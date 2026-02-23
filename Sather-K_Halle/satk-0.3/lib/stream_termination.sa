@@ -1,0 +1,4 @@
+---- Copyright (C) 2008 stream_termination.sa, by Maik Schoepe
+class STREAM_TERMINATION is like EXCEPTION;
+  name: STRING[*] is res := "called terminated stream".string; end;
+end;

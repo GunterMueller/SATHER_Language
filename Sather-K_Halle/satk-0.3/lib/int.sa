@@ -1,0 +1,32 @@
+---- Copyright (C) 2008 int.sa, by Maik Schoepe
+value class INT is builtin : "int32"
+include SYS_SIMPLE_INUM(INT, UNSIGNED);
+include SYS_SIMPLE_VALUE(INT);
+
+	is_equal (v: $OB): BOOL is
+    typecase v
+   	 when SAME then res := sys_is_equal (v);
+  	  when SHORT_INT then
+    		res := sys_is_equal(v as INT); 
+	 	  else res := false;
+    end;
+	end;
+  
+  stream upto (!to: INT): INT is
+    res := self;
+    loop
+      if res > to then return end;
+      resume;
+      res := res+1;
+    end;
+  end;
+
+  stream downto (!to: INT): INT is
+    res := self;
+    loop
+      if res < to then return end;
+      resume;
+      res := res-1;
+    end;
+  end;
+end;

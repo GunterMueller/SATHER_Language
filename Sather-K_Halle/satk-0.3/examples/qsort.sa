@@ -1,0 +1,47 @@
+-- Simple implementation of Hoare's quicksort
+-- Copyright (C) 1996 Martin Trapp, Christian von Roques & Markus Armbruster
+
+class QSORT is
+
+  quicksort(a:ARRAY[*](INT); m,n: INT) is
+    if n>m
+    then 
+      i,j: INT; -- Indizes
+      r,h: INT; -- Elementtyp
+      r := a[(m+n) div 2];
+      i := m;
+      j := n;
+      while i <= j
+      loop -- Schleifeninvariante Inv
+	while a[i]<r loop i := i+1 end;
+	while a[j]>r loop j := j-1 end;
+	if i <=j
+	then h := a[i]; a[i] := a[j]; a[j] := h;
+	  i := i+1; j :=j-1
+	end;
+      end;
+      quicksort(a,m,j);
+      quicksort(a,i,n)
+    end; -- if
+  end;
+  
+
+  dump (a: ARRAY[*](INT)) is
+    i: INT;
+    i := 0;
+    while i<a.asize loop TEXT::sout << a[i] << ' '; i := i+1; end;
+    TEXT::sout << '\n';
+  end;
+  
+  main is
+    a: #ARRAY[20](INT);
+    i: INT;
+    r: #RANDOM;
+  
+    i := 0; while i<a.asize loop a[i] := r.next(64); i := i+1; end;
+    dump (a);
+    quicksort (a, 0, a.asize-1);
+    dump (a);
+  end;
+  
+end;

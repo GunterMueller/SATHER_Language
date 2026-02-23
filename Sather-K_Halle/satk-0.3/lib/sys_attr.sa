@@ -1,0 +1,23 @@
+---- Copyright (C) 2008 sys_attr.sa, by Maik Schoepe
+class SYS_ATTR is builtin : "class [mscorlib]System.Reflection.FieldInfo"
+  
+  string: STRING is builtin 
+  	".maxstack 1"
+  	"ldarg.s 0"
+  	"ldfld class [mscorlib]System.Reflection.FieldInfo 'SYS_ATTR'::_val"
+  	"call instance string [mscorlib]System.Reflection.FieldInfo::get_Name()"
+		"call instance char[] string::ToCharArray()"
+		"newobj instance void 'STRING[*]'::.ctor(char[])"
+  	"ret"
+  end;
+
+  get_value(v: $OB): $OB is builtin
+    "ldarg 0"
+  	"ldfld class [mscorlib]System.Reflection.FieldInfo 'SYS_ATTR'::_val"
+  	"ldarg v"
+  	"callvirt instance object [mscorlib]System.Reflection.FieldInfo::GetValue(object)"
+  	"isinst '$OB'"
+  	"ret"
+  end;
+end;
+

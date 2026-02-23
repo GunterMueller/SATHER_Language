@@ -1,0 +1,4 @@
+---- Copyright (C) 2008 float_underflow.sa, by Maik Schoepe
+class FLOAT_UNDERFLOW is like NUMERIC_ERROR;
+  name: STRING[*] is res := "floating-point underflow".string end;
+end;

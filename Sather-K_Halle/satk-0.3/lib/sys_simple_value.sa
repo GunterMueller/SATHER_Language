@@ -1,0 +1,21 @@
+---- Copyright (C) 2008 sys_simple_value.sa, by Maik Schoepe
+abstract value class SYS_SIMPLE_VALUE(T) is builtin
+	string: STRING[*] is builtin
+		".locals (" SAME@native " v)"
+		".maxstack 1"
+		"ldarg.0"
+		"ldfld " SAME@native " " SAME "::'_val'"
+		"stloc v"
+		"ldloca v"
+		"call instance string " SAME@native  "::ToString ()"
+		"call instance char[] string::ToCharArray()"
+		"newobj instance void 'STRING[*]'::.ctor(char[])"
+		"ret"
+	end;	
+
+  from_str(s: STR[*]): T is builtin
+    "ldarg s"
+    "call " T " 'SYS_CONVERSION'::convert(valuetype 'STR[*]')"
+    "ret"
+  end;
+end;

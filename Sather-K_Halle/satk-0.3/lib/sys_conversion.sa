@@ -1,0 +1,582 @@
+---- Copyright (C) 2008 sys_conversion.sa, by Maik Schoepe
+-- static builtin methods could not be called directly from other Sather-K methods!
+
+class SYS_CONVERSION is
+  -- SHORT_INT
+  convert(v: SHORT_INT) : INT is static_builtin
+    "ldarg v"
+    "call int16 SHORT_INT::_valueOut(valuetype 'SHORT_INT')"
+    "conv.ovf.i4"
+    "newobj instance void INT::.ctor(int32)"
+    "ret"
+  end;
+
+  convert(v: SHORT_INT) : LONG_INT is static_builtin
+    "ldarg v"
+    "call int16 SHORT_INT::_valueOut(valuetype 'SHORT_INT')"
+    "conv.ovf.i8"
+    "newobj instance void LONG_INT::.ctor(int64)"
+    "ret"
+  end;
+
+  convert(v: SHORT_INT) : SHORT_UNSIGNED is static_builtin
+    "ldarg v"
+    "call int16 SHORT_INT::_valueOut(valuetype 'SHORT_INT')"
+    "conv.ovf.u2"
+    "newobj instance void SHORT_UNSIGNED::.ctor(unsigned int16)"
+    "ret"
+  end;
+
+  convert(v: SHORT_INT) : UNSIGNED is static_builtin
+    "ldarg v"
+    "call int16 SHORT_INT::_valueOut(valuetype 'SHORT_INT')"
+    "conv.ovf.u4"
+    "newobj instance void UNSIGNED::.ctor(unsigned int32)"
+    "ret"
+  end;
+
+  convert(v: SHORT_INT) : LONG_UNSIGNED is static_builtin
+    "ldarg v"
+    "call int16 SHORT_INT::_valueOut(valuetype 'SHORT_INT')"
+    "conv.ovf.u8"
+    "newobj instance void LONG_UNSIGNED::.ctor(unsigned int64)"
+    "ret"
+  end;
+
+  convert(v: SHORT_INT) : FLT is static_builtin
+    "ldarg v"
+    "call int16 SHORT_INT::_valueOut(valuetype 'SHORT_INT')"
+    "conv.r4"
+    "newobj instance void FLT::.ctor(float32)"
+    "ret"
+  end;
+
+  convert(v: SHORT_INT) : FLTD is static_builtin
+    "ldarg v"
+    "call int16 SHORT_INT::_valueOut(valuetype 'SHORT_INT')"
+    "conv.r8"
+    "newobj instance void FLTD::.ctor(float64)"
+    "ret"
+  end;
+  -- INT
+  convert(v: INT) : SHORT_INT is static_builtin
+    "ldarg v"
+    "call int32 INT::_valueOut(valuetype 'INT')"
+    "conv.ovf.i2"
+    "newobj instance void SHORT_INT::.ctor(int16)"
+    "ret"
+  end;
+
+  convert(v: INT) : LONG_INT is static_builtin
+    "ldarg v"
+    "call int32 INT::_valueOut(valuetype 'INT')"
+    "conv.ovf.i8"
+    "newobj instance void LONG_INT::.ctor(int64)"
+    "ret"
+  end;
+
+  convert(v: INT) : SHORT_UNSIGNED is static_builtin
+    "ldarg v"
+    "call int32 INT::_valueOut(valuetype 'INT')"
+    "conv.ovf.u2"
+    "newobj instance void SHORT_UNSIGNED::.ctor(unsigned int16)"
+    "ret"
+  end;
+
+  convert(v: INT) : UNSIGNED is static_builtin
+    "ldarg v"
+    "call int32 INT::_valueOut(valuetype 'INT')"
+    "conv.ovf.i4"
+    "newobj instance void UNSIGNED::.ctor(unsigned int32)"
+    "ret"
+  end;
+
+  convert(v: INT) : LONG_UNSIGNED is static_builtin
+    "ldarg v"
+    "call int32 INT::_valueOut(valuetype 'INT')"
+    "conv.ovf.u8"
+    "newobj instance void LONG_UNSIGNED::.ctor(unsigned int64)"
+    "ret"
+  end;
+
+  convert(v: INT) : FLT is static_builtin
+    "ldarg v"
+    "call int32 INT::_valueOut(valuetype 'INT')"
+    "conv.r4"
+    "newobj instance void FLT::.ctor(float32)"
+    "ret"
+  end;
+
+  convert(v: INT) : FLTD is static_builtin
+    "ldarg v"
+    "call int32 INT::_valueOut(valuetype 'INT')"
+    "conv.r8"
+    "newobj instance void FLTD::.ctor(float64)"
+    "ret"
+  end;
+  -- LONG_INT
+  convert(v: LONG_INT) : SHORT_INT is static_builtin
+    "ldarg v"
+    "call int64 LONG_INT::_valueOut(valuetype 'LONG_INT')"
+    "conv.ovf.i2"
+    "newobj instance void SHORT_INT::.ctor(int16)"
+    "ret"
+  end;
+
+  convert(v: LONG_INT) : INT is static_builtin
+    "ldarg v"
+    "call int64 LONG_INT::_valueOut(valuetype 'LONG_INT')"
+    "conv.ovf.i4"
+    "newobj instance void INT::.ctor(int32)"
+    "ret"
+  end;
+
+  convert(v: LONG_INT) : SHORT_UNSIGNED is static_builtin
+    "ldarg v"
+    "call int64 LONG_INT::_valueOut(valuetype 'LONG_INT')"
+    "conv.ovf.u2"
+    "newobj instance void SHORT_UNSIGNED::.ctor(unsigned int16)"
+    "ret"
+  end;
+
+  convert(v: LONG_INT) : UNSIGNED is static_builtin
+    "ldarg v"
+    "call int64 LONG_INT::_valueOut(valuetype 'LONG_INT')"
+    "conv.ovf.i4"
+    "newobj instance void UNSIGNED::.ctor(unsigned int32)"
+    "ret"
+  end;
+
+  convert(v: LONG_INT) : LONG_UNSIGNED is static_builtin
+    "ldarg v"
+    "call int64 LONG_INT::_valueOut(valuetype 'LONG_INT')"
+    "conv.ovf.u8"
+    "newobj instance void LONG_UNSIGNED::.ctor(unsigned int64)"
+    "ret"
+  end;
+
+  convert(v: LONG_INT) : FLT is static_builtin
+    "ldarg v"
+    "call int64 LONG_INT::_valueOut(valuetype 'LONG_INT')"
+    "conv.r4"
+    "newobj instance void FLT::.ctor(float32)"
+    "ret"
+  end;
+
+  convert(v: LONG_INT) : FLTD is static_builtin
+    "ldarg v"
+    "call int64 LONG_INT::_valueOut(valuetype 'LONG_INT')"
+    "conv.r8"
+    "newobj instance void FLTD::.ctor(float64)"
+    "ret"
+  end;
+
+  --SHORT_UNSIGNED
+  convert(v: SHORT_UNSIGNED) : UNSIGNED is static_builtin
+    "ldarg v"
+    "call unsigned int16 SHORT_UNSIGNED::_valueOut(valuetype 'SHORT_UNSIGNED')"
+    "conv.ovf.u4"
+    "newobj instance void UNSIGNED::.ctor(unsigned int32)"
+    "ret"
+  end;
+
+  convert(v: SHORT_UNSIGNED) : LONG_UNSIGNED is static_builtin
+    "ldarg v"
+    "call unsigned int16 SHORT_UNSIGNED::_valueOut(valuetype 'SHORT_UNSIGNED')"
+    "conv.ovf.u8"
+    "newobj instance void LONG_UNSIGNED::.ctor(unsigned int64)"
+    "ret"
+  end;
+
+  convert(v: SHORT_UNSIGNED) : SHORT_INT is static_builtin
+    "ldarg v"
+    "call unsigned int16 SHORT_UNSIGNED::_valueOut(valuetype 'SHORT_UNSIGNED')"
+    "conv.ovf.i2"
+    "newobj instance void SHORT_INT::.ctor(int16)"
+    "ret"
+  end;
+
+  convert(v: SHORT_UNSIGNED) : INT is static_builtin
+    "ldarg v"
+    "call unsigned int16 SHORT_UNSIGNED::_valueOut(valuetype 'SHORT_UNSIGNED')"
+    "conv.ovf.i4"
+    "newobj instance void INT::.ctor(int32)"
+    "ret"
+  end;
+
+  convert(v: SHORT_UNSIGNED) : LONG_INT is static_builtin
+    "ldarg v"
+    "call unsigned int16 SHORT_UNSIGNED::_valueOut(valuetype 'SHORT_UNSIGNED')"
+    "conv.ovf.i8"
+    "newobj instance void LONG_INT::.ctor(int64)"
+    "ret"
+  end;
+
+  convert(v: SHORT_UNSIGNED) : FLT is static_builtin
+    "ldarg v"
+    "call unsigned int16 SHORT_UNSIGNED::_valueOut(valuetype 'SHORT_UNSIGNED')"
+    "conv.r4"
+    "newobj instance void FLT::.ctor(float32)"
+    "ret"
+  end;
+
+  convert(v: SHORT_UNSIGNED) : FLTD is static_builtin
+    "ldarg v"
+    "call unsigned int16 SHORT_UNSIGNED::_valueOut(valuetype 'SHORT_UNSIGNED')"
+    "conv.r8"
+    "newobj instance void FLTD::.ctor(float64)"
+    "ret"
+  end;
+
+  -- UNSIGNED
+  convert(v: UNSIGNED) : SHORT_UNSIGNED is static_builtin
+    "ldarg v"
+    "call unsigned int32 UNSIGNED::_valueOut(valuetype 'UNSIGNED')"
+    "conv.ovf.u2"
+    "newobj instance void SHORT_UNSIGNED::.ctor(unsigned int16)"
+    "ret"
+  end;
+
+  convert(v: UNSIGNED) : LONG_UNSIGNED is static_builtin
+    "ldarg v"
+    "call unsigned int32 UNSIGNED::_valueOut(valuetype 'UNSIGNED')"
+    "conv.ovf.u8"
+    "newobj instance void LONG_UNSIGNED::.ctor(unsigned int64)"
+    "ret"
+  end;
+
+  convert(v: UNSIGNED) : SHORT_INT is static_builtin
+    "ldarg v"
+    "call unsigned int32 UNSIGNED::_valueOut(valuetype 'UNSIGNED')"
+    "conv.ovf.i2"
+    "newobj instance void SHORT_INT::.ctor(int16)"
+    "ret"
+  end;
+
+  convert(v: UNSIGNED) : INT is static_builtin
+    "ldarg v"
+    "call unsigned int32 UNSIGNED::_valueOut(valuetype 'UNSIGNED')"
+    "conv.ovf.i4"
+    "newobj instance void INT::.ctor(int32)"
+    "ret"
+  end;
+
+  convert(v: UNSIGNED) : LONG_INT is static_builtin
+    "ldarg v"
+    "call unsigned int32 UNSIGNED::_valueOut(valuetype 'UNSIGNED')"
+    "conv.ovf.i8"
+    "newobj instance void LONG_INT::.ctor(int64)"
+    "ret"
+  end;
+
+  convert(v: UNSIGNED) : FLT is static_builtin
+    "ldarg v"
+    "call unsigned int32 UNSIGNED::_valueOut(valuetype 'UNSIGNED')"
+    "conv.r4"
+    "newobj instance void FLT::.ctor(float32)"
+    "ret"
+  end;
+
+  convert(v: UNSIGNED) : FLTD is static_builtin
+    "ldarg v"
+    "call unsigned int32 UNSIGNED::_valueOut(valuetype 'UNSIGNED')"
+    "conv.r8"
+    "newobj instance void FLTD::.ctor(float64)"
+    "ret"
+  end;
+
+  -- LONG_UNSIGNED
+  convert(v: LONG_UNSIGNED) : SHORT_UNSIGNED is static_builtin
+    "ldarg v"
+    "call unsigned int64 LONG_UNSIGNED::_valueOut(valuetype 'LONG_UNSIGNED')"
+    "conv.ovf.u2"
+    "newobj instance void SHORT_UNSIGNED::.ctor(unsigned int16)"
+    "ret"
+  end;
+
+  convert(v: LONG_UNSIGNED) : UNSIGNED is static_builtin
+    "ldarg v"
+    "call unsigned int64 LONG_UNSIGNED::_valueOut(valuetype 'LONG_UNSIGNED')"
+    "conv.ovf.u4"
+    "newobj instance void UNSIGNED::.ctor(unsigned int32)"
+    "ret"
+  end;
+
+  convert(v: LONG_UNSIGNED) : SHORT_INT is static_builtin
+    "ldarg v"
+    "call unsigned int64 LONG_UNSIGNED::_valueOut(valuetype 'LONG_UNSIGNED')"
+    "conv.ovf.i2"
+    "newobj instance void SHORT_INT::.ctor(int16)"
+    "ret"
+  end;
+
+  convert(v: LONG_UNSIGNED) : INT is static_builtin
+    "ldarg v"
+    "call unsigned int64 LONG_UNSIGNED::_valueOut(valuetype 'LONG_UNSIGNED')"
+    "conv.ovf.i4"
+    "newobj instance void INT::.ctor(int32)"
+    "ret"
+  end;
+
+  convert(v: LONG_UNSIGNED) : LONG_INT is static_builtin
+    "ldarg v"
+    "call unsigned int64 LONG_UNSIGNED::_valueOut(valuetype 'LONG_UNSIGNED')"
+    "conv.ovf.i8"
+    "newobj instance void LONG_INT::.ctor(int64)"
+    "ret"
+  end;
+
+  convert(v: LONG_UNSIGNED) : FLT is static_builtin
+    "ldarg v"
+    "call unsigned int64 LONG_UNSIGNED::_valueOut(valuetype 'LONG_UNSIGNED')"
+    "conv.r4"
+    "newobj instance void FLT::.ctor(float32)"
+    "ret"
+  end;
+
+  convert(v: LONG_UNSIGNED) : FLTD is static_builtin
+    "ldarg v"
+    "call unsigned int64 LONG_UNSIGNED::_valueOut(valuetype 'LONG_UNSIGNED')"
+    "conv.r8"
+    "newobj instance void FLTD::.ctor(float64)"
+    "ret"
+  end;
+
+  -- FLT
+  convert(v: FLT) : SHORT_UNSIGNED is static_builtin
+    "ldarg v"
+    "call float32 FLT::_valueOut(valuetype 'FLT')"
+    "conv.ovf.u2"
+    "newobj instance void SHORT_UNSIGNED::.ctor(unsigned int16)"
+    "ret"
+  end;
+
+  convert(v: FLT) : UNSIGNED is static_builtin
+    "ldarg v"
+    "call float32 FLT::_valueOut(valuetype 'FLT')"
+    "conv.ovf.u4"
+    "newobj instance void UNSIGNED::.ctor(unsigned int32)"
+    "ret"
+  end;
+
+  convert(v: FLT) : LONG_UNSIGNED is static_builtin
+    "ldarg v"
+    "call float32 FLT::_valueOut(valuetype 'FLT')"
+    "conv.ovf.u8"
+    "newobj instance void LONG_UNSIGNED::.ctor(unsigned int64)"
+    "ret"
+  end;
+
+  convert(v: FLT) : SHORT_INT is static_builtin
+    "ldarg v"
+    "call float32 FLT::_valueOut(valuetype 'FLT')"
+    "conv.ovf.i2"
+    "newobj instance void SHORT_INT::.ctor(int16)"
+    "ret"
+  end;
+
+  convert(v: FLT) : INT is static_builtin
+    "ldarg v"
+    "call float32 FLT::_valueOut(valuetype 'FLT')"
+    "conv.ovf.i4"
+    "newobj instance void INT::.ctor(int32)"
+    "ret"
+  end;
+
+  convert(v: FLT) : LONG_INT is static_builtin
+    "ldarg v"
+    "call float32 FLT::_valueOut(valuetype 'FLT')"
+    "conv.ovf.i8"
+    "newobj instance void LONG_INT::.ctor(int64)"
+    "ret"
+  end;
+
+  convert(v: FLT) : FLTD is static_builtin
+    "ldarg v"
+    "call float32 FLT::_valueOut(valuetype 'FLT')"
+    "conv.r8"
+    "newobj instance void FLTD::.ctor(float64)"
+    "ret"
+  end;
+
+  -- FLTD
+  convert(v: FLTD) : SHORT_UNSIGNED is static_builtin
+    "ldarg v"
+    "call float64 FLTD::_valueOut(valuetype 'FLTD')"
+    "conv.ovf.u2"
+    "newobj instance void SHORT_UNSIGNED::.ctor(unsigned int16)"
+    "ret"
+  end;
+
+  convert(v: FLTD) : UNSIGNED is static_builtin
+    "ldarg v"
+    "call float64 FLTD::_valueOut(valuetype 'FLTD')"
+    "conv.ovf.u4"
+    "newobj instance void UNSIGNED::.ctor(unsigned int32)"
+    "ret"
+  end;
+
+  convert(v: FLTD) : LONG_UNSIGNED is static_builtin
+    "ldarg v"
+    "call float64 FLTD::_valueOut(valuetype 'FLTD')"
+    "conv.ovf.u8"
+    "newobj instance void LONG_UNSIGNED::.ctor(unsigned int64)"
+    "ret"
+  end;
+
+  convert(v: FLTD) : SHORT_INT is static_builtin
+    "ldarg v"
+    "call float64 FLTD::_valueOut(valuetype 'FLTD')"
+    "conv.ovf.i2"
+    "newobj instance void SHORT_INT::.ctor(int16)"
+    "ret"
+  end;
+
+  convert(v: FLTD) : INT is static_builtin
+    "ldarg v"
+    "call float64 FLTD::_valueOut(valuetype 'FLTD')"
+    "conv.ovf.i4"
+    "newobj instance void INT::.ctor(int32)"
+    "ret"
+  end;
+
+  convert(v: FLTD) : LONG_INT is static_builtin
+    "ldarg v"
+    "call float64 FLTD::_valueOut(valuetype 'FLTD')"
+    "conv.ovf.i8"
+    "newobj instance void LONG_INT::.ctor(int64)"
+    "ret"
+  end;
+
+  convert(v: FLTD) : FLT is static_builtin
+    "ldarg v"
+    "call float64 FLTD::_valueOut(valuetype 'FLTD')"
+    "conv.r4"
+    "newobj instance void FLT::.ctor(float32)"
+    "ret"
+  end;
+
+  -- string conversion
+  convert(s: STR[*]) : BOOL is static_builtin
+    "ldarg s"
+    "call string 'STR[*]'::_valueOut(valuetype 'STR[*]')"
+    "call instance bool [mscorlib]System.Convert::ToBoolean(string)"
+    "newobj instance void BOOL::.ctor(bool)"
+    "ret"
+  end;
+
+  convert(s: STR[*]) : CHAR is static_builtin
+    "ldarg s"
+    "call string 'STR[*]'::_valueOut(valuetype 'STR[*]')"
+    "call instance char [mscorlib]System.Convert::ToChar(string)"
+    "newobj instance void CHAR::.ctor(char)"
+    "ret"
+  end;
+
+  convert(s: STR[*]) : BYTE is static_builtin
+    "ldarg s"
+    "call string 'STR[*]'::_valueOut(valuetype 'STR[*]')"
+    "call instance class [mscorlib]System.Byte [mscorlib]System.Convert::ToByte(string)"
+    "newobj instance void BYTE::.ctor(unsigned int8)"
+    "ret"
+  end;
+
+  convert(s: STR[*]) : SHORT_INT is static_builtin
+    "ldarg s"
+    "call string 'STR[*]'::_valueOut(valuetype 'STR[*]')"
+    "call int16 [mscorlib]System.Convert::ToInt16(string)"
+    "newobj instance void SHORT_INT::.ctor(int16)"
+    "ret"
+  end;
+
+  convert(s: STR[*]) : INT is static_builtin
+    "ldarg s"
+    "call string 'STR[*]'::_valueOut(valuetype 'STR[*]')"
+    "call int32 [mscorlib]System.Convert::ToInt32(string)"
+    "newobj instance void INT::.ctor(int32)"
+    "ret"
+  end;
+
+  convert(s: STR[*]) : LONG_INT is static_builtin
+    "ldarg s"
+    "call string 'STR[*]'::_valueOut(valuetype 'STR[*]')"
+    "call int64 [mscorlib]System.Convert::ToInt64(string)"
+    "newobj instance void LONG_INT::.ctor(int64)"
+    "ret"
+  end;
+
+  convert(s: STR[*]) : SHORT_UNSIGNED is static_builtin
+    "ldarg s"
+    "call string 'STR[*]'::_valueOut(valuetype 'STR[*]')"
+    "call unsigned int16 [mscorlib]System.Convert::ToUInt16(string)"
+    "newobj instance void SHORT_UNSIGNED::.ctor(unsigned int16)"
+    "ret"
+  end;
+
+  convert(s: STR[*]) : UNSIGNED is static_builtin
+    "ldarg s"
+    "call string 'STR[*]'::_valueOut(valuetype 'STR[*]')"
+    "call unsigned int32 [mscorlib]System.Convert::ToUInt32(string)"
+    "newobj instance void UNSIGNED::.ctor(unsigned int32)"
+    "ret"
+  end;
+
+  convert(s: STR[*]) : LONG_UNSIGNED is static_builtin
+    "ldarg s"
+    "call string 'STR[*]'::_valueOut(valuetype 'STR[*]')"
+    "call unsigned int64 [mscorlib]System.Convert::ToUInt64(string)"
+    "newobj instance void LONG_UNSIGNED::.ctor(unsigned int64)"
+    "ret"
+  end;
+
+  convert(s: STR[*]) : FLT is static_builtin
+    "ldarg s"
+    "call string 'STR[*]'::_valueOut(valuetype 'STR[*]')"
+    "call float32 [mscorlib]System.Convert::ToSingle(string)"
+    "newobj instance void FLT::.ctor(float32)"
+    "ret"
+  end;
+
+  convert(s: STR[*]) : FLTD is static_builtin
+    "ldarg s"
+    "call string 'STR[*]'::_valueOut(valuetype 'STR[*]')"
+    "call float64 [mscorlib]System.Convert::ToDouble(string)"
+    "newobj instance void FLTD::.ctor(float64)"
+    "ret"
+  end;
+  
+  -- value string, ref string conversion
+  convert(s: STR[*]) : STRING[*] is static_builtin
+    "ldarg s"
+    "call string 'STR[*]'::_valueOut(valuetype 'STR[*]')"
+		"call instance char[] string::ToCharArray()"
+		"newobj instance void 'STRING[*]'::.ctor(char[])"
+		"ret"
+  end;
+  
+  convert(s: STRING[*]) : STR[*] is static_builtin
+    "ldarg s"
+		"ldfld char[] 'STRING[*]'::_val"
+    "newobj instance void string::.ctor(char [])"
+    "newobj instance void 'STR[*]'::.ctor(string)"
+    "ret"
+  end;
+
+  -- simple values
+  convert(v: CHAR) : SHORT_INT is static_builtin
+    "ldarg v"
+    "call char CHAR::_valueOut(valuetype 'CHAR')"
+    "conv.ovf.i2"
+    "newobj instance void SHORT_INT::.ctor(int16)"
+    "ret"
+  end;
+
+  convert(v: CHAR) : INT is static_builtin
+    "ldarg v"
+    "call char CHAR::_valueOut(valuetype 'CHAR')"
+    "conv.ovf.i4"
+    "newobj instance void INT::.ctor(int32)"
+    "ret"
+  end;
+
+end;

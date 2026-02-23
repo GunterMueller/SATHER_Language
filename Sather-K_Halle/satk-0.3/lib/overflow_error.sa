@@ -1,0 +1,5 @@
+---- Copyright (C) 2008 overflow_error.sa, by Maik Schoepe
+class OVERFLOW_ERROR is like NUMERIC_ERROR;
+  name: STRING[*] is res := "arithmetic overflow".string end;
+end;
+

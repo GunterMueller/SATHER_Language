@@ -1,0 +1,4 @@
+---- Copyright (C) 2008 zero_divide.sa, by Maik Schoepe
+class ZERO_DIVIDE is like NUMERIC_ERROR;
+ name: STRING is res := "division by zero".string end;
+end;

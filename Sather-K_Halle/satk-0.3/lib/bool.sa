@@ -1,0 +1,14 @@
+---- Copyright (C) 2008 bool.sa, by Maik Schoepe
+value class BOOL is builtin : "bool"
+include SYS_SIMPLE_VALUE(BOOL);
+
+	negate: BOOL is builtin
+		".maxstack 2"
+		"ldarg 0"
+		"ldfld bool 'BOOL'::'_val'"
+		"ldc.i4.0"
+		"ceq"
+		"newobj instance void 'BOOL'::.ctor(bool)"
+		"ret"
+	end;
+end;

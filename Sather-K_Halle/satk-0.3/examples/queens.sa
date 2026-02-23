@@ -1,0 +1,70 @@
+-- The notorious n-queens problem (C.F. Gauss, 1850)
+-- Copyright (C) 1996 Markus Armbruster
+
+class QUEENS is
+
+  private row: ARRAY[*](INT);
+  -- queen in column c is at row[c]
+  
+  place_ok (i: INT): BOOL is
+  -- return whether queen in column i is
+  -- not in check from queens left of it
+    j: INT := 0;
+    while j < i loop
+      if row[j] = row[i] or (row[i]-row[j]).abs = i-j then
+	res := false;
+	return;
+      end;
+      j := j+1;
+    end;
+    res := true;
+  end;
+  
+  solve (n: INT): INT is
+  -- return the number of solutions to the n-queens problem
+    c: INT := 0;
+    res := 0;
+    row := #ARRAY[n](INT);
+    row[0] := -1;
+    while c >= 0 loop
+      row[c] := row[c]+1;
+      while row[c] < n and not place_ok(c) loop
+	row[c] := row[c]+1;
+      end;
+      if row[c] < n then -- successfully placed at (c,row[c])
+	if c = n-1 then
+	  res := res+1;
+	else
+	  c := c+1; row[c] := -1;
+	end;
+      else -- dead end, track back
+	c := c-1;
+      end;
+    end;
+    row := void;
+  end;
+
+
+  usage (progname: STRING) is
+    TEXT::sout << "usage: " << progname << " [num]\n";
+  end;
+
+
+  main (arg: ARRAY[*](STRING)): INT is
+    q: $QUEENS :=  #QUEENS; -- stupid pitfall: can't use self, its void
+    n: INT;
+  
+    case arg.asize
+    when 1 then
+      n := 8;
+    when 2 then
+      n := arg[1].int;
+      if n <= 0 then usage(arg[0]); res := 1; return; end;
+    else
+      usage(arg[0]); res := 1; return;
+    end;
+    TEXT::sout << "The " << n << "-queens problem has " << q.solve(n) << " solutions.\n";
+    res := 0;
+  end;
+
+end;

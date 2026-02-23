@@ -1,0 +1,4 @@
+---- Copyright (C) 2008 reference_error.sa, by Maik Schoepe
+class REFERENCE_ERROR is like EXCEPTION;
+  name: STRING[*] is res := "void dereference".string end;
+end;

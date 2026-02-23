@@ -1,0 +1,70 @@
+-- The towers of hanoi
+-- Contributed by Arne K. Frick
+
+class PEGS is
+
+  stick :ARRAY[*](INT);
+  moves :INT;
+  verbose :BOOL := false;
+
+  init(n :INT) is
+    -- initializes an array of pegs
+    stick := #ARRAY[3](INT);
+    stick[0] := n;
+    stick[1] := 0;
+    stick[2] := 0;
+    moves:=0;
+  end;
+  
+  hanoi(n, from, to :INT) is
+    if n > 0 then
+      -- moves the stack of pegs from stick[from] via stick[temp]
+      -- to stick[to]
+      spare :INT := 3 as INT - from - to;
+  
+      hanoi (n-1, from, spare);
+  
+      moves := moves + 1;
+      stick[from] := stick[from] - 1;
+      stick[to] := stick[to] + 1;
+      if verbose then
+				TEXT::sout << "move " << from << " to " << to << "\n";
+     end;
+  
+      hanoi (n-1, spare, to);
+    end;
+  end;
+    
+end;
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+class HANOI is
+
+  main(args :ARRAY[*](STRING[*])) is
+    i :INT := 1;
+    n_specified : BOOL := false;
+    verbose : BOOL := false;
+  
+    if args.asize > i  and  args[i].str="-v" then
+      verbose := true;
+      i := i + 1;
+    end;
+    
+    if i /= args.asize - 1 then
+      TEXT::sout << " wrong # of arguments\n\n"
+    	 "Usage: hanoi [-v] n\n"
+    	 "   where n is the number of pegs\n"
+    	 "   -v enables verbose printing of moves\n";
+    else
+      n :INT := args[i].int;
+      p :$PEGS := #PEGS(n);
+      p.verbose := verbose;
+      p.hanoi (n, 0, 2);
+      TEXT::sout << "Total #moves: " << p.moves << "\n";
+    end;
+  end;
+
+end;
+
+

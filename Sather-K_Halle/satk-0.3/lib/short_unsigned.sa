@@ -1,0 +1,23 @@
+---- Copyright (C) 2008 short_unsigned.sa, by Maik Schoepe
+value class SHORT_UNSIGNED is builtin : "unsigned int16"
+include SYS_SIMPLE_INUM(SHORT_UNSIGNED, UNSIGNED);
+include SYS_SIMPLE_VALUE(SHORT_UNSIGNED);
+  
+  stream upto (!to: SHORT_UNSIGNED): SHORT_UNSIGNED is
+    res := self;
+    loop
+      if res > to then return end;
+      resume;
+      res := res+1;
+    end;
+  end;
+
+  stream downto (!to: SHORT_UNSIGNED): SHORT_UNSIGNED is
+    res := self;
+    loop
+      if res < to then return end;
+      resume;
+      res := res-1;
+    end;
+  end;
+end;

@@ -1,0 +1,25 @@
+---- Copyright (C) 2008 reference.sa, by Maik Schoepe
+abstract class REFERENCE is builtin like OB;
+  type: TYPE is builtin
+  	".maxstack 1"
+  	"ldarg.s 0"
+  	"callvirt instance class [mscorlib]System.Type object::GetType()"
+  	"newobj instance void 'TYPE'::.ctor(class [mscorlib]System.Type)"
+  	"ret"
+  end;
+
+	private sys_is_equal(v: SAME): BOOL is builtin 
+		".maxstack 2"
+		"ldarg.s 0"
+		"ldarg v"
+		"ceq"
+		"newobj instance void 'BOOL'::.ctor(bool)"
+		"ret"
+	end;
+
+	copy: SAME is builtin
+	  "ldarg.0"
+	  "callvirt instance object object::MemberwiseClone()"
+	  "ret"
+	end;
+end;

@@ -1,0 +1,87 @@
+This is the README for Karla, the Karlsruhe Library of Algorithms and
+Data Structures.  The major design goals of Karla are reliability,
+flexibility and efficiency.  More information about Karla can be found
+in the WWW.  The Karla project home page is
+
+	http://i44www.info.uni-karlsruhe.de/~frick/karla/karla.html
+
+There are a few points to note about Karla and this 
+release.
+
+* Karla is written in Sather-K, the Karlsruhe variant of Sather.
+Therefore, you need the compiler, too, if you want to use it.  See
+below for the exact location.
+
+* As Karla is a research project, we provide it free of charge and
+cannot assume any liability for your use of it.  You get what you
+pay for.  See also the file $KARLA/obviously onlydoc/license.txt.
+
+* This is the first release.  Please don't expect everything to run 
+smooth at this point.  Let us know how to improve the installation 
+description and usage.  
+
+REQUIREMENTS:
+* Sather-K Compiler, to be found as
+	
+	i44ftp.info.uni-karlsruhe.de:/pub/sather/satherk-0.9.tar.gz
+
+  It can also be found at ftp.icsi.berkeley.edu:/pub/sather/Sather-K.
+
+* TCL/Tk for the configuration management system, sk.tcl
+* The FSBox file selector widget. You can find it on the web at
+
+	ftp://harbor.ecn.purdue.edu/pub/tcl/code/FSBox.tar.Z
+
+
+
+PROGRAMMING SUPPORT:
+   available for GNU Emacs.  This includes keyword highlighting,
+   indentation and compiler support.
+   To use it, add the following lines to your .emacs:
+
+	(setq load-path (cons (concat (getenv "KARLA") "/setup/emacs-lisp") load-path))
+
+	;;
+	;; prepare for documentation of files using standard
+	;; headers and copyright
+	;;	
+	(setq doc-where-am-i '("Universitaet Karlsruhe" "info.uni-karlsruhe.de")) 
+	   ;; location and EMail suffix
+
+	(require 'language-tools)
+	(require 'karla)
+
+	;; compilation support
+	(defvar compile-command "make")
+	(require 'compile "mycompile")
+
+   Feel free to simplify/enhance.  We'd be glad to hear from you to improve programming
+   support for Karla.
+
+DOCUMENTATION:
+   The subdirectory 'doc' contains Postscript versions of all
+   documents.  
+
+Bug Reports: keep 'em coming in to 
+
+	karla-bugs@ipd.info.uni-karlsruhe.de
+
+	(If this doesn't seem to work, try {frick,zimmer}@informatik.uni-karlsruhe.de)
+
+ANNOUNCEMENT:
+
+	In the future, there will be mailing lists for the
+	discussion of Karla and the announcement of new versions.
+	Watch for an announcement on comp.lang.sather and
+	comp.object.
+
+	We intend to schedule a major new release every 6 months,
+	bug fixes as necessary.
+
+--
+Arne Frick                 | phone: +(49)721/608-4763     
+Universitaet Karlsruhe     | fax:   +(49)721/691462       
+Vincenz-Priessnitz-Str. 3  | email: frick@informatik.uni-karlsruhe.de 
+D-76128 Karlsruhe, GERMANY | URL:   http://i44www.info.uni-karlsruhe.de/~frick 
+
+

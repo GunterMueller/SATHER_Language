@@ -1,0 +1,4 @@
+---- Copyright (C) 2008 float_overflow.sa, by Maik Schoepe
+class FLOAT_OVERFLOW is like NUMERIC_ERROR;
+  name: STRING[*] is res := "floating-point overflow".string end;
+end;

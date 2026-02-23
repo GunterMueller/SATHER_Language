@@ -1,0 +1,27 @@
+Using the Compiler
+------------------
+
+1. Example
+
+The command 'satk filename.sa' will produce the assembly 'filename.exe' if the main class has the name
+FILENAME. This assembly could be executed by the command 'mono filename.exe'.
+
+2. Options
+
+satk [-m classname] [-o file] [-il] [-l] sourcefile
+
+-m classname : sets the name of the main class
+-o file      : output filename
+-il          : generate IL-Code
+-l           : long error output (untested)
+
+3. Compiling multiple files
+
+At this time this is only possible by piping:
+
+cat file1.sa file2.sa ... | satk
+
+4. Reporting Bugs
+
+Please report bugs to:
+maik.schoepe@informatik.uni-halle.de

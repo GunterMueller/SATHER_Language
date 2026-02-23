@@ -1,0 +1,32 @@
+---- Copyright (C) 2008 long_int.sa, by Maik Schoepe
+value class LONG_INT is builtin : "int64"
+include SYS_SIMPLE_INUM(LONG_INT, UNSIGNED);
+include SYS_SIMPLE_VALUE(LONG_INT);
+	
+	is_equal (v: $OB): BOOL is
+    typecase v
+   	 when SAME then res := sys_is_equal (v);
+  	  when INT, SHORT_INT then
+    		res := sys_is_equal(v as LONG_INT); 
+	 	  else res := false;
+    end;
+	end;
+
+  stream upto (!to: LONG_INT): LONG_INT is
+    res := self;
+    loop
+      if res > to then return end;
+      resume;
+      res := res+1;
+    end;
+  end;
+
+  stream downto (!to: LONG_INT): LONG_INT is
+    res := self;
+    loop
+      if res < to then return end;
+      resume;
+      res := res-1;
+    end;
+  end;
+end;

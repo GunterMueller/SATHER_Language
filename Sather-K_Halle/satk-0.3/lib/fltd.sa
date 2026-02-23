@@ -1,0 +1,25 @@
+---- Copyright (C) 2008 fltd.sa, by Maik Schoepe
+value class FLTD is builtin: "float64"
+include SYS_SIMPLE_FNUM(FLTD);
+include SYS_SIMPLE_VALUE(FLTD);
+
+	is_equal (v: $OB): BOOL is
+    typecase v
+   	 when SAME then res := sys_is_equal (v);
+  	  when INT, SHORT_INT, LONG_INT, FLT then
+    		res := sys_is_equal(v as FLTD); 
+	 	  else res := false;
+    end;
+	end;
+
+	private sys_quotient(other:FLTD):FLTD is builtin
+		"ldarg.0"
+		"ldobj FLTD"
+    "call float64  'FLTD'::_valueOut(valuetype 'FLTD')"
+		"ldarg other"
+    "call float64  'FLTD'::_valueOut(valuetype 'FLTD')"
+		"div"
+		"newobj instance void 'FLTD'::.ctor (float64)"
+		"ret"
+	end;
+end;

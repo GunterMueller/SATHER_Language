@@ -1,0 +1,57 @@
+/* Copyright (C) 2010, University of Halle */
+
+/*  This file is part of Sather-K Compiler Halle.
+      
+    Sather-K Compiler Halle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+                      
+    Sather-K Compiler Halle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+                                      
+    You should have received a copy of the GNU General Public
+    License along with Sather-K Compiler Halle.  If not, see
+    <http://www.gnu.org/licenses/>. */
+    
+#define featureK                1
+#define methodK                 2
+#define locVarK                 3
+#define parameterK              4
+#define aggregateK              5
+#define attributeK              6
+
+#define externalK               7
+#define abstractK               8
+#define valueK                  9
+#define referenceK              10
+
+#define privateK                11
+#define constantK               12
+#define sharedK                 13
+#define readonlyK               14
+
+#define streamK                 15
+#define procedureK              16
+
+#define onceK                   17
+#define inK                     18
+#define outK                    19
+#define inoutK                  20
+
+#define arrayclassK             21
+
+#define polymorphK              22
+#define monomorphK              23
+#define sameK                   24
+
+#define implicitstreamK         25
+#define unsharedK               26
+#define boundK                  27
+#define builtinK                28
+#define builtinarrayK           29
+#define initK                   30
+#define finalizeK               31
+#define builtinstaticK          28

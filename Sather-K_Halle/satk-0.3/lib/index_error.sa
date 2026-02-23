@@ -1,0 +1,4 @@
+---- Copyright (C) 2008 index_error.sa, by Maik Schoepe
+class INDEX_ERROR is like EXCEPTION;
+  name: STRING[*] is res := "array index out of bounds".string end;
+end;

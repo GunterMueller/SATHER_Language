@@ -1,0 +1,153 @@
+---- Copyright (C) 2008 sys_simple_inum.sa, by Maik Schoepe
+abstract value class SYS_SIMPLE_INUM(T; U) is builtin
+include SYS_SIMPLE_NUM(T,U);
+
+	plus (other: T): SAME is builtin 
+		"ldarg.0"
+		"ldfld " SAME@native " " SAME "::_val"
+		"ldarga other"
+		"ldfld " T@native " " T "::_val"
+		"add.ovf"
+		"newobj instance void " SAME "::.ctor (" SAME@native ")"
+		"ret"
+	end;
+
+	minus (other: T): SAME is builtin 
+		"ldarg.0"
+		"ldfld " SAME@native " " SAME "::_val"
+		"ldarga other"
+		"ldfld " T@native " " T "::_val"
+		"sub.ovf"
+		"newobj instance void " SAME "::.ctor (" SAME@native ")"
+		"ret"
+  end;
+
+	times (other: T): SAME is builtin 
+		"ldarg.0"
+		"ldfld " SAME@native " " SAME "::_val"
+		"ldarga other"
+		"ldfld " T@native " " T "::_val"
+		"mul.ovf"
+		"newobj instance void " SAME "::.ctor (" SAME@native ")"
+		"ret"
+  end;
+
+	quotient(other: T):FLTD is 
+		if (other=0) then raise ZERO_DIVIDE end;
+		res := sys_quotient(other);	
+	end;
+
+	divide (other: T): SAME is builtin 
+		"ldarg.0"
+		"ldfld " SAME@native " " SAME "::_val"
+		"ldarga other"
+		"ldfld " T@native " " T "::_val"
+		"div"
+		"newobj instance void " SAME "::.ctor (" SAME@native ")"
+		"ret"
+	end;
+
+	modulo (other: T): SAME is builtin 
+		"ldarg.0"
+		"ldfld " SAME@native " " SAME "::_val"
+		"ldarga other"
+		"ldfld " T@native " " T "::_val"
+		"rem"
+		"newobj instance void " SAME "::.ctor (" SAME@native ")"
+		"ret"
+	end;
+
+  byte: BYTE is builtin
+    "ldarg.0"
+		"ldfld " SAME@native " " SAME "::_val"
+    "conv.i1"
+    "newobj instance void BYTE::.ctor(unsigned int8)"
+    "ret"
+  end;
+
+  char: CHAR is builtin
+    "ldarg.0"
+		"ldfld " SAME@native " " SAME "::_val"
+    "conv.i2"
+    "newobj instance void CHAR::.ctor(char)"
+    "ret"
+  end;
+
+	pow (exp: U): SAME is
+    base: SAME := self;
+    res := 1;
+    while exp>0 loop
+      if exp mod 2 = 1 then
+        res := res * base;
+      end;
+      exp := exp div 2;
+      base := base * base;
+    end;
+  end;
+
+  bitnot: SAME is builtin
+    "ldarg.0"
+		"ldfld " SAME@native " " SAME "::_val"
+    "not"
+		"newobj instance void " SAME "::.ctor (" SAME@native ")"
+		"ret"
+  end;
+  
+  bitand (other: T): SAME is builtin 
+    "ldarg.0"
+		"ldfld " SAME@native " " SAME "::_val"
+		"ldarga other"
+		"ldfld " T@native " " T "::_val"
+    "and"
+		"newobj instance void " SAME "::.ctor (" SAME@native ")"
+		"ret"
+  end;
+  
+  bitor (other: T): SAME is builtin 
+    "ldarg.0"
+		"ldfld " SAME@native " " SAME "::_val"
+		"ldarga other"
+		"ldfld " T@native " " T "::_val"
+    "or"
+		"newobj instance void " SAME "::.ctor (" SAME@native ")"
+		"ret"
+  end;
+
+  bitxor (other: T): SAME is builtin
+    "ldarg.0"
+		"ldfld " SAME@native " " SAME "::_val"
+		"ldarga other"
+		"ldfld " T@native " " T "::_val"
+    "xor"
+		"newobj instance void " SAME "::.ctor (" SAME@native ")"
+		"ret"
+  end;
+
+  shl (other: U): SAME is builtin
+    "ldarg.0"
+		"ldfld " SAME@native " " SAME "::_val"
+		"ldarga other"
+		"ldfld " U@native " " U "::_val"
+    "shl"
+		"newobj instance void " SAME "::.ctor (" SAME@native ")"
+		"ret"
+  end;
+
+  shr (other: U): SAME is builtin
+    "ldarg.0"
+		"ldfld " SAME@native " " SAME "::_val"
+		"ldarga other"
+		"ldfld " U@native " " U "::_val"
+    "shr"
+		"newobj instance void " SAME "::.ctor (" SAME@native ")"
+		"ret"
+  end;
+
+  gcd (other: T): T is
+    me : T := self;
+    res := other;
+    while res /= me loop
+      other := me % res;  res := me;  me := other;
+    end;
+  end;
+end;

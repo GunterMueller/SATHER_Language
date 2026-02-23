@@ -1,0 +1,78 @@
+---- Copyright (C) 2008 sys_simple_array.sa, by Maik Schoepe
+abstract class SYS_SIMPLE_ARRAY is
+  asize:INT is
+    res := asize0;
+  end;  
+
+  dimension:INT is builtin
+    ".maxstack 1"
+    "ldarg.0"
+    "ldfld " SAME@native " " SAME "::_val"
+    "callvirt instance int32 [mscorlib]System.Array::get_Rank()"
+    "newobj instance void INT::.ctor(int32)"
+    "ret"
+  end;
+
+  boundsize(dim: INT):INT is builtin
+    ".maxstack 2"
+    "ldarg.0"
+    "ldfld " SAME@native " " SAME "::_val"
+    "ldarg dim"
+    "call int32 INT::_valueOut(valuetype 'INT')"
+    "callvirt instance int32 [mscorlib]System.Array::GetLength(int32)"
+    "newobj instance void INT::.ctor(int32)"
+    "ret"
+  end;
+
+  get_value(indices:ARRAY[*](INT)):$OB is builtin 
+    ".maxstack 6"
+    ".locals init (int32 i, int32[] sys_ind)"
+    "ldarg indices"
+    "ldfld valuetype 'INT' 'ARRAY[*](INT)'::asize0"
+    "call int32 INT::_valueOut(valuetype 'INT')"
+    "stloc i"
+    "ldloc i"
+    "newarr int32"
+    --"newobj void int32[]::.ctor(int32)"
+    --"call void [mscorlib]System.Console::WriteLine(int32)"
+    "stloc sys_ind"
+    "start:"
+    "ldloc i"
+    "brfalse end"
+    "ldloc i"
+    "ldc.i4.1"
+    "sub"
+    "stloc i"
+    "ldloc sys_ind"
+    "ldloc i"
+    "ldarg indices"
+    "ldfld valuetype INT [] 'ARRAY[*](INT)'::_val"
+    "ldloc i"
+    "ldelem valuetype 'INT'"
+    "call int32 INT::_valueOut(valuetype 'INT')"
+    "stelem int32"
+    "br start"
+    "end:"
+    "ldarg.0"
+    "ldfld " SAME@native " " SAME "::_val"
+    "ldloc sys_ind"
+    "callvirt instance object [mscorlib]System.Array::GetValue(int32[])"
+    "castclass '$OB'" 
+    "ret"
+  end;
+  
+  private int_arr_inc(a, bound: ARRAY[*](INT)): INT is
+    dim: INT := a.asize; 
+
+    res := 0;
+
+    while dim > 0 loop
+      a[dim-1] := a[dim-1] + 1;
+      if a[dim-1] >= bound[dim-1] then
+      	a[dim-1] := 0;
+      	res := res + 1;
+      	dim := dim - 1;
+      else break end;	
+   	end;
+  end;
+end;

@@ -1,0 +1,4 @@
+---- Copyright (C) 2008 integer_overflow.sa, by Maik Schoepe
+class INTEGER_OVERFLOW is like NUMERIC_ERROR;
+  name: STRING[*] is res := "integer overflow".string end;
+end;

@@ -1,0 +1,45 @@
+---- Copyright (C) 2008 type.sa, by Maik Schoepe
+value class TYPE is builtin : "class [mscorlib]System.Type"
+  string: STRING is builtin 
+  	".maxstack 1"
+  	"ldarg.s 0"
+  	"ldfld class [mscorlib]System.Type 'TYPE'::_val"
+  	"call instance string class[mscorlib]System.Type::ToString()"
+		"call instance char[] string::ToCharArray()"
+		"newobj instance void 'STRING[*]'::.ctor(char[])"
+  	"ret"
+  end;
+
+  attributes: ARRAY[*](SYS_ATTR) is
+    num: INT := self.attr_num;
+    i: INT := 0;
+
+    res := #ARRAY[attr_num](SYS_ATTR);  
+
+    while i < num loop
+      res[i] := get_attr(i);
+      i := i+1;
+    end;	
+  end;
+
+  private attr_num: INT is builtin
+    "ldarg.0"
+    "ldfld class [mscorlib]System.Type TYPE::_val"
+    "callvirt instance class [mscorlib]System.Reflection.FieldInfo [] [mscorlib]System.Type::GetFields()"
+    "ldlen"
+    "conv.i4"
+    "newobj instance void INT::.ctor(int32)"
+    "ret"
+  end;
+  
+  private get_attr(i: INT) : SYS_ATTR is builtin
+    "ldarg.0"
+    "ldfld class [mscorlib]System.Type TYPE::_val"
+    "callvirt instance class [mscorlib]System.Reflection.FieldInfo [] [mscorlib]System.Type::GetFields()"
+    "ldarga i"
+    "ldfld int32 INT::_val"
+    "ldelem [mscorlib]System.Reflection.FieldInfo"
+    "newobj instance void SYS_ATTR::.ctor(class [mscorlib]System.Reflection.FieldInfo)"
+    "ret"
+  end;
+end;

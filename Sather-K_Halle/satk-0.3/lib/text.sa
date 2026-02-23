@@ -1,0 +1,128 @@
+---- Copyright (C) 2008 text.sa, by Maik Schoepe
+class TEXT is builtin
+
+  file: EXTOB;
+
+	str_out (x: $OB):TEXT is 
+		res := sys_str_out(x.string);
+	end;
+		
+	sys_str_out (x: STRING[*]):TEXT is builtin
+		".maxstack 2"
+		"ldarg 0"
+		"ldflda valuetype EXTOB TEXT::file"
+		"ldfld object EXTOB::_val"
+		"castclass [mscorlib]System.IO.TextWriter"
+		"ldarg x"
+		"ldfld char[] 'STRING[*]'::_val"
+		"callvirt instance void [mscorlib]System.IO.TextWriter::Write(char[])"
+		"ldarg 0"
+		"ret"
+	end;
+		
+  sout: TEXT is builtin
+		".maxstack 3"
+		"newobj instance void TEXT::.ctor()"
+		"dup"
+		"call class [mscorlib]System.IO.TextWriter [mscorlib]System.Console::get_Out()"
+		"newobj instance void EXTOB::.ctor(object)"
+		"stfld valuetype EXTOB TEXT::file"
+		"ret"
+  end;
+
+  sin: TEXT is builtin
+		".maxstack 3"
+		"newobj instance void TEXT::.ctor()"
+		"dup"
+		"call class [mscorlib]System.IO.TextReader [mscorlib]System.Console::get_In()"
+		"newobj instance void EXTOB::.ctor(object)"
+		"stfld valuetype EXTOB TEXT::file"
+		"ret"
+  end;
+
+  serr: TEXT is builtin
+		".maxstack 3"
+		"newobj instance void TEXT::.ctor()"
+		"dup"
+		"call class [mscorlib]System.IO.TextWriter [mscorlib]System.Console::get_Error()"
+		"newobj instance void EXTOB::.ctor(object)"
+		"stfld class 'EXTOB' 'TEXT'::file"
+		"ret"
+  end;
+
+  str_in (&s: STR[*]): TEXT is 
+    s := sys_read_str;
+  	res := self;
+  end;
+	
+  str_in (&s: STRING[*]): TEXT is 
+    s := sys_read_str.string;
+  	res := self;
+  end;
+
+  str_in (&v: BOOL): TEXT is
+    v := BOOL::from_str(sys_read_str);
+    res := self;
+  end;
+	
+  str_in (&v: BYTE): TEXT is
+    v := BYTE::from_str(sys_read_str);
+    res := self;
+  end;
+	
+  str_in (&v: CHAR): TEXT is
+    v := CHAR::from_str(sys_read_str);
+    res := self;
+  end;
+	
+  str_in (&v: SHORT_INT): TEXT is
+    v := SHORT_INT::from_str(sys_read_str);
+    res := self;
+  end;
+	
+  str_in (&v: INT): TEXT is
+    v := INT::from_str(sys_read_str);
+    res := self;
+  end;
+	
+  str_in (&v: LONG_INT): TEXT is
+    v := LONG_INT::from_str(sys_read_str);
+    res := self;
+  end;
+	
+  str_in (&v: SHORT_UNSIGNED): TEXT is
+    v := SHORT_UNSIGNED::from_str(sys_read_str);
+    res := self;
+  end;
+	
+  str_in (&v: UNSIGNED): TEXT is
+    v := UNSIGNED::from_str(sys_read_str);
+    res := self;
+  end;
+	
+  str_in (&v: LONG_UNSIGNED): TEXT is
+    v := LONG_UNSIGNED::from_str(sys_read_str);
+    res := self;
+  end;
+	
+  str_in (&v: FLT): TEXT is
+    v := FLT::from_str(sys_read_str);
+    res := self;
+  end;
+	
+  str_in (&v: FLTD): TEXT is
+    v := FLTD::from_str(sys_read_str);
+    res := self;
+  end;
+	
+	private sys_read_str: STR is builtin
+		".maxstack 1"
+		"ldarg 0"
+		"ldflda valuetype EXTOB TEXT::file"
+		"ldfld object EXTOB::_val"
+		"castclass [mscorlib]System.IO.TextReader"
+		"callvirt instance string [mscorlib]System.IO.TextReader::ReadLine()"
+		"newobj instance void 'STR[*]'::.ctor(string)"
+		"ret"
+	end;
+end;

@@ -1,0 +1,6 @@
+class HELLO_WORLD is
+  main is
+    TEXT::sout << "Hello World \n";
+    return  
+  end;
+end;  

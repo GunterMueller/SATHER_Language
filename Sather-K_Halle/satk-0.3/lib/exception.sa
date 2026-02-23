@@ -1,0 +1,14 @@
+---- Copyright (C) 2008 exception.sa, by Maik Schoepe
+abstract class EXCEPTION is builtin
+
+ name: STRING is abstract end;
+ readonly file_name: STR[10] := "<unknown>";
+ readonly line_number: INT := -1;
+ string: STRING is
+    if (line_number = -1) then
+      res := name;
+    else 
+      res := file_name.string.append(": ".string).append(line_number.string).append(": ".string).append(name);
+    end;
+ end;
+end;

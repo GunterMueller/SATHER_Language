@@ -1,0 +1,2539 @@
+/* Copyright (C) 2010, University of Halle */
+
+/*  This file is part of Sather-K Compiler Halle.
+      
+    Sather-K Compiler Halle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+                      
+    Sather-K Compiler Halle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+                                      
+    You should have received a copy of the GNU General Public
+    License along with Sather-K Compiler Halle.  If not, see
+    <http://www.gnu.org/licenses/>. */
+    
+
+#ifndef _VISITPROCS_H
+#define _VISITPROCS_H
+
+#include "HEAD.h"
+#include "node.h"
+#include "treecon.h"
+
+#include "eliproto.h"
+
+
+extern void LIGA_ATTREVAL ELI_ARG((NODEPTR));
+extern void _VS0Empty ELI_ARG((NODEPTR _currn));
+extern void _VS1LST_Class_declarationCLASS_DECLARATIONS ELI_ARG((_TPPLST_Class_declarationCLASS_DECLARATIONS _currn));
+extern void _VS2LST_Class_declarationCLASS_DECLARATIONS ELI_ARG((_TPPLST_Class_declarationCLASS_DECLARATIONS _currn));
+extern void _VS3LST_Class_declarationCLASS_DECLARATIONS ELI_ARG((_TPPLST_Class_declarationCLASS_DECLARATIONS _currn));
+extern void _VS4LST_Class_declarationCLASS_DECLARATIONS ELI_ARG((_TPPLST_Class_declarationCLASS_DECLARATIONS _currn));
+extern void _VS5LST_Class_declarationCLASS_DECLARATIONS ELI_ARG((_TPPLST_Class_declarationCLASS_DECLARATIONS _currn));
+extern void _VS6LST_Class_declarationCLASS_DECLARATIONS ELI_ARG((_TPPLST_Class_declarationCLASS_DECLARATIONS _currn));
+extern void _VS7LST_Class_declarationCLASS_DECLARATIONS ELI_ARG((_TPPLST_Class_declarationCLASS_DECLARATIONS _currn));
+#define _VS1LST_0CLASS_DECLARATIONS _VS0Empty
+
+#define _VS2LST_0CLASS_DECLARATIONS _VS0Empty
+
+#define _VS3LST_0CLASS_DECLARATIONS _VS0Empty
+
+#define _VS4LST_0CLASS_DECLARATIONS _VS0Empty
+
+#define _VS5LST_0CLASS_DECLARATIONS _VS0Empty
+
+#define _VS6LST_0CLASS_DECLARATIONS _VS0Empty
+
+#define _VS7LST_0CLASS_DECLARATIONS _VS0Empty
+
+extern void _VS1LST_Parameter_typePARAMETER_TYPES ELI_ARG((_TPPLST_Parameter_typePARAMETER_TYPES _currn));
+extern void _VS2LST_Parameter_typePARAMETER_TYPES ELI_ARG((_TPPLST_Parameter_typePARAMETER_TYPES _currn));
+#define _VS1LST_0PARAMETER_TYPES _VS0Empty
+
+#define _VS2LST_0PARAMETER_TYPES _VS0Empty
+
+extern void _VS1LST_BoundBOUNDS ELI_ARG((_TPPLST_BoundBOUNDS _currn));
+extern void _VS2LST_BoundBOUNDS ELI_ARG((_TPPLST_BoundBOUNDS _currn));
+extern void _VS1LST_0BOUNDS ELI_ARG((_TPPLST_0BOUNDS _currn));
+extern void _VS2LST_0BOUNDS ELI_ARG((_TPPLST_0BOUNDS _currn));
+extern void _VS1LST_Named_expressionNAMED_EXPRESSIONS ELI_ARG((_TPPLST_Named_expressionNAMED_EXPRESSIONS _currn));
+extern void _VS2LST_Named_expressionNAMED_EXPRESSIONS ELI_ARG((_TPPLST_Named_expressionNAMED_EXPRESSIONS _currn));
+#define _VS1LST_0NAMED_EXPRESSIONS _VS0Empty
+
+#define _VS2LST_0NAMED_EXPRESSIONS _VS0Empty
+
+#define _VS1LST_ModificationMODIFICATIONS _VS1LST_Class_declarationCLASS_DECLARATIONS
+
+extern void _VS2LST_ModificationMODIFICATIONS ELI_ARG((_TPPLST_ModificationMODIFICATIONS _currn));
+#define _VS1LST_0MODIFICATIONS _VS0Empty
+
+#define _VS2LST_0MODIFICATIONS _VS0Empty
+
+#define _VS1LST_Feature_declarationFEATURE_DECLS _VS1LST_Class_declarationCLASS_DECLARATIONS
+
+#define _VS2LST_Feature_declarationFEATURE_DECLS _VS2LST_ModificationMODIFICATIONS
+
+extern void _VS3LST_Feature_declarationFEATURE_DECLS ELI_ARG((_TPPLST_Feature_declarationFEATURE_DECLS _currn));
+#define _VS4LST_Feature_declarationFEATURE_DECLS _VS4LST_Class_declarationCLASS_DECLARATIONS
+
+#define _VS5LST_Feature_declarationFEATURE_DECLS _VS5LST_Class_declarationCLASS_DECLARATIONS
+
+#define _VS1LST_0FEATURE_DECLS _VS0Empty
+
+#define _VS2LST_0FEATURE_DECLS _VS0Empty
+
+#define _VS3LST_0FEATURE_DECLS _VS0Empty
+
+#define _VS4LST_0FEATURE_DECLS _VS0Empty
+
+#define _VS5LST_0FEATURE_DECLS _VS0Empty
+
+#define _VS1LST_Parameter_specificationPARAMETERS _VS1LST_Class_declarationCLASS_DECLARATIONS
+
+#define _VS2LST_Parameter_specificationPARAMETERS _VS2LST_ModificationMODIFICATIONS
+
+#define _VS3LST_Parameter_specificationPARAMETERS _VS3LST_Feature_declarationFEATURE_DECLS
+
+#define _VS4LST_Parameter_specificationPARAMETERS _VS4LST_Class_declarationCLASS_DECLARATIONS
+
+#define _VS1LST_0PARAMETERS _VS0Empty
+
+#define _VS2LST_0PARAMETERS _VS0Empty
+
+#define _VS3LST_0PARAMETERS _VS0Empty
+
+#define _VS4LST_0PARAMETERS _VS0Empty
+
+#define _VS1LST_Label_rangeLABEL_LIST _VS1LST_Class_declarationCLASS_DECLARATIONS
+
+#define _VS2LST_Label_rangeLABEL_LIST _VS2LST_ModificationMODIFICATIONS
+
+#define _VS1LST_0LABEL_LIST _VS0Empty
+
+#define _VS2LST_0LABEL_LIST _VS0Empty
+
+#define _VS1LST_Class_declaration_2CLASS_DECLARATIONS_2 _VS1LST_Class_declarationCLASS_DECLARATIONS
+
+#define _VS2LST_Class_declaration_2CLASS_DECLARATIONS_2 _VS2LST_ModificationMODIFICATIONS
+
+#define _VS3LST_Class_declaration_2CLASS_DECLARATIONS_2 _VS3LST_Feature_declarationFEATURE_DECLS
+
+extern void _VS4LST_Class_declaration_2CLASS_DECLARATIONS_2 ELI_ARG((_TPPLST_Class_declaration_2CLASS_DECLARATIONS_2 _currn));
+extern void _VS5LST_Class_declaration_2CLASS_DECLARATIONS_2 ELI_ARG((_TPPLST_Class_declaration_2CLASS_DECLARATIONS_2 _currn));
+#define _VS6LST_Class_declaration_2CLASS_DECLARATIONS_2 _VS6LST_Class_declarationCLASS_DECLARATIONS
+
+#define _VS7LST_Class_declaration_2CLASS_DECLARATIONS_2 _VS7LST_Class_declarationCLASS_DECLARATIONS
+
+extern void _VS8LST_Class_declaration_2CLASS_DECLARATIONS_2 ELI_ARG((_TPPLST_Class_declaration_2CLASS_DECLARATIONS_2 _currn));
+extern void _VS9LST_Class_declaration_2CLASS_DECLARATIONS_2 ELI_ARG((_TPPLST_Class_declaration_2CLASS_DECLARATIONS_2 _currn));
+extern void _VS10LST_Class_declaration_2CLASS_DECLARATIONS_2 ELI_ARG((_TPPLST_Class_declaration_2CLASS_DECLARATIONS_2 _currn));
+#define _VS1LST_0CLASS_DECLARATIONS_2 _VS0Empty
+
+#define _VS2LST_0CLASS_DECLARATIONS_2 _VS0Empty
+
+#define _VS3LST_0CLASS_DECLARATIONS_2 _VS0Empty
+
+#define _VS4LST_0CLASS_DECLARATIONS_2 _VS0Empty
+
+#define _VS5LST_0CLASS_DECLARATIONS_2 _VS0Empty
+
+#define _VS6LST_0CLASS_DECLARATIONS_2 _VS0Empty
+
+#define _VS7LST_0CLASS_DECLARATIONS_2 _VS0Empty
+
+#define _VS8LST_0CLASS_DECLARATIONS_2 _VS0Empty
+
+#define _VS9LST_0CLASS_DECLARATIONS_2 _VS0Empty
+
+extern void _VS10LST_0CLASS_DECLARATIONS_2 ELI_ARG((_TPPLST_0CLASS_DECLARATIONS_2 _currn));
+extern void _VS1LST_Parameter_type_2PARAMETER_TYPES_2 ELI_ARG((_TPPLST_Parameter_type_2PARAMETER_TYPES_2 _currn));
+extern void _VS2LST_Parameter_type_2PARAMETER_TYPES_2 ELI_ARG((_TPPLST_Parameter_type_2PARAMETER_TYPES_2 _currn));
+extern void _VS3LST_Parameter_type_2PARAMETER_TYPES_2 ELI_ARG((_TPPLST_Parameter_type_2PARAMETER_TYPES_2 _currn));
+extern void _VS4LST_Parameter_type_2PARAMETER_TYPES_2 ELI_ARG((_TPPLST_Parameter_type_2PARAMETER_TYPES_2 _currn));
+#define _VS1LST_0PARAMETER_TYPES_2 _VS0Empty
+
+#define _VS2LST_0PARAMETER_TYPES_2 _VS0Empty
+
+extern void _VS3LST_0PARAMETER_TYPES_2 ELI_ARG((_TPPLST_0PARAMETER_TYPES_2 _currn));
+extern void _VS4LST_0PARAMETER_TYPES_2 ELI_ARG((_TPPLST_0PARAMETER_TYPES_2 _currn));
+#define _VS1LST_Bound_2BOUNDS_2 _VS1LST_Class_declarationCLASS_DECLARATIONS
+
+#define _VS2LST_Bound_2BOUNDS_2 _VS2LST_ModificationMODIFICATIONS
+
+extern void _VS3LST_Bound_2BOUNDS_2 ELI_ARG((_TPPLST_Bound_2BOUNDS_2 _currn));
+extern void _VS4LST_Bound_2BOUNDS_2 ELI_ARG((_TPPLST_Bound_2BOUNDS_2 _currn));
+#define _VS1LST_0BOUNDS_2 _VS0Empty
+
+#define _VS2LST_0BOUNDS_2 _VS0Empty
+
+extern void _VS3LST_0BOUNDS_2 ELI_ARG((_TPPLST_0BOUNDS_2 _currn));
+extern void _VS4LST_0BOUNDS_2 ELI_ARG((_TPPLST_0BOUNDS_2 _currn));
+extern void _VS1LST_Named_expression_2NAMED_EXPRESSIONS_2 ELI_ARG((_TPPLST_Named_expression_2NAMED_EXPRESSIONS_2 _currn));
+extern void _VS2LST_Named_expression_2NAMED_EXPRESSIONS_2 ELI_ARG((_TPPLST_Named_expression_2NAMED_EXPRESSIONS_2 _currn));
+extern void _VS3LST_Named_expression_2NAMED_EXPRESSIONS_2 ELI_ARG((_TPPLST_Named_expression_2NAMED_EXPRESSIONS_2 _currn));
+extern void _VS4LST_Named_expression_2NAMED_EXPRESSIONS_2 ELI_ARG((_TPPLST_Named_expression_2NAMED_EXPRESSIONS_2 _currn));
+#define _VS1LST_0NAMED_EXPRESSIONS_2 _VS0Empty
+
+#define _VS2LST_0NAMED_EXPRESSIONS_2 _VS0Empty
+
+extern void _VS3LST_0NAMED_EXPRESSIONS_2 ELI_ARG((_TPPLST_0NAMED_EXPRESSIONS_2 _currn));
+extern void _VS4LST_0NAMED_EXPRESSIONS_2 ELI_ARG((_TPPLST_0NAMED_EXPRESSIONS_2 _currn));
+extern void _VS1LST_Feature_declaration_2FEATURE_DECLS_2 ELI_ARG((_TPPLST_Feature_declaration_2FEATURE_DECLS_2 _currn));
+extern void _VS2LST_Feature_declaration_2FEATURE_DECLS_2 ELI_ARG((_TPPLST_Feature_declaration_2FEATURE_DECLS_2 _currn));
+extern void _VS3LST_Feature_declaration_2FEATURE_DECLS_2 ELI_ARG((_TPPLST_Feature_declaration_2FEATURE_DECLS_2 _currn));
+extern void _VS4LST_Feature_declaration_2FEATURE_DECLS_2 ELI_ARG((_TPPLST_Feature_declaration_2FEATURE_DECLS_2 _currn));
+extern void _VS5LST_Feature_declaration_2FEATURE_DECLS_2 ELI_ARG((_TPPLST_Feature_declaration_2FEATURE_DECLS_2 _currn));
+extern void _VS6LST_Feature_declaration_2FEATURE_DECLS_2 ELI_ARG((_TPPLST_Feature_declaration_2FEATURE_DECLS_2 _currn));
+extern void _VS7LST_Feature_declaration_2FEATURE_DECLS_2 ELI_ARG((_TPPLST_Feature_declaration_2FEATURE_DECLS_2 _currn));
+#define _VS1LST_0FEATURE_DECLS_2 _VS0Empty
+
+#define _VS2LST_0FEATURE_DECLS_2 _VS0Empty
+
+#define _VS3LST_0FEATURE_DECLS_2 _VS0Empty
+
+#define _VS4LST_0FEATURE_DECLS_2 _VS0Empty
+
+extern void _VS5LST_0FEATURE_DECLS_2 ELI_ARG((_TPPLST_0FEATURE_DECLS_2 _currn));
+extern void _VS6LST_0FEATURE_DECLS_2 ELI_ARG((_TPPLST_0FEATURE_DECLS_2 _currn));
+extern void _VS7LST_0FEATURE_DECLS_2 ELI_ARG((_TPPLST_0FEATURE_DECLS_2 _currn));
+#define _VS1LST_Parameter_specification_2PARAMETERS_2 _VS1LST_Class_declarationCLASS_DECLARATIONS
+
+#define _VS2LST_Parameter_specification_2PARAMETERS_2 _VS2LST_ModificationMODIFICATIONS
+
+#define _VS3LST_Parameter_specification_2PARAMETERS_2 _VS3LST_Feature_declarationFEATURE_DECLS
+
+#define _VS4LST_Parameter_specification_2PARAMETERS_2 _VS4LST_Class_declarationCLASS_DECLARATIONS
+
+#define _VS5LST_Parameter_specification_2PARAMETERS_2 _VS5LST_Class_declarationCLASS_DECLARATIONS
+
+extern void _VS6LST_Parameter_specification_2PARAMETERS_2 ELI_ARG((_TPPLST_Parameter_specification_2PARAMETERS_2 _currn));
+#define _VS1LST_0PARAMETERS_2 _VS0Empty
+
+#define _VS2LST_0PARAMETERS_2 _VS0Empty
+
+#define _VS3LST_0PARAMETERS_2 _VS0Empty
+
+#define _VS4LST_0PARAMETERS_2 _VS0Empty
+
+#define _VS5LST_0PARAMETERS_2 _VS0Empty
+
+extern void _VS6LST_0PARAMETERS_2 ELI_ARG((_TPPLST_0PARAMETERS_2 _currn));
+#define _VS1LST_Label_range_2LABEL_LIST_2 _VS1LST_Class_declarationCLASS_DECLARATIONS
+
+#define _VS2LST_Label_range_2LABEL_LIST_2 _VS2LST_ModificationMODIFICATIONS
+
+extern void _VS3LST_Label_range_2LABEL_LIST_2 ELI_ARG((_TPPLST_Label_range_2LABEL_LIST_2 _currn));
+extern void _VS4LST_Label_range_2LABEL_LIST_2 ELI_ARG((_TPPLST_Label_range_2LABEL_LIST_2 _currn));
+#define _VS1LST_0LABEL_LIST_2 _VS0Empty
+
+#define _VS2LST_0LABEL_LIST_2 _VS0Empty
+
+extern void _VS3LST_0LABEL_LIST_2 ELI_ARG((_TPPLST_0LABEL_LIST_2 _currn));
+extern void _VS4LST_0LABEL_LIST_2 ELI_ARG((_TPPLST_0LABEL_LIST_2 _currn));
+extern void _VS1LST_class_declarationCLASS_DECLARATIONS_O ELI_ARG((_TPPLST_class_declarationCLASS_DECLARATIONS_O _currn));
+#define _VS2LST_class_declarationCLASS_DECLARATIONS_O _VS2LST_ModificationMODIFICATIONS
+
+extern void _VS3LST_class_declarationCLASS_DECLARATIONS_O ELI_ARG((_TPPLST_class_declarationCLASS_DECLARATIONS_O _currn));
+extern void _VS4LST_class_declarationCLASS_DECLARATIONS_O ELI_ARG((_TPPLST_class_declarationCLASS_DECLARATIONS_O _currn));
+extern void _VS5LST_class_declarationCLASS_DECLARATIONS_O ELI_ARG((_TPPLST_class_declarationCLASS_DECLARATIONS_O _currn));
+extern void _VS6LST_class_declarationCLASS_DECLARATIONS_O ELI_ARG((_TPPLST_class_declarationCLASS_DECLARATIONS_O _currn));
+extern void _VS7LST_class_declarationCLASS_DECLARATIONS_O ELI_ARG((_TPPLST_class_declarationCLASS_DECLARATIONS_O _currn));
+#define _VS1LST_0CLASS_DECLARATIONS_O _VS0Empty
+
+#define _VS2LST_0CLASS_DECLARATIONS_O _VS0Empty
+
+extern void _VS3LST_0CLASS_DECLARATIONS_O ELI_ARG((_TPPLST_0CLASS_DECLARATIONS_O _currn));
+#define _VS4LST_0CLASS_DECLARATIONS_O _VS0Empty
+
+#define _VS5LST_0CLASS_DECLARATIONS_O _VS0Empty
+
+extern void _VS6LST_0CLASS_DECLARATIONS_O ELI_ARG((_TPPLST_0CLASS_DECLARATIONS_O _currn));
+#define _VS7LST_0CLASS_DECLARATIONS_O _VS0Empty
+
+extern void _VS1LST_parameter_typePARAMETER_TYPES_O ELI_ARG((_TPPLST_parameter_typePARAMETER_TYPES_O _currn));
+extern void _VS2LST_parameter_typePARAMETER_TYPES_O ELI_ARG((_TPPLST_parameter_typePARAMETER_TYPES_O _currn));
+extern void _VS3LST_parameter_typePARAMETER_TYPES_O ELI_ARG((_TPPLST_parameter_typePARAMETER_TYPES_O _currn));
+#define _VS1LST_0PARAMETER_TYPES_O _VS0Empty
+
+extern void _VS2LST_0PARAMETER_TYPES_O ELI_ARG((_TPPLST_0PARAMETER_TYPES_O _currn));
+#define _VS3LST_0PARAMETER_TYPES_O _VS0Empty
+
+#define _VS1LST_boundBOUNDS_O _VS1LST_Class_declarationCLASS_DECLARATIONS
+
+extern void _VS2LST_boundBOUNDS_O ELI_ARG((_TPPLST_boundBOUNDS_O _currn));
+extern void _VS3LST_boundBOUNDS_O ELI_ARG((_TPPLST_boundBOUNDS_O _currn));
+extern void _VS4LST_boundBOUNDS_O ELI_ARG((_TPPLST_boundBOUNDS_O _currn));
+#define _VS1LST_0BOUNDS_O _VS0Empty
+
+#define _VS2LST_0BOUNDS_O _VS0Empty
+
+extern void _VS3LST_0BOUNDS_O ELI_ARG((_TPPLST_0BOUNDS_O _currn));
+#define _VS4LST_0BOUNDS_O _VS0Empty
+
+extern void _VS1LST_named_expressionNAMED_EXPRESSIONS_O ELI_ARG((_TPPLST_named_expressionNAMED_EXPRESSIONS_O _currn));
+extern void _VS2LST_named_expressionNAMED_EXPRESSIONS_O ELI_ARG((_TPPLST_named_expressionNAMED_EXPRESSIONS_O _currn));
+extern void _VS3LST_named_expressionNAMED_EXPRESSIONS_O ELI_ARG((_TPPLST_named_expressionNAMED_EXPRESSIONS_O _currn));
+#define _VS1LST_0NAMED_EXPRESSIONS_O _VS0Empty
+
+extern void _VS2LST_0NAMED_EXPRESSIONS_O ELI_ARG((_TPPLST_0NAMED_EXPRESSIONS_O _currn));
+#define _VS3LST_0NAMED_EXPRESSIONS_O _VS0Empty
+
+#define _VS1LST_modificationMODIFICATIONS_O _VS1LST_Class_declarationCLASS_DECLARATIONS
+
+#define _VS2LST_modificationMODIFICATIONS_O _VS2LST_ModificationMODIFICATIONS
+
+#define _VS3LST_modificationMODIFICATIONS_O _VS3LST_Feature_declarationFEATURE_DECLS
+
+#define _VS1LST_0MODIFICATIONS_O _VS0Empty
+
+#define _VS2LST_0MODIFICATIONS_O _VS0Empty
+
+#define _VS3LST_0MODIFICATIONS_O _VS0Empty
+
+#define _VS1LST_feature_declarationFEATURE_DECLS_O _VS1LST_Class_declarationCLASS_DECLARATIONS
+
+#define _VS2LST_feature_declarationFEATURE_DECLS_O _VS2LST_ModificationMODIFICATIONS
+
+#define _VS3LST_feature_declarationFEATURE_DECLS_O _VS3LST_Feature_declarationFEATURE_DECLS
+
+#define _VS4LST_feature_declarationFEATURE_DECLS_O _VS4LST_Class_declarationCLASS_DECLARATIONS
+
+#define _VS1LST_0FEATURE_DECLS_O _VS0Empty
+
+#define _VS2LST_0FEATURE_DECLS_O _VS0Empty
+
+#define _VS3LST_0FEATURE_DECLS_O _VS0Empty
+
+#define _VS4LST_0FEATURE_DECLS_O _VS0Empty
+
+#define _VS1LST_parameter_specificationPARAMETERS_O _VS1LST_Class_declarationCLASS_DECLARATIONS
+
+#define _VS2LST_parameter_specificationPARAMETERS_O _VS2LST_ModificationMODIFICATIONS
+
+#define _VS3LST_parameter_specificationPARAMETERS_O _VS3LST_Feature_declarationFEATURE_DECLS
+
+#define _VS1LST_0PARAMETERS_O _VS0Empty
+
+#define _VS2LST_0PARAMETERS_O _VS0Empty
+
+#define _VS3LST_0PARAMETERS_O _VS0Empty
+
+#define _VS1LST_label_rangeLABEL_LIST_O _VS1LST_Class_declarationCLASS_DECLARATIONS
+
+#define _VS2LST_label_rangeLABEL_LIST_O _VS2LST_ModificationMODIFICATIONS
+
+#define _VS3LST_label_rangeLABEL_LIST_O _VS3LST_Feature_declarationFEATURE_DECLS
+
+#define _VS1LST_0LABEL_LIST_O _VS0Empty
+
+#define _VS2LST_0LABEL_LIST_O _VS0Empty
+
+#define _VS3LST_0LABEL_LIST_O _VS0Empty
+
+extern void _VS1rule_1 ELI_ARG((_TPPrule_1 _currn,TreeNodePtr* _AS0orig_tree));
+extern void _VS1rule_2 ELI_ARG((_TPPrule_2 _currn));
+extern void _VS1ASSERTION_STATEMENT_O ELI_ARG((_TPPASSERTION_STATEMENT_O _currn));
+extern void _VS2ASSERTION_STATEMENT_O ELI_ARG((_TPPASSERTION_STATEMENT_O _currn));
+extern void _VS3ASSERTION_STATEMENT_O ELI_ARG((_TPPASSERTION_STATEMENT_O _currn));
+extern void _VS1RAISE_STATEMENT_O ELI_ARG((_TPPRAISE_STATEMENT_O _currn));
+extern void _VS2RAISE_STATEMENT_O ELI_ARG((_TPPRAISE_STATEMENT_O _currn));
+extern void _VS3RAISE_STATEMENT_O ELI_ARG((_TPPRAISE_STATEMENT_O _currn));
+extern void _VS1RETURN_STATEMENT_O ELI_ARG((_TPPRETURN_STATEMENT_O _currn));
+extern void _VS1RESUME_STATEMENT_O ELI_ARG((_TPPRESUME_STATEMENT_O _currn));
+extern void _VS1BREAK_STATEMENT_O ELI_ARG((_TPPBREAK_STATEMENT_O _currn));
+extern void _VS1LOOP_O ELI_ARG((_TPPLOOP_O _currn));
+extern void _VS2LOOP_O ELI_ARG((_TPPLOOP_O _currn));
+extern void _VS3LOOP_O ELI_ARG((_TPPLOOP_O _currn));
+extern void _VS1LOOP_EXP_O ELI_ARG((_TPPLOOP_EXP_O _currn));
+extern void _VS2LOOP_EXP_O ELI_ARG((_TPPLOOP_EXP_O _currn));
+extern void _VS3LOOP_EXP_O ELI_ARG((_TPPLOOP_EXP_O _currn));
+extern void _VS1TYPES_LST_O ELI_ARG((_TPPTYPES_LST_O _currn));
+extern void _VS2TYPES_LST_O ELI_ARG((_TPPTYPES_LST_O _currn,TreeNodePtr* _AS0tree));
+extern void _VS3TYPES_LST_O ELI_ARG((_TPPTYPES_LST_O _currn,TreeNodePtr* _AS0tree));
+extern void _VS1TYPES_EMPTY_O ELI_ARG((_TPPTYPES_EMPTY_O _currn));
+extern void _VS2TYPES_EMPTY_O ELI_ARG((_TPPTYPES_EMPTY_O _currn,TreeNodePtr* _AS0tree));
+extern void _VS3TYPES_EMPTY_O ELI_ARG((_TPPTYPES_EMPTY_O _currn,TreeNodePtr* _AS0tree));
+extern void _VS1WHEN_TYPES_BLOCK_O ELI_ARG((_TPPWHEN_TYPES_BLOCK_O _currn));
+extern void _VS2WHEN_TYPES_BLOCK_O ELI_ARG((_TPPWHEN_TYPES_BLOCK_O _currn));
+extern void _VS3WHEN_TYPES_BLOCK_O ELI_ARG((_TPPWHEN_TYPES_BLOCK_O _currn));
+extern void _VS1WHEN_TYPES_BLOCKS_EMPTY_O ELI_ARG((_TPPWHEN_TYPES_BLOCKS_EMPTY_O _currn));
+extern void _VS2WHEN_TYPES_BLOCKS_EMPTY_O ELI_ARG((_TPPWHEN_TYPES_BLOCKS_EMPTY_O _currn,TreeNodePtr* _AS0tree));
+extern void _VS3WHEN_TYPES_BLOCKS_EMPTY_O ELI_ARG((_TPPWHEN_TYPES_BLOCKS_EMPTY_O _currn,TreeNodePtr* _AS0tree));
+extern void _VS1WHEN_TYPES_BLOCKS_O ELI_ARG((_TPPWHEN_TYPES_BLOCKS_O _currn));
+extern void _VS2WHEN_TYPES_BLOCKS_O ELI_ARG((_TPPWHEN_TYPES_BLOCKS_O _currn,TreeNodePtr* _AS0tree));
+extern void _VS3WHEN_TYPES_BLOCKS_O ELI_ARG((_TPPWHEN_TYPES_BLOCKS_O _currn,TreeNodePtr* _AS0tree));
+extern void _VS1TYPE_CASE_STATEMENT_ATT_O ELI_ARG((_TPPTYPE_CASE_STATEMENT_ATT_O _currn));
+extern void _VS2TYPE_CASE_STATEMENT_ATT_O ELI_ARG((_TPPTYPE_CASE_STATEMENT_ATT_O _currn));
+extern void _VS3TYPE_CASE_STATEMENT_ATT_O ELI_ARG((_TPPTYPE_CASE_STATEMENT_ATT_O _currn));
+extern void _VS1TYPE_CASE_STATEMENT_O ELI_ARG((_TPPTYPE_CASE_STATEMENT_O _currn));
+extern void _VS2TYPE_CASE_STATEMENT_O ELI_ARG((_TPPTYPE_CASE_STATEMENT_O _currn));
+extern void _VS3TYPE_CASE_STATEMENT_O ELI_ARG((_TPPTYPE_CASE_STATEMENT_O _currn));
+extern void _VS1CASE_LABEL_DES_O ELI_ARG((_TPPCASE_LABEL_DES_O _currn));
+extern void _VS2CASE_LABEL_DES_O ELI_ARG((_TPPCASE_LABEL_DES_O _currn,TreeNodePtr* _AS0tree));
+extern void _VS3CASE_LABEL_DES_O ELI_ARG((_TPPCASE_LABEL_DES_O _currn,TreeNodePtr* _AS0tree));
+extern void _VS1CASE_LABEL_VALUE_O ELI_ARG((_TPPCASE_LABEL_VALUE_O _currn));
+extern void _VS2CASE_LABEL_VALUE_O ELI_ARG((_TPPCASE_LABEL_VALUE_O _currn,TreeNodePtr* _AS0tree));
+extern void _VS3CASE_LABEL_VALUE_O ELI_ARG((_TPPCASE_LABEL_VALUE_O _currn,TreeNodePtr* _AS0tree));
+extern void _VS1LABEL_RANGE_O ELI_ARG((_TPPLABEL_RANGE_O _currn));
+extern void _VS2LABEL_RANGE_O ELI_ARG((_TPPLABEL_RANGE_O _currn));
+extern void _VS3LABEL_RANGE_O ELI_ARG((_TPPLABEL_RANGE_O _currn));
+extern void _VS1LABEL_RANGE_SINGLE_O ELI_ARG((_TPPLABEL_RANGE_SINGLE_O _currn));
+extern void _VS2LABEL_RANGE_SINGLE_O ELI_ARG((_TPPLABEL_RANGE_SINGLE_O _currn));
+extern void _VS3LABEL_RANGE_SINGLE_O ELI_ARG((_TPPLABEL_RANGE_SINGLE_O _currn));
+extern void _VS1LABEL_LIST_O ELI_ARG((_TPPLABEL_LIST_O _currn));
+extern void _VS2LABEL_LIST_O ELI_ARG((_TPPLABEL_LIST_O _currn,TreeNodePtr* _AS0tree));
+extern void _VS3LABEL_LIST_O ELI_ARG((_TPPLABEL_LIST_O _currn,TreeNodePtr* _AS0tree));
+extern void _VS1WHEN_LABEL_STMT_O ELI_ARG((_TPPWHEN_LABEL_STMT_O _currn));
+extern void _VS2WHEN_LABEL_STMT_O ELI_ARG((_TPPWHEN_LABEL_STMT_O _currn));
+extern void _VS3WHEN_LABEL_STMT_O ELI_ARG((_TPPWHEN_LABEL_STMT_O _currn));
+extern void _VS1WHEN_LABEL_STMTS_EMPTY_O ELI_ARG((_TPPWHEN_LABEL_STMTS_EMPTY_O _currn));
+extern void _VS2WHEN_LABEL_STMTS_EMPTY_O ELI_ARG((_TPPWHEN_LABEL_STMTS_EMPTY_O _currn,TreeNodePtr* _AS0tree));
+extern void _VS3WHEN_LABEL_STMTS_EMPTY_O ELI_ARG((_TPPWHEN_LABEL_STMTS_EMPTY_O _currn,TreeNodePtr* _AS0tree));
+extern void _VS1WHEN_LABEL_STMTS_O ELI_ARG((_TPPWHEN_LABEL_STMTS_O _currn));
+extern void _VS2WHEN_LABEL_STMTS_O ELI_ARG((_TPPWHEN_LABEL_STMTS_O _currn,TreeNodePtr* _AS0tree));
+extern void _VS3WHEN_LABEL_STMTS_O ELI_ARG((_TPPWHEN_LABEL_STMTS_O _currn,TreeNodePtr* _AS0tree));
+extern void _VS1CASE_STATEMENT_O ELI_ARG((_TPPCASE_STATEMENT_O _currn));
+extern void _VS2CASE_STATEMENT_O ELI_ARG((_TPPCASE_STATEMENT_O _currn));
+extern void _VS3CASE_STATEMENT_O ELI_ARG((_TPPCASE_STATEMENT_O _currn));
+extern void _VS1COND_STATEMENT_ELSE_O ELI_ARG((_TPPCOND_STATEMENT_ELSE_O _currn));
+extern void _VS2COND_STATEMENT_ELSE_O ELI_ARG((_TPPCOND_STATEMENT_ELSE_O _currn));
+extern void _VS3COND_STATEMENT_ELSE_O ELI_ARG((_TPPCOND_STATEMENT_ELSE_O _currn));
+extern void _VS1COND_STATEMENT_O ELI_ARG((_TPPCOND_STATEMENT_O _currn));
+extern void _VS2COND_STATEMENT_O ELI_ARG((_TPPCOND_STATEMENT_O _currn));
+extern void _VS3COND_STATEMENT_O ELI_ARG((_TPPCOND_STATEMENT_O _currn));
+extern void _VS1EXCEPTION_TYPES_LST_O ELI_ARG((_TPPEXCEPTION_TYPES_LST_O _currn));
+extern void _VS2EXCEPTION_TYPES_LST_O ELI_ARG((_TPPEXCEPTION_TYPES_LST_O _currn,TreeNodePtr* _AS0tree));
+extern void _VS3EXCEPTION_TYPES_LST_O ELI_ARG((_TPPEXCEPTION_TYPES_LST_O _currn,TreeNodePtr* _AS0tree));
+extern void _VS1EXCEPTION_TYPES_EMPTY_O ELI_ARG((_TPPEXCEPTION_TYPES_EMPTY_O _currn));
+extern void _VS2EXCEPTION_TYPES_EMPTY_O ELI_ARG((_TPPEXCEPTION_TYPES_EMPTY_O _currn,TreeNodePtr* _AS0tree));
+extern void _VS3EXCEPTION_TYPES_EMPTY_O ELI_ARG((_TPPEXCEPTION_TYPES_EMPTY_O _currn,TreeNodePtr* _AS0tree));
+extern void _VS1WHEN_EXCEPTION_STMT_O ELI_ARG((_TPPWHEN_EXCEPTION_STMT_O _currn));
+extern void _VS2WHEN_EXCEPTION_STMT_O ELI_ARG((_TPPWHEN_EXCEPTION_STMT_O _currn));
+extern void _VS3WHEN_EXCEPTION_STMT_O ELI_ARG((_TPPWHEN_EXCEPTION_STMT_O _currn));
+extern void _VS1WHEN_EXCEPTION_STMTS_EMPTY_O ELI_ARG((_TPPWHEN_EXCEPTION_STMTS_EMPTY_O _currn));
+extern void _VS2WHEN_EXCEPTION_STMTS_EMPTY_O ELI_ARG((_TPPWHEN_EXCEPTION_STMTS_EMPTY_O _currn,TreeNodePtr* _AS0tree));
+extern void _VS3WHEN_EXCEPTION_STMTS_EMPTY_O ELI_ARG((_TPPWHEN_EXCEPTION_STMTS_EMPTY_O _currn,TreeNodePtr* _AS0tree));
+extern void _VS1WHEN_EXCEPTION_STMTS_O ELI_ARG((_TPPWHEN_EXCEPTION_STMTS_O _currn));
+extern void _VS2WHEN_EXCEPTION_STMTS_O ELI_ARG((_TPPWHEN_EXCEPTION_STMTS_O _currn,TreeNodePtr* _AS0tree));
+extern void _VS3WHEN_EXCEPTION_STMTS_O ELI_ARG((_TPPWHEN_EXCEPTION_STMTS_O _currn,TreeNodePtr* _AS0tree));
+extern void _VS1EXCEPTIONS_O ELI_ARG((_TPPEXCEPTIONS_O _currn));
+extern void _VS2EXCEPTIONS_O ELI_ARG((_TPPEXCEPTIONS_O _currn));
+extern void _VS3EXCEPTIONS_O ELI_ARG((_TPPEXCEPTIONS_O _currn));
+extern void _VS1EXCEPTIONS_EMPTY_O ELI_ARG((_TPPEXCEPTIONS_EMPTY_O _currn));
+extern void _VS2EXCEPTIONS_EMPTY_O ELI_ARG((_TPPEXCEPTIONS_EMPTY_O _currn));
+#define _VS3EXCEPTIONS_EMPTY_O _VS0Empty
+
+extern void _VS1BEGIN_BLOCK_O ELI_ARG((_TPPBEGIN_BLOCK_O _currn));
+extern void _VS2BEGIN_BLOCK_O ELI_ARG((_TPPBEGIN_BLOCK_O _currn));
+extern void _VS3BEGIN_BLOCK_O ELI_ARG((_TPPBEGIN_BLOCK_O _currn));
+extern void _VS1ASSIGNMENT_O ELI_ARG((_TPPASSIGNMENT_O _currn));
+extern void _VS2ASSIGNMENT_O ELI_ARG((_TPPASSIGNMENT_O _currn));
+extern void _VS3ASSIGNMENT_O ELI_ARG((_TPPASSIGNMENT_O _currn));
+extern void _VS1STATEMENTS_ASSERT_O ELI_ARG((_TPPSTATEMENTS_ASSERT_O _currn));
+extern void _VS2STATEMENTS_ASSERT_O ELI_ARG((_TPPSTATEMENTS_ASSERT_O _currn,TreeNodePtr* _AS0tree));
+extern void _VS3STATEMENTS_ASSERT_O ELI_ARG((_TPPSTATEMENTS_ASSERT_O _currn,TreeNodePtr* _AS0tree));
+extern void _VS1STATEMENTS_RAISE_O ELI_ARG((_TPPSTATEMENTS_RAISE_O _currn));
+extern void _VS2STATEMENTS_RAISE_O ELI_ARG((_TPPSTATEMENTS_RAISE_O _currn,TreeNodePtr* _AS0tree));
+extern void _VS3STATEMENTS_RAISE_O ELI_ARG((_TPPSTATEMENTS_RAISE_O _currn,TreeNodePtr* _AS0tree));
+extern void _VS1STATEMENTS_RETURN_O ELI_ARG((_TPPSTATEMENTS_RETURN_O _currn));
+extern void _VS2STATEMENTS_RETURN_O ELI_ARG((_TPPSTATEMENTS_RETURN_O _currn,TreeNodePtr* _AS0tree));
+extern void _VS3STATEMENTS_RETURN_O ELI_ARG((_TPPSTATEMENTS_RETURN_O _currn,TreeNodePtr* _AS0tree));
+extern void _VS1STATEMENTS_RESUME_O ELI_ARG((_TPPSTATEMENTS_RESUME_O _currn));
+extern void _VS2STATEMENTS_RESUME_O ELI_ARG((_TPPSTATEMENTS_RESUME_O _currn,TreeNodePtr* _AS0tree));
+extern void _VS3STATEMENTS_RESUME_O ELI_ARG((_TPPSTATEMENTS_RESUME_O _currn,TreeNodePtr* _AS0tree));
+extern void _VS1STATEMENTS_EXP_O ELI_ARG((_TPPSTATEMENTS_EXP_O _currn));
+extern void _VS2STATEMENTS_EXP_O ELI_ARG((_TPPSTATEMENTS_EXP_O _currn,TreeNodePtr* _AS0tree));
+extern void _VS3STATEMENTS_EXP_O ELI_ARG((_TPPSTATEMENTS_EXP_O _currn,TreeNodePtr* _AS0tree));
+extern void _VS1STATEMENTS_BREAK_O ELI_ARG((_TPPSTATEMENTS_BREAK_O _currn));
+extern void _VS2STATEMENTS_BREAK_O ELI_ARG((_TPPSTATEMENTS_BREAK_O _currn,TreeNodePtr* _AS0tree));
+extern void _VS3STATEMENTS_BREAK_O ELI_ARG((_TPPSTATEMENTS_BREAK_O _currn,TreeNodePtr* _AS0tree));
+extern void _VS1STATEMENTS_LOOP_O ELI_ARG((_TPPSTATEMENTS_LOOP_O _currn));
+extern void _VS2STATEMENTS_LOOP_O ELI_ARG((_TPPSTATEMENTS_LOOP_O _currn,TreeNodePtr* _AS0tree));
+extern void _VS3STATEMENTS_LOOP_O ELI_ARG((_TPPSTATEMENTS_LOOP_O _currn,TreeNodePtr* _AS0tree));
+extern void _VS1STATEMENTS_TYPE_CASE_O ELI_ARG((_TPPSTATEMENTS_TYPE_CASE_O _currn));
+extern void _VS2STATEMENTS_TYPE_CASE_O ELI_ARG((_TPPSTATEMENTS_TYPE_CASE_O _currn,TreeNodePtr* _AS0tree));
+extern void _VS3STATEMENTS_TYPE_CASE_O ELI_ARG((_TPPSTATEMENTS_TYPE_CASE_O _currn,TreeNodePtr* _AS0tree));
+extern void _VS1STATEMENTS_CASE_O ELI_ARG((_TPPSTATEMENTS_CASE_O _currn));
+extern void _VS2STATEMENTS_CASE_O ELI_ARG((_TPPSTATEMENTS_CASE_O _currn,TreeNodePtr* _AS0tree));
+extern void _VS3STATEMENTS_CASE_O ELI_ARG((_TPPSTATEMENTS_CASE_O _currn,TreeNodePtr* _AS0tree));
+extern void _VS1STATEMENTS_COND_O ELI_ARG((_TPPSTATEMENTS_COND_O _currn));
+extern void _VS2STATEMENTS_COND_O ELI_ARG((_TPPSTATEMENTS_COND_O _currn,TreeNodePtr* _AS0tree));
+extern void _VS3STATEMENTS_COND_O ELI_ARG((_TPPSTATEMENTS_COND_O _currn,TreeNodePtr* _AS0tree));
+extern void _VS1STATEMENTS_BEGIN_O ELI_ARG((_TPPSTATEMENTS_BEGIN_O _currn));
+extern void _VS2STATEMENTS_BEGIN_O ELI_ARG((_TPPSTATEMENTS_BEGIN_O _currn,TreeNodePtr* _AS0tree));
+extern void _VS3STATEMENTS_BEGIN_O ELI_ARG((_TPPSTATEMENTS_BEGIN_O _currn,TreeNodePtr* _AS0tree));
+extern void _VS1STATEMENTS_ASSIGN_O ELI_ARG((_TPPSTATEMENTS_ASSIGN_O _currn));
+extern void _VS2STATEMENTS_ASSIGN_O ELI_ARG((_TPPSTATEMENTS_ASSIGN_O _currn,TreeNodePtr* _AS0tree));
+extern void _VS3STATEMENTS_ASSIGN_O ELI_ARG((_TPPSTATEMENTS_ASSIGN_O _currn,TreeNodePtr* _AS0tree));
+extern void _VS1STATEMENTS_EMPTY_O ELI_ARG((_TPPSTATEMENTS_EMPTY_O _currn));
+extern void _VS2STATEMENTS_EMPTY_O ELI_ARG((_TPPSTATEMENTS_EMPTY_O _currn,TreeNodePtr* _AS0tree));
+extern void _VS3STATEMENTS_EMPTY_O ELI_ARG((_TPPSTATEMENTS_EMPTY_O _currn,TreeNodePtr* _AS0tree));
+extern void _VS1LOCAL_STREAM_DECL_O ELI_ARG((_TPPLOCAL_STREAM_DECL_O _currn));
+extern void _VS2LOCAL_STREAM_DECL_O ELI_ARG((_TPPLOCAL_STREAM_DECL_O _currn));
+extern void _VS3LOCAL_STREAM_DECL_O ELI_ARG((_TPPLOCAL_STREAM_DECL_O _currn));
+extern void _VS1LOCAL_DECLS_STREAM_O ELI_ARG((_TPPLOCAL_DECLS_STREAM_O _currn));
+extern void _VS2LOCAL_DECLS_STREAM_O ELI_ARG((_TPPLOCAL_DECLS_STREAM_O _currn,TreeNodePtr* _AS0tree));
+extern void _VS3LOCAL_DECLS_STREAM_O ELI_ARG((_TPPLOCAL_DECLS_STREAM_O _currn,TreeNodePtr* _AS0tree));
+extern void _VS1LOCAL_DECLS_ATT_O ELI_ARG((_TPPLOCAL_DECLS_ATT_O _currn));
+extern void _VS2LOCAL_DECLS_ATT_O ELI_ARG((_TPPLOCAL_DECLS_ATT_O _currn,TreeNodePtr* _AS0tree));
+extern void _VS3LOCAL_DECLS_ATT_O ELI_ARG((_TPPLOCAL_DECLS_ATT_O _currn,TreeNodePtr* _AS0tree));
+extern void _VS1LOCAL_DECLS_EMPTY_O ELI_ARG((_TPPLOCAL_DECLS_EMPTY_O _currn));
+extern void _VS2LOCAL_DECLS_EMPTY_O ELI_ARG((_TPPLOCAL_DECLS_EMPTY_O _currn,TreeNodePtr* _AS0tree));
+extern void _VS3LOCAL_DECLS_EMPTY_O ELI_ARG((_TPPLOCAL_DECLS_EMPTY_O _currn,TreeNodePtr* _AS0tree));
+extern void _VS1BLOCK_O ELI_ARG((_TPPBLOCK_O _currn));
+extern void _VS2BLOCK_O ELI_ARG((_TPPBLOCK_O _currn,TreeNodePtr* _AS0tree));
+extern void _VS3BLOCK_O ELI_ARG((_TPPBLOCK_O _currn,TreeNodePtr* _AS0tree));
+extern void _VS1BUILTIN_INST_CLRTYPE_O ELI_ARG((_TPPBUILTIN_INST_CLRTYPE_O _currn));
+extern void _VS2BUILTIN_INST_CLRTYPE_O ELI_ARG((_TPPBUILTIN_INST_CLRTYPE_O _currn));
+extern void _VS3BUILTIN_INST_CLRTYPE_O ELI_ARG((_TPPBUILTIN_INST_CLRTYPE_O _currn));
+extern void _VS1BUILTIN_INST_TYPE_O ELI_ARG((_TPPBUILTIN_INST_TYPE_O _currn));
+extern void _VS2BUILTIN_INST_TYPE_O ELI_ARG((_TPPBUILTIN_INST_TYPE_O _currn));
+extern void _VS3BUILTIN_INST_TYPE_O ELI_ARG((_TPPBUILTIN_INST_TYPE_O _currn));
+extern void _VS1BUILTIN_INST_STR_O ELI_ARG((_TPPBUILTIN_INST_STR_O _currn));
+extern void _VS2BUILTIN_INST_STR_O ELI_ARG((_TPPBUILTIN_INST_STR_O _currn));
+#define _VS3BUILTIN_INST_STR_O _VS0Empty
+
+extern void _VS1BUILTIN_INSTS_EMPTY_O ELI_ARG((_TPPBUILTIN_INSTS_EMPTY_O _currn));
+extern void _VS2BUILTIN_INSTS_EMPTY_O ELI_ARG((_TPPBUILTIN_INSTS_EMPTY_O _currn));
+#define _VS3BUILTIN_INSTS_EMPTY_O _VS0Empty
+
+extern void _VS1BUILTIN_INSTS_O ELI_ARG((_TPPBUILTIN_INSTS_O _currn));
+extern void _VS2BUILTIN_INSTS_O ELI_ARG((_TPPBUILTIN_INSTS_O _currn));
+extern void _VS3BUILTIN_INSTS_O ELI_ARG((_TPPBUILTIN_INSTS_O _currn));
+extern void _VS1METHOD_BODY_STATIC_BUILTIN_O ELI_ARG((_TPPMETHOD_BODY_STATIC_BUILTIN_O _currn));
+extern void _VS2METHOD_BODY_STATIC_BUILTIN_O ELI_ARG((_TPPMETHOD_BODY_STATIC_BUILTIN_O _currn));
+extern void _VS3METHOD_BODY_STATIC_BUILTIN_O ELI_ARG((_TPPMETHOD_BODY_STATIC_BUILTIN_O _currn));
+extern void _VS1METHOD_BODY_BUILTIN_O ELI_ARG((_TPPMETHOD_BODY_BUILTIN_O _currn));
+extern void _VS2METHOD_BODY_BUILTIN_O ELI_ARG((_TPPMETHOD_BODY_BUILTIN_O _currn));
+extern void _VS3METHOD_BODY_BUILTIN_O ELI_ARG((_TPPMETHOD_BODY_BUILTIN_O _currn));
+extern void _VS1LINKER_SYMBOL_O ELI_ARG((_TPPLINKER_SYMBOL_O _currn));
+extern void _VS1LINKER_SYMBOL_EMPTY_O ELI_ARG((_TPPLINKER_SYMBOL_EMPTY_O _currn));
+extern void _VS1FOREIGN_LANGUAGE_O ELI_ARG((_TPPFOREIGN_LANGUAGE_O _currn));
+extern void _VS1METHOD_BODY_FOREIGN_O ELI_ARG((_TPPMETHOD_BODY_FOREIGN_O _currn));
+extern void _VS2METHOD_BODY_FOREIGN_O ELI_ARG((_TPPMETHOD_BODY_FOREIGN_O _currn));
+#define _VS3METHOD_BODY_FOREIGN_O _VS0Empty
+
+extern void _VS1METHOD_BODY_AB_O ELI_ARG((_TPPMETHOD_BODY_AB_O _currn));
+extern void _VS2METHOD_BODY_AB_O ELI_ARG((_TPPMETHOD_BODY_AB_O _currn));
+#define _VS3METHOD_BODY_AB_O _VS0Empty
+
+extern void _VS1METHOD_BODY_O ELI_ARG((_TPPMETHOD_BODY_O _currn));
+extern void _VS2METHOD_BODY_O ELI_ARG((_TPPMETHOD_BODY_O _currn));
+extern void _VS3METHOD_BODY_O ELI_ARG((_TPPMETHOD_BODY_O _currn));
+extern void _VS1PARAMETER_SPEC_O ELI_ARG((_TPPPARAMETER_SPEC_O _currn));
+extern void _VS2PARAMETER_SPEC_O ELI_ARG((_TPPPARAMETER_SPEC_O _currn));
+extern void _VS3PARAMETER_SPEC_O ELI_ARG((_TPPPARAMETER_SPEC_O _currn));
+extern void _VS1PARAMETERS_O ELI_ARG((_TPPPARAMETERS_O _currn));
+extern void _VS2PARAMETERS_O ELI_ARG((_TPPPARAMETERS_O _currn));
+extern void _VS3PARAMETERS_O ELI_ARG((_TPPPARAMETERS_O _currn));
+extern void _VS1METHOD_IDENT_DEF_O ELI_ARG((_TPPMETHOD_IDENT_DEF_O _currn));
+extern void _VS1METHOD_DECL_O ELI_ARG((_TPPMETHOD_DECL_O _currn));
+extern void _VS2METHOD_DECL_O ELI_ARG((_TPPMETHOD_DECL_O _currn));
+extern void _VS3METHOD_DECL_O ELI_ARG((_TPPMETHOD_DECL_O _currn));
+extern void _VS4METHOD_DECL_O ELI_ARG((_TPPMETHOD_DECL_O _currn));
+extern void _VS1IDENTIFIERS_O ELI_ARG((_TPPIDENTIFIERS_O _currn));
+extern void _VS1IDENTIFIERS_LST_O ELI_ARG((_TPPIDENTIFIERS_LST_O _currn));
+extern void _VS1ATTR_SPEC_O ELI_ARG((_TPPATTR_SPEC_O _currn));
+extern void _VS2ATTR_SPEC_O ELI_ARG((_TPPATTR_SPEC_O _currn));
+extern void _VS3ATTR_SPEC_O ELI_ARG((_TPPATTR_SPEC_O _currn));
+extern void _VS1ATTR_DECL_CONST_TYPE_CONST_O ELI_ARG((_TPPATTR_DECL_CONST_TYPE_CONST_O _currn));
+extern void _VS2ATTR_DECL_CONST_TYPE_CONST_O ELI_ARG((_TPPATTR_DECL_CONST_TYPE_CONST_O _currn));
+extern void _VS3ATTR_DECL_CONST_TYPE_CONST_O ELI_ARG((_TPPATTR_DECL_CONST_TYPE_CONST_O _currn));
+extern void _VS1ATTR_DECL_TYPE_CONST_O ELI_ARG((_TPPATTR_DECL_TYPE_CONST_O _currn));
+extern void _VS2ATTR_DECL_TYPE_CONST_O ELI_ARG((_TPPATTR_DECL_TYPE_CONST_O _currn));
+extern void _VS3ATTR_DECL_TYPE_CONST_O ELI_ARG((_TPPATTR_DECL_TYPE_CONST_O _currn));
+extern void _VS1ATTR_DECL_CONST_EXP_O ELI_ARG((_TPPATTR_DECL_CONST_EXP_O _currn));
+extern void _VS2ATTR_DECL_CONST_EXP_O ELI_ARG((_TPPATTR_DECL_CONST_EXP_O _currn));
+extern void _VS3ATTR_DECL_CONST_EXP_O ELI_ARG((_TPPATTR_DECL_CONST_EXP_O _currn));
+extern void _VS1ATTR_DECL_EXP_O ELI_ARG((_TPPATTR_DECL_EXP_O _currn));
+extern void _VS2ATTR_DECL_EXP_O ELI_ARG((_TPPATTR_DECL_EXP_O _currn));
+extern void _VS3ATTR_DECL_EXP_O ELI_ARG((_TPPATTR_DECL_EXP_O _currn));
+extern void _VS1ATTR_DECL_O ELI_ARG((_TPPATTR_DECL_O _currn));
+extern void _VS2ATTR_DECL_O ELI_ARG((_TPPATTR_DECL_O _currn));
+extern void _VS3ATTR_DECL_O ELI_ARG((_TPPATTR_DECL_O _currn));
+extern void _VS1ATTR_ACCESS_SH_RO_O ELI_ARG((_TPPATTR_ACCESS_SH_RO_O _currn));
+extern void _VS1ATTR_ACCESS_RO_O ELI_ARG((_TPPATTR_ACCESS_RO_O _currn));
+extern void _VS1ATTR_ACCESS_SH_O ELI_ARG((_TPPATTR_ACCESS_SH_O _currn));
+extern void _VS1FEATURE_STREAM_O ELI_ARG((_TPPFEATURE_STREAM_O _currn));
+extern void _VS2FEATURE_STREAM_O ELI_ARG((_TPPFEATURE_STREAM_O _currn));
+extern void _VS3FEATURE_STREAM_O ELI_ARG((_TPPFEATURE_STREAM_O _currn));
+extern void _VS4FEATURE_STREAM_O ELI_ARG((_TPPFEATURE_STREAM_O _currn));
+extern void _VS1FEATURE_METH_O ELI_ARG((_TPPFEATURE_METH_O _currn));
+extern void _VS2FEATURE_METH_O ELI_ARG((_TPPFEATURE_METH_O _currn));
+extern void _VS3FEATURE_METH_O ELI_ARG((_TPPFEATURE_METH_O _currn));
+extern void _VS4FEATURE_METH_O ELI_ARG((_TPPFEATURE_METH_O _currn));
+extern void _VS1FEATURE_ATT_O ELI_ARG((_TPPFEATURE_ATT_O _currn));
+extern void _VS2FEATURE_ATT_O ELI_ARG((_TPPFEATURE_ATT_O _currn));
+extern void _VS3FEATURE_ATT_O ELI_ARG((_TPPFEATURE_ATT_O _currn));
+extern void _VS4FEATURE_ATT_O ELI_ARG((_TPPFEATURE_ATT_O _currn));
+extern void _VS1FEATURE_ATT_ACC_O ELI_ARG((_TPPFEATURE_ATT_ACC_O _currn));
+extern void _VS2FEATURE_ATT_ACC_O ELI_ARG((_TPPFEATURE_ATT_ACC_O _currn));
+extern void _VS3FEATURE_ATT_ACC_O ELI_ARG((_TPPFEATURE_ATT_ACC_O _currn));
+extern void _VS4FEATURE_ATT_ACC_O ELI_ARG((_TPPFEATURE_ATT_ACC_O _currn));
+extern void _VS1FEATURE_DECL_PRIV_O ELI_ARG((_TPPFEATURE_DECL_PRIV_O _currn));
+extern void _VS2FEATURE_DECL_PRIV_O ELI_ARG((_TPPFEATURE_DECL_PRIV_O _currn));
+extern void _VS3FEATURE_DECL_PRIV_O ELI_ARG((_TPPFEATURE_DECL_PRIV_O _currn));
+extern void _VS4FEATURE_DECL_PRIV_O ELI_ARG((_TPPFEATURE_DECL_PRIV_O _currn));
+extern void _VS1FEATURE_DECL_O ELI_ARG((_TPPFEATURE_DECL_O _currn));
+extern void _VS2FEATURE_DECL_O ELI_ARG((_TPPFEATURE_DECL_O _currn));
+extern void _VS3FEATURE_DECL_O ELI_ARG((_TPPFEATURE_DECL_O _currn));
+extern void _VS4FEATURE_DECL_O ELI_ARG((_TPPFEATURE_DECL_O _currn));
+extern void _VS1FEATURE_DECLS_O ELI_ARG((_TPPFEATURE_DECLS_O _currn));
+extern void _VS2FEATURE_DECLS_O ELI_ARG((_TPPFEATURE_DECLS_O _currn));
+extern void _VS3FEATURE_DECLS_O ELI_ARG((_TPPFEATURE_DECLS_O _currn));
+extern void _VS4FEATURE_DECLS_O ELI_ARG((_TPPFEATURE_DECLS_O _currn));
+extern void _VS1FEATURE_ID_USE_O ELI_ARG((_TPPFEATURE_ID_USE_O _currn));
+extern void _VS1FEATURE_SPEC_STREAM_O ELI_ARG((_TPPFEATURE_SPEC_STREAM_O _currn));
+extern void _VS2FEATURE_SPEC_STREAM_O ELI_ARG((_TPPFEATURE_SPEC_STREAM_O _currn));
+extern void _VS3FEATURE_SPEC_STREAM_O ELI_ARG((_TPPFEATURE_SPEC_STREAM_O _currn));
+extern void _VS1FEATURE_SPEC_O ELI_ARG((_TPPFEATURE_SPEC_O _currn));
+extern void _VS2FEATURE_SPEC_O ELI_ARG((_TPPFEATURE_SPEC_O _currn));
+extern void _VS3FEATURE_SPEC_O ELI_ARG((_TPPFEATURE_SPEC_O _currn));
+extern void _VS1IDENT_MOD_O ELI_ARG((_TPPIDENT_MOD_O _currn));
+extern void _VS1MODIFICATION_NAME_O ELI_ARG((_TPPMODIFICATION_NAME_O _currn));
+extern void _VS2MODIFICATION_NAME_O ELI_ARG((_TPPMODIFICATION_NAME_O _currn));
+extern void _VS3MODIFICATION_NAME_O ELI_ARG((_TPPMODIFICATION_NAME_O _currn));
+extern void _VS1MODIFICATION_OUT_O ELI_ARG((_TPPMODIFICATION_OUT_O _currn));
+extern void _VS2MODIFICATION_OUT_O ELI_ARG((_TPPMODIFICATION_OUT_O _currn));
+extern void _VS3MODIFICATION_OUT_O ELI_ARG((_TPPMODIFICATION_OUT_O _currn));
+extern void _VS1MODIFICATION_ONLY_O ELI_ARG((_TPPMODIFICATION_ONLY_O _currn));
+extern void _VS2MODIFICATION_ONLY_O ELI_ARG((_TPPMODIFICATION_ONLY_O _currn));
+extern void _VS3MODIFICATION_ONLY_O ELI_ARG((_TPPMODIFICATION_ONLY_O _currn));
+extern void _VS1MODIFICATIONS_O ELI_ARG((_TPPMODIFICATIONS_O _currn));
+extern void _VS2MODIFICATIONS_O ELI_ARG((_TPPMODIFICATIONS_O _currn));
+extern void _VS3MODIFICATIONS_O ELI_ARG((_TPPMODIFICATIONS_O _currn));
+extern void _VS1INHERITANCE_INC_ONLY_O ELI_ARG((_TPPINHERITANCE_INC_ONLY_O _currn));
+extern void _VS2INHERITANCE_INC_ONLY_O ELI_ARG((_TPPINHERITANCE_INC_ONLY_O _currn));
+extern void _VS3INHERITANCE_INC_ONLY_O ELI_ARG((_TPPINHERITANCE_INC_ONLY_O _currn));
+extern void _VS1INHERITANCE_INCLUDE_O ELI_ARG((_TPPINHERITANCE_INCLUDE_O _currn));
+extern void _VS2INHERITANCE_INCLUDE_O ELI_ARG((_TPPINHERITANCE_INCLUDE_O _currn));
+extern void _VS3INHERITANCE_INCLUDE_O ELI_ARG((_TPPINHERITANCE_INCLUDE_O _currn));
+extern void _VS1INHERITANCE_LIKE_O ELI_ARG((_TPPINHERITANCE_LIKE_O _currn));
+extern void _VS2INHERITANCE_LIKE_O ELI_ARG((_TPPINHERITANCE_LIKE_O _currn));
+extern void _VS3INHERITANCE_LIKE_O ELI_ARG((_TPPINHERITANCE_LIKE_O _currn));
+extern void _VS1INHERITANCE_PRIV_O ELI_ARG((_TPPINHERITANCE_PRIV_O _currn));
+extern void _VS2INHERITANCE_PRIV_O ELI_ARG((_TPPINHERITANCE_PRIV_O _currn));
+extern void _VS3INHERITANCE_PRIV_O ELI_ARG((_TPPINHERITANCE_PRIV_O _currn));
+extern void _VS1INHERITANCES_LST_O ELI_ARG((_TPPINHERITANCES_LST_O _currn));
+extern void _VS2INHERITANCES_LST_O ELI_ARG((_TPPINHERITANCES_LST_O _currn));
+extern void _VS3INHERITANCES_LST_O ELI_ARG((_TPPINHERITANCES_LST_O _currn));
+extern void _VS1INHERITANCES_EMPTY_O ELI_ARG((_TPPINHERITANCES_EMPTY_O _currn));
+extern void _VS2INHERITANCES_EMPTY_O ELI_ARG((_TPPINHERITANCES_EMPTY_O _currn));
+#define _VS3INHERITANCES_EMPTY_O _VS0Empty
+
+extern void _VS1DIRECT_STREAM_CALL_O ELI_ARG((_TPPDIRECT_STREAM_CALL_O _currn));
+extern void _VS2DIRECT_STREAM_CALL_O ELI_ARG((_TPPDIRECT_STREAM_CALL_O _currn));
+extern void _VS3DIRECT_STREAM_CALL_O ELI_ARG((_TPPDIRECT_STREAM_CALL_O _currn));
+extern void _VS1COERCION_O ELI_ARG((_TPPCOERCION_O _currn));
+extern void _VS2COERCION_O ELI_ARG((_TPPCOERCION_O _currn));
+extern void _VS3COERCION_O ELI_ARG((_TPPCOERCION_O _currn));
+extern void _VS1STR_CONSTANT_O ELI_ARG((_TPPSTR_CONSTANT_O _currn,TreeNodePtr* _AS0tree,TreeNodePtr* _AS0orig_tree));
+extern void _VS1STR_CONSTANTS_O ELI_ARG((_TPPSTR_CONSTANTS_O _currn));
+extern void _VS1STR_CONSTANTS_LST_O ELI_ARG((_TPPSTR_CONSTANTS_LST_O _currn));
+extern void _VS1VALUE_VOID_O ELI_ARG((_TPPVALUE_VOID_O _currn));
+extern void _VS1VALUE_SED_O ELI_ARG((_TPPVALUE_SED_O _currn));
+extern void _VS1VALUE_OCT_O ELI_ARG((_TPPVALUE_OCT_O _currn));
+extern void _VS1VALUE_STR_O ELI_ARG((_TPPVALUE_STR_O _currn));
+extern void _VS1VALUE_CHAR_O ELI_ARG((_TPPVALUE_CHAR_O _currn));
+extern void _VS1VALUE_BOOL_O ELI_ARG((_TPPVALUE_BOOL_O _currn));
+extern void _VS1VALUE_FLOAT_O ELI_ARG((_TPPVALUE_FLOAT_O _currn));
+extern void _VS1VALUE_INT_O ELI_ARG((_TPPVALUE_INT_O _currn));
+extern void _VS1BOUND_METHOD_O ELI_ARG((_TPPBOUND_METHOD_O _currn));
+extern void _VS2BOUND_METHOD_O ELI_ARG((_TPPBOUND_METHOD_O _currn));
+extern void _VS3BOUND_METHOD_O ELI_ARG((_TPPBOUND_METHOD_O _currn));
+extern void _VS1NAMED_EXPRESSION_O ELI_ARG((_TPPNAMED_EXPRESSION_O _currn,TreeNodePtr* _AS0named_expressions_orig_tree_pre));
+extern void _VS2NAMED_EXPRESSION_O ELI_ARG((_TPPNAMED_EXPRESSION_O _currn,TreeNodePtr* _AS0named_expressions_tree_pre,TreeNodePtr* _AS0named_expressions_orig_tree_pre,DefTableKeyList* _AS0_const67));
+extern void _VS3NAMED_EXPRESSION_O ELI_ARG((_TPPNAMED_EXPRESSION_O _currn,TreeNodePtr* _AS0named_expressions_tree_pre,TreeNodePtr* _AS0named_expressions_orig_tree_pre,DefTableKeyList* _AS0_const67));
+extern void _VS1NAMED_EXPRESSIONS_O ELI_ARG((_TPPNAMED_EXPRESSIONS_O _currn));
+extern void _VS2NAMED_EXPRESSIONS_O ELI_ARG((_TPPNAMED_EXPRESSIONS_O _currn));
+extern void _VS3NAMED_EXPRESSIONS_O ELI_ARG((_TPPNAMED_EXPRESSIONS_O _currn));
+extern void _VS1AGG_ID_DEF_O ELI_ARG((_TPPAGG_ID_DEF_O _currn,TreeNodePtr* _AS0orig_tree));
+extern void _VS1AGGREGATE_NAMED_O ELI_ARG((_TPPAGGREGATE_NAMED_O _currn,TreeNodePtr* _AS0orig_tree));
+extern void _VS2AGGREGATE_NAMED_O ELI_ARG((_TPPAGGREGATE_NAMED_O _currn,TreeNodePtr* _AS0tree,TreeNodePtr* _AS0orig_tree,DefTableKeyList* _AS0_const67));
+extern void _VS3AGGREGATE_NAMED_O ELI_ARG((_TPPAGGREGATE_NAMED_O _currn,TreeNodePtr* _AS0tree,TreeNodePtr* _AS0orig_tree,DefTableKeyList* _AS0_const67));
+extern void _VS1AGGREGATE_O ELI_ARG((_TPPAGGREGATE_O _currn,TreeNodePtr* _AS0orig_tree));
+extern void _VS2AGGREGATE_O ELI_ARG((_TPPAGGREGATE_O _currn,TreeNodePtr* _AS0tree,TreeNodePtr* _AS0orig_tree,DefTableKeyList* _AS0_const67));
+extern void _VS3AGGREGATE_O ELI_ARG((_TPPAGGREGATE_O _currn,TreeNodePtr* _AS0tree,TreeNodePtr* _AS0orig_tree,DefTableKeyList* _AS0_const67));
+extern void _VS1TYPE_CONSTRUCTOR_SAME_AGG_O ELI_ARG((_TPPTYPE_CONSTRUCTOR_SAME_AGG_O _currn,TreeNodePtr* _AS0class_spec_tree));
+extern void _VS2TYPE_CONSTRUCTOR_SAME_AGG_O ELI_ARG((_TPPTYPE_CONSTRUCTOR_SAME_AGG_O _currn,TreeNodePtr* _AS0class_spec_tree));
+extern void _VS3TYPE_CONSTRUCTOR_SAME_AGG_O ELI_ARG((_TPPTYPE_CONSTRUCTOR_SAME_AGG_O _currn,TreeNodePtr* _AS0class_spec_tree));
+extern void _VS1TYPE_CONSTRUCTOR_SAME_O ELI_ARG((_TPPTYPE_CONSTRUCTOR_SAME_O _currn,TreeNodePtr* _AS0class_spec_tree));
+extern void _VS2TYPE_CONSTRUCTOR_SAME_O ELI_ARG((_TPPTYPE_CONSTRUCTOR_SAME_O _currn,TreeNodePtr* _AS0class_spec_tree));
+extern void _VS3TYPE_CONSTRUCTOR_SAME_O ELI_ARG((_TPPTYPE_CONSTRUCTOR_SAME_O _currn,TreeNodePtr* _AS0class_spec_tree));
+extern void _VS1TYPE_CONSTRUCTOR_DES_O ELI_ARG((_TPPTYPE_CONSTRUCTOR_DES_O _currn,TreeNodePtr* _AS0class_spec_tree));
+extern void _VS2TYPE_CONSTRUCTOR_DES_O ELI_ARG((_TPPTYPE_CONSTRUCTOR_DES_O _currn,TreeNodePtr* _AS0class_spec_tree));
+extern void _VS3TYPE_CONSTRUCTOR_DES_O ELI_ARG((_TPPTYPE_CONSTRUCTOR_DES_O _currn,TreeNodePtr* _AS0class_spec_tree));
+extern void _VS1TYPE_CONSTRUCTOR_AGG_O ELI_ARG((_TPPTYPE_CONSTRUCTOR_AGG_O _currn,TreeNodePtr* _AS0class_spec_tree));
+extern void _VS2TYPE_CONSTRUCTOR_AGG_O ELI_ARG((_TPPTYPE_CONSTRUCTOR_AGG_O _currn,TreeNodePtr* _AS0class_spec_tree));
+extern void _VS3TYPE_CONSTRUCTOR_AGG_O ELI_ARG((_TPPTYPE_CONSTRUCTOR_AGG_O _currn,TreeNodePtr* _AS0class_spec_tree));
+extern void _VS1TYPE_CONSTRUCTOR_CLASS_O ELI_ARG((_TPPTYPE_CONSTRUCTOR_CLASS_O _currn,TreeNodePtr* _AS0class_spec_tree));
+extern void _VS2TYPE_CONSTRUCTOR_CLASS_O ELI_ARG((_TPPTYPE_CONSTRUCTOR_CLASS_O _currn,TreeNodePtr* _AS0class_spec_tree));
+extern void _VS3TYPE_CONSTRUCTOR_CLASS_O ELI_ARG((_TPPTYPE_CONSTRUCTOR_CLASS_O _currn,TreeNodePtr* _AS0class_spec_tree));
+extern void _VS1TYPE_CONSTRUCTOR_CL_AGG_O ELI_ARG((_TPPTYPE_CONSTRUCTOR_CL_AGG_O _currn,TreeNodePtr* _AS0class_spec_tree));
+extern void _VS2TYPE_CONSTRUCTOR_CL_AGG_O ELI_ARG((_TPPTYPE_CONSTRUCTOR_CL_AGG_O _currn,TreeNodePtr* _AS0class_spec_tree));
+extern void _VS3TYPE_CONSTRUCTOR_CL_AGG_O ELI_ARG((_TPPTYPE_CONSTRUCTOR_CL_AGG_O _currn,TreeNodePtr* _AS0class_spec_tree));
+extern void _VS1QUAL_FEATURE_ID_USE_O ELI_ARG((_TPPQUAL_FEATURE_ID_USE_O _currn));
+extern void _VS1QUALIFICATION_TYPE_O ELI_ARG((_TPPQUALIFICATION_TYPE_O _currn));
+extern void _VS2QUALIFICATION_TYPE_O ELI_ARG((_TPPQUALIFICATION_TYPE_O _currn));
+extern void _VS3QUALIFICATION_TYPE_O ELI_ARG((_TPPQUALIFICATION_TYPE_O _currn));
+extern void _VS1QUALIFICATION_EXP_O ELI_ARG((_TPPQUALIFICATION_EXP_O _currn));
+extern void _VS2QUALIFICATION_EXP_O ELI_ARG((_TPPQUALIFICATION_EXP_O _currn));
+extern void _VS3QUALIFICATION_EXP_O ELI_ARG((_TPPQUALIFICATION_EXP_O _currn));
+extern void _VS1STD_METHOD_CALL_O ELI_ARG((_TPPSTD_METHOD_CALL_O _currn,int* _AS0IsClassSpecifier));
+extern void _VS2STD_METHOD_CALL_O ELI_ARG((_TPPSTD_METHOD_CALL_O _currn,int* _AS0IsClassSpecifier));
+extern void _VS3STD_METHOD_CALL_O ELI_ARG((_TPPSTD_METHOD_CALL_O _currn,int* _AS0IsClassSpecifier));
+extern void _VS1OBJ_ID_USE_O ELI_ARG((_TPPOBJ_ID_USE_O _currn));
+extern void _VS1NAME_NOT_O ELI_ARG((_TPPNAME_NOT_O _currn,TreeNodePtr* _AS0orig_tree));
+extern void _VS1NAME_POW_O ELI_ARG((_TPPNAME_POW_O _currn,TreeNodePtr* _AS0orig_tree));
+extern void _VS1NAME_MOD_O ELI_ARG((_TPPNAME_MOD_O _currn,TreeNodePtr* _AS0orig_tree));
+extern void _VS1NAME_DIV_O ELI_ARG((_TPPNAME_DIV_O _currn,TreeNodePtr* _AS0orig_tree));
+extern void _VS1NAME_QUOTIENT_O ELI_ARG((_TPPNAME_QUOTIENT_O _currn,TreeNodePtr* _AS0orig_tree));
+extern void _VS1NAME_STAR_O ELI_ARG((_TPPNAME_STAR_O _currn,TreeNodePtr* _AS0orig_tree));
+extern void _VS1NAME_MINUS_O ELI_ARG((_TPPNAME_MINUS_O _currn,TreeNodePtr* _AS0orig_tree));
+extern void _VS1NAME_PLUS_O ELI_ARG((_TPPNAME_PLUS_O _currn,TreeNodePtr* _AS0orig_tree));
+extern void _VS1NAME_GT_EQ_O ELI_ARG((_TPPNAME_GT_EQ_O _currn,TreeNodePtr* _AS0orig_tree));
+extern void _VS1NAME_GT_O ELI_ARG((_TPPNAME_GT_O _currn,TreeNodePtr* _AS0orig_tree));
+extern void _VS1NAME_LT_EQ_O ELI_ARG((_TPPNAME_LT_EQ_O _currn,TreeNodePtr* _AS0orig_tree));
+extern void _VS1NAME_LT_O ELI_ARG((_TPPNAME_LT_O _currn,TreeNodePtr* _AS0orig_tree));
+extern void _VS1NAME_NOT_EQ_O ELI_ARG((_TPPNAME_NOT_EQ_O _currn,TreeNodePtr* _AS0orig_tree));
+extern void _VS1NAME_EQ_O ELI_ARG((_TPPNAME_EQ_O _currn,TreeNodePtr* _AS0orig_tree));
+extern void _VS1NAME_QUESTION_O ELI_ARG((_TPPNAME_QUESTION_O _currn,TreeNodePtr* _AS0orig_tree));
+extern void _VS1NAME_GRAVE_O ELI_ARG((_TPPNAME_GRAVE_O _currn,TreeNodePtr* _AS0orig_tree));
+extern void _VS1NAME_TILDE_O ELI_ARG((_TPPNAME_TILDE_O _currn,TreeNodePtr* _AS0orig_tree));
+extern void _VS1NAME_STROKE_O ELI_ARG((_TPPNAME_STROKE_O _currn,TreeNodePtr* _AS0orig_tree));
+extern void _VS1NAME_BACKSLASH_O ELI_ARG((_TPPNAME_BACKSLASH_O _currn,TreeNodePtr* _AS0orig_tree));
+extern void _VS1NAME_STR_IN_O ELI_ARG((_TPPNAME_STR_IN_O _currn,TreeNodePtr* _AS0orig_tree));
+extern void _VS1NAME_STR_OUT_O ELI_ARG((_TPPNAME_STR_OUT_O _currn,TreeNodePtr* _AS0orig_tree));
+extern void _VS1NAME_EMPTY_O ELI_ARG((_TPPNAME_EMPTY_O _currn,TreeNodePtr* _AS0orig_tree));
+extern void _VS1NAME_OBJ_O ELI_ARG((_TPPNAME_OBJ_O _currn,TreeNodePtr* _AS0orig_tree));
+extern void _VS1NAME_LEFT_SQ_BRACKET_O ELI_ARG((_TPPNAME_LEFT_SQ_BRACKET_O _currn,TreeNodePtr* _AS0orig_tree));
+extern void _VS1EXPRESSION_EMPTY_O ELI_ARG((_TPPEXPRESSION_EMPTY_O _currn,TreeNodePtr* _AS0orig_tree));
+extern void _VS2EXPRESSION_EMPTY_O ELI_ARG((_TPPEXPRESSION_EMPTY_O _currn,TreeNodePtr* _AS0tree,TreeNodePtr* _AS0orig_tree,DefTableKeyList* _AS0_const67));
+extern void _VS3EXPRESSION_EMPTY_O ELI_ARG((_TPPEXPRESSION_EMPTY_O _currn,TreeNodePtr* _AS0tree,TreeNodePtr* _AS0orig_tree,DefTableKeyList* _AS0_const67));
+extern void _VS1EXPRESSION_AND_O ELI_ARG((_TPPEXPRESSION_AND_O _currn,TreeNodePtr* _AS0orig_tree));
+extern void _VS2EXPRESSION_AND_O ELI_ARG((_TPPEXPRESSION_AND_O _currn,TreeNodePtr* _AS0tree,TreeNodePtr* _AS0orig_tree,DefTableKeyList* _AS0_const67));
+extern void _VS3EXPRESSION_AND_O ELI_ARG((_TPPEXPRESSION_AND_O _currn,TreeNodePtr* _AS0tree,TreeNodePtr* _AS0orig_tree,DefTableKeyList* _AS0_const67));
+extern void _VS1EXPRESSION_OR_O ELI_ARG((_TPPEXPRESSION_OR_O _currn,TreeNodePtr* _AS0orig_tree));
+extern void _VS2EXPRESSION_OR_O ELI_ARG((_TPPEXPRESSION_OR_O _currn,TreeNodePtr* _AS0tree,TreeNodePtr* _AS0orig_tree,DefTableKeyList* _AS0_const67));
+extern void _VS3EXPRESSION_OR_O ELI_ARG((_TPPEXPRESSION_OR_O _currn,TreeNodePtr* _AS0tree,TreeNodePtr* _AS0orig_tree,DefTableKeyList* _AS0_const67));
+extern void _VS1EXPRESSION_STREAM_O ELI_ARG((_TPPEXPRESSION_STREAM_O _currn,TreeNodePtr* _AS0orig_tree));
+extern void _VS2EXPRESSION_STREAM_O ELI_ARG((_TPPEXPRESSION_STREAM_O _currn,TreeNodePtr* _AS0tree,TreeNodePtr* _AS0orig_tree,DefTableKeyList* _AS0_const67));
+extern void _VS3EXPRESSION_STREAM_O ELI_ARG((_TPPEXPRESSION_STREAM_O _currn,TreeNodePtr* _AS0tree,TreeNodePtr* _AS0orig_tree,DefTableKeyList* _AS0_const67));
+extern void _VS1EXPRESSION_METH_O ELI_ARG((_TPPEXPRESSION_METH_O _currn,TreeNodePtr* _AS0orig_tree));
+extern void _VS2EXPRESSION_METH_O ELI_ARG((_TPPEXPRESSION_METH_O _currn,TreeNodePtr* _AS0tree,TreeNodePtr* _AS0orig_tree,DefTableKeyList* _AS0_const67));
+extern void _VS3EXPRESSION_METH_O ELI_ARG((_TPPEXPRESSION_METH_O _currn,TreeNodePtr* _AS0tree,TreeNodePtr* _AS0orig_tree,DefTableKeyList* _AS0_const67));
+extern void _VS1EXPRESSION_COERCION_O ELI_ARG((_TPPEXPRESSION_COERCION_O _currn,TreeNodePtr* _AS0orig_tree));
+extern void _VS2EXPRESSION_COERCION_O ELI_ARG((_TPPEXPRESSION_COERCION_O _currn,TreeNodePtr* _AS0tree,TreeNodePtr* _AS0orig_tree,DefTableKeyList* _AS0_const67));
+extern void _VS3EXPRESSION_COERCION_O ELI_ARG((_TPPEXPRESSION_COERCION_O _currn,TreeNodePtr* _AS0tree,TreeNodePtr* _AS0orig_tree,DefTableKeyList* _AS0_const67));
+extern void _VS1EXPRESSION_VALUE_O ELI_ARG((_TPPEXPRESSION_VALUE_O _currn,TreeNodePtr* _AS0orig_tree));
+extern void _VS2EXPRESSION_VALUE_O ELI_ARG((_TPPEXPRESSION_VALUE_O _currn,TreeNodePtr* _AS0tree,TreeNodePtr* _AS0orig_tree,DefTableKeyList* _AS0_const67));
+extern void _VS3EXPRESSION_VALUE_O ELI_ARG((_TPPEXPRESSION_VALUE_O _currn,TreeNodePtr* _AS0tree,TreeNodePtr* _AS0orig_tree,DefTableKeyList* _AS0_const67));
+extern void _VS1EXPRESSION_BOUND_O ELI_ARG((_TPPEXPRESSION_BOUND_O _currn,TreeNodePtr* _AS0orig_tree));
+extern void _VS2EXPRESSION_BOUND_O ELI_ARG((_TPPEXPRESSION_BOUND_O _currn,TreeNodePtr* _AS0tree,TreeNodePtr* _AS0orig_tree,DefTableKeyList* _AS0_const67));
+extern void _VS3EXPRESSION_BOUND_O ELI_ARG((_TPPEXPRESSION_BOUND_O _currn,TreeNodePtr* _AS0tree,TreeNodePtr* _AS0orig_tree,DefTableKeyList* _AS0_const67));
+extern void _VS1EXPRESSION_CONS_O ELI_ARG((_TPPEXPRESSION_CONS_O _currn,TreeNodePtr* _AS0orig_tree));
+extern void _VS2EXPRESSION_CONS_O ELI_ARG((_TPPEXPRESSION_CONS_O _currn,TreeNodePtr* _AS0tree,TreeNodePtr* _AS0orig_tree,DefTableKeyList* _AS0_const67));
+extern void _VS3EXPRESSION_CONS_O ELI_ARG((_TPPEXPRESSION_CONS_O _currn,TreeNodePtr* _AS0tree,TreeNodePtr* _AS0orig_tree,DefTableKeyList* _AS0_const67));
+extern void _VS1EXPRESSION_STAR_O ELI_ARG((_TPPEXPRESSION_STAR_O _currn,TreeNodePtr* _AS0orig_tree));
+extern void _VS2EXPRESSION_STAR_O ELI_ARG((_TPPEXPRESSION_STAR_O _currn,TreeNodePtr* _AS0tree,TreeNodePtr* _AS0orig_tree,DefTableKeyList* _AS0_const67));
+extern void _VS3EXPRESSION_STAR_O ELI_ARG((_TPPEXPRESSION_STAR_O _currn,TreeNodePtr* _AS0tree,TreeNodePtr* _AS0orig_tree,DefTableKeyList* _AS0_const67));
+extern void _VS1DESIGNATOR_QUAL_O ELI_ARG((_TPPDESIGNATOR_QUAL_O _currn,DefTableKey* _AS0Key,int* _AS0IsArrayAccessOrSingleId,int* _AS0IsClassIdUse2,int* _AS0ResolvesToSingleId,int* _AS0ResolvesToArrayAccessOrSingleId,TreeNodePtr* _AS0orig_tree,TreeNodePtr* _AS0class_id_tree,TreeNodePtr* _AS0arr_bounds_tree));
+extern void _VS2DESIGNATOR_QUAL_O ELI_ARG((_TPPDESIGNATOR_QUAL_O _currn,DefTableKey* _AS0Key,int* _AS0IsArrayAccessOrSingleId,int* _AS0IsClassIdUse2,int* _AS0ResolvesToSingleId,int* _AS0ResolvesToArrayAccessOrSingleId,TreeNodePtr* _AS0tree,int* _AS0is_notequal,TreeNodePtr* _AS0orig_tree,TreeNodePtr* _AS0class_id_tree,TreeNodePtr* _AS0arr_bounds_tree,DefTableKeyList* _AS0_const67));
+extern void _VS3DESIGNATOR_QUAL_O ELI_ARG((_TPPDESIGNATOR_QUAL_O _currn,DefTableKey* _AS0Key,int* _AS0IsArrayAccessOrSingleId,int* _AS0IsClassIdUse2,int* _AS0ResolvesToSingleId,int* _AS0ResolvesToArrayAccessOrSingleId,TreeNodePtr* _AS0tree,int* _AS0is_notequal,TreeNodePtr* _AS0orig_tree,TreeNodePtr* _AS0class_id_tree,TreeNodePtr* _AS0arr_bounds_tree,DefTableKeyList* _AS0_const67));
+extern void _VS1DESIGNATOR_METH_O ELI_ARG((_TPPDESIGNATOR_METH_O _currn,DefTableKey* _AS0Key,int* _AS0IsArrayAccessOrSingleId,int* _AS0IsClassIdUse2,int* _AS0ResolvesToSingleId,int* _AS0ResolvesToArrayAccessOrSingleId,TreeNodePtr* _AS0orig_tree,TreeNodePtr* _AS0class_id_tree,TreeNodePtr* _AS0arr_bounds_tree));
+extern void _VS2DESIGNATOR_METH_O ELI_ARG((_TPPDESIGNATOR_METH_O _currn,DefTableKey* _AS0Key,int* _AS0IsArrayAccessOrSingleId,int* _AS0IsClassIdUse2,int* _AS0ResolvesToSingleId,int* _AS0ResolvesToArrayAccessOrSingleId,TreeNodePtr* _AS0tree,int* _AS0is_notequal,TreeNodePtr* _AS0orig_tree,TreeNodePtr* _AS0class_id_tree,TreeNodePtr* _AS0arr_bounds_tree,DefTableKeyList* _AS0_const67));
+extern void _VS3DESIGNATOR_METH_O ELI_ARG((_TPPDESIGNATOR_METH_O _currn,DefTableKey* _AS0Key,int* _AS0IsArrayAccessOrSingleId,int* _AS0IsClassIdUse2,int* _AS0ResolvesToSingleId,int* _AS0ResolvesToArrayAccessOrSingleId,TreeNodePtr* _AS0tree,int* _AS0is_notequal,TreeNodePtr* _AS0orig_tree,TreeNodePtr* _AS0class_id_tree,TreeNodePtr* _AS0arr_bounds_tree,DefTableKeyList* _AS0_const67));
+extern void _VS1DESIGNATOR_EXP_O ELI_ARG((_TPPDESIGNATOR_EXP_O _currn,DefTableKey* _AS0Key,int* _AS0IsArrayAccessOrSingleId,int* _AS0IsClassIdUse2,int* _AS0ResolvesToSingleId,int* _AS0ResolvesToArrayAccessOrSingleId,TreeNodePtr* _AS0orig_tree,TreeNodePtr* _AS0class_id_tree,TreeNodePtr* _AS0arr_bounds_tree));
+extern void _VS2DESIGNATOR_EXP_O ELI_ARG((_TPPDESIGNATOR_EXP_O _currn,DefTableKey* _AS0Key,int* _AS0IsArrayAccessOrSingleId,int* _AS0IsClassIdUse2,int* _AS0ResolvesToSingleId,int* _AS0ResolvesToArrayAccessOrSingleId,TreeNodePtr* _AS0tree,int* _AS0is_notequal,TreeNodePtr* _AS0orig_tree,TreeNodePtr* _AS0class_id_tree,TreeNodePtr* _AS0arr_bounds_tree,DefTableKeyList* _AS0_const67));
+extern void _VS3DESIGNATOR_EXP_O ELI_ARG((_TPPDESIGNATOR_EXP_O _currn,DefTableKey* _AS0Key,int* _AS0IsArrayAccessOrSingleId,int* _AS0IsClassIdUse2,int* _AS0ResolvesToSingleId,int* _AS0ResolvesToArrayAccessOrSingleId,TreeNodePtr* _AS0tree,int* _AS0is_notequal,TreeNodePtr* _AS0orig_tree,TreeNodePtr* _AS0class_id_tree,TreeNodePtr* _AS0arr_bounds_tree,DefTableKeyList* _AS0_const67));
+extern void _VS1DESIGNATOR_NAME_O ELI_ARG((_TPPDESIGNATOR_NAME_O _currn,DefTableKey* _AS0Key,int* _AS0IsArrayAccessOrSingleId,int* _AS0IsClassIdUse2,int* _AS0ResolvesToSingleId,int* _AS0ResolvesToArrayAccessOrSingleId,TreeNodePtr* _AS0orig_tree,TreeNodePtr* _AS0class_id_tree,TreeNodePtr* _AS0arr_bounds_tree));
+extern void _VS2DESIGNATOR_NAME_O ELI_ARG((_TPPDESIGNATOR_NAME_O _currn,DefTableKey* _AS0Key,int* _AS0IsArrayAccessOrSingleId,int* _AS0IsClassIdUse2,int* _AS0ResolvesToSingleId,int* _AS0ResolvesToArrayAccessOrSingleId,TreeNodePtr* _AS0tree,int* _AS0is_notequal,TreeNodePtr* _AS0orig_tree,TreeNodePtr* _AS0class_id_tree,TreeNodePtr* _AS0arr_bounds_tree,DefTableKeyList* _AS0_const67));
+extern void _VS3DESIGNATOR_NAME_O ELI_ARG((_TPPDESIGNATOR_NAME_O _currn,DefTableKey* _AS0Key,int* _AS0IsArrayAccessOrSingleId,int* _AS0IsClassIdUse2,int* _AS0ResolvesToSingleId,int* _AS0ResolvesToArrayAccessOrSingleId,TreeNodePtr* _AS0tree,int* _AS0is_notequal,TreeNodePtr* _AS0orig_tree,TreeNodePtr* _AS0class_id_tree,TreeNodePtr* _AS0arr_bounds_tree,DefTableKeyList* _AS0_const67));
+extern void _VS1ARGUMENT_EMPTY_O ELI_ARG((_TPPARGUMENT_EMPTY_O _currn,int* _AS0IsClassSpecifier));
+extern void _VS2ARGUMENT_EMPTY_O ELI_ARG((_TPPARGUMENT_EMPTY_O _currn,int* _AS0IsClassSpecifier));
+extern void _VS3ARGUMENT_EMPTY_O ELI_ARG((_TPPARGUMENT_EMPTY_O _currn,int* _AS0IsClassSpecifier));
+extern void _VS1ARGUMENT_INOUT_O ELI_ARG((_TPPARGUMENT_INOUT_O _currn,int* _AS0IsClassSpecifier));
+extern void _VS2ARGUMENT_INOUT_O ELI_ARG((_TPPARGUMENT_INOUT_O _currn,int* _AS0IsClassSpecifier));
+extern void _VS3ARGUMENT_INOUT_O ELI_ARG((_TPPARGUMENT_INOUT_O _currn,int* _AS0IsClassSpecifier));
+extern void _VS1ARGUMENT_OUT_O ELI_ARG((_TPPARGUMENT_OUT_O _currn,int* _AS0IsClassSpecifier));
+extern void _VS2ARGUMENT_OUT_O ELI_ARG((_TPPARGUMENT_OUT_O _currn,int* _AS0IsClassSpecifier));
+extern void _VS3ARGUMENT_OUT_O ELI_ARG((_TPPARGUMENT_OUT_O _currn,int* _AS0IsClassSpecifier));
+extern void _VS1ARGUMENT_EXP_O ELI_ARG((_TPPARGUMENT_EXP_O _currn,int* _AS0IsClassSpecifier));
+extern void _VS2ARGUMENT_EXP_O ELI_ARG((_TPPARGUMENT_EXP_O _currn,int* _AS0IsClassSpecifier));
+extern void _VS3ARGUMENT_EXP_O ELI_ARG((_TPPARGUMENT_EXP_O _currn,int* _AS0IsClassSpecifier));
+extern void _VS1ARGUMENTS_LST_O ELI_ARG((_TPPARGUMENTS_LST_O _currn,int* _AS0IsClassSpecifiers,int* _AS0ResolvesToExpressions,int* _AS0ResolvesToClassSpecifiers,TreeNodePtr* _AS0orig_tree,TreeNodePtr* _AS0class_args_tree,TreeNodePtr* _AS0arr_bounds_tree));
+extern void _VS2ARGUMENTS_LST_O ELI_ARG((_TPPARGUMENTS_LST_O _currn,int* _AS0IsClassSpecifiers,int* _AS0ResolvesToExpressions,int* _AS0ResolvesToClassSpecifiers,TreeNodePtr* _AS0tree,TreeNodePtr* _AS0orig_tree,TreeNodePtr* _AS0class_args_tree,TreeNodePtr* _AS0arr_bounds_tree,DefTableKeyList* _AS0_const67));
+extern void _VS3ARGUMENTS_LST_O ELI_ARG((_TPPARGUMENTS_LST_O _currn,int* _AS0IsClassSpecifiers,int* _AS0IsJustExpressions,int* _AS0ResolvesToExpressions,int* _AS0ResolvesToClassSpecifiers,TreeNodePtr* _AS0tree,TreeNodePtr* _AS0orig_tree,TreeNodePtr* _AS0class_args_tree,TreeNodePtr* _AS0arr_bounds_tree,DefTableKeyList* _AS0_const67));
+extern void _VS1ARGUMENTS_EMPTY_O ELI_ARG((_TPPARGUMENTS_EMPTY_O _currn,int* _AS0IsClassSpecifiers,int* _AS0ResolvesToExpressions,int* _AS0ResolvesToClassSpecifiers,TreeNodePtr* _AS0orig_tree,TreeNodePtr* _AS0class_args_tree,TreeNodePtr* _AS0arr_bounds_tree));
+extern void _VS2ARGUMENTS_EMPTY_O ELI_ARG((_TPPARGUMENTS_EMPTY_O _currn,int* _AS0IsClassSpecifiers,int* _AS0ResolvesToExpressions,int* _AS0ResolvesToClassSpecifiers,TreeNodePtr* _AS0tree,TreeNodePtr* _AS0orig_tree,TreeNodePtr* _AS0class_args_tree,TreeNodePtr* _AS0arr_bounds_tree,DefTableKeyList* _AS0_const67));
+extern void _VS3ARGUMENTS_EMPTY_O ELI_ARG((_TPPARGUMENTS_EMPTY_O _currn,int* _AS0IsClassSpecifiers,int* _AS0IsJustExpressions,int* _AS0ResolvesToExpressions,int* _AS0ResolvesToClassSpecifiers,TreeNodePtr* _AS0tree,TreeNodePtr* _AS0orig_tree,TreeNodePtr* _AS0class_args_tree,TreeNodePtr* _AS0arr_bounds_tree,DefTableKeyList* _AS0_const67));
+extern void _VS1BOUND_EXP_O ELI_ARG((_TPPBOUND_EXP_O _currn));
+extern void _VS2BOUND_EXP_O ELI_ARG((_TPPBOUND_EXP_O _currn,TreeNodePtr* _AS0bounds_orig_tree_pre));
+extern void _VS3BOUND_EXP_O ELI_ARG((_TPPBOUND_EXP_O _currn,int* _AS0BoundCount_pre,TreeNodePtr* _AS0bounds_tree_pre,TreeNodePtr* _AS0starbounds_tree_pre,TreeNodePtr* _AS0bounds_orig_tree_pre,DefTableKeyList* _AS0_const67));
+extern void _VS4BOUND_EXP_O ELI_ARG((_TPPBOUND_EXP_O _currn,int* _AS0BoundCount_pre,int* _AS0ClassBoundCount_pre,TreeNodePtr* _AS0bounds_tree_pre,TreeNodePtr* _AS0starbounds_tree_pre,TreeNodePtr* _AS0bounds_orig_tree_pre,DefTableKeyList* _AS0_const67));
+extern void _VS1BOUNDS_O ELI_ARG((_TPPBOUNDS_O _currn));
+extern void _VS2BOUNDS_O ELI_ARG((_TPPBOUNDS_O _currn,TreeNodePtr* _AS0orig_tree));
+extern void _VS3BOUNDS_O ELI_ARG((_TPPBOUNDS_O _currn,int* _AS0BoundCnt,TreeNodePtr* _AS0tree,TreeNodePtr* _AS0starbound_tree,TreeNodePtr* _AS0orig_tree,DefTableKeyList* _AS0_const67));
+extern void _VS4BOUNDS_O ELI_ARG((_TPPBOUNDS_O _currn,int* _AS0BoundCnt,int* _AS0ClassBoundCnt,TreeNodePtr* _AS0tree,TreeNodePtr* _AS0starbound_tree,TreeNodePtr* _AS0orig_tree,DefTableKeyList* _AS0_const67));
+extern void _VS1CLASS_ID_USE_O ELI_ARG((_TPPCLASS_ID_USE_O _currn));
+extern void _VS2CLASS_ID_USE_O ELI_ARG((_TPPCLASS_ID_USE_O _currn,TreeNodePtr* _AS0orig_tree));
+extern void _VS3CLASS_ID_USE_O ELI_ARG((_TPPCLASS_ID_USE_O _currn,TreeNodePtr* _AS0orig_tree,int* _AS0ClassArgCount_post));
+extern void _VS1PARAMETER_KIND_INOUT_O ELI_ARG((_TPPPARAMETER_KIND_INOUT_O _currn,TreeNodePtr* _AS0orig_tree));
+extern void _VS1PARAMETER_KIND_OUT_O ELI_ARG((_TPPPARAMETER_KIND_OUT_O _currn,TreeNodePtr* _AS0orig_tree));
+extern void _VS1PARAMETER_KIND_ONCE_O ELI_ARG((_TPPPARAMETER_KIND_ONCE_O _currn,TreeNodePtr* _AS0orig_tree));
+extern void _VS1PARAMETER_KIND_IN_O ELI_ARG((_TPPPARAMETER_KIND_IN_O _currn,TreeNodePtr* _AS0orig_tree));
+extern void _VS1PARAMETER_TYPE_O ELI_ARG((_TPPPARAMETER_TYPE_O _currn,TreeNodePtr* _AS0parameter_types_orig_tree_pre));
+extern void _VS2PARAMETER_TYPE_O ELI_ARG((_TPPPARAMETER_TYPE_O _currn,TreeNodePtr* _AS0parameter_types_tree_pre,TreeNodePtr* _AS0parameter_types_orig_tree_pre,DefTableKeyList* _AS0_const67));
+extern void _VS3PARAMETER_TYPE_O ELI_ARG((_TPPPARAMETER_TYPE_O _currn,TreeNodePtr* _AS0parameter_types_tree_pre,TreeNodePtr* _AS0parameter_types_orig_tree_pre,DefTableKeyList* _AS0_const67));
+extern void _VS1PARAMETER_TYPES_O ELI_ARG((_TPPPARAMETER_TYPES_O _currn,TreeNodePtr* _AS0orig_tree));
+extern void _VS2PARAMETER_TYPES_O ELI_ARG((_TPPPARAMETER_TYPES_O _currn,TreeNodePtr* _AS0tree,TreeNodePtr* _AS0orig_tree,DefTableKeyList* _AS0_const67));
+extern void _VS3PARAMETER_TYPES_O ELI_ARG((_TPPPARAMETER_TYPES_O _currn,TreeNodePtr* _AS0tree,TreeNodePtr* _AS0orig_tree,DefTableKeyList* _AS0_const67));
+extern void _VS1METHOD_SPECIFICATION_O ELI_ARG((_TPPMETHOD_SPECIFICATION_O _currn));
+extern void _VS2METHOD_SPECIFICATION_O ELI_ARG((_TPPMETHOD_SPECIFICATION_O _currn,TreeNodePtr* _AS0tree));
+extern void _VS3METHOD_SPECIFICATION_O ELI_ARG((_TPPMETHOD_SPECIFICATION_O _currn,TreeNodePtr* _AS0tree));
+extern void _VS1CLASS_ARGUMENT_O ELI_ARG((_TPPCLASS_ARGUMENT_O _currn));
+extern void _VS2CLASS_ARGUMENT_O ELI_ARG((_TPPCLASS_ARGUMENT_O _currn,ArgumentInfoList* _AS0ArgInfos_pre));
+extern void _VS3CLASS_ARGUMENT_O ELI_ARG((_TPPCLASS_ARGUMENT_O _currn,int* _AS0ClassArgCount_pre,ArgumentInfoList* _AS0ArgInfos_pre));
+extern void _VS1CLASS_ARGUMENTS_LST_O ELI_ARG((_TPPCLASS_ARGUMENTS_LST_O _currn,TreeNodePtr* _AS0orig_tree));
+extern void _VS2CLASS_ARGUMENTS_LST_O ELI_ARG((_TPPCLASS_ARGUMENTS_LST_O _currn,TreeNodePtr* _AS0tree,TreeNodePtr* _AS0starbound_tree,TreeNodePtr* _AS0orig_tree,DefTableKeyList* _AS0_const67));
+extern void _VS3CLASS_ARGUMENTS_LST_O ELI_ARG((_TPPCLASS_ARGUMENTS_LST_O _currn,TreeNodePtr* _AS0tree,TreeNodePtr* _AS0starbound_tree,TreeNodePtr* _AS0orig_tree,DefTableKeyList* _AS0_const67));
+extern void _VS1CLASS_ARGUMENTS_EMPTY_O ELI_ARG((_TPPCLASS_ARGUMENTS_EMPTY_O _currn,TreeNodePtr* _AS0orig_tree));
+extern void _VS2CLASS_ARGUMENTS_EMPTY_O ELI_ARG((_TPPCLASS_ARGUMENTS_EMPTY_O _currn,TreeNodePtr* _AS0tree,TreeNodePtr* _AS0starbound_tree,TreeNodePtr* _AS0orig_tree,DefTableKeyList* _AS0_const67));
+extern void _VS3CLASS_ARGUMENTS_EMPTY_O ELI_ARG((_TPPCLASS_ARGUMENTS_EMPTY_O _currn,TreeNodePtr* _AS0tree,TreeNodePtr* _AS0starbound_tree,TreeNodePtr* _AS0orig_tree,DefTableKeyList* _AS0_const67));
+extern void _VS1CLASS_SPECIFIER_O ELI_ARG((_TPPCLASS_SPECIFIER_O _currn));
+extern void _VS2CLASS_SPECIFIER_O ELI_ARG((_TPPCLASS_SPECIFIER_O _currn,TreeNodePtr* _AS0tree));
+extern void _VS3CLASS_SPECIFIER_O ELI_ARG((_TPPCLASS_SPECIFIER_O _currn,TreeNodePtr* _AS0tree));
+extern void _VS1TYPE_SPECIFIER_STREAM_O ELI_ARG((_TPPTYPE_SPECIFIER_STREAM_O _currn,TreeNodePtr* _AS0class_spec_tree));
+extern void _VS2TYPE_SPECIFIER_STREAM_O ELI_ARG((_TPPTYPE_SPECIFIER_STREAM_O _currn,TreeNodePtr* _AS0class_spec_tree));
+extern void _VS3TYPE_SPECIFIER_STREAM_O ELI_ARG((_TPPTYPE_SPECIFIER_STREAM_O _currn,TreeNodePtr* _AS0class_spec_tree));
+extern void _VS1TYPE_SPECIFIER_SAME_O ELI_ARG((_TPPTYPE_SPECIFIER_SAME_O _currn,TreeNodePtr* _AS0class_spec_tree));
+extern void _VS2TYPE_SPECIFIER_SAME_O ELI_ARG((_TPPTYPE_SPECIFIER_SAME_O _currn,TreeNodePtr* _AS0class_spec_tree));
+extern void _VS3TYPE_SPECIFIER_SAME_O ELI_ARG((_TPPTYPE_SPECIFIER_SAME_O _currn,TreeNodePtr* _AS0class_spec_tree));
+extern void _VS1TYPE_SPECIFIER_SAME_POLY_O ELI_ARG((_TPPTYPE_SPECIFIER_SAME_POLY_O _currn,TreeNodePtr* _AS0class_spec_tree));
+extern void _VS2TYPE_SPECIFIER_SAME_POLY_O ELI_ARG((_TPPTYPE_SPECIFIER_SAME_POLY_O _currn,TreeNodePtr* _AS0class_spec_tree));
+extern void _VS3TYPE_SPECIFIER_SAME_POLY_O ELI_ARG((_TPPTYPE_SPECIFIER_SAME_POLY_O _currn,TreeNodePtr* _AS0class_spec_tree));
+extern void _VS1TYPE_SPECIFIER_PROC_O ELI_ARG((_TPPTYPE_SPECIFIER_PROC_O _currn,TreeNodePtr* _AS0class_spec_tree));
+extern void _VS2TYPE_SPECIFIER_PROC_O ELI_ARG((_TPPTYPE_SPECIFIER_PROC_O _currn,TreeNodePtr* _AS0class_spec_tree));
+extern void _VS3TYPE_SPECIFIER_PROC_O ELI_ARG((_TPPTYPE_SPECIFIER_PROC_O _currn,TreeNodePtr* _AS0class_spec_tree));
+extern void _VS1TYPE_SPECIFIER_EMPTY_O ELI_ARG((_TPPTYPE_SPECIFIER_EMPTY_O _currn,TreeNodePtr* _AS0class_spec_tree));
+extern void _VS2TYPE_SPECIFIER_EMPTY_O ELI_ARG((_TPPTYPE_SPECIFIER_EMPTY_O _currn,TreeNodePtr* _AS0class_spec_tree));
+extern void _VS3TYPE_SPECIFIER_EMPTY_O ELI_ARG((_TPPTYPE_SPECIFIER_EMPTY_O _currn,TreeNodePtr* _AS0class_spec_tree));
+extern void _VS1TYPE_SPECIFIER_DES_O ELI_ARG((_TPPTYPE_SPECIFIER_DES_O _currn,TreeNodePtr* _AS0class_spec_tree));
+extern void _VS2TYPE_SPECIFIER_DES_O ELI_ARG((_TPPTYPE_SPECIFIER_DES_O _currn,TreeNodePtr* _AS0class_spec_tree));
+extern void _VS3TYPE_SPECIFIER_DES_O ELI_ARG((_TPPTYPE_SPECIFIER_DES_O _currn,TreeNodePtr* _AS0class_spec_tree));
+extern void _VS1TYPE_SPECIFIER_CL_O ELI_ARG((_TPPTYPE_SPECIFIER_CL_O _currn,TreeNodePtr* _AS0class_spec_tree));
+extern void _VS2TYPE_SPECIFIER_CL_O ELI_ARG((_TPPTYPE_SPECIFIER_CL_O _currn,TreeNodePtr* _AS0class_spec_tree));
+extern void _VS3TYPE_SPECIFIER_CL_O ELI_ARG((_TPPTYPE_SPECIFIER_CL_O _currn,TreeNodePtr* _AS0class_spec_tree));
+extern void _VS1TYPE_SPECIFIER_CL_POLY_O ELI_ARG((_TPPTYPE_SPECIFIER_CL_POLY_O _currn,TreeNodePtr* _AS0class_spec_tree));
+extern void _VS2TYPE_SPECIFIER_CL_POLY_O ELI_ARG((_TPPTYPE_SPECIFIER_CL_POLY_O _currn,TreeNodePtr* _AS0class_spec_tree));
+extern void _VS3TYPE_SPECIFIER_CL_POLY_O ELI_ARG((_TPPTYPE_SPECIFIER_CL_POLY_O _currn,TreeNodePtr* _AS0class_spec_tree));
+extern void _VS1TYPE_SPECIFIERS_EMPTY_O ELI_ARG((_TPPTYPE_SPECIFIERS_EMPTY_O _currn));
+extern void _VS2TYPE_SPECIFIERS_EMPTY_O ELI_ARG((_TPPTYPE_SPECIFIERS_EMPTY_O _currn));
+#define _VS3TYPE_SPECIFIERS_EMPTY_O _VS0Empty
+
+extern void _VS1TYPE_SPECIFIERS_LST_O ELI_ARG((_TPPTYPE_SPECIFIERS_LST_O _currn));
+extern void _VS2TYPE_SPECIFIERS_LST_O ELI_ARG((_TPPTYPE_SPECIFIERS_LST_O _currn));
+extern void _VS3TYPE_SPECIFIERS_LST_O ELI_ARG((_TPPTYPE_SPECIFIERS_LST_O _currn));
+extern void _VS1CLASS_PARAM_ID_DEF_O ELI_ARG((_TPPCLASS_PARAM_ID_DEF_O _currn));
+extern void _VS2CLASS_PARAM_ID_DEF_O ELI_ARG((_TPPCLASS_PARAM_ID_DEF_O _currn));
+extern void _VS3CLASS_PARAM_ID_DEF_O ELI_ARG((_TPPCLASS_PARAM_ID_DEF_O _currn));
+extern void _VS4CLASS_PARAM_ID_DEF_O ELI_ARG((_TPPCLASS_PARAM_ID_DEF_O _currn));
+extern void _VS1CLASS_PARAMETER_O ELI_ARG((_TPPCLASS_PARAMETER_O _currn));
+extern void _VS2CLASS_PARAMETER_O ELI_ARG((_TPPCLASS_PARAMETER_O _currn));
+extern void _VS3CLASS_PARAMETER_O ELI_ARG((_TPPCLASS_PARAMETER_O _currn));
+extern void _VS4CLASS_PARAMETER_O ELI_ARG((_TPPCLASS_PARAMETER_O _currn));
+extern void _VS5CLASS_PARAMETER_O ELI_ARG((_TPPCLASS_PARAMETER_O _currn));
+extern void _VS1IDENT_DEF_O ELI_ARG((_TPPIDENT_DEF_O _currn));
+extern void _VS1BOUND_IDENTIFIER_STAR_O ELI_ARG((_TPPBOUND_IDENTIFIER_STAR_O _currn));
+extern void _VS1BOUND_IDENTIFIER_O ELI_ARG((_TPPBOUND_IDENTIFIER_O _currn));
+extern void _VS1CLASS_PARAMETERS_EMPTY_O ELI_ARG((_TPPCLASS_PARAMETERS_EMPTY_O _currn));
+extern void _VS2CLASS_PARAMETERS_EMPTY_O ELI_ARG((_TPPCLASS_PARAMETERS_EMPTY_O _currn));
+extern void _VS3CLASS_PARAMETERS_EMPTY_O ELI_ARG((_TPPCLASS_PARAMETERS_EMPTY_O _currn));
+extern void _VS4CLASS_PARAMETERS_EMPTY_O ELI_ARG((_TPPCLASS_PARAMETERS_EMPTY_O _currn));
+extern void _VS5CLASS_PARAMETERS_EMPTY_O ELI_ARG((_TPPCLASS_PARAMETERS_EMPTY_O _currn));
+extern void _VS1CLASS_PARAMETERS_LST_O ELI_ARG((_TPPCLASS_PARAMETERS_LST_O _currn));
+extern void _VS2CLASS_PARAMETERS_LST_O ELI_ARG((_TPPCLASS_PARAMETERS_LST_O _currn));
+extern void _VS3CLASS_PARAMETERS_LST_O ELI_ARG((_TPPCLASS_PARAMETERS_LST_O _currn));
+extern void _VS4CLASS_PARAMETERS_LST_O ELI_ARG((_TPPCLASS_PARAMETERS_LST_O _currn));
+extern void _VS5CLASS_PARAMETERS_LST_O ELI_ARG((_TPPCLASS_PARAMETERS_LST_O _currn));
+extern void _VS1CLASS_BOUNDS_EMPTY_O ELI_ARG((_TPPCLASS_BOUNDS_EMPTY_O _currn));
+extern void _VS2CLASS_BOUNDS_EMPTY_O ELI_ARG((_TPPCLASS_BOUNDS_EMPTY_O _currn));
+extern void _VS1CLASS_BOUNDS_LST_O ELI_ARG((_TPPCLASS_BOUNDS_LST_O _currn));
+extern void _VS2CLASS_BOUNDS_LST_O ELI_ARG((_TPPCLASS_BOUNDS_LST_O _currn));
+extern void _VS1CLASS_ID_DEF_O ELI_ARG((_TPPCLASS_ID_DEF_O _currn));
+extern void _VS2CLASS_ID_DEF_O ELI_ARG((_TPPCLASS_ID_DEF_O _currn));
+extern void _VS3CLASS_ID_DEF_O ELI_ARG((_TPPCLASS_ID_DEF_O _currn));
+extern void _VS4CLASS_ID_DEF_O ELI_ARG((_TPPCLASS_ID_DEF_O _currn));
+extern void _VS1BUILTIN_OPT_CL_O ELI_ARG((_TPPBUILTIN_OPT_CL_O _currn));
+extern void _VS2BUILTIN_OPT_CL_O ELI_ARG((_TPPBUILTIN_OPT_CL_O _currn));
+extern void _VS3BUILTIN_OPT_CL_O ELI_ARG((_TPPBUILTIN_OPT_CL_O _currn));
+extern void _VS1BUILTIN_OPT_ID_O ELI_ARG((_TPPBUILTIN_OPT_ID_O _currn));
+extern void _VS2BUILTIN_OPT_ID_O ELI_ARG((_TPPBUILTIN_OPT_ID_O _currn));
+#define _VS3BUILTIN_OPT_ID_O _VS0Empty
+
+extern void _VS1BUILTIN_OPT_O ELI_ARG((_TPPBUILTIN_OPT_O _currn));
+extern void _VS2BUILTIN_OPT_O ELI_ARG((_TPPBUILTIN_OPT_O _currn));
+#define _VS3BUILTIN_OPT_O _VS0Empty
+
+extern void _VS1BUILTIN_OPT_EMPTY_O ELI_ARG((_TPPBUILTIN_OPT_EMPTY_O _currn));
+extern void _VS2BUILTIN_OPT_EMPTY_O ELI_ARG((_TPPBUILTIN_OPT_EMPTY_O _currn));
+#define _VS3BUILTIN_OPT_EMPTY_O _VS0Empty
+
+extern void _VS1CLASS_BODY_O ELI_ARG((_TPPCLASS_BODY_O _currn));
+extern void _VS2CLASS_BODY_O ELI_ARG((_TPPCLASS_BODY_O _currn));
+extern void _VS3CLASS_BODY_O ELI_ARG((_TPPCLASS_BODY_O _currn));
+extern void _VS4CLASS_BODY_O ELI_ARG((_TPPCLASS_BODY_O _currn));
+extern void _VS5CLASS_BODY_O ELI_ARG((_TPPCLASS_BODY_O _currn));
+extern void _VS1CLASS_HEAD_O ELI_ARG((_TPPCLASS_HEAD_O _currn));
+extern void _VS2CLASS_HEAD_O ELI_ARG((_TPPCLASS_HEAD_O _currn));
+extern void _VS3CLASS_HEAD_O ELI_ARG((_TPPCLASS_HEAD_O _currn));
+extern void _VS4CLASS_HEAD_O ELI_ARG((_TPPCLASS_HEAD_O _currn));
+extern void _VS5CLASS_HEAD_O ELI_ARG((_TPPCLASS_HEAD_O _currn));
+extern void _VS6CLASS_HEAD_O ELI_ARG((_TPPCLASS_HEAD_O _currn));
+extern void _VS1CLASS_ATTRIBUTE_VA_O ELI_ARG((_TPPCLASS_ATTRIBUTE_VA_O _currn));
+extern void _VS1CLASS_ATTRIBUTE_EX_O ELI_ARG((_TPPCLASS_ATTRIBUTE_EX_O _currn));
+extern void _VS1CLASS_ATTRIBUTE_O ELI_ARG((_TPPCLASS_ATTRIBUTE_O _currn));
+extern void _VS1CLASS_ATTRIBUTE_ABVA_O ELI_ARG((_TPPCLASS_ATTRIBUTE_ABVA_O _currn));
+extern void _VS1CLASS_ATTRIBUTE_AB_O ELI_ARG((_TPPCLASS_ATTRIBUTE_AB_O _currn));
+extern void _VS1CLASS_DECLARATION_O ELI_ARG((_TPPCLASS_DECLARATION_O _currn));
+extern void _VS2CLASS_DECLARATION_O ELI_ARG((_TPPCLASS_DECLARATION_O _currn));
+extern void _VS3CLASS_DECLARATION_O ELI_ARG((_TPPCLASS_DECLARATION_O _currn,DefTableKeyList* _AS0ReachableClasses));
+extern void _VS4CLASS_DECLARATION_O ELI_ARG((_TPPCLASS_DECLARATION_O _currn,DefTableKeyList* _AS0ReachableClasses));
+extern void _VS5CLASS_DECLARATION_O ELI_ARG((_TPPCLASS_DECLARATION_O _currn,DefTableKeyList* _AS0ReachableClasses));
+extern void _VS6CLASS_DECLARATION_O ELI_ARG((_TPPCLASS_DECLARATION_O _currn,DefTableKeyList* _AS0ReachableClasses));
+extern void _VS7CLASS_DECLARATION_O ELI_ARG((_TPPCLASS_DECLARATION_O _currn,DefTableKeyList* _AS0ReachableClasses));
+extern void _VS1CLASS_DECLARATIONS_O ELI_ARG((_TPPCLASS_DECLARATIONS_O _currn));
+extern void _VS2CLASS_DECLARATIONS_O ELI_ARG((_TPPCLASS_DECLARATIONS_O _currn));
+extern void _VS3CLASS_DECLARATIONS_O ELI_ARG((_TPPCLASS_DECLARATIONS_O _currn));
+extern void _VS4CLASS_DECLARATIONS_O ELI_ARG((_TPPCLASS_DECLARATIONS_O _currn));
+extern void _VS5CLASS_DECLARATIONS_O ELI_ARG((_TPPCLASS_DECLARATIONS_O _currn));
+extern void _VS6CLASS_DECLARATIONS_O ELI_ARG((_TPPCLASS_DECLARATIONS_O _currn));
+extern void _VS7CLASS_DECLARATIONS_O ELI_ARG((_TPPCLASS_DECLARATIONS_O _currn));
+extern void _VS1ASSERTION_STATEMENT_2 ELI_ARG((_TPPASSERTION_STATEMENT_2 _currn));
+extern void _VS2ASSERTION_STATEMENT_2 ELI_ARG((_TPPASSERTION_STATEMENT_2 _currn));
+extern void _VS3ASSERTION_STATEMENT_2 ELI_ARG((_TPPASSERTION_STATEMENT_2 _currn));
+extern void _VS4ASSERTION_STATEMENT_2 ELI_ARG((_TPPASSERTION_STATEMENT_2 _currn));
+extern void _VS1RAISE_STATEMENT_2 ELI_ARG((_TPPRAISE_STATEMENT_2 _currn));
+extern void _VS2RAISE_STATEMENT_2 ELI_ARG((_TPPRAISE_STATEMENT_2 _currn));
+extern void _VS3RAISE_STATEMENT_2 ELI_ARG((_TPPRAISE_STATEMENT_2 _currn));
+extern void _VS4RAISE_STATEMENT_2 ELI_ARG((_TPPRAISE_STATEMENT_2 _currn));
+extern void _VS1RETURN_STATEMENT_2 ELI_ARG((_TPPRETURN_STATEMENT_2 _currn));
+extern void _VS1RESUME_STATEMENT_2 ELI_ARG((_TPPRESUME_STATEMENT_2 _currn));
+extern void _VS1BREAK_STATEMENT_2 ELI_ARG((_TPPBREAK_STATEMENT_2 _currn));
+extern void _VS1LOOP_2 ELI_ARG((_TPPLOOP_2 _currn));
+extern void _VS2LOOP_2 ELI_ARG((_TPPLOOP_2 _currn));
+extern void _VS3LOOP_2 ELI_ARG((_TPPLOOP_2 _currn));
+extern void _VS4LOOP_2 ELI_ARG((_TPPLOOP_2 _currn));
+extern void _VS5LOOP_2 ELI_ARG((_TPPLOOP_2 _currn));
+extern void _VS6LOOP_2 ELI_ARG((_TPPLOOP_2 _currn));
+extern void _VS1LOOP_EXP_2 ELI_ARG((_TPPLOOP_EXP_2 _currn));
+extern void _VS2LOOP_EXP_2 ELI_ARG((_TPPLOOP_EXP_2 _currn));
+extern void _VS3LOOP_EXP_2 ELI_ARG((_TPPLOOP_EXP_2 _currn));
+extern void _VS4LOOP_EXP_2 ELI_ARG((_TPPLOOP_EXP_2 _currn));
+extern void _VS5LOOP_EXP_2 ELI_ARG((_TPPLOOP_EXP_2 _currn));
+extern void _VS6LOOP_EXP_2 ELI_ARG((_TPPLOOP_EXP_2 _currn));
+extern void _VS1WHEN_TYPES_BLOCK_ELSE_2 ELI_ARG((_TPPWHEN_TYPES_BLOCK_ELSE_2 _currn));
+extern void _VS2WHEN_TYPES_BLOCK_ELSE_2 ELI_ARG((_TPPWHEN_TYPES_BLOCK_ELSE_2 _currn));
+extern void _VS3WHEN_TYPES_BLOCK_ELSE_2 ELI_ARG((_TPPWHEN_TYPES_BLOCK_ELSE_2 _currn));
+extern void _VS4WHEN_TYPES_BLOCK_ELSE_2 ELI_ARG((_TPPWHEN_TYPES_BLOCK_ELSE_2 _currn));
+extern void _VS5WHEN_TYPES_BLOCK_ELSE_2 ELI_ARG((_TPPWHEN_TYPES_BLOCK_ELSE_2 _currn));
+extern void _VS6WHEN_TYPES_BLOCK_ELSE_2 ELI_ARG((_TPPWHEN_TYPES_BLOCK_ELSE_2 _currn));
+extern void _VS1WHEN_TYPES_BLOCK_2 ELI_ARG((_TPPWHEN_TYPES_BLOCK_2 _currn));
+extern void _VS2WHEN_TYPES_BLOCK_2 ELI_ARG((_TPPWHEN_TYPES_BLOCK_2 _currn));
+extern void _VS3WHEN_TYPES_BLOCK_2 ELI_ARG((_TPPWHEN_TYPES_BLOCK_2 _currn));
+extern void _VS4WHEN_TYPES_BLOCK_2 ELI_ARG((_TPPWHEN_TYPES_BLOCK_2 _currn));
+extern void _VS5WHEN_TYPES_BLOCK_2 ELI_ARG((_TPPWHEN_TYPES_BLOCK_2 _currn));
+extern void _VS6WHEN_TYPES_BLOCK_2 ELI_ARG((_TPPWHEN_TYPES_BLOCK_2 _currn));
+#define _VS1WHEN_TYPES_BLOCKS_EMPTY_2 _VS0Empty
+
+#define _VS2WHEN_TYPES_BLOCKS_EMPTY_2 _VS0Empty
+
+#define _VS3WHEN_TYPES_BLOCKS_EMPTY_2 _VS0Empty
+
+#define _VS4WHEN_TYPES_BLOCKS_EMPTY_2 _VS0Empty
+
+extern void _VS5WHEN_TYPES_BLOCKS_EMPTY_2 ELI_ARG((_TPPWHEN_TYPES_BLOCKS_EMPTY_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS6WHEN_TYPES_BLOCKS_EMPTY_2 ELI_ARG((_TPPWHEN_TYPES_BLOCKS_EMPTY_2 _currn,PTGNode* _AS0out,int* _AS0_const85,PTGNode* _AS0_const84,int* _AS0_const83,PTGNode* _AS0_const82,DefTableKeyList* _AS0_const81,int* _AS0_const74));
+extern void _VS1WHEN_TYPES_BLOCKS_2 ELI_ARG((_TPPWHEN_TYPES_BLOCKS_2 _currn));
+#define _VS2WHEN_TYPES_BLOCKS_2 _VS2LST_ModificationMODIFICATIONS
+
+#define _VS3WHEN_TYPES_BLOCKS_2 _VS3LST_Feature_declarationFEATURE_DECLS
+
+#define _VS4WHEN_TYPES_BLOCKS_2 _VS4LST_Class_declarationCLASS_DECLARATIONS
+
+extern void _VS5WHEN_TYPES_BLOCKS_2 ELI_ARG((_TPPWHEN_TYPES_BLOCKS_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS6WHEN_TYPES_BLOCKS_2 ELI_ARG((_TPPWHEN_TYPES_BLOCKS_2 _currn,PTGNode* _AS0out,int* _AS0_const85,PTGNode* _AS0_const84,int* _AS0_const83,PTGNode* _AS0_const82,DefTableKeyList* _AS0_const81,int* _AS0_const74));
+extern void _VS1TYPE_CASE_STATEMENT_ATT_2 ELI_ARG((_TPPTYPE_CASE_STATEMENT_ATT_2 _currn));
+extern void _VS2TYPE_CASE_STATEMENT_ATT_2 ELI_ARG((_TPPTYPE_CASE_STATEMENT_ATT_2 _currn));
+extern void _VS3TYPE_CASE_STATEMENT_ATT_2 ELI_ARG((_TPPTYPE_CASE_STATEMENT_ATT_2 _currn));
+extern void _VS4TYPE_CASE_STATEMENT_ATT_2 ELI_ARG((_TPPTYPE_CASE_STATEMENT_ATT_2 _currn));
+extern void _VS5TYPE_CASE_STATEMENT_ATT_2 ELI_ARG((_TPPTYPE_CASE_STATEMENT_ATT_2 _currn));
+extern void _VS6TYPE_CASE_STATEMENT_ATT_2 ELI_ARG((_TPPTYPE_CASE_STATEMENT_ATT_2 _currn));
+extern void _VS1TYPE_CASE_STATEMENT_2 ELI_ARG((_TPPTYPE_CASE_STATEMENT_2 _currn));
+extern void _VS2TYPE_CASE_STATEMENT_2 ELI_ARG((_TPPTYPE_CASE_STATEMENT_2 _currn));
+extern void _VS3TYPE_CASE_STATEMENT_2 ELI_ARG((_TPPTYPE_CASE_STATEMENT_2 _currn));
+extern void _VS4TYPE_CASE_STATEMENT_2 ELI_ARG((_TPPTYPE_CASE_STATEMENT_2 _currn));
+extern void _VS5TYPE_CASE_STATEMENT_2 ELI_ARG((_TPPTYPE_CASE_STATEMENT_2 _currn));
+extern void _VS6TYPE_CASE_STATEMENT_2 ELI_ARG((_TPPTYPE_CASE_STATEMENT_2 _currn));
+extern void _VS1CASE_LABEL_DES_2 ELI_ARG((_TPPCASE_LABEL_DES_2 _currn));
+extern void _VS2CASE_LABEL_DES_2 ELI_ARG((_TPPCASE_LABEL_DES_2 _currn));
+extern void _VS3CASE_LABEL_DES_2 ELI_ARG((_TPPCASE_LABEL_DES_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS4CASE_LABEL_DES_2 ELI_ARG((_TPPCASE_LABEL_DES_2 _currn,CTValuePtr* _AS0LabelVal,int* _AS0_const83,PTGNode* _AS0_const82,DefTableKeyList* _AS0_const81));
+extern void _VS1CASE_LABEL_VALUE_2 ELI_ARG((_TPPCASE_LABEL_VALUE_2 _currn));
+#define _VS2CASE_LABEL_VALUE_2 _VS0Empty
+
+extern void _VS3CASE_LABEL_VALUE_2 ELI_ARG((_TPPCASE_LABEL_VALUE_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS4CASE_LABEL_VALUE_2 ELI_ARG((_TPPCASE_LABEL_VALUE_2 _currn,CTValuePtr* _AS0LabelVal,int* _AS0_const83,PTGNode* _AS0_const82,DefTableKeyList* _AS0_const81));
+extern void _VS1LABEL_RANGE_2 ELI_ARG((_TPPLABEL_RANGE_2 _currn));
+extern void _VS2LABEL_RANGE_2 ELI_ARG((_TPPLABEL_RANGE_2 _currn));
+extern void _VS3LABEL_RANGE_2 ELI_ARG((_TPPLABEL_RANGE_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS4LABEL_RANGE_2 ELI_ARG((_TPPLABEL_RANGE_2 _currn,int* _AS0_const83,PTGNode* _AS0_const82,DefTableKeyList* _AS0_const81));
+extern void _VS1LABEL_RANGE_SINGLE_2 ELI_ARG((_TPPLABEL_RANGE_SINGLE_2 _currn));
+extern void _VS2LABEL_RANGE_SINGLE_2 ELI_ARG((_TPPLABEL_RANGE_SINGLE_2 _currn));
+extern void _VS3LABEL_RANGE_SINGLE_2 ELI_ARG((_TPPLABEL_RANGE_SINGLE_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS4LABEL_RANGE_SINGLE_2 ELI_ARG((_TPPLABEL_RANGE_SINGLE_2 _currn,int* _AS0_const83,PTGNode* _AS0_const82,DefTableKeyList* _AS0_const81));
+#define _VS1LABEL_LIST_2 _VS1ASSERTION_STATEMENT_2
+
+extern void _VS2LABEL_LIST_2 ELI_ARG((_TPPLABEL_LIST_2 _currn));
+extern void _VS3LABEL_LIST_2 ELI_ARG((_TPPLABEL_LIST_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS4LABEL_LIST_2 ELI_ARG((_TPPLABEL_LIST_2 _currn,int* _AS0IsEmpty,PTGNode* _AS0out,ValueRangePtrList* _AS0LabelRanges_post,int* _AS0_const83,PTGNode* _AS0_const82,DefTableKeyList* _AS0_const81));
+extern void _VS1WHEN_LABEL_STMT_2 ELI_ARG((_TPPWHEN_LABEL_STMT_2 _currn));
+extern void _VS2WHEN_LABEL_STMT_2 ELI_ARG((_TPPWHEN_LABEL_STMT_2 _currn));
+extern void _VS3WHEN_LABEL_STMT_2 ELI_ARG((_TPPWHEN_LABEL_STMT_2 _currn));
+extern void _VS4WHEN_LABEL_STMT_2 ELI_ARG((_TPPWHEN_LABEL_STMT_2 _currn));
+extern void _VS5WHEN_LABEL_STMT_2 ELI_ARG((_TPPWHEN_LABEL_STMT_2 _currn));
+extern void _VS6WHEN_LABEL_STMT_2 ELI_ARG((_TPPWHEN_LABEL_STMT_2 _currn));
+#define _VS1WHEN_LABEL_STMTS_EMPTY_2 _VS0Empty
+
+#define _VS2WHEN_LABEL_STMTS_EMPTY_2 _VS0Empty
+
+#define _VS3WHEN_LABEL_STMTS_EMPTY_2 _VS0Empty
+
+#define _VS4WHEN_LABEL_STMTS_EMPTY_2 _VS0Empty
+
+extern void _VS5WHEN_LABEL_STMTS_EMPTY_2 ELI_ARG((_TPPWHEN_LABEL_STMTS_EMPTY_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS6WHEN_LABEL_STMTS_EMPTY_2 ELI_ARG((_TPPWHEN_LABEL_STMTS_EMPTY_2 _currn,PTGNode* _AS0out,int* _AS0_const85,PTGNode* _AS0_const84,int* _AS0_const83,PTGNode* _AS0_const82,DefTableKeyList* _AS0_const81,int* _AS0_const77));
+extern void _VS1WHEN_LABEL_STMTS_2 ELI_ARG((_TPPWHEN_LABEL_STMTS_2 _currn));
+#define _VS2WHEN_LABEL_STMTS_2 _VS2LST_ModificationMODIFICATIONS
+
+#define _VS3WHEN_LABEL_STMTS_2 _VS3LST_Feature_declarationFEATURE_DECLS
+
+#define _VS4WHEN_LABEL_STMTS_2 _VS4LST_Class_declarationCLASS_DECLARATIONS
+
+extern void _VS5WHEN_LABEL_STMTS_2 ELI_ARG((_TPPWHEN_LABEL_STMTS_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS6WHEN_LABEL_STMTS_2 ELI_ARG((_TPPWHEN_LABEL_STMTS_2 _currn,PTGNode* _AS0out,int* _AS0_const85,PTGNode* _AS0_const84,int* _AS0_const83,PTGNode* _AS0_const82,DefTableKeyList* _AS0_const81,int* _AS0_const77));
+extern void _VS1CASE_STATEMENT_2 ELI_ARG((_TPPCASE_STATEMENT_2 _currn));
+extern void _VS2CASE_STATEMENT_2 ELI_ARG((_TPPCASE_STATEMENT_2 _currn));
+extern void _VS3CASE_STATEMENT_2 ELI_ARG((_TPPCASE_STATEMENT_2 _currn));
+extern void _VS4CASE_STATEMENT_2 ELI_ARG((_TPPCASE_STATEMENT_2 _currn));
+extern void _VS5CASE_STATEMENT_2 ELI_ARG((_TPPCASE_STATEMENT_2 _currn));
+extern void _VS6CASE_STATEMENT_2 ELI_ARG((_TPPCASE_STATEMENT_2 _currn));
+extern void _VS1COND_STATEMENT_ELSE_2 ELI_ARG((_TPPCOND_STATEMENT_ELSE_2 _currn));
+extern void _VS2COND_STATEMENT_ELSE_2 ELI_ARG((_TPPCOND_STATEMENT_ELSE_2 _currn));
+extern void _VS3COND_STATEMENT_ELSE_2 ELI_ARG((_TPPCOND_STATEMENT_ELSE_2 _currn));
+extern void _VS4COND_STATEMENT_ELSE_2 ELI_ARG((_TPPCOND_STATEMENT_ELSE_2 _currn));
+extern void _VS5COND_STATEMENT_ELSE_2 ELI_ARG((_TPPCOND_STATEMENT_ELSE_2 _currn));
+extern void _VS6COND_STATEMENT_ELSE_2 ELI_ARG((_TPPCOND_STATEMENT_ELSE_2 _currn));
+extern void _VS1COND_STATEMENT_2 ELI_ARG((_TPPCOND_STATEMENT_2 _currn));
+extern void _VS2COND_STATEMENT_2 ELI_ARG((_TPPCOND_STATEMENT_2 _currn));
+extern void _VS3COND_STATEMENT_2 ELI_ARG((_TPPCOND_STATEMENT_2 _currn));
+extern void _VS4COND_STATEMENT_2 ELI_ARG((_TPPCOND_STATEMENT_2 _currn));
+extern void _VS5COND_STATEMENT_2 ELI_ARG((_TPPCOND_STATEMENT_2 _currn));
+extern void _VS6COND_STATEMENT_2 ELI_ARG((_TPPCOND_STATEMENT_2 _currn));
+extern void _VS1WHEN_EXCEPTION_STMT_ELSE_2 ELI_ARG((_TPPWHEN_EXCEPTION_STMT_ELSE_2 _currn));
+extern void _VS2WHEN_EXCEPTION_STMT_ELSE_2 ELI_ARG((_TPPWHEN_EXCEPTION_STMT_ELSE_2 _currn));
+extern void _VS3WHEN_EXCEPTION_STMT_ELSE_2 ELI_ARG((_TPPWHEN_EXCEPTION_STMT_ELSE_2 _currn));
+extern void _VS4WHEN_EXCEPTION_STMT_ELSE_2 ELI_ARG((_TPPWHEN_EXCEPTION_STMT_ELSE_2 _currn));
+extern void _VS5WHEN_EXCEPTION_STMT_ELSE_2 ELI_ARG((_TPPWHEN_EXCEPTION_STMT_ELSE_2 _currn));
+extern void _VS6WHEN_EXCEPTION_STMT_ELSE_2 ELI_ARG((_TPPWHEN_EXCEPTION_STMT_ELSE_2 _currn));
+extern void _VS1WHEN_EXCEPTION_STMT_2 ELI_ARG((_TPPWHEN_EXCEPTION_STMT_2 _currn));
+extern void _VS2WHEN_EXCEPTION_STMT_2 ELI_ARG((_TPPWHEN_EXCEPTION_STMT_2 _currn));
+extern void _VS3WHEN_EXCEPTION_STMT_2 ELI_ARG((_TPPWHEN_EXCEPTION_STMT_2 _currn));
+extern void _VS4WHEN_EXCEPTION_STMT_2 ELI_ARG((_TPPWHEN_EXCEPTION_STMT_2 _currn));
+extern void _VS5WHEN_EXCEPTION_STMT_2 ELI_ARG((_TPPWHEN_EXCEPTION_STMT_2 _currn));
+extern void _VS6WHEN_EXCEPTION_STMT_2 ELI_ARG((_TPPWHEN_EXCEPTION_STMT_2 _currn));
+#define _VS1WHEN_EXCEPTION_STMTS_EMPTY_2 _VS0Empty
+
+#define _VS2WHEN_EXCEPTION_STMTS_EMPTY_2 _VS0Empty
+
+#define _VS3WHEN_EXCEPTION_STMTS_EMPTY_2 _VS0Empty
+
+#define _VS4WHEN_EXCEPTION_STMTS_EMPTY_2 _VS0Empty
+
+extern void _VS5WHEN_EXCEPTION_STMTS_EMPTY_2 ELI_ARG((_TPPWHEN_EXCEPTION_STMTS_EMPTY_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS6WHEN_EXCEPTION_STMTS_EMPTY_2 ELI_ARG((_TPPWHEN_EXCEPTION_STMTS_EMPTY_2 _currn,PTGNode* _AS0out,int* _AS0_const85,PTGNode* _AS0_const84,int* _AS0_const83,PTGNode* _AS0_const82,DefTableKeyList* _AS0_const81));
+extern void _VS1WHEN_EXCEPTION_STMTS_2 ELI_ARG((_TPPWHEN_EXCEPTION_STMTS_2 _currn));
+#define _VS2WHEN_EXCEPTION_STMTS_2 _VS2LST_ModificationMODIFICATIONS
+
+#define _VS3WHEN_EXCEPTION_STMTS_2 _VS3LST_Feature_declarationFEATURE_DECLS
+
+#define _VS4WHEN_EXCEPTION_STMTS_2 _VS4LST_Class_declarationCLASS_DECLARATIONS
+
+extern void _VS5WHEN_EXCEPTION_STMTS_2 ELI_ARG((_TPPWHEN_EXCEPTION_STMTS_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS6WHEN_EXCEPTION_STMTS_2 ELI_ARG((_TPPWHEN_EXCEPTION_STMTS_2 _currn,PTGNode* _AS0out,int* _AS0_const85,PTGNode* _AS0_const84,int* _AS0_const83,PTGNode* _AS0_const82,DefTableKeyList* _AS0_const81));
+extern void _VS1EXCEPTIONS_2 ELI_ARG((_TPPEXCEPTIONS_2 _currn));
+extern void _VS2EXCEPTIONS_2 ELI_ARG((_TPPEXCEPTIONS_2 _currn));
+extern void _VS3EXCEPTIONS_2 ELI_ARG((_TPPEXCEPTIONS_2 _currn));
+extern void _VS4EXCEPTIONS_2 ELI_ARG((_TPPEXCEPTIONS_2 _currn));
+extern void _VS5EXCEPTIONS_2 ELI_ARG((_TPPEXCEPTIONS_2 _currn));
+extern void _VS6EXCEPTIONS_2 ELI_ARG((_TPPEXCEPTIONS_2 _currn));
+extern void _VS1EXCEPTIONS_EMPTY_2 ELI_ARG((_TPPEXCEPTIONS_EMPTY_2 _currn));
+extern void _VS2EXCEPTIONS_EMPTY_2 ELI_ARG((_TPPEXCEPTIONS_EMPTY_2 _currn));
+extern void _VS3EXCEPTIONS_EMPTY_2 ELI_ARG((_TPPEXCEPTIONS_EMPTY_2 _currn));
+extern void _VS4EXCEPTIONS_EMPTY_2 ELI_ARG((_TPPEXCEPTIONS_EMPTY_2 _currn));
+extern void _VS5EXCEPTIONS_EMPTY_2 ELI_ARG((_TPPEXCEPTIONS_EMPTY_2 _currn));
+extern void _VS6EXCEPTIONS_EMPTY_2 ELI_ARG((_TPPEXCEPTIONS_EMPTY_2 _currn));
+extern void _VS1BEGIN_BLOCK_2 ELI_ARG((_TPPBEGIN_BLOCK_2 _currn));
+extern void _VS2BEGIN_BLOCK_2 ELI_ARG((_TPPBEGIN_BLOCK_2 _currn));
+extern void _VS3BEGIN_BLOCK_2 ELI_ARG((_TPPBEGIN_BLOCK_2 _currn));
+extern void _VS4BEGIN_BLOCK_2 ELI_ARG((_TPPBEGIN_BLOCK_2 _currn));
+extern void _VS5BEGIN_BLOCK_2 ELI_ARG((_TPPBEGIN_BLOCK_2 _currn));
+extern void _VS6BEGIN_BLOCK_2 ELI_ARG((_TPPBEGIN_BLOCK_2 _currn));
+extern void _VS1ASSIGNMENT_2 ELI_ARG((_TPPASSIGNMENT_2 _currn));
+extern void _VS2ASSIGNMENT_2 ELI_ARG((_TPPASSIGNMENT_2 _currn));
+extern void _VS3ASSIGNMENT_2 ELI_ARG((_TPPASSIGNMENT_2 _currn));
+extern void _VS4ASSIGNMENT_2 ELI_ARG((_TPPASSIGNMENT_2 _currn));
+extern void _VS1STATEMENTS_ASSERT_2 ELI_ARG((_TPPSTATEMENTS_ASSERT_2 _currn));
+extern void _VS2STATEMENTS_ASSERT_2 ELI_ARG((_TPPSTATEMENTS_ASSERT_2 _currn));
+extern void _VS3STATEMENTS_ASSERT_2 ELI_ARG((_TPPSTATEMENTS_ASSERT_2 _currn));
+extern void _VS4STATEMENTS_ASSERT_2 ELI_ARG((_TPPSTATEMENTS_ASSERT_2 _currn));
+extern void _VS5STATEMENTS_ASSERT_2 ELI_ARG((_TPPSTATEMENTS_ASSERT_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS6STATEMENTS_ASSERT_2 ELI_ARG((_TPPSTATEMENTS_ASSERT_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS1STATEMENTS_RAISE_2 ELI_ARG((_TPPSTATEMENTS_RAISE_2 _currn));
+extern void _VS2STATEMENTS_RAISE_2 ELI_ARG((_TPPSTATEMENTS_RAISE_2 _currn));
+extern void _VS3STATEMENTS_RAISE_2 ELI_ARG((_TPPSTATEMENTS_RAISE_2 _currn));
+extern void _VS4STATEMENTS_RAISE_2 ELI_ARG((_TPPSTATEMENTS_RAISE_2 _currn));
+extern void _VS5STATEMENTS_RAISE_2 ELI_ARG((_TPPSTATEMENTS_RAISE_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS6STATEMENTS_RAISE_2 ELI_ARG((_TPPSTATEMENTS_RAISE_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS1STATEMENTS_RETURN_2 ELI_ARG((_TPPSTATEMENTS_RETURN_2 _currn));
+extern void _VS2STATEMENTS_RETURN_2 ELI_ARG((_TPPSTATEMENTS_RETURN_2 _currn));
+extern void _VS3STATEMENTS_RETURN_2 ELI_ARG((_TPPSTATEMENTS_RETURN_2 _currn));
+extern void _VS4STATEMENTS_RETURN_2 ELI_ARG((_TPPSTATEMENTS_RETURN_2 _currn));
+extern void _VS5STATEMENTS_RETURN_2 ELI_ARG((_TPPSTATEMENTS_RETURN_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS6STATEMENTS_RETURN_2 ELI_ARG((_TPPSTATEMENTS_RETURN_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS1STATEMENTS_RESUME_2 ELI_ARG((_TPPSTATEMENTS_RESUME_2 _currn));
+extern void _VS2STATEMENTS_RESUME_2 ELI_ARG((_TPPSTATEMENTS_RESUME_2 _currn));
+extern void _VS3STATEMENTS_RESUME_2 ELI_ARG((_TPPSTATEMENTS_RESUME_2 _currn));
+extern void _VS4STATEMENTS_RESUME_2 ELI_ARG((_TPPSTATEMENTS_RESUME_2 _currn));
+extern void _VS5STATEMENTS_RESUME_2 ELI_ARG((_TPPSTATEMENTS_RESUME_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS6STATEMENTS_RESUME_2 ELI_ARG((_TPPSTATEMENTS_RESUME_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS1STATEMENTS_EXP_2 ELI_ARG((_TPPSTATEMENTS_EXP_2 _currn));
+extern void _VS2STATEMENTS_EXP_2 ELI_ARG((_TPPSTATEMENTS_EXP_2 _currn));
+extern void _VS3STATEMENTS_EXP_2 ELI_ARG((_TPPSTATEMENTS_EXP_2 _currn));
+extern void _VS4STATEMENTS_EXP_2 ELI_ARG((_TPPSTATEMENTS_EXP_2 _currn));
+extern void _VS5STATEMENTS_EXP_2 ELI_ARG((_TPPSTATEMENTS_EXP_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS6STATEMENTS_EXP_2 ELI_ARG((_TPPSTATEMENTS_EXP_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS1STATEMENTS_BREAK_2 ELI_ARG((_TPPSTATEMENTS_BREAK_2 _currn));
+extern void _VS2STATEMENTS_BREAK_2 ELI_ARG((_TPPSTATEMENTS_BREAK_2 _currn));
+extern void _VS3STATEMENTS_BREAK_2 ELI_ARG((_TPPSTATEMENTS_BREAK_2 _currn));
+extern void _VS4STATEMENTS_BREAK_2 ELI_ARG((_TPPSTATEMENTS_BREAK_2 _currn));
+extern void _VS5STATEMENTS_BREAK_2 ELI_ARG((_TPPSTATEMENTS_BREAK_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS6STATEMENTS_BREAK_2 ELI_ARG((_TPPSTATEMENTS_BREAK_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS1STATEMENTS_LOOP_2 ELI_ARG((_TPPSTATEMENTS_LOOP_2 _currn));
+extern void _VS2STATEMENTS_LOOP_2 ELI_ARG((_TPPSTATEMENTS_LOOP_2 _currn));
+extern void _VS3STATEMENTS_LOOP_2 ELI_ARG((_TPPSTATEMENTS_LOOP_2 _currn));
+extern void _VS4STATEMENTS_LOOP_2 ELI_ARG((_TPPSTATEMENTS_LOOP_2 _currn));
+extern void _VS5STATEMENTS_LOOP_2 ELI_ARG((_TPPSTATEMENTS_LOOP_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS6STATEMENTS_LOOP_2 ELI_ARG((_TPPSTATEMENTS_LOOP_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS1STATEMENTS_TYPE_CASE_2 ELI_ARG((_TPPSTATEMENTS_TYPE_CASE_2 _currn));
+extern void _VS2STATEMENTS_TYPE_CASE_2 ELI_ARG((_TPPSTATEMENTS_TYPE_CASE_2 _currn));
+extern void _VS3STATEMENTS_TYPE_CASE_2 ELI_ARG((_TPPSTATEMENTS_TYPE_CASE_2 _currn));
+extern void _VS4STATEMENTS_TYPE_CASE_2 ELI_ARG((_TPPSTATEMENTS_TYPE_CASE_2 _currn));
+extern void _VS5STATEMENTS_TYPE_CASE_2 ELI_ARG((_TPPSTATEMENTS_TYPE_CASE_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS6STATEMENTS_TYPE_CASE_2 ELI_ARG((_TPPSTATEMENTS_TYPE_CASE_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS1STATEMENTS_CASE_2 ELI_ARG((_TPPSTATEMENTS_CASE_2 _currn));
+extern void _VS2STATEMENTS_CASE_2 ELI_ARG((_TPPSTATEMENTS_CASE_2 _currn));
+extern void _VS3STATEMENTS_CASE_2 ELI_ARG((_TPPSTATEMENTS_CASE_2 _currn));
+extern void _VS4STATEMENTS_CASE_2 ELI_ARG((_TPPSTATEMENTS_CASE_2 _currn));
+extern void _VS5STATEMENTS_CASE_2 ELI_ARG((_TPPSTATEMENTS_CASE_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS6STATEMENTS_CASE_2 ELI_ARG((_TPPSTATEMENTS_CASE_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS1STATEMENTS_COND_2 ELI_ARG((_TPPSTATEMENTS_COND_2 _currn));
+extern void _VS2STATEMENTS_COND_2 ELI_ARG((_TPPSTATEMENTS_COND_2 _currn));
+extern void _VS3STATEMENTS_COND_2 ELI_ARG((_TPPSTATEMENTS_COND_2 _currn));
+extern void _VS4STATEMENTS_COND_2 ELI_ARG((_TPPSTATEMENTS_COND_2 _currn));
+extern void _VS5STATEMENTS_COND_2 ELI_ARG((_TPPSTATEMENTS_COND_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS6STATEMENTS_COND_2 ELI_ARG((_TPPSTATEMENTS_COND_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS1STATEMENTS_BEGIN_2 ELI_ARG((_TPPSTATEMENTS_BEGIN_2 _currn));
+extern void _VS2STATEMENTS_BEGIN_2 ELI_ARG((_TPPSTATEMENTS_BEGIN_2 _currn));
+extern void _VS3STATEMENTS_BEGIN_2 ELI_ARG((_TPPSTATEMENTS_BEGIN_2 _currn));
+extern void _VS4STATEMENTS_BEGIN_2 ELI_ARG((_TPPSTATEMENTS_BEGIN_2 _currn));
+extern void _VS5STATEMENTS_BEGIN_2 ELI_ARG((_TPPSTATEMENTS_BEGIN_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS6STATEMENTS_BEGIN_2 ELI_ARG((_TPPSTATEMENTS_BEGIN_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS1STATEMENTS_ASSIGN_2 ELI_ARG((_TPPSTATEMENTS_ASSIGN_2 _currn));
+extern void _VS2STATEMENTS_ASSIGN_2 ELI_ARG((_TPPSTATEMENTS_ASSIGN_2 _currn));
+extern void _VS3STATEMENTS_ASSIGN_2 ELI_ARG((_TPPSTATEMENTS_ASSIGN_2 _currn));
+extern void _VS4STATEMENTS_ASSIGN_2 ELI_ARG((_TPPSTATEMENTS_ASSIGN_2 _currn));
+extern void _VS5STATEMENTS_ASSIGN_2 ELI_ARG((_TPPSTATEMENTS_ASSIGN_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS6STATEMENTS_ASSIGN_2 ELI_ARG((_TPPSTATEMENTS_ASSIGN_2 _currn,DefTableKeyList* _AS0_const81));
+#define _VS1STATEMENTS_EMPTY_2 _VS0Empty
+
+#define _VS2STATEMENTS_EMPTY_2 _VS0Empty
+
+#define _VS3STATEMENTS_EMPTY_2 _VS0Empty
+
+#define _VS4STATEMENTS_EMPTY_2 _VS0Empty
+
+extern void _VS5STATEMENTS_EMPTY_2 ELI_ARG((_TPPSTATEMENTS_EMPTY_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS6STATEMENTS_EMPTY_2 ELI_ARG((_TPPSTATEMENTS_EMPTY_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS1LOCAL_STREAM_DECL_2 ELI_ARG((_TPPLOCAL_STREAM_DECL_2 _currn));
+extern void _VS2LOCAL_STREAM_DECL_2 ELI_ARG((_TPPLOCAL_STREAM_DECL_2 _currn));
+extern void _VS3LOCAL_STREAM_DECL_2 ELI_ARG((_TPPLOCAL_STREAM_DECL_2 _currn));
+extern void _VS4LOCAL_STREAM_DECL_2 ELI_ARG((_TPPLOCAL_STREAM_DECL_2 _currn));
+extern void _VS5LOCAL_STREAM_DECL_2 ELI_ARG((_TPPLOCAL_STREAM_DECL_2 _currn));
+extern void _VS6LOCAL_STREAM_DECL_2 ELI_ARG((_TPPLOCAL_STREAM_DECL_2 _currn));
+extern void _VS1LOCAL_DECLS_STREAM_2 ELI_ARG((_TPPLOCAL_DECLS_STREAM_2 _currn));
+extern void _VS2LOCAL_DECLS_STREAM_2 ELI_ARG((_TPPLOCAL_DECLS_STREAM_2 _currn));
+extern void _VS3LOCAL_DECLS_STREAM_2 ELI_ARG((_TPPLOCAL_DECLS_STREAM_2 _currn));
+extern void _VS4LOCAL_DECLS_STREAM_2 ELI_ARG((_TPPLOCAL_DECLS_STREAM_2 _currn));
+extern void _VS5LOCAL_DECLS_STREAM_2 ELI_ARG((_TPPLOCAL_DECLS_STREAM_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS6LOCAL_DECLS_STREAM_2 ELI_ARG((_TPPLOCAL_DECLS_STREAM_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS1LOCAL_DECLS_ATT_2 ELI_ARG((_TPPLOCAL_DECLS_ATT_2 _currn));
+extern void _VS2LOCAL_DECLS_ATT_2 ELI_ARG((_TPPLOCAL_DECLS_ATT_2 _currn));
+extern void _VS3LOCAL_DECLS_ATT_2 ELI_ARG((_TPPLOCAL_DECLS_ATT_2 _currn));
+extern void _VS4LOCAL_DECLS_ATT_2 ELI_ARG((_TPPLOCAL_DECLS_ATT_2 _currn));
+extern void _VS5LOCAL_DECLS_ATT_2 ELI_ARG((_TPPLOCAL_DECLS_ATT_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS6LOCAL_DECLS_ATT_2 ELI_ARG((_TPPLOCAL_DECLS_ATT_2 _currn,DefTableKeyList* _AS0_const81));
+#define _VS1LOCAL_DECLS_EMPTY_2 _VS0Empty
+
+#define _VS2LOCAL_DECLS_EMPTY_2 _VS0Empty
+
+#define _VS3LOCAL_DECLS_EMPTY_2 _VS0Empty
+
+#define _VS4LOCAL_DECLS_EMPTY_2 _VS0Empty
+
+extern void _VS5LOCAL_DECLS_EMPTY_2 ELI_ARG((_TPPLOCAL_DECLS_EMPTY_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS6LOCAL_DECLS_EMPTY_2 ELI_ARG((_TPPLOCAL_DECLS_EMPTY_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS1BLOCK_2 ELI_ARG((_TPPBLOCK_2 _currn));
+extern void _VS2BLOCK_2 ELI_ARG((_TPPBLOCK_2 _currn));
+extern void _VS3BLOCK_2 ELI_ARG((_TPPBLOCK_2 _currn));
+extern void _VS4BLOCK_2 ELI_ARG((_TPPBLOCK_2 _currn));
+extern void _VS5BLOCK_2 ELI_ARG((_TPPBLOCK_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS6BLOCK_2 ELI_ARG((_TPPBLOCK_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS7BLOCK_2 ELI_ARG((_TPPBLOCK_2 _currn,PTGNode* _AS0locals,PTGNode* _AS0out,int* _AS0_const85,PTGNode* _AS0_const84,int* _AS0_const83,PTGNode* _AS0_const82,DefTableKeyList* _AS0_const81));
+extern void _VS1BUILTIN_INST_CLRTYPE_2 ELI_ARG((_TPPBUILTIN_INST_CLRTYPE_2 _currn));
+extern void _VS2BUILTIN_INST_CLRTYPE_2 ELI_ARG((_TPPBUILTIN_INST_CLRTYPE_2 _currn));
+extern void _VS3BUILTIN_INST_CLRTYPE_2 ELI_ARG((_TPPBUILTIN_INST_CLRTYPE_2 _currn));
+extern void _VS4BUILTIN_INST_CLRTYPE_2 ELI_ARG((_TPPBUILTIN_INST_CLRTYPE_2 _currn));
+extern void _VS1BUILTIN_INST_TYPE_2 ELI_ARG((_TPPBUILTIN_INST_TYPE_2 _currn));
+extern void _VS2BUILTIN_INST_TYPE_2 ELI_ARG((_TPPBUILTIN_INST_TYPE_2 _currn));
+extern void _VS3BUILTIN_INST_TYPE_2 ELI_ARG((_TPPBUILTIN_INST_TYPE_2 _currn));
+extern void _VS4BUILTIN_INST_TYPE_2 ELI_ARG((_TPPBUILTIN_INST_TYPE_2 _currn));
+extern void _VS1BUILTIN_INST_STR_2 ELI_ARG((_TPPBUILTIN_INST_STR_2 _currn));
+#define _VS2BUILTIN_INST_STR_2 _VS0Empty
+
+extern void _VS3BUILTIN_INST_STR_2 ELI_ARG((_TPPBUILTIN_INST_STR_2 _currn));
+extern void _VS4BUILTIN_INST_STR_2 ELI_ARG((_TPPBUILTIN_INST_STR_2 _currn));
+#define _VS1BUILTIN_INSTS_EMPTY_2 _VS0Empty
+
+#define _VS2BUILTIN_INSTS_EMPTY_2 _VS0Empty
+
+extern void _VS3BUILTIN_INSTS_EMPTY_2 ELI_ARG((_TPPBUILTIN_INSTS_EMPTY_2 _currn));
+extern void _VS4BUILTIN_INSTS_EMPTY_2 ELI_ARG((_TPPBUILTIN_INSTS_EMPTY_2 _currn));
+#define _VS1BUILTIN_INSTS_2 _VS1LST_Class_declarationCLASS_DECLARATIONS
+
+#define _VS2BUILTIN_INSTS_2 _VS2LST_ModificationMODIFICATIONS
+
+extern void _VS3BUILTIN_INSTS_2 ELI_ARG((_TPPBUILTIN_INSTS_2 _currn));
+extern void _VS4BUILTIN_INSTS_2 ELI_ARG((_TPPBUILTIN_INSTS_2 _currn));
+extern void _VS1METHOD_BODY_STATIC_BUILTIN_2 ELI_ARG((_TPPMETHOD_BODY_STATIC_BUILTIN_2 _currn));
+#define _VS2METHOD_BODY_STATIC_BUILTIN_2 _VS0Empty
+
+extern void _VS3METHOD_BODY_STATIC_BUILTIN_2 ELI_ARG((_TPPMETHOD_BODY_STATIC_BUILTIN_2 _currn));
+#define _VS4METHOD_BODY_STATIC_BUILTIN_2 _VS0Empty
+
+extern void _VS5METHOD_BODY_STATIC_BUILTIN_2 ELI_ARG((_TPPMETHOD_BODY_STATIC_BUILTIN_2 _currn));
+#define _VS6METHOD_BODY_STATIC_BUILTIN_2 _VS0Empty
+
+extern void _VS7METHOD_BODY_STATIC_BUILTIN_2 ELI_ARG((_TPPMETHOD_BODY_STATIC_BUILTIN_2 _currn));
+extern void _VS1METHOD_BODY_BUILTIN_2 ELI_ARG((_TPPMETHOD_BODY_BUILTIN_2 _currn));
+#define _VS2METHOD_BODY_BUILTIN_2 _VS0Empty
+
+extern void _VS3METHOD_BODY_BUILTIN_2 ELI_ARG((_TPPMETHOD_BODY_BUILTIN_2 _currn));
+#define _VS4METHOD_BODY_BUILTIN_2 _VS0Empty
+
+extern void _VS5METHOD_BODY_BUILTIN_2 ELI_ARG((_TPPMETHOD_BODY_BUILTIN_2 _currn));
+#define _VS6METHOD_BODY_BUILTIN_2 _VS0Empty
+
+extern void _VS7METHOD_BODY_BUILTIN_2 ELI_ARG((_TPPMETHOD_BODY_BUILTIN_2 _currn));
+#define _VS1LINKER_SYMBOL_2 _VS0Empty
+
+#define _VS1LINKER_SYMBOL_EMPTY_2 _VS0Empty
+
+#define _VS1FOREIGN_LANGUAGE_2 _VS0Empty
+
+extern void _VS1METHOD_BODY_FOREIGN_2 ELI_ARG((_TPPMETHOD_BODY_FOREIGN_2 _currn));
+#define _VS2METHOD_BODY_FOREIGN_2 _VS0Empty
+
+#define _VS3METHOD_BODY_FOREIGN_2 _VS0Empty
+
+#define _VS4METHOD_BODY_FOREIGN_2 _VS0Empty
+
+extern void _VS5METHOD_BODY_FOREIGN_2 ELI_ARG((_TPPMETHOD_BODY_FOREIGN_2 _currn));
+extern void _VS6METHOD_BODY_FOREIGN_2 ELI_ARG((_TPPMETHOD_BODY_FOREIGN_2 _currn));
+extern void _VS7METHOD_BODY_FOREIGN_2 ELI_ARG((_TPPMETHOD_BODY_FOREIGN_2 _currn));
+extern void _VS1METHOD_BODY_AB_2 ELI_ARG((_TPPMETHOD_BODY_AB_2 _currn));
+#define _VS2METHOD_BODY_AB_2 _VS0Empty
+
+#define _VS3METHOD_BODY_AB_2 _VS0Empty
+
+#define _VS4METHOD_BODY_AB_2 _VS0Empty
+
+extern void _VS5METHOD_BODY_AB_2 ELI_ARG((_TPPMETHOD_BODY_AB_2 _currn));
+extern void _VS6METHOD_BODY_AB_2 ELI_ARG((_TPPMETHOD_BODY_AB_2 _currn));
+extern void _VS7METHOD_BODY_AB_2 ELI_ARG((_TPPMETHOD_BODY_AB_2 _currn));
+extern void _VS1METHOD_BODY_2 ELI_ARG((_TPPMETHOD_BODY_2 _currn));
+extern void _VS2METHOD_BODY_2 ELI_ARG((_TPPMETHOD_BODY_2 _currn));
+extern void _VS3METHOD_BODY_2 ELI_ARG((_TPPMETHOD_BODY_2 _currn));
+extern void _VS4METHOD_BODY_2 ELI_ARG((_TPPMETHOD_BODY_2 _currn));
+extern void _VS5METHOD_BODY_2 ELI_ARG((_TPPMETHOD_BODY_2 _currn));
+extern void _VS6METHOD_BODY_2 ELI_ARG((_TPPMETHOD_BODY_2 _currn));
+extern void _VS7METHOD_BODY_2 ELI_ARG((_TPPMETHOD_BODY_2 _currn));
+extern void _VS1PARAMETER_SPEC_2 ELI_ARG((_TPPPARAMETER_SPEC_2 _currn));
+extern void _VS2PARAMETER_SPEC_2 ELI_ARG((_TPPPARAMETER_SPEC_2 _currn));
+extern void _VS3PARAMETER_SPEC_2 ELI_ARG((_TPPPARAMETER_SPEC_2 _currn));
+extern void _VS4PARAMETER_SPEC_2 ELI_ARG((_TPPPARAMETER_SPEC_2 _currn));
+extern void _VS5PARAMETER_SPEC_2 ELI_ARG((_TPPPARAMETER_SPEC_2 _currn));
+extern void _VS6PARAMETER_SPEC_2 ELI_ARG((_TPPPARAMETER_SPEC_2 _currn,PTGNode* _AS0_const89,PTGNode* _AS0_const88,PTGNode* _AS0_const87));
+extern void _VS1PARAMETERS_2 ELI_ARG((_TPPPARAMETERS_2 _currn));
+extern void _VS2PARAMETERS_2 ELI_ARG((_TPPPARAMETERS_2 _currn));
+extern void _VS3PARAMETERS_2 ELI_ARG((_TPPPARAMETERS_2 _currn));
+extern void _VS4PARAMETERS_2 ELI_ARG((_TPPPARAMETERS_2 _currn));
+extern void _VS5PARAMETERS_2 ELI_ARG((_TPPPARAMETERS_2 _currn));
+extern void _VS6PARAMETERS_2 ELI_ARG((_TPPPARAMETERS_2 _currn));
+extern void _VS1METHOD_IDENT_DEF_2 ELI_ARG((_TPPMETHOD_IDENT_DEF_2 _currn));
+extern void _VS2METHOD_IDENT_DEF_2 ELI_ARG((_TPPMETHOD_IDENT_DEF_2 _currn));
+extern void _VS3METHOD_IDENT_DEF_2 ELI_ARG((_TPPMETHOD_IDENT_DEF_2 _currn));
+extern void _VS1METHOD_DECL_2 ELI_ARG((_TPPMETHOD_DECL_2 _currn));
+extern void _VS2METHOD_DECL_2 ELI_ARG((_TPPMETHOD_DECL_2 _currn));
+extern void _VS3METHOD_DECL_2 ELI_ARG((_TPPMETHOD_DECL_2 _currn));
+extern void _VS4METHOD_DECL_2 ELI_ARG((_TPPMETHOD_DECL_2 _currn));
+extern void _VS5METHOD_DECL_2 ELI_ARG((_TPPMETHOD_DECL_2 _currn));
+extern void _VS6METHOD_DECL_2 ELI_ARG((_TPPMETHOD_DECL_2 _currn));
+extern void _VS7METHOD_DECL_2 ELI_ARG((_TPPMETHOD_DECL_2 _currn));
+extern void _VS8METHOD_DECL_2 ELI_ARG((_TPPMETHOD_DECL_2 _currn));
+extern void _VS9METHOD_DECL_2 ELI_ARG((_TPPMETHOD_DECL_2 _currn));
+extern void _VS1IDENTIFIERS_2 ELI_ARG((_TPPIDENTIFIERS_2 _currn,IntSet* _AS0KindSet));
+extern void _VS2IDENTIFIERS_2 ELI_ARG((_TPPIDENTIFIERS_2 _currn,IntSet* _AS0KindSet));
+extern void _VS3IDENTIFIERS_2 ELI_ARG((_TPPIDENTIFIERS_2 _currn,IntSet* _AS0KindSet));
+extern void _VS4IDENTIFIERS_2 ELI_ARG((_TPPIDENTIFIERS_2 _currn,IntSet* _AS0KindSet));
+extern void _VS5IDENTIFIERS_2 ELI_ARG((_TPPIDENTIFIERS_2 _currn,IntSet* _AS0KindSet));
+extern void _VS6IDENTIFIERS_2 ELI_ARG((_TPPIDENTIFIERS_2 _currn,IntSet* _AS0KindSet));
+extern void _VS1IDENTIFIERS_LST_2 ELI_ARG((_TPPIDENTIFIERS_LST_2 _currn,IntSet* _AS0KindSet));
+extern void _VS2IDENTIFIERS_LST_2 ELI_ARG((_TPPIDENTIFIERS_LST_2 _currn,IntSet* _AS0KindSet));
+extern void _VS3IDENTIFIERS_LST_2 ELI_ARG((_TPPIDENTIFIERS_LST_2 _currn,IntSet* _AS0KindSet));
+extern void _VS4IDENTIFIERS_LST_2 ELI_ARG((_TPPIDENTIFIERS_LST_2 _currn,IntSet* _AS0KindSet));
+extern void _VS5IDENTIFIERS_LST_2 ELI_ARG((_TPPIDENTIFIERS_LST_2 _currn,IntSet* _AS0KindSet));
+extern void _VS6IDENTIFIERS_LST_2 ELI_ARG((_TPPIDENTIFIERS_LST_2 _currn,IntSet* _AS0KindSet));
+extern void _VS1ATTR_SPEC_2 ELI_ARG((_TPPATTR_SPEC_2 _currn));
+extern void _VS2ATTR_SPEC_2 ELI_ARG((_TPPATTR_SPEC_2 _currn));
+extern void _VS3ATTR_SPEC_2 ELI_ARG((_TPPATTR_SPEC_2 _currn));
+extern void _VS4ATTR_SPEC_2 ELI_ARG((_TPPATTR_SPEC_2 _currn));
+extern void _VS5ATTR_SPEC_2 ELI_ARG((_TPPATTR_SPEC_2 _currn));
+extern void _VS6ATTR_SPEC_2 ELI_ARG((_TPPATTR_SPEC_2 _currn));
+extern void _VS7ATTR_SPEC_2 ELI_ARG((_TPPATTR_SPEC_2 _currn));
+extern void _VS8ATTR_SPEC_2 ELI_ARG((_TPPATTR_SPEC_2 _currn));
+extern void _VS1ATTR_DECL_CONST_TYPE_CONST_2 ELI_ARG((_TPPATTR_DECL_CONST_TYPE_CONST_2 _currn));
+extern void _VS2ATTR_DECL_CONST_TYPE_CONST_2 ELI_ARG((_TPPATTR_DECL_CONST_TYPE_CONST_2 _currn));
+extern void _VS3ATTR_DECL_CONST_TYPE_CONST_2 ELI_ARG((_TPPATTR_DECL_CONST_TYPE_CONST_2 _currn));
+extern void _VS4ATTR_DECL_CONST_TYPE_CONST_2 ELI_ARG((_TPPATTR_DECL_CONST_TYPE_CONST_2 _currn));
+extern void _VS5ATTR_DECL_CONST_TYPE_CONST_2 ELI_ARG((_TPPATTR_DECL_CONST_TYPE_CONST_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS6ATTR_DECL_CONST_TYPE_CONST_2 ELI_ARG((_TPPATTR_DECL_CONST_TYPE_CONST_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS7ATTR_DECL_CONST_TYPE_CONST_2 ELI_ARG((_TPPATTR_DECL_CONST_TYPE_CONST_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS8ATTR_DECL_CONST_TYPE_CONST_2 ELI_ARG((_TPPATTR_DECL_CONST_TYPE_CONST_2 _currn,int* _AS0StackHeight,int* _AS0_const83,PTGNode* _AS0_const82,DefTableKeyList* _AS0_const81));
+extern void _VS1ATTR_DECL_TYPE_CONST_2 ELI_ARG((_TPPATTR_DECL_TYPE_CONST_2 _currn));
+extern void _VS2ATTR_DECL_TYPE_CONST_2 ELI_ARG((_TPPATTR_DECL_TYPE_CONST_2 _currn));
+extern void _VS3ATTR_DECL_TYPE_CONST_2 ELI_ARG((_TPPATTR_DECL_TYPE_CONST_2 _currn));
+extern void _VS4ATTR_DECL_TYPE_CONST_2 ELI_ARG((_TPPATTR_DECL_TYPE_CONST_2 _currn));
+extern void _VS5ATTR_DECL_TYPE_CONST_2 ELI_ARG((_TPPATTR_DECL_TYPE_CONST_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS6ATTR_DECL_TYPE_CONST_2 ELI_ARG((_TPPATTR_DECL_TYPE_CONST_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS7ATTR_DECL_TYPE_CONST_2 ELI_ARG((_TPPATTR_DECL_TYPE_CONST_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS8ATTR_DECL_TYPE_CONST_2 ELI_ARG((_TPPATTR_DECL_TYPE_CONST_2 _currn,int* _AS0StackHeight,int* _AS0_const83,PTGNode* _AS0_const82,DefTableKeyList* _AS0_const81));
+extern void _VS1ATTR_DECL_CONST_EXP_2 ELI_ARG((_TPPATTR_DECL_CONST_EXP_2 _currn));
+extern void _VS2ATTR_DECL_CONST_EXP_2 ELI_ARG((_TPPATTR_DECL_CONST_EXP_2 _currn));
+extern void _VS3ATTR_DECL_CONST_EXP_2 ELI_ARG((_TPPATTR_DECL_CONST_EXP_2 _currn));
+extern void _VS4ATTR_DECL_CONST_EXP_2 ELI_ARG((_TPPATTR_DECL_CONST_EXP_2 _currn));
+extern void _VS5ATTR_DECL_CONST_EXP_2 ELI_ARG((_TPPATTR_DECL_CONST_EXP_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS6ATTR_DECL_CONST_EXP_2 ELI_ARG((_TPPATTR_DECL_CONST_EXP_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS7ATTR_DECL_CONST_EXP_2 ELI_ARG((_TPPATTR_DECL_CONST_EXP_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS8ATTR_DECL_CONST_EXP_2 ELI_ARG((_TPPATTR_DECL_CONST_EXP_2 _currn,int* _AS0StackHeight,int* _AS0_const83,PTGNode* _AS0_const82,DefTableKeyList* _AS0_const81));
+extern void _VS1ATTR_DECL_EXP_2 ELI_ARG((_TPPATTR_DECL_EXP_2 _currn));
+extern void _VS2ATTR_DECL_EXP_2 ELI_ARG((_TPPATTR_DECL_EXP_2 _currn));
+extern void _VS3ATTR_DECL_EXP_2 ELI_ARG((_TPPATTR_DECL_EXP_2 _currn));
+extern void _VS4ATTR_DECL_EXP_2 ELI_ARG((_TPPATTR_DECL_EXP_2 _currn));
+extern void _VS5ATTR_DECL_EXP_2 ELI_ARG((_TPPATTR_DECL_EXP_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS6ATTR_DECL_EXP_2 ELI_ARG((_TPPATTR_DECL_EXP_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS7ATTR_DECL_EXP_2 ELI_ARG((_TPPATTR_DECL_EXP_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS8ATTR_DECL_EXP_2 ELI_ARG((_TPPATTR_DECL_EXP_2 _currn,int* _AS0StackHeight,int* _AS0_const83,PTGNode* _AS0_const82,DefTableKeyList* _AS0_const81));
+extern void _VS1ATTR_DECL_2 ELI_ARG((_TPPATTR_DECL_2 _currn));
+extern void _VS2ATTR_DECL_2 ELI_ARG((_TPPATTR_DECL_2 _currn));
+extern void _VS3ATTR_DECL_2 ELI_ARG((_TPPATTR_DECL_2 _currn));
+extern void _VS4ATTR_DECL_2 ELI_ARG((_TPPATTR_DECL_2 _currn));
+extern void _VS5ATTR_DECL_2 ELI_ARG((_TPPATTR_DECL_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS6ATTR_DECL_2 ELI_ARG((_TPPATTR_DECL_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS7ATTR_DECL_2 ELI_ARG((_TPPATTR_DECL_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS8ATTR_DECL_2 ELI_ARG((_TPPATTR_DECL_2 _currn,int* _AS0StackHeight,int* _AS0_const83,PTGNode* _AS0_const82,DefTableKeyList* _AS0_const81));
+extern void _VS1ATTR_ACCESS_SH_RO_2 ELI_ARG((_TPPATTR_ACCESS_SH_RO_2 _currn));
+extern void _VS1ATTR_ACCESS_RO_2 ELI_ARG((_TPPATTR_ACCESS_RO_2 _currn));
+extern void _VS1ATTR_ACCESS_SH_2 ELI_ARG((_TPPATTR_ACCESS_SH_2 _currn));
+extern void _VS1FEATURE_STREAM_2 ELI_ARG((_TPPFEATURE_STREAM_2 _currn));
+extern void _VS2FEATURE_STREAM_2 ELI_ARG((_TPPFEATURE_STREAM_2 _currn));
+extern void _VS3FEATURE_STREAM_2 ELI_ARG((_TPPFEATURE_STREAM_2 _currn));
+extern void _VS4FEATURE_STREAM_2 ELI_ARG((_TPPFEATURE_STREAM_2 _currn));
+extern void _VS5FEATURE_STREAM_2 ELI_ARG((_TPPFEATURE_STREAM_2 _currn));
+extern void _VS6FEATURE_STREAM_2 ELI_ARG((_TPPFEATURE_STREAM_2 _currn));
+extern void _VS7FEATURE_STREAM_2 ELI_ARG((_TPPFEATURE_STREAM_2 _currn));
+extern void _VS8FEATURE_STREAM_2 ELI_ARG((_TPPFEATURE_STREAM_2 _currn));
+extern void _VS1FEATURE_METH_2 ELI_ARG((_TPPFEATURE_METH_2 _currn));
+extern void _VS2FEATURE_METH_2 ELI_ARG((_TPPFEATURE_METH_2 _currn));
+extern void _VS3FEATURE_METH_2 ELI_ARG((_TPPFEATURE_METH_2 _currn));
+extern void _VS4FEATURE_METH_2 ELI_ARG((_TPPFEATURE_METH_2 _currn));
+extern void _VS5FEATURE_METH_2 ELI_ARG((_TPPFEATURE_METH_2 _currn));
+extern void _VS6FEATURE_METH_2 ELI_ARG((_TPPFEATURE_METH_2 _currn));
+extern void _VS7FEATURE_METH_2 ELI_ARG((_TPPFEATURE_METH_2 _currn));
+extern void _VS8FEATURE_METH_2 ELI_ARG((_TPPFEATURE_METH_2 _currn));
+extern void _VS1FEATURE_ATT_2 ELI_ARG((_TPPFEATURE_ATT_2 _currn));
+extern void _VS2FEATURE_ATT_2 ELI_ARG((_TPPFEATURE_ATT_2 _currn));
+extern void _VS3FEATURE_ATT_2 ELI_ARG((_TPPFEATURE_ATT_2 _currn));
+extern void _VS4FEATURE_ATT_2 ELI_ARG((_TPPFEATURE_ATT_2 _currn));
+extern void _VS5FEATURE_ATT_2 ELI_ARG((_TPPFEATURE_ATT_2 _currn));
+extern void _VS6FEATURE_ATT_2 ELI_ARG((_TPPFEATURE_ATT_2 _currn));
+extern void _VS7FEATURE_ATT_2 ELI_ARG((_TPPFEATURE_ATT_2 _currn));
+extern void _VS8FEATURE_ATT_2 ELI_ARG((_TPPFEATURE_ATT_2 _currn));
+extern void _VS1FEATURE_ATT_ACC_2 ELI_ARG((_TPPFEATURE_ATT_ACC_2 _currn));
+extern void _VS2FEATURE_ATT_ACC_2 ELI_ARG((_TPPFEATURE_ATT_ACC_2 _currn));
+extern void _VS3FEATURE_ATT_ACC_2 ELI_ARG((_TPPFEATURE_ATT_ACC_2 _currn));
+extern void _VS4FEATURE_ATT_ACC_2 ELI_ARG((_TPPFEATURE_ATT_ACC_2 _currn));
+extern void _VS5FEATURE_ATT_ACC_2 ELI_ARG((_TPPFEATURE_ATT_ACC_2 _currn));
+extern void _VS6FEATURE_ATT_ACC_2 ELI_ARG((_TPPFEATURE_ATT_ACC_2 _currn));
+extern void _VS7FEATURE_ATT_ACC_2 ELI_ARG((_TPPFEATURE_ATT_ACC_2 _currn));
+extern void _VS8FEATURE_ATT_ACC_2 ELI_ARG((_TPPFEATURE_ATT_ACC_2 _currn));
+extern void _VS1FEATURE_DECL_PRIV_2 ELI_ARG((_TPPFEATURE_DECL_PRIV_2 _currn));
+extern void _VS2FEATURE_DECL_PRIV_2 ELI_ARG((_TPPFEATURE_DECL_PRIV_2 _currn));
+extern void _VS3FEATURE_DECL_PRIV_2 ELI_ARG((_TPPFEATURE_DECL_PRIV_2 _currn));
+extern void _VS4FEATURE_DECL_PRIV_2 ELI_ARG((_TPPFEATURE_DECL_PRIV_2 _currn));
+extern void _VS5FEATURE_DECL_PRIV_2 ELI_ARG((_TPPFEATURE_DECL_PRIV_2 _currn,int* _AS0_const112));
+extern void _VS6FEATURE_DECL_PRIV_2 ELI_ARG((_TPPFEATURE_DECL_PRIV_2 _currn,int* _AS0_const112,PTGNode* _AS0_const101));
+extern void _VS7FEATURE_DECL_PRIV_2 ELI_ARG((_TPPFEATURE_DECL_PRIV_2 _currn,int* _AS0_const114,int* _AS0_const112,int* _AS0_const111,int* _AS0_const107,int* _AS0_const106,PTGNode* _AS0_const101,PTGNode* _AS0_const0));
+extern void _VS1FEATURE_DECL_2 ELI_ARG((_TPPFEATURE_DECL_2 _currn));
+extern void _VS2FEATURE_DECL_2 ELI_ARG((_TPPFEATURE_DECL_2 _currn));
+extern void _VS3FEATURE_DECL_2 ELI_ARG((_TPPFEATURE_DECL_2 _currn));
+extern void _VS4FEATURE_DECL_2 ELI_ARG((_TPPFEATURE_DECL_2 _currn));
+extern void _VS5FEATURE_DECL_2 ELI_ARG((_TPPFEATURE_DECL_2 _currn,int* _AS0_const112));
+extern void _VS6FEATURE_DECL_2 ELI_ARG((_TPPFEATURE_DECL_2 _currn,int* _AS0_const112,PTGNode* _AS0_const101));
+extern void _VS7FEATURE_DECL_2 ELI_ARG((_TPPFEATURE_DECL_2 _currn,int* _AS0_const114,int* _AS0_const112,int* _AS0_const111,int* _AS0_const107,int* _AS0_const106,PTGNode* _AS0_const101,PTGNode* _AS0_const0));
+extern void _VS1FEATURE_DECLS_2 ELI_ARG((_TPPFEATURE_DECLS_2 _currn));
+extern void _VS2FEATURE_DECLS_2 ELI_ARG((_TPPFEATURE_DECLS_2 _currn));
+extern void _VS3FEATURE_DECLS_2 ELI_ARG((_TPPFEATURE_DECLS_2 _currn));
+extern void _VS4FEATURE_DECLS_2 ELI_ARG((_TPPFEATURE_DECLS_2 _currn));
+extern void _VS5FEATURE_DECLS_2 ELI_ARG((_TPPFEATURE_DECLS_2 _currn));
+extern void _VS6FEATURE_DECLS_2 ELI_ARG((_TPPFEATURE_DECLS_2 _currn));
+extern void _VS7FEATURE_DECLS_2 ELI_ARG((_TPPFEATURE_DECLS_2 _currn));
+extern void _VS1INHERITANCE_LIKE_2 ELI_ARG((_TPPINHERITANCE_LIKE_2 _currn));
+extern void _VS2INHERITANCE_LIKE_2 ELI_ARG((_TPPINHERITANCE_LIKE_2 _currn));
+extern void _VS3INHERITANCE_LIKE_2 ELI_ARG((_TPPINHERITANCE_LIKE_2 _currn));
+extern void _VS4INHERITANCE_LIKE_2 ELI_ARG((_TPPINHERITANCE_LIKE_2 _currn));
+extern void _VS1INHERITANCES_LST_2 ELI_ARG((_TPPINHERITANCES_LST_2 _currn));
+extern void _VS2INHERITANCES_LST_2 ELI_ARG((_TPPINHERITANCES_LST_2 _currn));
+extern void _VS3INHERITANCES_LST_2 ELI_ARG((_TPPINHERITANCES_LST_2 _currn));
+extern void _VS4INHERITANCES_LST_2 ELI_ARG((_TPPINHERITANCES_LST_2 _currn));
+extern void _VS1INHERITANCES_EMPTY_2 ELI_ARG((_TPPINHERITANCES_EMPTY_2 _currn));
+#define _VS2INHERITANCES_EMPTY_2 _VS0Empty
+
+extern void _VS3INHERITANCES_EMPTY_2 ELI_ARG((_TPPINHERITANCES_EMPTY_2 _currn));
+#define _VS4INHERITANCES_EMPTY_2 _VS0Empty
+
+extern void _VS1DIRECT_STREAM_CALL_2 ELI_ARG((_TPPDIRECT_STREAM_CALL_2 _currn));
+extern void _VS2DIRECT_STREAM_CALL_2 ELI_ARG((_TPPDIRECT_STREAM_CALL_2 _currn));
+extern void _VS3DIRECT_STREAM_CALL_2 ELI_ARG((_TPPDIRECT_STREAM_CALL_2 _currn));
+extern void _VS4DIRECT_STREAM_CALL_2 ELI_ARG((_TPPDIRECT_STREAM_CALL_2 _currn));
+extern void _VS5DIRECT_STREAM_CALL_2 ELI_ARG((_TPPDIRECT_STREAM_CALL_2 _currn));
+extern void _VS1COERCION_2 ELI_ARG((_TPPCOERCION_2 _currn));
+extern void _VS2COERCION_2 ELI_ARG((_TPPCOERCION_2 _currn));
+extern void _VS3COERCION_2 ELI_ARG((_TPPCOERCION_2 _currn));
+extern void _VS4COERCION_2 ELI_ARG((_TPPCOERCION_2 _currn));
+extern void _VS1STR_CONSTANT_2 ELI_ARG((_TPPSTR_CONSTANT_2 _currn,PTGNode* _AS0str_val));
+extern void _VS1STR_CONSTANTS_2 ELI_ARG((_TPPSTR_CONSTANTS_2 _currn));
+extern void _VS1STR_CONSTANTS_LST_2 ELI_ARG((_TPPSTR_CONSTANTS_LST_2 _currn));
+extern void _VS1VALUE_VOID_2 ELI_ARG((_TPPVALUE_VOID_2 _currn));
+extern void _VS2VALUE_VOID_2 ELI_ARG((_TPPVALUE_VOID_2 _currn));
+extern void _VS1VALUE_SED_2 ELI_ARG((_TPPVALUE_SED_2 _currn));
+extern void _VS2VALUE_SED_2 ELI_ARG((_TPPVALUE_SED_2 _currn));
+extern void _VS1VALUE_OCT_2 ELI_ARG((_TPPVALUE_OCT_2 _currn));
+extern void _VS2VALUE_OCT_2 ELI_ARG((_TPPVALUE_OCT_2 _currn));
+extern void _VS1VALUE_STR_2 ELI_ARG((_TPPVALUE_STR_2 _currn));
+extern void _VS2VALUE_STR_2 ELI_ARG((_TPPVALUE_STR_2 _currn));
+extern void _VS1VALUE_CHAR_2 ELI_ARG((_TPPVALUE_CHAR_2 _currn));
+extern void _VS2VALUE_CHAR_2 ELI_ARG((_TPPVALUE_CHAR_2 _currn));
+extern void _VS1VALUE_BOOL_2 ELI_ARG((_TPPVALUE_BOOL_2 _currn));
+extern void _VS2VALUE_BOOL_2 ELI_ARG((_TPPVALUE_BOOL_2 _currn));
+extern void _VS1VALUE_FLOAT_2 ELI_ARG((_TPPVALUE_FLOAT_2 _currn));
+extern void _VS2VALUE_FLOAT_2 ELI_ARG((_TPPVALUE_FLOAT_2 _currn));
+extern void _VS1VALUE_INT_2 ELI_ARG((_TPPVALUE_INT_2 _currn));
+extern void _VS2VALUE_INT_2 ELI_ARG((_TPPVALUE_INT_2 _currn));
+extern void _VS1BOUND_METHOD_2 ELI_ARG((_TPPBOUND_METHOD_2 _currn));
+extern void _VS2BOUND_METHOD_2 ELI_ARG((_TPPBOUND_METHOD_2 _currn));
+extern void _VS3BOUND_METHOD_2 ELI_ARG((_TPPBOUND_METHOD_2 _currn,STPtr* _AS0TypeEst));
+extern void _VS4BOUND_METHOD_2 ELI_ARG((_TPPBOUND_METHOD_2 _currn,STPtr* _AS0TypeEst));
+extern void _VS5BOUND_METHOD_2 ELI_ARG((_TPPBOUND_METHOD_2 _currn,STPtr* _AS0TypeEst));
+extern void _VS1NAMED_EXPRESSION_2 ELI_ARG((_TPPNAMED_EXPRESSION_2 _currn));
+extern void _VS2NAMED_EXPRESSION_2 ELI_ARG((_TPPNAMED_EXPRESSION_2 _currn,int* _AS0Index_pre,int* _AS0UnnamedIndex_pre));
+extern void _VS3NAMED_EXPRESSION_2 ELI_ARG((_TPPNAMED_EXPRESSION_2 _currn,int* _AS0Index_pre,int* _AS0UnnamedIndex_pre,DefTableKeyList* _AS0_const81));
+extern void _VS4NAMED_EXPRESSION_2 ELI_ARG((_TPPNAMED_EXPRESSION_2 _currn,PTGNode* _AS0named_exp_out_pre,int* _AS0Index_pre,int* _AS0UnnamedIndex_pre,PTGNode* _AS0_const101,int* _AS0_const83,PTGNode* _AS0_const82,DefTableKeyList* _AS0_const81));
+#define _VS1NAMED_EXPRESSIONS_2 _VS1ASSERTION_STATEMENT_2
+
+extern void _VS2NAMED_EXPRESSIONS_2 ELI_ARG((_TPPNAMED_EXPRESSIONS_2 _currn));
+extern void _VS3NAMED_EXPRESSIONS_2 ELI_ARG((_TPPNAMED_EXPRESSIONS_2 _currn));
+extern void _VS4NAMED_EXPRESSIONS_2 ELI_ARG((_TPPNAMED_EXPRESSIONS_2 _currn));
+extern void _VS1AGG_ID_DEF_2 ELI_ARG((_TPPAGG_ID_DEF_2 _currn));
+extern void _VS2AGG_ID_DEF_2 ELI_ARG((_TPPAGG_ID_DEF_2 _currn));
+extern void _VS1AGGREGATE_NAMED_2 ELI_ARG((_TPPAGGREGATE_NAMED_2 _currn));
+extern void _VS2AGGREGATE_NAMED_2 ELI_ARG((_TPPAGGREGATE_NAMED_2 _currn));
+extern void _VS3AGGREGATE_NAMED_2 ELI_ARG((_TPPAGGREGATE_NAMED_2 _currn));
+extern void _VS4AGGREGATE_NAMED_2 ELI_ARG((_TPPAGGREGATE_NAMED_2 _currn));
+extern void _VS5AGGREGATE_NAMED_2 ELI_ARG((_TPPAGGREGATE_NAMED_2 _currn));
+extern void _VS1AGGREGATE_2 ELI_ARG((_TPPAGGREGATE_2 _currn));
+extern void _VS2AGGREGATE_2 ELI_ARG((_TPPAGGREGATE_2 _currn));
+extern void _VS3AGGREGATE_2 ELI_ARG((_TPPAGGREGATE_2 _currn));
+extern void _VS4AGGREGATE_2 ELI_ARG((_TPPAGGREGATE_2 _currn));
+extern void _VS5AGGREGATE_2 ELI_ARG((_TPPAGGREGATE_2 _currn));
+extern void _VS1TYPE_CONSTRUCTOR_SAME_AGG_2 ELI_ARG((_TPPTYPE_CONSTRUCTOR_SAME_AGG_2 _currn));
+extern void _VS2TYPE_CONSTRUCTOR_SAME_AGG_2 ELI_ARG((_TPPTYPE_CONSTRUCTOR_SAME_AGG_2 _currn));
+extern void _VS3TYPE_CONSTRUCTOR_SAME_AGG_2 ELI_ARG((_TPPTYPE_CONSTRUCTOR_SAME_AGG_2 _currn));
+extern void _VS4TYPE_CONSTRUCTOR_SAME_AGG_2 ELI_ARG((_TPPTYPE_CONSTRUCTOR_SAME_AGG_2 _currn));
+extern void _VS5TYPE_CONSTRUCTOR_SAME_AGG_2 ELI_ARG((_TPPTYPE_CONSTRUCTOR_SAME_AGG_2 _currn));
+extern void _VS1TYPE_CONSTRUCTOR_SAME_2 ELI_ARG((_TPPTYPE_CONSTRUCTOR_SAME_2 _currn));
+extern void _VS2TYPE_CONSTRUCTOR_SAME_2 ELI_ARG((_TPPTYPE_CONSTRUCTOR_SAME_2 _currn));
+extern void _VS3TYPE_CONSTRUCTOR_SAME_2 ELI_ARG((_TPPTYPE_CONSTRUCTOR_SAME_2 _currn));
+extern void _VS4TYPE_CONSTRUCTOR_SAME_2 ELI_ARG((_TPPTYPE_CONSTRUCTOR_SAME_2 _currn));
+extern void _VS5TYPE_CONSTRUCTOR_SAME_2 ELI_ARG((_TPPTYPE_CONSTRUCTOR_SAME_2 _currn));
+extern void _VS1TYPE_CONSTRUCTOR_DES_2 ELI_ARG((_TPPTYPE_CONSTRUCTOR_DES_2 _currn));
+extern void _VS2TYPE_CONSTRUCTOR_DES_2 ELI_ARG((_TPPTYPE_CONSTRUCTOR_DES_2 _currn));
+extern void _VS3TYPE_CONSTRUCTOR_DES_2 ELI_ARG((_TPPTYPE_CONSTRUCTOR_DES_2 _currn));
+extern void _VS4TYPE_CONSTRUCTOR_DES_2 ELI_ARG((_TPPTYPE_CONSTRUCTOR_DES_2 _currn));
+extern void _VS5TYPE_CONSTRUCTOR_DES_2 ELI_ARG((_TPPTYPE_CONSTRUCTOR_DES_2 _currn));
+extern void _VS1TYPE_CONSTRUCTOR_AGG_2 ELI_ARG((_TPPTYPE_CONSTRUCTOR_AGG_2 _currn));
+extern void _VS2TYPE_CONSTRUCTOR_AGG_2 ELI_ARG((_TPPTYPE_CONSTRUCTOR_AGG_2 _currn));
+extern void _VS3TYPE_CONSTRUCTOR_AGG_2 ELI_ARG((_TPPTYPE_CONSTRUCTOR_AGG_2 _currn));
+extern void _VS4TYPE_CONSTRUCTOR_AGG_2 ELI_ARG((_TPPTYPE_CONSTRUCTOR_AGG_2 _currn));
+extern void _VS5TYPE_CONSTRUCTOR_AGG_2 ELI_ARG((_TPPTYPE_CONSTRUCTOR_AGG_2 _currn));
+extern void _VS1TYPE_CONSTRUCTOR_CLASS_2 ELI_ARG((_TPPTYPE_CONSTRUCTOR_CLASS_2 _currn));
+extern void _VS2TYPE_CONSTRUCTOR_CLASS_2 ELI_ARG((_TPPTYPE_CONSTRUCTOR_CLASS_2 _currn));
+extern void _VS3TYPE_CONSTRUCTOR_CLASS_2 ELI_ARG((_TPPTYPE_CONSTRUCTOR_CLASS_2 _currn));
+extern void _VS4TYPE_CONSTRUCTOR_CLASS_2 ELI_ARG((_TPPTYPE_CONSTRUCTOR_CLASS_2 _currn));
+extern void _VS5TYPE_CONSTRUCTOR_CLASS_2 ELI_ARG((_TPPTYPE_CONSTRUCTOR_CLASS_2 _currn));
+extern void _VS1TYPE_CONSTRUCTOR_CL_AGG_2 ELI_ARG((_TPPTYPE_CONSTRUCTOR_CL_AGG_2 _currn));
+extern void _VS2TYPE_CONSTRUCTOR_CL_AGG_2 ELI_ARG((_TPPTYPE_CONSTRUCTOR_CL_AGG_2 _currn));
+extern void _VS3TYPE_CONSTRUCTOR_CL_AGG_2 ELI_ARG((_TPPTYPE_CONSTRUCTOR_CL_AGG_2 _currn));
+extern void _VS4TYPE_CONSTRUCTOR_CL_AGG_2 ELI_ARG((_TPPTYPE_CONSTRUCTOR_CL_AGG_2 _currn));
+extern void _VS5TYPE_CONSTRUCTOR_CL_AGG_2 ELI_ARG((_TPPTYPE_CONSTRUCTOR_CL_AGG_2 _currn));
+extern void _VS1QUAL_FEATURE_ID_USE_2 ELI_ARG((_TPPQUAL_FEATURE_ID_USE_2 _currn));
+extern void _VS2QUAL_FEATURE_ID_USE_2 ELI_ARG((_TPPQUAL_FEATURE_ID_USE_2 _currn));
+#define _VS1QUALIFICATION_TYPE_2 _VS1ASSERTION_STATEMENT_2
+
+extern void _VS2QUALIFICATION_TYPE_2 ELI_ARG((_TPPQUALIFICATION_TYPE_2 _currn));
+extern void _VS3QUALIFICATION_TYPE_2 ELI_ARG((_TPPQUALIFICATION_TYPE_2 _currn));
+extern void _VS4QUALIFICATION_TYPE_2 ELI_ARG((_TPPQUALIFICATION_TYPE_2 _currn));
+extern void _VS5QUALIFICATION_TYPE_2 ELI_ARG((_TPPQUALIFICATION_TYPE_2 _currn));
+#define _VS1QUALIFICATION_EXP_2 _VS1ASSERTION_STATEMENT_2
+
+extern void _VS2QUALIFICATION_EXP_2 ELI_ARG((_TPPQUALIFICATION_EXP_2 _currn));
+extern void _VS3QUALIFICATION_EXP_2 ELI_ARG((_TPPQUALIFICATION_EXP_2 _currn));
+extern void _VS4QUALIFICATION_EXP_2 ELI_ARG((_TPPQUALIFICATION_EXP_2 _currn));
+extern void _VS5QUALIFICATION_EXP_2 ELI_ARG((_TPPQUALIFICATION_EXP_2 _currn));
+extern void _VS1STD_METHOD_CALL_2 ELI_ARG((_TPPSTD_METHOD_CALL_2 _currn));
+extern void _VS2STD_METHOD_CALL_2 ELI_ARG((_TPPSTD_METHOD_CALL_2 _currn));
+extern void _VS3STD_METHOD_CALL_2 ELI_ARG((_TPPSTD_METHOD_CALL_2 _currn,STPtr* _AS0TypeEst));
+extern void _VS4STD_METHOD_CALL_2 ELI_ARG((_TPPSTD_METHOD_CALL_2 _currn,STPtr* _AS0TypeEst));
+extern void _VS5STD_METHOD_CALL_2 ELI_ARG((_TPPSTD_METHOD_CALL_2 _currn,STPtr* _AS0TypeEst));
+extern void _VS1OBJ_ID_USE_2 ELI_ARG((_TPPOBJ_ID_USE_2 _currn));
+extern void _VS1NAME_NOT_2 ELI_ARG((_TPPNAME_NOT_2 _currn));
+extern void _VS2NAME_NOT_2 ELI_ARG((_TPPNAME_NOT_2 _currn,int* _AS0IsUnnamed));
+extern void _VS3NAME_NOT_2 ELI_ARG((_TPPNAME_NOT_2 _currn,PTGNode* _AS0des_out,int* _AS0IsUnnamed));
+extern void _VS1NAME_POW_2 ELI_ARG((_TPPNAME_POW_2 _currn));
+extern void _VS2NAME_POW_2 ELI_ARG((_TPPNAME_POW_2 _currn,int* _AS0IsUnnamed));
+extern void _VS3NAME_POW_2 ELI_ARG((_TPPNAME_POW_2 _currn,PTGNode* _AS0des_out,int* _AS0IsUnnamed));
+extern void _VS1NAME_MOD_2 ELI_ARG((_TPPNAME_MOD_2 _currn));
+extern void _VS2NAME_MOD_2 ELI_ARG((_TPPNAME_MOD_2 _currn,int* _AS0IsUnnamed));
+extern void _VS3NAME_MOD_2 ELI_ARG((_TPPNAME_MOD_2 _currn,PTGNode* _AS0des_out,int* _AS0IsUnnamed));
+extern void _VS1NAME_DIV_2 ELI_ARG((_TPPNAME_DIV_2 _currn));
+extern void _VS2NAME_DIV_2 ELI_ARG((_TPPNAME_DIV_2 _currn,int* _AS0IsUnnamed));
+extern void _VS3NAME_DIV_2 ELI_ARG((_TPPNAME_DIV_2 _currn,PTGNode* _AS0des_out,int* _AS0IsUnnamed));
+extern void _VS1NAME_QUOTIENT_2 ELI_ARG((_TPPNAME_QUOTIENT_2 _currn));
+extern void _VS2NAME_QUOTIENT_2 ELI_ARG((_TPPNAME_QUOTIENT_2 _currn,int* _AS0IsUnnamed));
+extern void _VS3NAME_QUOTIENT_2 ELI_ARG((_TPPNAME_QUOTIENT_2 _currn,PTGNode* _AS0des_out,int* _AS0IsUnnamed));
+extern void _VS1NAME_STAR_2 ELI_ARG((_TPPNAME_STAR_2 _currn));
+extern void _VS2NAME_STAR_2 ELI_ARG((_TPPNAME_STAR_2 _currn,int* _AS0IsUnnamed));
+extern void _VS3NAME_STAR_2 ELI_ARG((_TPPNAME_STAR_2 _currn,PTGNode* _AS0des_out,int* _AS0IsUnnamed));
+extern void _VS1NAME_MINUS_2 ELI_ARG((_TPPNAME_MINUS_2 _currn));
+extern void _VS2NAME_MINUS_2 ELI_ARG((_TPPNAME_MINUS_2 _currn,int* _AS0IsUnnamed));
+extern void _VS3NAME_MINUS_2 ELI_ARG((_TPPNAME_MINUS_2 _currn,PTGNode* _AS0des_out,int* _AS0IsUnnamed));
+extern void _VS1NAME_PLUS_2 ELI_ARG((_TPPNAME_PLUS_2 _currn));
+extern void _VS2NAME_PLUS_2 ELI_ARG((_TPPNAME_PLUS_2 _currn,int* _AS0IsUnnamed));
+extern void _VS3NAME_PLUS_2 ELI_ARG((_TPPNAME_PLUS_2 _currn,PTGNode* _AS0des_out,int* _AS0IsUnnamed));
+extern void _VS1NAME_GT_EQ_2 ELI_ARG((_TPPNAME_GT_EQ_2 _currn));
+extern void _VS2NAME_GT_EQ_2 ELI_ARG((_TPPNAME_GT_EQ_2 _currn,int* _AS0IsUnnamed));
+extern void _VS3NAME_GT_EQ_2 ELI_ARG((_TPPNAME_GT_EQ_2 _currn,PTGNode* _AS0des_out,int* _AS0IsUnnamed));
+extern void _VS1NAME_GT_2 ELI_ARG((_TPPNAME_GT_2 _currn));
+extern void _VS2NAME_GT_2 ELI_ARG((_TPPNAME_GT_2 _currn,int* _AS0IsUnnamed));
+extern void _VS3NAME_GT_2 ELI_ARG((_TPPNAME_GT_2 _currn,PTGNode* _AS0des_out,int* _AS0IsUnnamed));
+extern void _VS1NAME_LT_EQ_2 ELI_ARG((_TPPNAME_LT_EQ_2 _currn));
+extern void _VS2NAME_LT_EQ_2 ELI_ARG((_TPPNAME_LT_EQ_2 _currn,int* _AS0IsUnnamed));
+extern void _VS3NAME_LT_EQ_2 ELI_ARG((_TPPNAME_LT_EQ_2 _currn,PTGNode* _AS0des_out,int* _AS0IsUnnamed));
+extern void _VS1NAME_LT_2 ELI_ARG((_TPPNAME_LT_2 _currn));
+extern void _VS2NAME_LT_2 ELI_ARG((_TPPNAME_LT_2 _currn,int* _AS0IsUnnamed));
+extern void _VS3NAME_LT_2 ELI_ARG((_TPPNAME_LT_2 _currn,PTGNode* _AS0des_out,int* _AS0IsUnnamed));
+extern void _VS1NAME_EQ_2 ELI_ARG((_TPPNAME_EQ_2 _currn));
+extern void _VS2NAME_EQ_2 ELI_ARG((_TPPNAME_EQ_2 _currn,int* _AS0IsUnnamed));
+extern void _VS3NAME_EQ_2 ELI_ARG((_TPPNAME_EQ_2 _currn,PTGNode* _AS0des_out,int* _AS0IsUnnamed));
+extern void _VS1NAME_QUESTION_2 ELI_ARG((_TPPNAME_QUESTION_2 _currn));
+extern void _VS2NAME_QUESTION_2 ELI_ARG((_TPPNAME_QUESTION_2 _currn,int* _AS0IsUnnamed));
+extern void _VS3NAME_QUESTION_2 ELI_ARG((_TPPNAME_QUESTION_2 _currn,PTGNode* _AS0des_out,int* _AS0IsUnnamed));
+extern void _VS1NAME_GRAVE_2 ELI_ARG((_TPPNAME_GRAVE_2 _currn));
+extern void _VS2NAME_GRAVE_2 ELI_ARG((_TPPNAME_GRAVE_2 _currn,int* _AS0IsUnnamed));
+extern void _VS3NAME_GRAVE_2 ELI_ARG((_TPPNAME_GRAVE_2 _currn,PTGNode* _AS0des_out,int* _AS0IsUnnamed));
+extern void _VS1NAME_TILDE_2 ELI_ARG((_TPPNAME_TILDE_2 _currn));
+extern void _VS2NAME_TILDE_2 ELI_ARG((_TPPNAME_TILDE_2 _currn,int* _AS0IsUnnamed));
+extern void _VS3NAME_TILDE_2 ELI_ARG((_TPPNAME_TILDE_2 _currn,PTGNode* _AS0des_out,int* _AS0IsUnnamed));
+extern void _VS1NAME_STROKE_2 ELI_ARG((_TPPNAME_STROKE_2 _currn));
+extern void _VS2NAME_STROKE_2 ELI_ARG((_TPPNAME_STROKE_2 _currn,int* _AS0IsUnnamed));
+extern void _VS3NAME_STROKE_2 ELI_ARG((_TPPNAME_STROKE_2 _currn,PTGNode* _AS0des_out,int* _AS0IsUnnamed));
+extern void _VS1NAME_BACKSLASH_2 ELI_ARG((_TPPNAME_BACKSLASH_2 _currn));
+extern void _VS2NAME_BACKSLASH_2 ELI_ARG((_TPPNAME_BACKSLASH_2 _currn,int* _AS0IsUnnamed));
+extern void _VS3NAME_BACKSLASH_2 ELI_ARG((_TPPNAME_BACKSLASH_2 _currn,PTGNode* _AS0des_out,int* _AS0IsUnnamed));
+extern void _VS1NAME_STR_IN_2 ELI_ARG((_TPPNAME_STR_IN_2 _currn));
+extern void _VS2NAME_STR_IN_2 ELI_ARG((_TPPNAME_STR_IN_2 _currn,int* _AS0IsUnnamed));
+extern void _VS3NAME_STR_IN_2 ELI_ARG((_TPPNAME_STR_IN_2 _currn,PTGNode* _AS0des_out,int* _AS0IsUnnamed));
+extern void _VS1NAME_STR_OUT_2 ELI_ARG((_TPPNAME_STR_OUT_2 _currn));
+extern void _VS2NAME_STR_OUT_2 ELI_ARG((_TPPNAME_STR_OUT_2 _currn,int* _AS0IsUnnamed));
+extern void _VS3NAME_STR_OUT_2 ELI_ARG((_TPPNAME_STR_OUT_2 _currn,PTGNode* _AS0des_out,int* _AS0IsUnnamed));
+extern void _VS1NAME_EMPTY_2 ELI_ARG((_TPPNAME_EMPTY_2 _currn));
+extern void _VS2NAME_EMPTY_2 ELI_ARG((_TPPNAME_EMPTY_2 _currn,int* _AS0IsUnnamed));
+extern void _VS3NAME_EMPTY_2 ELI_ARG((_TPPNAME_EMPTY_2 _currn,PTGNode* _AS0des_out,int* _AS0IsUnnamed));
+extern void _VS1NAME_OBJ_2 ELI_ARG((_TPPNAME_OBJ_2 _currn));
+extern void _VS2NAME_OBJ_2 ELI_ARG((_TPPNAME_OBJ_2 _currn,int* _AS0IsUnnamed));
+extern void _VS3NAME_OBJ_2 ELI_ARG((_TPPNAME_OBJ_2 _currn,PTGNode* _AS0des_out,int* _AS0IsUnnamed));
+extern void _VS1NAME_LEFT_SQ_BRACKET_2 ELI_ARG((_TPPNAME_LEFT_SQ_BRACKET_2 _currn));
+extern void _VS2NAME_LEFT_SQ_BRACKET_2 ELI_ARG((_TPPNAME_LEFT_SQ_BRACKET_2 _currn,int* _AS0IsUnnamed));
+extern void _VS3NAME_LEFT_SQ_BRACKET_2 ELI_ARG((_TPPNAME_LEFT_SQ_BRACKET_2 _currn,PTGNode* _AS0des_out,int* _AS0IsUnnamed));
+extern void _VS1EXPRESSION_AND_2 ELI_ARG((_TPPEXPRESSION_AND_2 _currn));
+extern void _VS2EXPRESSION_AND_2 ELI_ARG((_TPPEXPRESSION_AND_2 _currn));
+#define _VS3EXPRESSION_AND_2 _VS0Empty
+
+extern void _VS4EXPRESSION_AND_2 ELI_ARG((_TPPEXPRESSION_AND_2 _currn,int* _AS0IsExplicitCoercion));
+extern void _VS5EXPRESSION_AND_2 ELI_ARG((_TPPEXPRESSION_AND_2 _currn,int* _AS0IsExplicitCoercion,DefTableKeyList* _AS0_const81));
+extern void _VS6EXPRESSION_AND_2 ELI_ARG((_TPPEXPRESSION_AND_2 _currn,PTGNode* _AS0out,int* _AS0UsedAsQualifier,int* _AS0StackBefore,int* _AS0IsExplicitCoercion,DefTableKeyList* _AS0_const81));
+extern void _VS1EXPRESSION_OR_2 ELI_ARG((_TPPEXPRESSION_OR_2 _currn));
+extern void _VS2EXPRESSION_OR_2 ELI_ARG((_TPPEXPRESSION_OR_2 _currn));
+#define _VS3EXPRESSION_OR_2 _VS0Empty
+
+extern void _VS4EXPRESSION_OR_2 ELI_ARG((_TPPEXPRESSION_OR_2 _currn,int* _AS0IsExplicitCoercion));
+extern void _VS5EXPRESSION_OR_2 ELI_ARG((_TPPEXPRESSION_OR_2 _currn,int* _AS0IsExplicitCoercion,DefTableKeyList* _AS0_const81));
+extern void _VS6EXPRESSION_OR_2 ELI_ARG((_TPPEXPRESSION_OR_2 _currn,PTGNode* _AS0out,int* _AS0UsedAsQualifier,int* _AS0StackBefore,int* _AS0IsExplicitCoercion,DefTableKeyList* _AS0_const81));
+extern void _VS1EXPRESSION_STREAM_2 ELI_ARG((_TPPEXPRESSION_STREAM_2 _currn));
+extern void _VS2EXPRESSION_STREAM_2 ELI_ARG((_TPPEXPRESSION_STREAM_2 _currn));
+#define _VS3EXPRESSION_STREAM_2 _VS0Empty
+
+extern void _VS4EXPRESSION_STREAM_2 ELI_ARG((_TPPEXPRESSION_STREAM_2 _currn,int* _AS0IsExplicitCoercion));
+extern void _VS5EXPRESSION_STREAM_2 ELI_ARG((_TPPEXPRESSION_STREAM_2 _currn,int* _AS0IsExplicitCoercion,DefTableKeyList* _AS0_const81));
+extern void _VS6EXPRESSION_STREAM_2 ELI_ARG((_TPPEXPRESSION_STREAM_2 _currn,PTGNode* _AS0out,int* _AS0UsedAsQualifier,int* _AS0StackBefore,int* _AS0IsExplicitCoercion,DefTableKeyList* _AS0_const81));
+extern void _VS1EXPRESSION_METH_2 ELI_ARG((_TPPEXPRESSION_METH_2 _currn));
+extern void _VS2EXPRESSION_METH_2 ELI_ARG((_TPPEXPRESSION_METH_2 _currn));
+#define _VS3EXPRESSION_METH_2 _VS0Empty
+
+extern void _VS4EXPRESSION_METH_2 ELI_ARG((_TPPEXPRESSION_METH_2 _currn,int* _AS0IsExplicitCoercion));
+extern void _VS5EXPRESSION_METH_2 ELI_ARG((_TPPEXPRESSION_METH_2 _currn,int* _AS0IsExplicitCoercion,DefTableKeyList* _AS0_const81));
+extern void _VS6EXPRESSION_METH_2 ELI_ARG((_TPPEXPRESSION_METH_2 _currn,PTGNode* _AS0out,int* _AS0UsedAsQualifier,int* _AS0StackBefore,int* _AS0IsExplicitCoercion,DefTableKeyList* _AS0_const81));
+extern void _VS1EXPRESSION_COERCION_2 ELI_ARG((_TPPEXPRESSION_COERCION_2 _currn));
+extern void _VS2EXPRESSION_COERCION_2 ELI_ARG((_TPPEXPRESSION_COERCION_2 _currn));
+#define _VS3EXPRESSION_COERCION_2 _VS0Empty
+
+extern void _VS4EXPRESSION_COERCION_2 ELI_ARG((_TPPEXPRESSION_COERCION_2 _currn,int* _AS0IsExplicitCoercion));
+extern void _VS5EXPRESSION_COERCION_2 ELI_ARG((_TPPEXPRESSION_COERCION_2 _currn,int* _AS0IsExplicitCoercion,DefTableKeyList* _AS0_const81));
+extern void _VS6EXPRESSION_COERCION_2 ELI_ARG((_TPPEXPRESSION_COERCION_2 _currn,PTGNode* _AS0out,int* _AS0UsedAsQualifier,int* _AS0StackBefore,int* _AS0IsExplicitCoercion,DefTableKeyList* _AS0_const81));
+extern void _VS1EXPRESSION_VALUE_2 ELI_ARG((_TPPEXPRESSION_VALUE_2 _currn));
+extern void _VS2EXPRESSION_VALUE_2 ELI_ARG((_TPPEXPRESSION_VALUE_2 _currn));
+#define _VS3EXPRESSION_VALUE_2 _VS0Empty
+
+extern void _VS4EXPRESSION_VALUE_2 ELI_ARG((_TPPEXPRESSION_VALUE_2 _currn,int* _AS0IsExplicitCoercion));
+extern void _VS5EXPRESSION_VALUE_2 ELI_ARG((_TPPEXPRESSION_VALUE_2 _currn,int* _AS0IsExplicitCoercion,DefTableKeyList* _AS0_const81));
+extern void _VS6EXPRESSION_VALUE_2 ELI_ARG((_TPPEXPRESSION_VALUE_2 _currn,PTGNode* _AS0out,int* _AS0UsedAsQualifier,int* _AS0StackBefore,int* _AS0IsExplicitCoercion,DefTableKeyList* _AS0_const81));
+extern void _VS1EXPRESSION_BOUND_2 ELI_ARG((_TPPEXPRESSION_BOUND_2 _currn));
+extern void _VS2EXPRESSION_BOUND_2 ELI_ARG((_TPPEXPRESSION_BOUND_2 _currn));
+#define _VS3EXPRESSION_BOUND_2 _VS0Empty
+
+extern void _VS4EXPRESSION_BOUND_2 ELI_ARG((_TPPEXPRESSION_BOUND_2 _currn,int* _AS0IsExplicitCoercion));
+extern void _VS5EXPRESSION_BOUND_2 ELI_ARG((_TPPEXPRESSION_BOUND_2 _currn,int* _AS0IsExplicitCoercion,DefTableKeyList* _AS0_const81));
+extern void _VS6EXPRESSION_BOUND_2 ELI_ARG((_TPPEXPRESSION_BOUND_2 _currn,PTGNode* _AS0out,int* _AS0UsedAsQualifier,int* _AS0StackBefore,int* _AS0IsExplicitCoercion,DefTableKeyList* _AS0_const81));
+extern void _VS1EXPRESSION_CONS_2 ELI_ARG((_TPPEXPRESSION_CONS_2 _currn));
+extern void _VS2EXPRESSION_CONS_2 ELI_ARG((_TPPEXPRESSION_CONS_2 _currn));
+extern void _VS3EXPRESSION_CONS_2 ELI_ARG((_TPPEXPRESSION_CONS_2 _currn));
+extern void _VS4EXPRESSION_CONS_2 ELI_ARG((_TPPEXPRESSION_CONS_2 _currn,int* _AS0IsExplicitCoercion));
+extern void _VS5EXPRESSION_CONS_2 ELI_ARG((_TPPEXPRESSION_CONS_2 _currn,int* _AS0IsExplicitCoercion,DefTableKeyList* _AS0_const81));
+extern void _VS6EXPRESSION_CONS_2 ELI_ARG((_TPPEXPRESSION_CONS_2 _currn,PTGNode* _AS0out,int* _AS0UsedAsQualifier,int* _AS0StackBefore,int* _AS0IsExplicitCoercion,DefTableKeyList* _AS0_const81));
+#define _VS1EXPRESSION_STAR_2 _VS0Empty
+
+extern void _VS2EXPRESSION_STAR_2 ELI_ARG((_TPPEXPRESSION_STAR_2 _currn));
+#define _VS3EXPRESSION_STAR_2 _VS0Empty
+
+extern void _VS4EXPRESSION_STAR_2 ELI_ARG((_TPPEXPRESSION_STAR_2 _currn,int* _AS0IsExplicitCoercion));
+extern void _VS5EXPRESSION_STAR_2 ELI_ARG((_TPPEXPRESSION_STAR_2 _currn,int* _AS0IsExplicitCoercion,DefTableKeyList* _AS0_const81));
+extern void _VS6EXPRESSION_STAR_2 ELI_ARG((_TPPEXPRESSION_STAR_2 _currn,PTGNode* _AS0out,int* _AS0UsedAsQualifier,int* _AS0StackBefore,int* _AS0IsExplicitCoercion,DefTableKeyList* _AS0_const81));
+extern void _VS1DESIGNATOR_QUAL_2 ELI_ARG((_TPPDESIGNATOR_QUAL_2 _currn));
+extern void _VS2DESIGNATOR_QUAL_2 ELI_ARG((_TPPDESIGNATOR_QUAL_2 _currn,int* _AS0Is_aget,int* _AS0Op,CTValuePtr* _AS0Val));
+extern void _VS3DESIGNATOR_QUAL_2 ELI_ARG((_TPPDESIGNATOR_QUAL_2 _currn,int* _AS0Is_aget,int* _AS0Op,CTValuePtr* _AS0Val));
+extern void _VS4DESIGNATOR_QUAL_2 ELI_ARG((_TPPDESIGNATOR_QUAL_2 _currn,int* _AS0Is_aget,int* _AS0Op,CTValuePtr* _AS0Val));
+extern void _VS5DESIGNATOR_QUAL_2 ELI_ARG((_TPPDESIGNATOR_QUAL_2 _currn,int* _AS0Is_aget,int* _AS0Op,CTValuePtr* _AS0Val,DefTableKeyList* _AS0_const81));
+extern void _VS6DESIGNATOR_QUAL_2 ELI_ARG((_TPPDESIGNATOR_QUAL_2 _currn,PTGNode* _AS0out,PTGNode* _AS0qualifier_out,PTGNode* _AS0ValHomeNode,int* _AS0StackHeight,int* _AS0StackBefore,int* _AS0Is_aget,int* _AS0IsSharedQualified,int* _AS0Op,CTValuePtr* _AS0Val,PTGNode* _AS0_const101,int* _AS0_const83,PTGNode* _AS0_const82,DefTableKeyList* _AS0_const81));
+extern void _VS1DESIGNATOR_METH_2 ELI_ARG((_TPPDESIGNATOR_METH_2 _currn));
+extern void _VS2DESIGNATOR_METH_2 ELI_ARG((_TPPDESIGNATOR_METH_2 _currn,int* _AS0Is_aget,int* _AS0Op,CTValuePtr* _AS0Val));
+extern void _VS3DESIGNATOR_METH_2 ELI_ARG((_TPPDESIGNATOR_METH_2 _currn,int* _AS0Is_aget,int* _AS0Op,CTValuePtr* _AS0Val));
+extern void _VS4DESIGNATOR_METH_2 ELI_ARG((_TPPDESIGNATOR_METH_2 _currn,int* _AS0Is_aget,int* _AS0Op,CTValuePtr* _AS0Val));
+extern void _VS5DESIGNATOR_METH_2 ELI_ARG((_TPPDESIGNATOR_METH_2 _currn,int* _AS0Is_aget,int* _AS0Op,CTValuePtr* _AS0Val,DefTableKeyList* _AS0_const81));
+extern void _VS6DESIGNATOR_METH_2 ELI_ARG((_TPPDESIGNATOR_METH_2 _currn,PTGNode* _AS0out,PTGNode* _AS0qualifier_out,PTGNode* _AS0ValHomeNode,int* _AS0StackHeight,int* _AS0StackBefore,int* _AS0Is_aget,int* _AS0IsSharedQualified,int* _AS0Op,CTValuePtr* _AS0Val,PTGNode* _AS0_const101,int* _AS0_const83,PTGNode* _AS0_const82,DefTableKeyList* _AS0_const81));
+extern void _VS1DESIGNATOR_EXP_2 ELI_ARG((_TPPDESIGNATOR_EXP_2 _currn));
+extern void _VS2DESIGNATOR_EXP_2 ELI_ARG((_TPPDESIGNATOR_EXP_2 _currn,int* _AS0Is_aget,int* _AS0Op,CTValuePtr* _AS0Val));
+extern void _VS3DESIGNATOR_EXP_2 ELI_ARG((_TPPDESIGNATOR_EXP_2 _currn,int* _AS0Is_aget,int* _AS0Op,CTValuePtr* _AS0Val));
+extern void _VS4DESIGNATOR_EXP_2 ELI_ARG((_TPPDESIGNATOR_EXP_2 _currn,int* _AS0Is_aget,int* _AS0Op,CTValuePtr* _AS0Val));
+extern void _VS5DESIGNATOR_EXP_2 ELI_ARG((_TPPDESIGNATOR_EXP_2 _currn,int* _AS0Is_aget,int* _AS0Op,CTValuePtr* _AS0Val,DefTableKeyList* _AS0_const81));
+extern void _VS6DESIGNATOR_EXP_2 ELI_ARG((_TPPDESIGNATOR_EXP_2 _currn,PTGNode* _AS0out,PTGNode* _AS0qualifier_out,PTGNode* _AS0ValHomeNode,int* _AS0StackHeight,int* _AS0StackBefore,int* _AS0Is_aget,int* _AS0IsSharedQualified,int* _AS0Op,CTValuePtr* _AS0Val,PTGNode* _AS0_const101,int* _AS0_const83,PTGNode* _AS0_const82,DefTableKeyList* _AS0_const81));
+extern void _VS1DESIGNATOR_NAME_2 ELI_ARG((_TPPDESIGNATOR_NAME_2 _currn));
+extern void _VS2DESIGNATOR_NAME_2 ELI_ARG((_TPPDESIGNATOR_NAME_2 _currn,int* _AS0Is_aget,int* _AS0Op,CTValuePtr* _AS0Val));
+extern void _VS3DESIGNATOR_NAME_2 ELI_ARG((_TPPDESIGNATOR_NAME_2 _currn,int* _AS0Is_aget,int* _AS0Op,CTValuePtr* _AS0Val));
+extern void _VS4DESIGNATOR_NAME_2 ELI_ARG((_TPPDESIGNATOR_NAME_2 _currn,int* _AS0Is_aget,int* _AS0Op,CTValuePtr* _AS0Val));
+extern void _VS5DESIGNATOR_NAME_2 ELI_ARG((_TPPDESIGNATOR_NAME_2 _currn,int* _AS0Is_aget,int* _AS0Op,CTValuePtr* _AS0Val,DefTableKeyList* _AS0_const81));
+extern void _VS6DESIGNATOR_NAME_2 ELI_ARG((_TPPDESIGNATOR_NAME_2 _currn,PTGNode* _AS0out,PTGNode* _AS0qualifier_out,PTGNode* _AS0ValHomeNode,int* _AS0StackHeight,int* _AS0StackBefore,int* _AS0Is_aget,int* _AS0IsSharedQualified,int* _AS0Op,CTValuePtr* _AS0Val,PTGNode* _AS0_const101,int* _AS0_const83,PTGNode* _AS0_const82,DefTableKeyList* _AS0_const81));
+#define _VS1ARGUMENT_EMPTY_2 _VS0Empty
+
+extern void _VS2ARGUMENT_EMPTY_2 ELI_ARG((_TPPARGUMENT_EMPTY_2 _currn));
+extern void _VS3ARGUMENT_EMPTY_2 ELI_ARG((_TPPARGUMENT_EMPTY_2 _currn));
+extern void _VS4ARGUMENT_EMPTY_2 ELI_ARG((_TPPARGUMENT_EMPTY_2 _currn));
+extern void _VS5ARGUMENT_EMPTY_2 ELI_ARG((_TPPARGUMENT_EMPTY_2 _currn,DefTableKey* _AS0FormalParam,DefTableKeyList* _AS0FormalParams));
+extern void _VS1ARGUMENT_INOUT_2 ELI_ARG((_TPPARGUMENT_INOUT_2 _currn));
+extern void _VS2ARGUMENT_INOUT_2 ELI_ARG((_TPPARGUMENT_INOUT_2 _currn));
+extern void _VS3ARGUMENT_INOUT_2 ELI_ARG((_TPPARGUMENT_INOUT_2 _currn));
+extern void _VS4ARGUMENT_INOUT_2 ELI_ARG((_TPPARGUMENT_INOUT_2 _currn));
+extern void _VS5ARGUMENT_INOUT_2 ELI_ARG((_TPPARGUMENT_INOUT_2 _currn,DefTableKey* _AS0FormalParam,DefTableKeyList* _AS0FormalParams));
+extern void _VS1ARGUMENT_OUT_2 ELI_ARG((_TPPARGUMENT_OUT_2 _currn));
+extern void _VS2ARGUMENT_OUT_2 ELI_ARG((_TPPARGUMENT_OUT_2 _currn));
+extern void _VS3ARGUMENT_OUT_2 ELI_ARG((_TPPARGUMENT_OUT_2 _currn));
+extern void _VS4ARGUMENT_OUT_2 ELI_ARG((_TPPARGUMENT_OUT_2 _currn));
+extern void _VS5ARGUMENT_OUT_2 ELI_ARG((_TPPARGUMENT_OUT_2 _currn,DefTableKey* _AS0FormalParam,DefTableKeyList* _AS0FormalParams));
+extern void _VS1ARGUMENT_EXP_2 ELI_ARG((_TPPARGUMENT_EXP_2 _currn));
+extern void _VS2ARGUMENT_EXP_2 ELI_ARG((_TPPARGUMENT_EXP_2 _currn));
+extern void _VS3ARGUMENT_EXP_2 ELI_ARG((_TPPARGUMENT_EXP_2 _currn));
+extern void _VS4ARGUMENT_EXP_2 ELI_ARG((_TPPARGUMENT_EXP_2 _currn));
+extern void _VS5ARGUMENT_EXP_2 ELI_ARG((_TPPARGUMENT_EXP_2 _currn,DefTableKey* _AS0FormalParam,DefTableKeyList* _AS0FormalParams));
+extern void _VS1ARGUMENTS_LST_2 ELI_ARG((_TPPARGUMENTS_LST_2 _currn));
+extern void _VS2ARGUMENTS_LST_2 ELI_ARG((_TPPARGUMENTS_LST_2 _currn));
+extern void _VS3ARGUMENTS_LST_2 ELI_ARG((_TPPARGUMENTS_LST_2 _currn));
+extern void _VS4ARGUMENTS_LST_2 ELI_ARG((_TPPARGUMENTS_LST_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS5ARGUMENTS_LST_2 ELI_ARG((_TPPARGUMENTS_LST_2 _currn,PTGNode* _AS0once_out,PTGNode* _AS0out,PTGNode* _AS0write_back,STPtrList* _AS0BoundArgs,int* _AS0StackBefore,PTGNode* _AS0_const101,int* _AS0_const83,PTGNode* _AS0_const82,DefTableKeyList* _AS0_const81));
+#define _VS1ARGUMENTS_EMPTY_2 _VS0Empty
+
+extern void _VS2ARGUMENTS_EMPTY_2 ELI_ARG((_TPPARGUMENTS_EMPTY_2 _currn));
+extern void _VS3ARGUMENTS_EMPTY_2 ELI_ARG((_TPPARGUMENTS_EMPTY_2 _currn));
+extern void _VS4ARGUMENTS_EMPTY_2 ELI_ARG((_TPPARGUMENTS_EMPTY_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS5ARGUMENTS_EMPTY_2 ELI_ARG((_TPPARGUMENTS_EMPTY_2 _currn,PTGNode* _AS0once_out,PTGNode* _AS0out,PTGNode* _AS0write_back,STPtrList* _AS0BoundArgs,int* _AS0StackBefore,PTGNode* _AS0_const101,int* _AS0_const83,PTGNode* _AS0_const82,DefTableKeyList* _AS0_const81));
+extern void _VS1BOUND_EXP_2 ELI_ARG((_TPPBOUND_EXP_2 _currn));
+extern void _VS2BOUND_EXP_2 ELI_ARG((_TPPBOUND_EXP_2 _currn));
+extern void _VS3BOUND_EXP_2 ELI_ARG((_TPPBOUND_EXP_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS4BOUND_EXP_2 ELI_ARG((_TPPBOUND_EXP_2 _currn,int* _AS0IsDefined,int* _AS0BoundCount_pre,PTGNode* _AS0bounds_out_pre,PTGNode* _AS0_const101,int* _AS0_const83,PTGNode* _AS0_const82,DefTableKeyList* _AS0_const81));
+#define _VS1BOUNDS_2 _VS1ASSERTION_STATEMENT_2
+
+#define _VS2BOUNDS_2 _VS2LABEL_LIST_2
+
+extern void _VS3BOUNDS_2 ELI_ARG((_TPPBOUNDS_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS4BOUNDS_2 ELI_ARG((_TPPBOUNDS_2 _currn,PTGNode* _AS0out,int* _AS0_const105,PTGNode* _AS0_const101,int* _AS0_const83,PTGNode* _AS0_const82,DefTableKeyList* _AS0_const81));
+extern void _VS1CLASS_ID_USE_2 ELI_ARG((_TPPCLASS_ID_USE_2 _currn));
+extern void _VS1PARAMETER_KIND_INOUT_2 ELI_ARG((_TPPPARAMETER_KIND_INOUT_2 _currn));
+extern void _VS1PARAMETER_KIND_OUT_2 ELI_ARG((_TPPPARAMETER_KIND_OUT_2 _currn));
+extern void _VS1PARAMETER_KIND_ONCE_2 ELI_ARG((_TPPPARAMETER_KIND_ONCE_2 _currn));
+extern void _VS1PARAMETER_KIND_IN_2 ELI_ARG((_TPPPARAMETER_KIND_IN_2 _currn));
+extern void _VS1PARAMETER_TYPE_2 ELI_ARG((_TPPPARAMETER_TYPE_2 _currn,PTGNode* _AS0NameListPtg_pre,DefTableKeyList* _AS0Params_pre));
+extern void _VS2PARAMETER_TYPE_2 ELI_ARG((_TPPPARAMETER_TYPE_2 _currn,PTGNode* _AS0NameListPtg_pre,DefTableKeyList* _AS0Params_pre));
+extern void _VS3PARAMETER_TYPE_2 ELI_ARG((_TPPPARAMETER_TYPE_2 _currn,PTGNode* _AS0NameListPtg_pre,DefTableKeyList* _AS0Params_pre,DefTableKeyList* _AS0_const81));
+extern void _VS4PARAMETER_TYPE_2 ELI_ARG((_TPPPARAMETER_TYPE_2 _currn,PTGNode* _AS0NameListPtg_pre,DefTableKeyList* _AS0Params_pre,PTGNode* _AS0_const101,int* _AS0_const83,PTGNode* _AS0_const82,DefTableKeyList* _AS0_const81));
+extern void _VS1PARAMETER_TYPES_2 ELI_ARG((_TPPPARAMETER_TYPES_2 _currn,DefTableKeyList* _AS0ParamList,PTGNode* _AS0NamePtg));
+extern void _VS2PARAMETER_TYPES_2 ELI_ARG((_TPPPARAMETER_TYPES_2 _currn,DefTableKeyList* _AS0ParamList,PTGNode* _AS0NamePtg));
+extern void _VS3PARAMETER_TYPES_2 ELI_ARG((_TPPPARAMETER_TYPES_2 _currn,DefTableKeyList* _AS0ParamList,PTGNode* _AS0NamePtg,DefTableKeyList* _AS0_const81));
+extern void _VS4PARAMETER_TYPES_2 ELI_ARG((_TPPPARAMETER_TYPES_2 _currn,DefTableKeyList* _AS0ParamList,PTGNode* _AS0NamePtg,PTGNode* _AS0_const101,int* _AS0_const83,PTGNode* _AS0_const82,DefTableKeyList* _AS0_const81));
+extern void _VS1METHOD_SPECIFICATION_2 ELI_ARG((_TPPMETHOD_SPECIFICATION_2 _currn));
+extern void _VS2METHOD_SPECIFICATION_2 ELI_ARG((_TPPMETHOD_SPECIFICATION_2 _currn));
+extern void _VS3METHOD_SPECIFICATION_2 ELI_ARG((_TPPMETHOD_SPECIFICATION_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS4METHOD_SPECIFICATION_2 ELI_ARG((_TPPMETHOD_SPECIFICATION_2 _currn,int* _AS0_const83,PTGNode* _AS0_const82,DefTableKeyList* _AS0_const81));
+extern void _VS1CLASS_ARGUMENT_2 ELI_ARG((_TPPCLASS_ARGUMENT_2 _currn));
+extern void _VS2CLASS_ARGUMENT_2 ELI_ARG((_TPPCLASS_ARGUMENT_2 _currn));
+extern void _VS3CLASS_ARGUMENT_2 ELI_ARG((_TPPCLASS_ARGUMENT_2 _currn));
+extern void _VS4CLASS_ARGUMENT_2 ELI_ARG((_TPPCLASS_ARGUMENT_2 _currn));
+#define _VS1CLASS_ARGUMENTS_LST_2 _VS1LST_Class_declarationCLASS_DECLARATIONS
+
+#define _VS2CLASS_ARGUMENTS_LST_2 _VS2LST_ModificationMODIFICATIONS
+
+extern void _VS3CLASS_ARGUMENTS_LST_2 ELI_ARG((_TPPCLASS_ARGUMENTS_LST_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS4CLASS_ARGUMENTS_LST_2 ELI_ARG((_TPPCLASS_ARGUMENTS_LST_2 _currn,PTGNode* _AS0_const101,int* _AS0_const83,PTGNode* _AS0_const82,DefTableKeyList* _AS0_const81));
+#define _VS1CLASS_ARGUMENTS_EMPTY_2 _VS0Empty
+
+#define _VS2CLASS_ARGUMENTS_EMPTY_2 _VS0Empty
+
+extern void _VS3CLASS_ARGUMENTS_EMPTY_2 ELI_ARG((_TPPCLASS_ARGUMENTS_EMPTY_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS4CLASS_ARGUMENTS_EMPTY_2 ELI_ARG((_TPPCLASS_ARGUMENTS_EMPTY_2 _currn,PTGNode* _AS0_const101,int* _AS0_const83,PTGNode* _AS0_const82,DefTableKeyList* _AS0_const81));
+extern void _VS1CLASS_SPECIFIER_2 ELI_ARG((_TPPCLASS_SPECIFIER_2 _currn,int* _AS0IsPoly));
+extern void _VS2CLASS_SPECIFIER_2 ELI_ARG((_TPPCLASS_SPECIFIER_2 _currn,int* _AS0IsPoly));
+extern void _VS3CLASS_SPECIFIER_2 ELI_ARG((_TPPCLASS_SPECIFIER_2 _currn,int* _AS0IsPoly,DefTableKeyList* _AS0_const81));
+extern void _VS4CLASS_SPECIFIER_2 ELI_ARG((_TPPCLASS_SPECIFIER_2 _currn,PTGNode* _AS0init_code,int* _AS0IsPoly,PTGNode* _AS0_const101,int* _AS0_const83,PTGNode* _AS0_const82,DefTableKeyList* _AS0_const81));
+extern void _VS1TYPE_SPECIFIER_STREAM_2 ELI_ARG((_TPPTYPE_SPECIFIER_STREAM_2 _currn));
+extern void _VS2TYPE_SPECIFIER_STREAM_2 ELI_ARG((_TPPTYPE_SPECIFIER_STREAM_2 _currn));
+extern void _VS3TYPE_SPECIFIER_STREAM_2 ELI_ARG((_TPPTYPE_SPECIFIER_STREAM_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS4TYPE_SPECIFIER_STREAM_2 ELI_ARG((_TPPTYPE_SPECIFIER_STREAM_2 _currn,int* _AS0IsMethodParameterType,DefTableKeyList* _AS0_const81));
+extern void _VS1TYPE_SPECIFIER_SAME_2 ELI_ARG((_TPPTYPE_SPECIFIER_SAME_2 _currn));
+#define _VS2TYPE_SPECIFIER_SAME_2 _VS0Empty
+
+extern void _VS3TYPE_SPECIFIER_SAME_2 ELI_ARG((_TPPTYPE_SPECIFIER_SAME_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS4TYPE_SPECIFIER_SAME_2 ELI_ARG((_TPPTYPE_SPECIFIER_SAME_2 _currn,int* _AS0IsMethodParameterType,DefTableKeyList* _AS0_const81));
+extern void _VS1TYPE_SPECIFIER_SAME_POLY_2 ELI_ARG((_TPPTYPE_SPECIFIER_SAME_POLY_2 _currn));
+#define _VS2TYPE_SPECIFIER_SAME_POLY_2 _VS0Empty
+
+extern void _VS3TYPE_SPECIFIER_SAME_POLY_2 ELI_ARG((_TPPTYPE_SPECIFIER_SAME_POLY_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS4TYPE_SPECIFIER_SAME_POLY_2 ELI_ARG((_TPPTYPE_SPECIFIER_SAME_POLY_2 _currn,int* _AS0IsMethodParameterType,DefTableKeyList* _AS0_const81));
+extern void _VS1TYPE_SPECIFIER_PROC_2 ELI_ARG((_TPPTYPE_SPECIFIER_PROC_2 _currn));
+extern void _VS2TYPE_SPECIFIER_PROC_2 ELI_ARG((_TPPTYPE_SPECIFIER_PROC_2 _currn));
+extern void _VS3TYPE_SPECIFIER_PROC_2 ELI_ARG((_TPPTYPE_SPECIFIER_PROC_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS4TYPE_SPECIFIER_PROC_2 ELI_ARG((_TPPTYPE_SPECIFIER_PROC_2 _currn,int* _AS0IsMethodParameterType,DefTableKeyList* _AS0_const81));
+extern void _VS1TYPE_SPECIFIER_EMPTY_2 ELI_ARG((_TPPTYPE_SPECIFIER_EMPTY_2 _currn));
+#define _VS2TYPE_SPECIFIER_EMPTY_2 _VS0Empty
+
+extern void _VS3TYPE_SPECIFIER_EMPTY_2 ELI_ARG((_TPPTYPE_SPECIFIER_EMPTY_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS4TYPE_SPECIFIER_EMPTY_2 ELI_ARG((_TPPTYPE_SPECIFIER_EMPTY_2 _currn,int* _AS0IsMethodParameterType,DefTableKeyList* _AS0_const81));
+extern void _VS1TYPE_SPECIFIER_CL_2 ELI_ARG((_TPPTYPE_SPECIFIER_CL_2 _currn));
+extern void _VS2TYPE_SPECIFIER_CL_2 ELI_ARG((_TPPTYPE_SPECIFIER_CL_2 _currn));
+extern void _VS3TYPE_SPECIFIER_CL_2 ELI_ARG((_TPPTYPE_SPECIFIER_CL_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS4TYPE_SPECIFIER_CL_2 ELI_ARG((_TPPTYPE_SPECIFIER_CL_2 _currn,int* _AS0IsMethodParameterType,DefTableKeyList* _AS0_const81));
+extern void _VS1TYPE_SPECIFIER_CL_POLY_2 ELI_ARG((_TPPTYPE_SPECIFIER_CL_POLY_2 _currn));
+extern void _VS2TYPE_SPECIFIER_CL_POLY_2 ELI_ARG((_TPPTYPE_SPECIFIER_CL_POLY_2 _currn));
+extern void _VS3TYPE_SPECIFIER_CL_POLY_2 ELI_ARG((_TPPTYPE_SPECIFIER_CL_POLY_2 _currn,DefTableKeyList* _AS0_const81));
+extern void _VS4TYPE_SPECIFIER_CL_POLY_2 ELI_ARG((_TPPTYPE_SPECIFIER_CL_POLY_2 _currn,int* _AS0IsMethodParameterType,DefTableKeyList* _AS0_const81));
+#define _VS1TYPE_SPECIFIERS_EMPTY_2 _VS0Empty
+
+#define _VS2TYPE_SPECIFIERS_EMPTY_2 _VS0Empty
+
+#define _VS3TYPE_SPECIFIERS_EMPTY_2 _VS0Empty
+
+#define _VS4TYPE_SPECIFIERS_EMPTY_2 _VS0Empty
+
+#define _VS1TYPE_SPECIFIERS_LST_2 _VS1LST_Class_declarationCLASS_DECLARATIONS
+
+#define _VS2TYPE_SPECIFIERS_LST_2 _VS2LST_ModificationMODIFICATIONS
+
+extern void _VS3TYPE_SPECIFIERS_LST_2 ELI_ARG((_TPPTYPE_SPECIFIERS_LST_2 _currn));
+extern void _VS4TYPE_SPECIFIERS_LST_2 ELI_ARG((_TPPTYPE_SPECIFIERS_LST_2 _currn));
+extern void _VS1CLASS_PARAMETER_2 ELI_ARG((_TPPCLASS_PARAMETER_2 _currn));
+extern void _VS2CLASS_PARAMETER_2 ELI_ARG((_TPPCLASS_PARAMETER_2 _currn));
+extern void _VS3CLASS_PARAMETER_2 ELI_ARG((_TPPCLASS_PARAMETER_2 _currn));
+extern void _VS4CLASS_PARAMETER_2 ELI_ARG((_TPPCLASS_PARAMETER_2 _currn));
+extern void _VS1IDENT_DEF_2 ELI_ARG((_TPPIDENT_DEF_2 _currn));
+extern void _VS2IDENT_DEF_2 ELI_ARG((_TPPIDENT_DEF_2 _currn));
+extern void _VS3IDENT_DEF_2 ELI_ARG((_TPPIDENT_DEF_2 _currn));
+extern void _VS4IDENT_DEF_2 ELI_ARG((_TPPIDENT_DEF_2 _currn));
+extern void _VS5IDENT_DEF_2 ELI_ARG((_TPPIDENT_DEF_2 _currn));
+extern void _VS6IDENT_DEF_2 ELI_ARG((_TPPIDENT_DEF_2 _currn));
+extern void _VS1BOUND_IDENTIFIER_2 ELI_ARG((_TPPBOUND_IDENTIFIER_2 _currn));
+extern void _VS2BOUND_IDENTIFIER_2 ELI_ARG((_TPPBOUND_IDENTIFIER_2 _currn));
+extern void _VS3BOUND_IDENTIFIER_2 ELI_ARG((_TPPBOUND_IDENTIFIER_2 _currn));
+extern void _VS4BOUND_IDENTIFIER_2 ELI_ARG((_TPPBOUND_IDENTIFIER_2 _currn));
+extern void _VS5BOUND_IDENTIFIER_2 ELI_ARG((_TPPBOUND_IDENTIFIER_2 _currn));
+#define _VS1CLASS_PARAMETERS_EMPTY_2 _VS0Empty
+
+#define _VS2CLASS_PARAMETERS_EMPTY_2 _VS0Empty
+
+#define _VS3CLASS_PARAMETERS_EMPTY_2 _VS0Empty
+
+#define _VS4CLASS_PARAMETERS_EMPTY_2 _VS0Empty
+
+#define _VS1CLASS_PARAMETERS_LST_2 _VS1LST_Class_declarationCLASS_DECLARATIONS
+
+#define _VS2CLASS_PARAMETERS_LST_2 _VS2LST_ModificationMODIFICATIONS
+
+#define _VS3CLASS_PARAMETERS_LST_2 _VS3LST_Feature_declarationFEATURE_DECLS
+
+#define _VS4CLASS_PARAMETERS_LST_2 _VS4LST_Class_declarationCLASS_DECLARATIONS
+
+extern void _VS1CLASS_BOUNDS_EMPTY_2 ELI_ARG((_TPPCLASS_BOUNDS_EMPTY_2 _currn));
+extern void _VS2CLASS_BOUNDS_EMPTY_2 ELI_ARG((_TPPCLASS_BOUNDS_EMPTY_2 _currn));
+#define _VS3CLASS_BOUNDS_EMPTY_2 _VS0Empty
+
+#define _VS4CLASS_BOUNDS_EMPTY_2 _VS0Empty
+
+#define _VS5CLASS_BOUNDS_EMPTY_2 _VS0Empty
+
+extern void _VS6CLASS_BOUNDS_EMPTY_2 ELI_ARG((_TPPCLASS_BOUNDS_EMPTY_2 _currn));
+extern void _VS1CLASS_BOUNDS_LST_2 ELI_ARG((_TPPCLASS_BOUNDS_LST_2 _currn));
+extern void _VS2CLASS_BOUNDS_LST_2 ELI_ARG((_TPPCLASS_BOUNDS_LST_2 _currn));
+extern void _VS3CLASS_BOUNDS_LST_2 ELI_ARG((_TPPCLASS_BOUNDS_LST_2 _currn));
+extern void _VS4CLASS_BOUNDS_LST_2 ELI_ARG((_TPPCLASS_BOUNDS_LST_2 _currn));
+extern void _VS5CLASS_BOUNDS_LST_2 ELI_ARG((_TPPCLASS_BOUNDS_LST_2 _currn));
+extern void _VS6CLASS_BOUNDS_LST_2 ELI_ARG((_TPPCLASS_BOUNDS_LST_2 _currn));
+extern void _VS1CLASS_ID_DEF_POLY_2 ELI_ARG((_TPPCLASS_ID_DEF_POLY_2 _currn));
+extern void _VS2CLASS_ID_DEF_POLY_2 ELI_ARG((_TPPCLASS_ID_DEF_POLY_2 _currn));
+extern void _VS3CLASS_ID_DEF_POLY_2 ELI_ARG((_TPPCLASS_ID_DEF_POLY_2 _currn));
+extern void _VS1CLASS_ID_DEF_2 ELI_ARG((_TPPCLASS_ID_DEF_2 _currn));
+extern void _VS2CLASS_ID_DEF_2 ELI_ARG((_TPPCLASS_ID_DEF_2 _currn));
+extern void _VS3CLASS_ID_DEF_2 ELI_ARG((_TPPCLASS_ID_DEF_2 _currn));
+extern void _VS1BUILTIN_OPT_CL_2 ELI_ARG((_TPPBUILTIN_OPT_CL_2 _currn));
+extern void _VS2BUILTIN_OPT_CL_2 ELI_ARG((_TPPBUILTIN_OPT_CL_2 _currn));
+extern void _VS3BUILTIN_OPT_CL_2 ELI_ARG((_TPPBUILTIN_OPT_CL_2 _currn));
+extern void _VS4BUILTIN_OPT_CL_2 ELI_ARG((_TPPBUILTIN_OPT_CL_2 _currn));
+extern void _VS5BUILTIN_OPT_CL_2 ELI_ARG((_TPPBUILTIN_OPT_CL_2 _currn));
+extern void _VS1BUILTIN_OPT_ID_2 ELI_ARG((_TPPBUILTIN_OPT_ID_2 _currn));
+#define _VS2BUILTIN_OPT_ID_2 _VS0Empty
+
+#define _VS3BUILTIN_OPT_ID_2 _VS0Empty
+
+extern void _VS4BUILTIN_OPT_ID_2 ELI_ARG((_TPPBUILTIN_OPT_ID_2 _currn));
+extern void _VS5BUILTIN_OPT_ID_2 ELI_ARG((_TPPBUILTIN_OPT_ID_2 _currn));
+extern void _VS1BUILTIN_OPT_2 ELI_ARG((_TPPBUILTIN_OPT_2 _currn));
+#define _VS2BUILTIN_OPT_2 _VS0Empty
+
+#define _VS3BUILTIN_OPT_2 _VS0Empty
+
+#define _VS4BUILTIN_OPT_2 _VS0Empty
+
+extern void _VS5BUILTIN_OPT_2 ELI_ARG((_TPPBUILTIN_OPT_2 _currn));
+extern void _VS1BUILTIN_OPT_EMPTY_2 ELI_ARG((_TPPBUILTIN_OPT_EMPTY_2 _currn));
+#define _VS2BUILTIN_OPT_EMPTY_2 _VS0Empty
+
+#define _VS3BUILTIN_OPT_EMPTY_2 _VS0Empty
+
+#define _VS4BUILTIN_OPT_EMPTY_2 _VS0Empty
+
+extern void _VS5BUILTIN_OPT_EMPTY_2 ELI_ARG((_TPPBUILTIN_OPT_EMPTY_2 _currn));
+extern void _VS1CLASS_BODY_2 ELI_ARG((_TPPCLASS_BODY_2 _currn));
+extern void _VS2CLASS_BODY_2 ELI_ARG((_TPPCLASS_BODY_2 _currn));
+extern void _VS3CLASS_BODY_2 ELI_ARG((_TPPCLASS_BODY_2 _currn));
+extern void _VS4CLASS_BODY_2 ELI_ARG((_TPPCLASS_BODY_2 _currn));
+extern void _VS5CLASS_BODY_2 ELI_ARG((_TPPCLASS_BODY_2 _currn));
+extern void _VS6CLASS_BODY_2 ELI_ARG((_TPPCLASS_BODY_2 _currn));
+extern void _VS7CLASS_BODY_2 ELI_ARG((_TPPCLASS_BODY_2 _currn));
+extern void _VS8CLASS_BODY_2 ELI_ARG((_TPPCLASS_BODY_2 _currn));
+extern void _VS1CLASS_HEAD_2 ELI_ARG((_TPPCLASS_HEAD_2 _currn));
+extern void _VS2CLASS_HEAD_2 ELI_ARG((_TPPCLASS_HEAD_2 _currn));
+extern void _VS3CLASS_HEAD_2 ELI_ARG((_TPPCLASS_HEAD_2 _currn));
+extern void _VS4CLASS_HEAD_2 ELI_ARG((_TPPCLASS_HEAD_2 _currn));
+extern void _VS5CLASS_HEAD_2 ELI_ARG((_TPPCLASS_HEAD_2 _currn));
+extern void _VS6CLASS_HEAD_2 ELI_ARG((_TPPCLASS_HEAD_2 _currn));
+extern void _VS7CLASS_HEAD_2 ELI_ARG((_TPPCLASS_HEAD_2 _currn));
+extern void _VS8CLASS_HEAD_2 ELI_ARG((_TPPCLASS_HEAD_2 _currn));
+extern void _VS9CLASS_HEAD_2 ELI_ARG((_TPPCLASS_HEAD_2 _currn));
+extern void _VS1CLASS_ATTRIBUTE_VA_2 ELI_ARG((_TPPCLASS_ATTRIBUTE_VA_2 _currn));
+extern void _VS1CLASS_ATTRIBUTE_EX_2 ELI_ARG((_TPPCLASS_ATTRIBUTE_EX_2 _currn));
+extern void _VS1CLASS_ATTRIBUTE_2 ELI_ARG((_TPPCLASS_ATTRIBUTE_2 _currn));
+extern void _VS1CLASS_ATTRIBUTE_ABVA_2 ELI_ARG((_TPPCLASS_ATTRIBUTE_ABVA_2 _currn));
+extern void _VS1CLASS_ATTRIBUTE_AB_2 ELI_ARG((_TPPCLASS_ATTRIBUTE_AB_2 _currn));
+extern void _VS1CLASS_DECLARATION_2 ELI_ARG((_TPPCLASS_DECLARATION_2 _currn));
+extern void _VS2CLASS_DECLARATION_2 ELI_ARG((_TPPCLASS_DECLARATION_2 _currn));
+extern void _VS3CLASS_DECLARATION_2 ELI_ARG((_TPPCLASS_DECLARATION_2 _currn));
+extern void _VS4CLASS_DECLARATION_2 ELI_ARG((_TPPCLASS_DECLARATION_2 _currn));
+extern void _VS5CLASS_DECLARATION_2 ELI_ARG((_TPPCLASS_DECLARATION_2 _currn));
+extern void _VS6CLASS_DECLARATION_2 ELI_ARG((_TPPCLASS_DECLARATION_2 _currn));
+extern void _VS7CLASS_DECLARATION_2 ELI_ARG((_TPPCLASS_DECLARATION_2 _currn));
+extern void _VS8CLASS_DECLARATION_2 ELI_ARG((_TPPCLASS_DECLARATION_2 _currn));
+extern void _VS9CLASS_DECLARATION_2 ELI_ARG((_TPPCLASS_DECLARATION_2 _currn));
+extern void _VS10CLASS_DECLARATION_2 ELI_ARG((_TPPCLASS_DECLARATION_2 _currn,PTGNode* _AS0_const0));
+#define _VS1CLASS_DECLARATIONS_2 _VS1ASSERTION_STATEMENT_2
+
+#define _VS2CLASS_DECLARATIONS_2 _VS2LABEL_LIST_2
+
+extern void _VS3CLASS_DECLARATIONS_2 ELI_ARG((_TPPCLASS_DECLARATIONS_2 _currn));
+extern void _VS4CLASS_DECLARATIONS_2 ELI_ARG((_TPPCLASS_DECLARATIONS_2 _currn));
+extern void _VS5CLASS_DECLARATIONS_2 ELI_ARG((_TPPCLASS_DECLARATIONS_2 _currn));
+extern void _VS6CLASS_DECLARATIONS_2 ELI_ARG((_TPPCLASS_DECLARATIONS_2 _currn));
+extern void _VS7CLASS_DECLARATIONS_2 ELI_ARG((_TPPCLASS_DECLARATIONS_2 _currn));
+extern void _VS8CLASS_DECLARATIONS_2 ELI_ARG((_TPPCLASS_DECLARATIONS_2 _currn));
+extern void _VS9CLASS_DECLARATIONS_2 ELI_ARG((_TPPCLASS_DECLARATIONS_2 _currn));
+extern void _VS10CLASS_DECLARATIONS_2 ELI_ARG((_TPPCLASS_DECLARATIONS_2 _currn));
+extern void _VS1ASSERTION_STATEMENT ELI_ARG((_TPPASSERTION_STATEMENT _currn));
+extern void _VS2ASSERTION_STATEMENT ELI_ARG((_TPPASSERTION_STATEMENT _currn));
+extern void _VS1RAISE_STATEMENT ELI_ARG((_TPPRAISE_STATEMENT _currn));
+extern void _VS2RAISE_STATEMENT ELI_ARG((_TPPRAISE_STATEMENT _currn));
+extern void _VS1RETURN_STATEMENT ELI_ARG((_TPPRETURN_STATEMENT _currn));
+extern void _VS1RESUME_STATEMENT ELI_ARG((_TPPRESUME_STATEMENT _currn));
+extern void _VS1BREAK_STATEMENT ELI_ARG((_TPPBREAK_STATEMENT _currn));
+extern void _VS1LOOP ELI_ARG((_TPPLOOP _currn));
+extern void _VS2LOOP ELI_ARG((_TPPLOOP _currn));
+extern void _VS3LOOP ELI_ARG((_TPPLOOP _currn));
+extern void _VS4LOOP ELI_ARG((_TPPLOOP _currn));
+extern void _VS1LOOP_EXP ELI_ARG((_TPPLOOP_EXP _currn));
+extern void _VS2LOOP_EXP ELI_ARG((_TPPLOOP_EXP _currn));
+extern void _VS3LOOP_EXP ELI_ARG((_TPPLOOP_EXP _currn));
+extern void _VS4LOOP_EXP ELI_ARG((_TPPLOOP_EXP _currn));
+extern void _VS1TYPES_LST ELI_ARG((_TPPTYPES_LST _currn));
+extern void _VS2TYPES_LST ELI_ARG((_TPPTYPES_LST _currn));
+extern void _VS1TYPES_EMPTY ELI_ARG((_TPPTYPES_EMPTY _currn));
+#define _VS2TYPES_EMPTY _VS0Empty
+
+extern void _VS1WHEN_TYPES_BLOCK ELI_ARG((_TPPWHEN_TYPES_BLOCK _currn));
+extern void _VS2WHEN_TYPES_BLOCK ELI_ARG((_TPPWHEN_TYPES_BLOCK _currn));
+extern void _VS3WHEN_TYPES_BLOCK ELI_ARG((_TPPWHEN_TYPES_BLOCK _currn));
+extern void _VS4WHEN_TYPES_BLOCK ELI_ARG((_TPPWHEN_TYPES_BLOCK _currn));
+extern void _VS1WHEN_TYPES_BLOCKS_EMPTY ELI_ARG((_TPPWHEN_TYPES_BLOCKS_EMPTY _currn));
+extern void _VS2WHEN_TYPES_BLOCKS_EMPTY ELI_ARG((_TPPWHEN_TYPES_BLOCKS_EMPTY _currn));
+extern void _VS3WHEN_TYPES_BLOCKS_EMPTY ELI_ARG((_TPPWHEN_TYPES_BLOCKS_EMPTY _currn));
+extern void _VS4WHEN_TYPES_BLOCKS_EMPTY ELI_ARG((_TPPWHEN_TYPES_BLOCKS_EMPTY _currn));
+extern void _VS1WHEN_TYPES_BLOCKS ELI_ARG((_TPPWHEN_TYPES_BLOCKS _currn));
+extern void _VS2WHEN_TYPES_BLOCKS ELI_ARG((_TPPWHEN_TYPES_BLOCKS _currn));
+extern void _VS3WHEN_TYPES_BLOCKS ELI_ARG((_TPPWHEN_TYPES_BLOCKS _currn));
+extern void _VS4WHEN_TYPES_BLOCKS ELI_ARG((_TPPWHEN_TYPES_BLOCKS _currn));
+extern void _VS1TYPE_CASE_STATEMENT_ATT ELI_ARG((_TPPTYPE_CASE_STATEMENT_ATT _currn));
+extern void _VS2TYPE_CASE_STATEMENT_ATT ELI_ARG((_TPPTYPE_CASE_STATEMENT_ATT _currn));
+extern void _VS3TYPE_CASE_STATEMENT_ATT ELI_ARG((_TPPTYPE_CASE_STATEMENT_ATT _currn));
+extern void _VS4TYPE_CASE_STATEMENT_ATT ELI_ARG((_TPPTYPE_CASE_STATEMENT_ATT _currn));
+extern void _VS1TYPE_CASE_STATEMENT ELI_ARG((_TPPTYPE_CASE_STATEMENT _currn));
+extern void _VS2TYPE_CASE_STATEMENT ELI_ARG((_TPPTYPE_CASE_STATEMENT _currn));
+extern void _VS3TYPE_CASE_STATEMENT ELI_ARG((_TPPTYPE_CASE_STATEMENT _currn));
+extern void _VS4TYPE_CASE_STATEMENT ELI_ARG((_TPPTYPE_CASE_STATEMENT _currn));
+extern void _VS1CASE_LABEL_DES ELI_ARG((_TPPCASE_LABEL_DES _currn,TreeNodePtr* _AS0tree));
+extern void _VS2CASE_LABEL_DES ELI_ARG((_TPPCASE_LABEL_DES _currn,TreeNodePtr* _AS0tree));
+extern void _VS1CASE_LABEL_VALUE ELI_ARG((_TPPCASE_LABEL_VALUE _currn,TreeNodePtr* _AS0tree));
+extern void _VS2CASE_LABEL_VALUE ELI_ARG((_TPPCASE_LABEL_VALUE _currn,TreeNodePtr* _AS0tree));
+extern void _VS1LABEL_RANGE ELI_ARG((_TPPLABEL_RANGE _currn));
+extern void _VS2LABEL_RANGE ELI_ARG((_TPPLABEL_RANGE _currn));
+extern void _VS1LABEL_RANGE_SINGLE ELI_ARG((_TPPLABEL_RANGE_SINGLE _currn));
+extern void _VS2LABEL_RANGE_SINGLE ELI_ARG((_TPPLABEL_RANGE_SINGLE _currn));
+extern void _VS1LABEL_LIST ELI_ARG((_TPPLABEL_LIST _currn));
+extern void _VS2LABEL_LIST ELI_ARG((_TPPLABEL_LIST _currn));
+extern void _VS1WHEN_LABEL_STMT ELI_ARG((_TPPWHEN_LABEL_STMT _currn));
+extern void _VS2WHEN_LABEL_STMT ELI_ARG((_TPPWHEN_LABEL_STMT _currn));
+extern void _VS3WHEN_LABEL_STMT ELI_ARG((_TPPWHEN_LABEL_STMT _currn));
+extern void _VS4WHEN_LABEL_STMT ELI_ARG((_TPPWHEN_LABEL_STMT _currn));
+extern void _VS1WHEN_LABEL_STMTS_EMPTY ELI_ARG((_TPPWHEN_LABEL_STMTS_EMPTY _currn));
+extern void _VS2WHEN_LABEL_STMTS_EMPTY ELI_ARG((_TPPWHEN_LABEL_STMTS_EMPTY _currn,TreeNodePtr* _AS0tree));
+extern void _VS3WHEN_LABEL_STMTS_EMPTY ELI_ARG((_TPPWHEN_LABEL_STMTS_EMPTY _currn,TreeNodePtr* _AS0tree));
+extern void _VS4WHEN_LABEL_STMTS_EMPTY ELI_ARG((_TPPWHEN_LABEL_STMTS_EMPTY _currn,TreeNodePtr* _AS0tree));
+extern void _VS1WHEN_LABEL_STMTS ELI_ARG((_TPPWHEN_LABEL_STMTS _currn));
+extern void _VS2WHEN_LABEL_STMTS ELI_ARG((_TPPWHEN_LABEL_STMTS _currn,TreeNodePtr* _AS0tree));
+extern void _VS3WHEN_LABEL_STMTS ELI_ARG((_TPPWHEN_LABEL_STMTS _currn,TreeNodePtr* _AS0tree));
+extern void _VS4WHEN_LABEL_STMTS ELI_ARG((_TPPWHEN_LABEL_STMTS _currn,TreeNodePtr* _AS0tree));
+extern void _VS1CASE_STATEMENT ELI_ARG((_TPPCASE_STATEMENT _currn));
+extern void _VS2CASE_STATEMENT ELI_ARG((_TPPCASE_STATEMENT _currn));
+extern void _VS3CASE_STATEMENT ELI_ARG((_TPPCASE_STATEMENT _currn));
+extern void _VS4CASE_STATEMENT ELI_ARG((_TPPCASE_STATEMENT _currn));
+extern void _VS1COND_STATEMENT_ELSE ELI_ARG((_TPPCOND_STATEMENT_ELSE _currn));
+extern void _VS2COND_STATEMENT_ELSE ELI_ARG((_TPPCOND_STATEMENT_ELSE _currn));
+extern void _VS3COND_STATEMENT_ELSE ELI_ARG((_TPPCOND_STATEMENT_ELSE _currn));
+extern void _VS4COND_STATEMENT_ELSE ELI_ARG((_TPPCOND_STATEMENT_ELSE _currn));
+extern void _VS1COND_STATEMENT ELI_ARG((_TPPCOND_STATEMENT _currn));
+extern void _VS2COND_STATEMENT ELI_ARG((_TPPCOND_STATEMENT _currn));
+extern void _VS3COND_STATEMENT ELI_ARG((_TPPCOND_STATEMENT _currn));
+extern void _VS4COND_STATEMENT ELI_ARG((_TPPCOND_STATEMENT _currn));
+extern void _VS1EXCEPTION_TYPES_LST ELI_ARG((_TPPEXCEPTION_TYPES_LST _currn));
+extern void _VS2EXCEPTION_TYPES_LST ELI_ARG((_TPPEXCEPTION_TYPES_LST _currn));
+extern void _VS1EXCEPTION_TYPES_EMPTY ELI_ARG((_TPPEXCEPTION_TYPES_EMPTY _currn));
+#define _VS2EXCEPTION_TYPES_EMPTY _VS0Empty
+
+extern void _VS1WHEN_EXCEPTION_STMT ELI_ARG((_TPPWHEN_EXCEPTION_STMT _currn));
+extern void _VS2WHEN_EXCEPTION_STMT ELI_ARG((_TPPWHEN_EXCEPTION_STMT _currn));
+extern void _VS3WHEN_EXCEPTION_STMT ELI_ARG((_TPPWHEN_EXCEPTION_STMT _currn));
+extern void _VS4WHEN_EXCEPTION_STMT ELI_ARG((_TPPWHEN_EXCEPTION_STMT _currn));
+extern void _VS1WHEN_EXCEPTION_STMTS_EMPTY ELI_ARG((_TPPWHEN_EXCEPTION_STMTS_EMPTY _currn));
+extern void _VS2WHEN_EXCEPTION_STMTS_EMPTY ELI_ARG((_TPPWHEN_EXCEPTION_STMTS_EMPTY _currn));
+extern void _VS3WHEN_EXCEPTION_STMTS_EMPTY ELI_ARG((_TPPWHEN_EXCEPTION_STMTS_EMPTY _currn));
+extern void _VS4WHEN_EXCEPTION_STMTS_EMPTY ELI_ARG((_TPPWHEN_EXCEPTION_STMTS_EMPTY _currn));
+extern void _VS1WHEN_EXCEPTION_STMTS ELI_ARG((_TPPWHEN_EXCEPTION_STMTS _currn));
+extern void _VS2WHEN_EXCEPTION_STMTS ELI_ARG((_TPPWHEN_EXCEPTION_STMTS _currn));
+extern void _VS3WHEN_EXCEPTION_STMTS ELI_ARG((_TPPWHEN_EXCEPTION_STMTS _currn));
+extern void _VS4WHEN_EXCEPTION_STMTS ELI_ARG((_TPPWHEN_EXCEPTION_STMTS _currn));
+extern void _VS1EXCEPTIONS ELI_ARG((_TPPEXCEPTIONS _currn));
+extern void _VS2EXCEPTIONS ELI_ARG((_TPPEXCEPTIONS _currn));
+extern void _VS3EXCEPTIONS ELI_ARG((_TPPEXCEPTIONS _currn));
+extern void _VS4EXCEPTIONS ELI_ARG((_TPPEXCEPTIONS _currn));
+extern void _VS1EXCEPTIONS_EMPTY ELI_ARG((_TPPEXCEPTIONS_EMPTY _currn));
+extern void _VS2EXCEPTIONS_EMPTY ELI_ARG((_TPPEXCEPTIONS_EMPTY _currn));
+#define _VS3EXCEPTIONS_EMPTY _VS0Empty
+
+#define _VS4EXCEPTIONS_EMPTY _VS0Empty
+
+extern void _VS1BEGIN_BLOCK ELI_ARG((_TPPBEGIN_BLOCK _currn));
+extern void _VS2BEGIN_BLOCK ELI_ARG((_TPPBEGIN_BLOCK _currn));
+extern void _VS3BEGIN_BLOCK ELI_ARG((_TPPBEGIN_BLOCK _currn));
+extern void _VS4BEGIN_BLOCK ELI_ARG((_TPPBEGIN_BLOCK _currn));
+extern void _VS1ASSIGNMENT ELI_ARG((_TPPASSIGNMENT _currn));
+extern void _VS2ASSIGNMENT ELI_ARG((_TPPASSIGNMENT _currn));
+extern void _VS1STATEMENTS_ASSERT ELI_ARG((_TPPSTATEMENTS_ASSERT _currn));
+extern void _VS2STATEMENTS_ASSERT ELI_ARG((_TPPSTATEMENTS_ASSERT _currn,TreeNodePtr* _AS0tree));
+extern void _VS3STATEMENTS_ASSERT ELI_ARG((_TPPSTATEMENTS_ASSERT _currn,TreeNodePtr* _AS0tree));
+extern void _VS4STATEMENTS_ASSERT ELI_ARG((_TPPSTATEMENTS_ASSERT _currn,TreeNodePtr* _AS0tree));
+extern void _VS1STATEMENTS_RAISE ELI_ARG((_TPPSTATEMENTS_RAISE _currn));
+extern void _VS2STATEMENTS_RAISE ELI_ARG((_TPPSTATEMENTS_RAISE _currn,TreeNodePtr* _AS0tree));
+extern void _VS3STATEMENTS_RAISE ELI_ARG((_TPPSTATEMENTS_RAISE _currn,TreeNodePtr* _AS0tree));
+extern void _VS4STATEMENTS_RAISE ELI_ARG((_TPPSTATEMENTS_RAISE _currn,TreeNodePtr* _AS0tree));
+extern void _VS1STATEMENTS_RETURN ELI_ARG((_TPPSTATEMENTS_RETURN _currn));
+extern void _VS2STATEMENTS_RETURN ELI_ARG((_TPPSTATEMENTS_RETURN _currn,TreeNodePtr* _AS0tree));
+extern void _VS3STATEMENTS_RETURN ELI_ARG((_TPPSTATEMENTS_RETURN _currn,TreeNodePtr* _AS0tree));
+extern void _VS4STATEMENTS_RETURN ELI_ARG((_TPPSTATEMENTS_RETURN _currn,TreeNodePtr* _AS0tree));
+extern void _VS1STATEMENTS_RESUME ELI_ARG((_TPPSTATEMENTS_RESUME _currn));
+extern void _VS2STATEMENTS_RESUME ELI_ARG((_TPPSTATEMENTS_RESUME _currn,TreeNodePtr* _AS0tree));
+extern void _VS3STATEMENTS_RESUME ELI_ARG((_TPPSTATEMENTS_RESUME _currn,TreeNodePtr* _AS0tree));
+extern void _VS4STATEMENTS_RESUME ELI_ARG((_TPPSTATEMENTS_RESUME _currn,TreeNodePtr* _AS0tree));
+extern void _VS1STATEMENTS_EXP ELI_ARG((_TPPSTATEMENTS_EXP _currn));
+extern void _VS2STATEMENTS_EXP ELI_ARG((_TPPSTATEMENTS_EXP _currn,TreeNodePtr* _AS0tree));
+extern void _VS3STATEMENTS_EXP ELI_ARG((_TPPSTATEMENTS_EXP _currn,TreeNodePtr* _AS0tree));
+extern void _VS4STATEMENTS_EXP ELI_ARG((_TPPSTATEMENTS_EXP _currn,TreeNodePtr* _AS0tree));
+extern void _VS1STATEMENTS_BREAK ELI_ARG((_TPPSTATEMENTS_BREAK _currn));
+extern void _VS2STATEMENTS_BREAK ELI_ARG((_TPPSTATEMENTS_BREAK _currn,TreeNodePtr* _AS0tree));
+extern void _VS3STATEMENTS_BREAK ELI_ARG((_TPPSTATEMENTS_BREAK _currn,TreeNodePtr* _AS0tree));
+extern void _VS4STATEMENTS_BREAK ELI_ARG((_TPPSTATEMENTS_BREAK _currn,TreeNodePtr* _AS0tree));
+extern void _VS1STATEMENTS_LOOP ELI_ARG((_TPPSTATEMENTS_LOOP _currn));
+extern void _VS2STATEMENTS_LOOP ELI_ARG((_TPPSTATEMENTS_LOOP _currn,TreeNodePtr* _AS0tree));
+extern void _VS3STATEMENTS_LOOP ELI_ARG((_TPPSTATEMENTS_LOOP _currn,TreeNodePtr* _AS0tree));
+extern void _VS4STATEMENTS_LOOP ELI_ARG((_TPPSTATEMENTS_LOOP _currn,TreeNodePtr* _AS0tree));
+extern void _VS1STATEMENTS_TYPE_CASE ELI_ARG((_TPPSTATEMENTS_TYPE_CASE _currn));
+extern void _VS2STATEMENTS_TYPE_CASE ELI_ARG((_TPPSTATEMENTS_TYPE_CASE _currn,TreeNodePtr* _AS0tree));
+extern void _VS3STATEMENTS_TYPE_CASE ELI_ARG((_TPPSTATEMENTS_TYPE_CASE _currn,TreeNodePtr* _AS0tree));
+extern void _VS4STATEMENTS_TYPE_CASE ELI_ARG((_TPPSTATEMENTS_TYPE_CASE _currn,TreeNodePtr* _AS0tree));
+extern void _VS1STATEMENTS_CASE ELI_ARG((_TPPSTATEMENTS_CASE _currn));
+extern void _VS2STATEMENTS_CASE ELI_ARG((_TPPSTATEMENTS_CASE _currn,TreeNodePtr* _AS0tree));
+extern void _VS3STATEMENTS_CASE ELI_ARG((_TPPSTATEMENTS_CASE _currn,TreeNodePtr* _AS0tree));
+extern void _VS4STATEMENTS_CASE ELI_ARG((_TPPSTATEMENTS_CASE _currn,TreeNodePtr* _AS0tree));
+extern void _VS1STATEMENTS_COND ELI_ARG((_TPPSTATEMENTS_COND _currn));
+extern void _VS2STATEMENTS_COND ELI_ARG((_TPPSTATEMENTS_COND _currn,TreeNodePtr* _AS0tree));
+extern void _VS3STATEMENTS_COND ELI_ARG((_TPPSTATEMENTS_COND _currn,TreeNodePtr* _AS0tree));
+extern void _VS4STATEMENTS_COND ELI_ARG((_TPPSTATEMENTS_COND _currn,TreeNodePtr* _AS0tree));
+extern void _VS1STATEMENTS_BEGIN ELI_ARG((_TPPSTATEMENTS_BEGIN _currn));
+extern void _VS2STATEMENTS_BEGIN ELI_ARG((_TPPSTATEMENTS_BEGIN _currn,TreeNodePtr* _AS0tree));
+extern void _VS3STATEMENTS_BEGIN ELI_ARG((_TPPSTATEMENTS_BEGIN _currn,TreeNodePtr* _AS0tree));
+extern void _VS4STATEMENTS_BEGIN ELI_ARG((_TPPSTATEMENTS_BEGIN _currn,TreeNodePtr* _AS0tree));
+extern void _VS1STATEMENTS_ASSIGN ELI_ARG((_TPPSTATEMENTS_ASSIGN _currn));
+extern void _VS2STATEMENTS_ASSIGN ELI_ARG((_TPPSTATEMENTS_ASSIGN _currn,TreeNodePtr* _AS0tree));
+extern void _VS3STATEMENTS_ASSIGN ELI_ARG((_TPPSTATEMENTS_ASSIGN _currn,TreeNodePtr* _AS0tree));
+extern void _VS4STATEMENTS_ASSIGN ELI_ARG((_TPPSTATEMENTS_ASSIGN _currn,TreeNodePtr* _AS0tree));
+extern void _VS1STATEMENTS_EMPTY ELI_ARG((_TPPSTATEMENTS_EMPTY _currn));
+extern void _VS2STATEMENTS_EMPTY ELI_ARG((_TPPSTATEMENTS_EMPTY _currn,TreeNodePtr* _AS0tree));
+extern void _VS3STATEMENTS_EMPTY ELI_ARG((_TPPSTATEMENTS_EMPTY _currn,TreeNodePtr* _AS0tree));
+extern void _VS4STATEMENTS_EMPTY ELI_ARG((_TPPSTATEMENTS_EMPTY _currn,TreeNodePtr* _AS0tree));
+extern void _VS1LOCAL_STREAM_DECL ELI_ARG((_TPPLOCAL_STREAM_DECL _currn));
+extern void _VS2LOCAL_STREAM_DECL ELI_ARG((_TPPLOCAL_STREAM_DECL _currn));
+extern void _VS3LOCAL_STREAM_DECL ELI_ARG((_TPPLOCAL_STREAM_DECL _currn));
+extern void _VS4LOCAL_STREAM_DECL ELI_ARG((_TPPLOCAL_STREAM_DECL _currn));
+extern void _VS1LOCAL_DECLS_STREAM ELI_ARG((_TPPLOCAL_DECLS_STREAM _currn));
+extern void _VS2LOCAL_DECLS_STREAM ELI_ARG((_TPPLOCAL_DECLS_STREAM _currn,TreeNodePtr* _AS0tree));
+extern void _VS3LOCAL_DECLS_STREAM ELI_ARG((_TPPLOCAL_DECLS_STREAM _currn,TreeNodePtr* _AS0tree));
+extern void _VS4LOCAL_DECLS_STREAM ELI_ARG((_TPPLOCAL_DECLS_STREAM _currn,TreeNodePtr* _AS0tree));
+extern void _VS1LOCAL_DECLS_ATT ELI_ARG((_TPPLOCAL_DECLS_ATT _currn));
+extern void _VS2LOCAL_DECLS_ATT ELI_ARG((_TPPLOCAL_DECLS_ATT _currn,TreeNodePtr* _AS0tree));
+extern void _VS3LOCAL_DECLS_ATT ELI_ARG((_TPPLOCAL_DECLS_ATT _currn,TreeNodePtr* _AS0tree));
+extern void _VS4LOCAL_DECLS_ATT ELI_ARG((_TPPLOCAL_DECLS_ATT _currn,TreeNodePtr* _AS0tree));
+extern void _VS1LOCAL_DECLS_EMPTY ELI_ARG((_TPPLOCAL_DECLS_EMPTY _currn));
+extern void _VS2LOCAL_DECLS_EMPTY ELI_ARG((_TPPLOCAL_DECLS_EMPTY _currn,TreeNodePtr* _AS0tree));
+extern void _VS3LOCAL_DECLS_EMPTY ELI_ARG((_TPPLOCAL_DECLS_EMPTY _currn,TreeNodePtr* _AS0tree));
+extern void _VS4LOCAL_DECLS_EMPTY ELI_ARG((_TPPLOCAL_DECLS_EMPTY _currn,TreeNodePtr* _AS0tree));
+extern void _VS1BLOCK ELI_ARG((_TPPBLOCK _currn));
+extern void _VS2BLOCK ELI_ARG((_TPPBLOCK _currn));
+extern void _VS3BLOCK ELI_ARG((_TPPBLOCK _currn));
+extern void _VS4BLOCK ELI_ARG((_TPPBLOCK _currn));
+extern void _VS1BUILTIN_INST_CLRTYPE ELI_ARG((_TPPBUILTIN_INST_CLRTYPE _currn));
+extern void _VS2BUILTIN_INST_CLRTYPE ELI_ARG((_TPPBUILTIN_INST_CLRTYPE _currn));
+extern void _VS1BUILTIN_INST_TYPE ELI_ARG((_TPPBUILTIN_INST_TYPE _currn));
+extern void _VS2BUILTIN_INST_TYPE ELI_ARG((_TPPBUILTIN_INST_TYPE _currn));
+extern void _VS1BUILTIN_INST_STR ELI_ARG((_TPPBUILTIN_INST_STR _currn));
+#define _VS2BUILTIN_INST_STR _VS0Empty
+
+extern void _VS1BUILTIN_INSTS_EMPTY ELI_ARG((_TPPBUILTIN_INSTS_EMPTY _currn));
+#define _VS2BUILTIN_INSTS_EMPTY _VS0Empty
+
+extern void _VS1BUILTIN_INSTS ELI_ARG((_TPPBUILTIN_INSTS _currn));
+extern void _VS2BUILTIN_INSTS ELI_ARG((_TPPBUILTIN_INSTS _currn));
+extern void _VS1METHOD_BODY_STATIC_BUILTIN ELI_ARG((_TPPMETHOD_BODY_STATIC_BUILTIN _currn));
+#define _VS2METHOD_BODY_STATIC_BUILTIN _VS0Empty
+
+extern void _VS3METHOD_BODY_STATIC_BUILTIN ELI_ARG((_TPPMETHOD_BODY_STATIC_BUILTIN _currn));
+#define _VS4METHOD_BODY_STATIC_BUILTIN _VS0Empty
+
+extern void _VS5METHOD_BODY_STATIC_BUILTIN ELI_ARG((_TPPMETHOD_BODY_STATIC_BUILTIN _currn));
+extern void _VS1METHOD_BODY_BUILTIN ELI_ARG((_TPPMETHOD_BODY_BUILTIN _currn));
+#define _VS2METHOD_BODY_BUILTIN _VS0Empty
+
+extern void _VS3METHOD_BODY_BUILTIN ELI_ARG((_TPPMETHOD_BODY_BUILTIN _currn));
+#define _VS4METHOD_BODY_BUILTIN _VS0Empty
+
+extern void _VS5METHOD_BODY_BUILTIN ELI_ARG((_TPPMETHOD_BODY_BUILTIN _currn));
+extern void _VS1LINKER_SYMBOL ELI_ARG((_TPPLINKER_SYMBOL _currn));
+extern void _VS1LINKER_SYMBOL_EMPTY ELI_ARG((_TPPLINKER_SYMBOL_EMPTY _currn));
+extern void _VS1FOREIGN_LANGUAGE ELI_ARG((_TPPFOREIGN_LANGUAGE _currn));
+extern void _VS1METHOD_BODY_FOREIGN ELI_ARG((_TPPMETHOD_BODY_FOREIGN _currn));
+#define _VS2METHOD_BODY_FOREIGN _VS0Empty
+
+extern void _VS3METHOD_BODY_FOREIGN ELI_ARG((_TPPMETHOD_BODY_FOREIGN _currn));
+#define _VS4METHOD_BODY_FOREIGN _VS0Empty
+
+#define _VS5METHOD_BODY_FOREIGN _VS0Empty
+
+extern void _VS1METHOD_BODY_AB ELI_ARG((_TPPMETHOD_BODY_AB _currn));
+#define _VS2METHOD_BODY_AB _VS0Empty
+
+extern void _VS3METHOD_BODY_AB ELI_ARG((_TPPMETHOD_BODY_AB _currn));
+#define _VS4METHOD_BODY_AB _VS0Empty
+
+#define _VS5METHOD_BODY_AB _VS0Empty
+
+extern void _VS1METHOD_BODY ELI_ARG((_TPPMETHOD_BODY _currn));
+extern void _VS2METHOD_BODY ELI_ARG((_TPPMETHOD_BODY _currn));
+extern void _VS3METHOD_BODY ELI_ARG((_TPPMETHOD_BODY _currn));
+extern void _VS4METHOD_BODY ELI_ARG((_TPPMETHOD_BODY _currn));
+extern void _VS5METHOD_BODY ELI_ARG((_TPPMETHOD_BODY _currn));
+extern void _VS1PARAMETER_SPEC ELI_ARG((_TPPPARAMETER_SPEC _currn));
+extern void _VS2PARAMETER_SPEC ELI_ARG((_TPPPARAMETER_SPEC _currn));
+extern void _VS3PARAMETER_SPEC ELI_ARG((_TPPPARAMETER_SPEC _currn));
+extern void _VS4PARAMETER_SPEC ELI_ARG((_TPPPARAMETER_SPEC _currn));
+extern void _VS1PARAMETERS ELI_ARG((_TPPPARAMETERS _currn));
+extern void _VS2PARAMETERS ELI_ARG((_TPPPARAMETERS _currn));
+extern void _VS3PARAMETERS ELI_ARG((_TPPPARAMETERS _currn));
+extern void _VS4PARAMETERS ELI_ARG((_TPPPARAMETERS _currn));
+extern void _VS5PARAMETERS ELI_ARG((_TPPPARAMETERS _currn));
+extern void _VS1METHOD_IDENT_DEF ELI_ARG((_TPPMETHOD_IDENT_DEF _currn));
+extern void _VS1METHOD_DECL ELI_ARG((_TPPMETHOD_DECL _currn));
+extern void _VS2METHOD_DECL ELI_ARG((_TPPMETHOD_DECL _currn));
+extern void _VS3METHOD_DECL ELI_ARG((_TPPMETHOD_DECL _currn));
+extern void _VS4METHOD_DECL ELI_ARG((_TPPMETHOD_DECL _currn));
+extern void _VS5METHOD_DECL ELI_ARG((_TPPMETHOD_DECL _currn));
+extern void _VS1IDENTIFIERS ELI_ARG((_TPPIDENTIFIERS _currn,IntSet* _AS0KindSet));
+extern void _VS2IDENTIFIERS ELI_ARG((_TPPIDENTIFIERS _currn,IntSet* _AS0KindSet));
+extern void _VS3IDENTIFIERS ELI_ARG((_TPPIDENTIFIERS _currn,IntSet* _AS0KindSet));
+extern void _VS4IDENTIFIERS ELI_ARG((_TPPIDENTIFIERS _currn,IntSet* _AS0KindSet));
+extern void _VS1IDENTIFIERS_LST ELI_ARG((_TPPIDENTIFIERS_LST _currn,IntSet* _AS0KindSet));
+extern void _VS2IDENTIFIERS_LST ELI_ARG((_TPPIDENTIFIERS_LST _currn,IntSet* _AS0KindSet));
+extern void _VS3IDENTIFIERS_LST ELI_ARG((_TPPIDENTIFIERS_LST _currn,IntSet* _AS0KindSet));
+extern void _VS4IDENTIFIERS_LST ELI_ARG((_TPPIDENTIFIERS_LST _currn,IntSet* _AS0KindSet));
+extern void _VS1ATTR_SPEC ELI_ARG((_TPPATTR_SPEC _currn));
+extern void _VS2ATTR_SPEC ELI_ARG((_TPPATTR_SPEC _currn));
+extern void _VS3ATTR_SPEC ELI_ARG((_TPPATTR_SPEC _currn));
+extern void _VS4ATTR_SPEC ELI_ARG((_TPPATTR_SPEC _currn));
+extern void _VS1ATTR_DECL_CONST_TYPE_CONST ELI_ARG((_TPPATTR_DECL_CONST_TYPE_CONST _currn));
+extern void _VS2ATTR_DECL_CONST_TYPE_CONST ELI_ARG((_TPPATTR_DECL_CONST_TYPE_CONST _currn));
+extern void _VS3ATTR_DECL_CONST_TYPE_CONST ELI_ARG((_TPPATTR_DECL_CONST_TYPE_CONST _currn));
+extern void _VS4ATTR_DECL_CONST_TYPE_CONST ELI_ARG((_TPPATTR_DECL_CONST_TYPE_CONST _currn));
+extern void _VS1ATTR_DECL_TYPE_CONST ELI_ARG((_TPPATTR_DECL_TYPE_CONST _currn));
+extern void _VS2ATTR_DECL_TYPE_CONST ELI_ARG((_TPPATTR_DECL_TYPE_CONST _currn));
+extern void _VS3ATTR_DECL_TYPE_CONST ELI_ARG((_TPPATTR_DECL_TYPE_CONST _currn));
+extern void _VS4ATTR_DECL_TYPE_CONST ELI_ARG((_TPPATTR_DECL_TYPE_CONST _currn));
+extern void _VS1ATTR_DECL_CONST_EXP ELI_ARG((_TPPATTR_DECL_CONST_EXP _currn));
+extern void _VS2ATTR_DECL_CONST_EXP ELI_ARG((_TPPATTR_DECL_CONST_EXP _currn));
+extern void _VS3ATTR_DECL_CONST_EXP ELI_ARG((_TPPATTR_DECL_CONST_EXP _currn));
+extern void _VS4ATTR_DECL_CONST_EXP ELI_ARG((_TPPATTR_DECL_CONST_EXP _currn));
+extern void _VS1ATTR_DECL_EXP ELI_ARG((_TPPATTR_DECL_EXP _currn));
+extern void _VS2ATTR_DECL_EXP ELI_ARG((_TPPATTR_DECL_EXP _currn));
+extern void _VS3ATTR_DECL_EXP ELI_ARG((_TPPATTR_DECL_EXP _currn));
+extern void _VS4ATTR_DECL_EXP ELI_ARG((_TPPATTR_DECL_EXP _currn));
+extern void _VS1ATTR_DECL ELI_ARG((_TPPATTR_DECL _currn));
+extern void _VS2ATTR_DECL ELI_ARG((_TPPATTR_DECL _currn));
+extern void _VS3ATTR_DECL ELI_ARG((_TPPATTR_DECL _currn));
+extern void _VS4ATTR_DECL ELI_ARG((_TPPATTR_DECL _currn));
+extern void _VS1ATTR_ACCESS_SH_RO ELI_ARG((_TPPATTR_ACCESS_SH_RO _currn));
+extern void _VS1ATTR_ACCESS_RO ELI_ARG((_TPPATTR_ACCESS_RO _currn));
+extern void _VS1ATTR_ACCESS_SH ELI_ARG((_TPPATTR_ACCESS_SH _currn));
+extern void _VS1FEATURE_STREAM ELI_ARG((_TPPFEATURE_STREAM _currn));
+extern void _VS2FEATURE_STREAM ELI_ARG((_TPPFEATURE_STREAM _currn));
+extern void _VS3FEATURE_STREAM ELI_ARG((_TPPFEATURE_STREAM _currn));
+extern void _VS4FEATURE_STREAM ELI_ARG((_TPPFEATURE_STREAM _currn));
+extern void _VS5FEATURE_STREAM ELI_ARG((_TPPFEATURE_STREAM _currn));
+extern void _VS1FEATURE_METH ELI_ARG((_TPPFEATURE_METH _currn));
+extern void _VS2FEATURE_METH ELI_ARG((_TPPFEATURE_METH _currn));
+extern void _VS3FEATURE_METH ELI_ARG((_TPPFEATURE_METH _currn));
+extern void _VS4FEATURE_METH ELI_ARG((_TPPFEATURE_METH _currn));
+extern void _VS5FEATURE_METH ELI_ARG((_TPPFEATURE_METH _currn));
+extern void _VS1FEATURE_ATT ELI_ARG((_TPPFEATURE_ATT _currn));
+extern void _VS2FEATURE_ATT ELI_ARG((_TPPFEATURE_ATT _currn));
+extern void _VS3FEATURE_ATT ELI_ARG((_TPPFEATURE_ATT _currn));
+extern void _VS4FEATURE_ATT ELI_ARG((_TPPFEATURE_ATT _currn));
+extern void _VS5FEATURE_ATT ELI_ARG((_TPPFEATURE_ATT _currn));
+extern void _VS1FEATURE_ATT_ACC ELI_ARG((_TPPFEATURE_ATT_ACC _currn));
+extern void _VS2FEATURE_ATT_ACC ELI_ARG((_TPPFEATURE_ATT_ACC _currn));
+extern void _VS3FEATURE_ATT_ACC ELI_ARG((_TPPFEATURE_ATT_ACC _currn));
+extern void _VS4FEATURE_ATT_ACC ELI_ARG((_TPPFEATURE_ATT_ACC _currn));
+extern void _VS5FEATURE_ATT_ACC ELI_ARG((_TPPFEATURE_ATT_ACC _currn));
+extern void _VS1FEATURE_DECL_PRIV ELI_ARG((_TPPFEATURE_DECL_PRIV _currn));
+extern void _VS2FEATURE_DECL_PRIV ELI_ARG((_TPPFEATURE_DECL_PRIV _currn));
+extern void _VS3FEATURE_DECL_PRIV ELI_ARG((_TPPFEATURE_DECL_PRIV _currn));
+extern void _VS4FEATURE_DECL_PRIV ELI_ARG((_TPPFEATURE_DECL_PRIV _currn));
+extern void _VS5FEATURE_DECL_PRIV ELI_ARG((_TPPFEATURE_DECL_PRIV _currn));
+extern void _VS1FEATURE_DECL ELI_ARG((_TPPFEATURE_DECL _currn));
+extern void _VS2FEATURE_DECL ELI_ARG((_TPPFEATURE_DECL _currn));
+extern void _VS3FEATURE_DECL ELI_ARG((_TPPFEATURE_DECL _currn));
+extern void _VS4FEATURE_DECL ELI_ARG((_TPPFEATURE_DECL _currn));
+extern void _VS5FEATURE_DECL ELI_ARG((_TPPFEATURE_DECL _currn));
+extern void _VS1FEATURE_DECLS ELI_ARG((_TPPFEATURE_DECLS _currn));
+extern void _VS2FEATURE_DECLS ELI_ARG((_TPPFEATURE_DECLS _currn));
+extern void _VS3FEATURE_DECLS ELI_ARG((_TPPFEATURE_DECLS _currn));
+extern void _VS4FEATURE_DECLS ELI_ARG((_TPPFEATURE_DECLS _currn));
+extern void _VS5FEATURE_DECLS ELI_ARG((_TPPFEATURE_DECLS _currn));
+extern void _VS1FEATURE_ID_USE ELI_ARG((_TPPFEATURE_ID_USE _currn));
+extern void _VS1FEATURE_SPEC_STREAM ELI_ARG((_TPPFEATURE_SPEC_STREAM _currn));
+extern void _VS2FEATURE_SPEC_STREAM ELI_ARG((_TPPFEATURE_SPEC_STREAM _currn));
+extern void _VS1FEATURE_SPEC ELI_ARG((_TPPFEATURE_SPEC _currn));
+extern void _VS2FEATURE_SPEC ELI_ARG((_TPPFEATURE_SPEC _currn));
+extern void _VS1IDENT_MOD ELI_ARG((_TPPIDENT_MOD _currn));
+extern void _VS1MODIFICATION_NAME ELI_ARG((_TPPMODIFICATION_NAME _currn));
+extern void _VS2MODIFICATION_NAME ELI_ARG((_TPPMODIFICATION_NAME _currn));
+extern void _VS1MODIFICATION_OUT ELI_ARG((_TPPMODIFICATION_OUT _currn));
+extern void _VS2MODIFICATION_OUT ELI_ARG((_TPPMODIFICATION_OUT _currn));
+extern void _VS1MODIFICATION_ONLY ELI_ARG((_TPPMODIFICATION_ONLY _currn));
+extern void _VS2MODIFICATION_ONLY ELI_ARG((_TPPMODIFICATION_ONLY _currn));
+extern void _VS1MODIFICATIONS ELI_ARG((_TPPMODIFICATIONS _currn));
+#define _VS2MODIFICATIONS _VS2LABEL_LIST_2
+
+extern void _VS1INHERITANCE_INC_ONLY ELI_ARG((_TPPINHERITANCE_INC_ONLY _currn,int* _AS0_const118));
+extern void _VS2INHERITANCE_INC_ONLY ELI_ARG((_TPPINHERITANCE_INC_ONLY _currn,int* _AS0_const118));
+extern void _VS3INHERITANCE_INC_ONLY ELI_ARG((_TPPINHERITANCE_INC_ONLY _currn,int* _AS0_const118,int* _AS0_const117));
+extern void _VS1INHERITANCE_INCLUDE ELI_ARG((_TPPINHERITANCE_INCLUDE _currn,int* _AS0_const118));
+extern void _VS2INHERITANCE_INCLUDE ELI_ARG((_TPPINHERITANCE_INCLUDE _currn,int* _AS0_const118));
+extern void _VS3INHERITANCE_INCLUDE ELI_ARG((_TPPINHERITANCE_INCLUDE _currn,int* _AS0_const118,int* _AS0_const117));
+extern void _VS1INHERITANCE_LIKE ELI_ARG((_TPPINHERITANCE_LIKE _currn,int* _AS0_const118));
+extern void _VS2INHERITANCE_LIKE ELI_ARG((_TPPINHERITANCE_LIKE _currn,int* _AS0_const118));
+extern void _VS3INHERITANCE_LIKE ELI_ARG((_TPPINHERITANCE_LIKE _currn,int* _AS0_const118,int* _AS0_const117));
+extern void _VS1INHERITANCE_PRIV ELI_ARG((_TPPINHERITANCE_PRIV _currn,int* _AS0_const118));
+extern void _VS2INHERITANCE_PRIV ELI_ARG((_TPPINHERITANCE_PRIV _currn,int* _AS0_const118));
+extern void _VS3INHERITANCE_PRIV ELI_ARG((_TPPINHERITANCE_PRIV _currn,int* _AS0_const118,int* _AS0_const117));
+extern void _VS1INHERITANCES_LST ELI_ARG((_TPPINHERITANCES_LST _currn));
+extern void _VS2INHERITANCES_LST ELI_ARG((_TPPINHERITANCES_LST _currn));
+extern void _VS3INHERITANCES_LST ELI_ARG((_TPPINHERITANCES_LST _currn));
+extern void _VS4INHERITANCES_LST ELI_ARG((_TPPINHERITANCES_LST _currn));
+extern void _VS1INHERITANCES_EMPTY ELI_ARG((_TPPINHERITANCES_EMPTY _currn));
+extern void _VS2INHERITANCES_EMPTY ELI_ARG((_TPPINHERITANCES_EMPTY _currn));
+extern void _VS3INHERITANCES_EMPTY ELI_ARG((_TPPINHERITANCES_EMPTY _currn));
+extern void _VS4INHERITANCES_EMPTY ELI_ARG((_TPPINHERITANCES_EMPTY _currn));
+extern void _VS1DIRECT_STREAM_CALL ELI_ARG((_TPPDIRECT_STREAM_CALL _currn));
+extern void _VS2DIRECT_STREAM_CALL ELI_ARG((_TPPDIRECT_STREAM_CALL _currn));
+extern void _VS1COERCION ELI_ARG((_TPPCOERCION _currn));
+extern void _VS2COERCION ELI_ARG((_TPPCOERCION _currn));
+extern void _VS1STR_CONSTANT ELI_ARG((_TPPSTR_CONSTANT _currn,TreeNodePtr* _AS0tree));
+extern void _VS1STR_CONSTANTS ELI_ARG((_TPPSTR_CONSTANTS _currn));
+extern void _VS1STR_CONSTANTS_LST ELI_ARG((_TPPSTR_CONSTANTS_LST _currn));
+extern void _VS1VALUE_VOID ELI_ARG((_TPPVALUE_VOID _currn));
+extern void _VS1VALUE_SED ELI_ARG((_TPPVALUE_SED _currn));
+extern void _VS1VALUE_OCT ELI_ARG((_TPPVALUE_OCT _currn));
+extern void _VS1VALUE_STR ELI_ARG((_TPPVALUE_STR _currn));
+extern void _VS1VALUE_CHAR ELI_ARG((_TPPVALUE_CHAR _currn));
+extern void _VS1VALUE_BOOL ELI_ARG((_TPPVALUE_BOOL _currn));
+extern void _VS1VALUE_FLOAT ELI_ARG((_TPPVALUE_FLOAT _currn));
+extern void _VS1VALUE_INT ELI_ARG((_TPPVALUE_INT _currn));
+extern void _VS1BOUND_METHOD ELI_ARG((_TPPBOUND_METHOD _currn));
+extern void _VS2BOUND_METHOD ELI_ARG((_TPPBOUND_METHOD _currn));
+extern void _VS1NAMED_EXPRESSION ELI_ARG((_TPPNAMED_EXPRESSION _currn,TreeNodePtr* _AS0named_expressions_tree_pre));
+extern void _VS2NAMED_EXPRESSION ELI_ARG((_TPPNAMED_EXPRESSION _currn,TreeNodePtr* _AS0named_expressions_tree_pre));
+extern void _VS1NAMED_EXPRESSIONS ELI_ARG((_TPPNAMED_EXPRESSIONS _currn));
+extern void _VS2NAMED_EXPRESSIONS ELI_ARG((_TPPNAMED_EXPRESSIONS _currn));
+extern void _VS1AGG_ID_DEF ELI_ARG((_TPPAGG_ID_DEF _currn,TreeNodePtr* _AS0tree));
+extern void _VS1AGGREGATE_NAMED ELI_ARG((_TPPAGGREGATE_NAMED _currn));
+extern void _VS2AGGREGATE_NAMED ELI_ARG((_TPPAGGREGATE_NAMED _currn));
+extern void _VS1AGGREGATE ELI_ARG((_TPPAGGREGATE _currn));
+extern void _VS2AGGREGATE ELI_ARG((_TPPAGGREGATE _currn));
+extern void _VS1TYPE_CONSTRUCTOR_SAME_AGG ELI_ARG((_TPPTYPE_CONSTRUCTOR_SAME_AGG _currn));
+extern void _VS2TYPE_CONSTRUCTOR_SAME_AGG ELI_ARG((_TPPTYPE_CONSTRUCTOR_SAME_AGG _currn));
+extern void _VS1TYPE_CONSTRUCTOR_SAME ELI_ARG((_TPPTYPE_CONSTRUCTOR_SAME _currn));
+extern void _VS2TYPE_CONSTRUCTOR_SAME ELI_ARG((_TPPTYPE_CONSTRUCTOR_SAME _currn));
+extern void _VS1TYPE_CONSTRUCTOR_DES ELI_ARG((_TPPTYPE_CONSTRUCTOR_DES _currn));
+extern void _VS2TYPE_CONSTRUCTOR_DES ELI_ARG((_TPPTYPE_CONSTRUCTOR_DES _currn));
+extern void _VS1TYPE_CONSTRUCTOR_AGG ELI_ARG((_TPPTYPE_CONSTRUCTOR_AGG _currn));
+extern void _VS2TYPE_CONSTRUCTOR_AGG ELI_ARG((_TPPTYPE_CONSTRUCTOR_AGG _currn));
+extern void _VS1TYPE_CONSTRUCTOR_CLASS ELI_ARG((_TPPTYPE_CONSTRUCTOR_CLASS _currn));
+extern void _VS2TYPE_CONSTRUCTOR_CLASS ELI_ARG((_TPPTYPE_CONSTRUCTOR_CLASS _currn));
+extern void _VS1TYPE_CONSTRUCTOR_CL_AGG ELI_ARG((_TPPTYPE_CONSTRUCTOR_CL_AGG _currn));
+extern void _VS2TYPE_CONSTRUCTOR_CL_AGG ELI_ARG((_TPPTYPE_CONSTRUCTOR_CL_AGG _currn));
+extern void _VS1QUAL_FEATURE_ID_USE ELI_ARG((_TPPQUAL_FEATURE_ID_USE _currn));
+extern void _VS1QUALIFICATION_TYPE ELI_ARG((_TPPQUALIFICATION_TYPE _currn));
+extern void _VS2QUALIFICATION_TYPE ELI_ARG((_TPPQUALIFICATION_TYPE _currn));
+extern void _VS1QUALIFICATION_EXP ELI_ARG((_TPPQUALIFICATION_EXP _currn));
+extern void _VS2QUALIFICATION_EXP ELI_ARG((_TPPQUALIFICATION_EXP _currn));
+extern void _VS1STD_METHOD_CALL ELI_ARG((_TPPSTD_METHOD_CALL _currn));
+extern void _VS2STD_METHOD_CALL ELI_ARG((_TPPSTD_METHOD_CALL _currn));
+extern void _VS1OBJ_ID_USE ELI_ARG((_TPPOBJ_ID_USE _currn));
+extern void _VS1NAME_NOT ELI_ARG((_TPPNAME_NOT _currn));
+extern void _VS1NAME_POW ELI_ARG((_TPPNAME_POW _currn));
+extern void _VS1NAME_MOD ELI_ARG((_TPPNAME_MOD _currn));
+extern void _VS1NAME_DIV ELI_ARG((_TPPNAME_DIV _currn));
+extern void _VS1NAME_QUOTIENT ELI_ARG((_TPPNAME_QUOTIENT _currn));
+extern void _VS1NAME_STAR ELI_ARG((_TPPNAME_STAR _currn));
+extern void _VS1NAME_MINUS ELI_ARG((_TPPNAME_MINUS _currn));
+extern void _VS1NAME_PLUS ELI_ARG((_TPPNAME_PLUS _currn));
+extern void _VS1NAME_GT_EQ ELI_ARG((_TPPNAME_GT_EQ _currn));
+extern void _VS1NAME_GT ELI_ARG((_TPPNAME_GT _currn));
+extern void _VS1NAME_LT_EQ ELI_ARG((_TPPNAME_LT_EQ _currn));
+extern void _VS1NAME_LT ELI_ARG((_TPPNAME_LT _currn));
+extern void _VS1NAME_EQ ELI_ARG((_TPPNAME_EQ _currn));
+extern void _VS1NAME_QUESTION ELI_ARG((_TPPNAME_QUESTION _currn));
+extern void _VS1NAME_GRAVE ELI_ARG((_TPPNAME_GRAVE _currn));
+extern void _VS1NAME_TILDE ELI_ARG((_TPPNAME_TILDE _currn));
+extern void _VS1NAME_STROKE ELI_ARG((_TPPNAME_STROKE _currn));
+extern void _VS1NAME_BACKSLASH ELI_ARG((_TPPNAME_BACKSLASH _currn));
+extern void _VS1NAME_STR_IN ELI_ARG((_TPPNAME_STR_IN _currn));
+extern void _VS1NAME_STR_OUT ELI_ARG((_TPPNAME_STR_OUT _currn));
+extern void _VS1NAME_EMPTY ELI_ARG((_TPPNAME_EMPTY _currn));
+extern void _VS1NAME_OBJ ELI_ARG((_TPPNAME_OBJ _currn));
+extern void _VS1NAME_LEFT_SQ_BRACKET ELI_ARG((_TPPNAME_LEFT_SQ_BRACKET _currn));
+extern void _VS1EXPRESSION_AND ELI_ARG((_TPPEXPRESSION_AND _currn));
+extern void _VS2EXPRESSION_AND ELI_ARG((_TPPEXPRESSION_AND _currn));
+extern void _VS1EXPRESSION_OR ELI_ARG((_TPPEXPRESSION_OR _currn));
+extern void _VS2EXPRESSION_OR ELI_ARG((_TPPEXPRESSION_OR _currn));
+extern void _VS1EXPRESSION_STREAM ELI_ARG((_TPPEXPRESSION_STREAM _currn));
+extern void _VS2EXPRESSION_STREAM ELI_ARG((_TPPEXPRESSION_STREAM _currn));
+extern void _VS1EXPRESSION_METH ELI_ARG((_TPPEXPRESSION_METH _currn));
+extern void _VS2EXPRESSION_METH ELI_ARG((_TPPEXPRESSION_METH _currn));
+extern void _VS1EXPRESSION_COERCION ELI_ARG((_TPPEXPRESSION_COERCION _currn));
+extern void _VS2EXPRESSION_COERCION ELI_ARG((_TPPEXPRESSION_COERCION _currn));
+extern void _VS1EXPRESSION_VALUE ELI_ARG((_TPPEXPRESSION_VALUE _currn));
+extern void _VS2EXPRESSION_VALUE ELI_ARG((_TPPEXPRESSION_VALUE _currn));
+extern void _VS1EXPRESSION_BOUND ELI_ARG((_TPPEXPRESSION_BOUND _currn));
+extern void _VS2EXPRESSION_BOUND ELI_ARG((_TPPEXPRESSION_BOUND _currn));
+extern void _VS1EXPRESSION_CONS ELI_ARG((_TPPEXPRESSION_CONS _currn));
+extern void _VS2EXPRESSION_CONS ELI_ARG((_TPPEXPRESSION_CONS _currn));
+extern void _VS1EXPRESSION_STAR ELI_ARG((_TPPEXPRESSION_STAR _currn));
+extern void _VS2EXPRESSION_STAR ELI_ARG((_TPPEXPRESSION_STAR _currn));
+extern void _VS1DESIGNATOR_QUAL ELI_ARG((_TPPDESIGNATOR_QUAL _currn,TreeNodePtr* _AS0tree));
+extern void _VS2DESIGNATOR_QUAL ELI_ARG((_TPPDESIGNATOR_QUAL _currn,TreeNodePtr* _AS0tree));
+extern void _VS1DESIGNATOR_METH ELI_ARG((_TPPDESIGNATOR_METH _currn,TreeNodePtr* _AS0tree));
+extern void _VS2DESIGNATOR_METH ELI_ARG((_TPPDESIGNATOR_METH _currn,TreeNodePtr* _AS0tree));
+extern void _VS1DESIGNATOR_EXP ELI_ARG((_TPPDESIGNATOR_EXP _currn,TreeNodePtr* _AS0tree));
+extern void _VS2DESIGNATOR_EXP ELI_ARG((_TPPDESIGNATOR_EXP _currn,TreeNodePtr* _AS0tree));
+extern void _VS1DESIGNATOR_NAME ELI_ARG((_TPPDESIGNATOR_NAME _currn,TreeNodePtr* _AS0tree));
+extern void _VS2DESIGNATOR_NAME ELI_ARG((_TPPDESIGNATOR_NAME _currn,TreeNodePtr* _AS0tree));
+extern void _VS1ARGUMENT_EMPTY ELI_ARG((_TPPARGUMENT_EMPTY _currn));
+#define _VS2ARGUMENT_EMPTY _VS0Empty
+
+extern void _VS1ARGUMENT_INOUT ELI_ARG((_TPPARGUMENT_INOUT _currn));
+extern void _VS2ARGUMENT_INOUT ELI_ARG((_TPPARGUMENT_INOUT _currn));
+extern void _VS1ARGUMENT_OUT ELI_ARG((_TPPARGUMENT_OUT _currn));
+extern void _VS2ARGUMENT_OUT ELI_ARG((_TPPARGUMENT_OUT _currn));
+extern void _VS1ARGUMENT_EXP ELI_ARG((_TPPARGUMENT_EXP _currn));
+extern void _VS2ARGUMENT_EXP ELI_ARG((_TPPARGUMENT_EXP _currn));
+extern void _VS1ARGUMENTS_LST ELI_ARG((_TPPARGUMENTS_LST _currn,TreeNodePtr* _AS0tree));
+extern void _VS2ARGUMENTS_LST ELI_ARG((_TPPARGUMENTS_LST _currn,TreeNodePtr* _AS0tree));
+extern void _VS1ARGUMENTS_EMPTY ELI_ARG((_TPPARGUMENTS_EMPTY _currn,TreeNodePtr* _AS0tree));
+extern void _VS2ARGUMENTS_EMPTY ELI_ARG((_TPPARGUMENTS_EMPTY _currn,TreeNodePtr* _AS0tree));
+extern void _VS1BOUND_EXP ELI_ARG((_TPPBOUND_EXP _currn,int* _AS0One,TreeNodePtr* _AS0bounds_tree_pre));
+extern void _VS2BOUND_EXP ELI_ARG((_TPPBOUND_EXP _currn,int* _AS0One,TreeNodePtr* _AS0bounds_tree_pre,int* _AS0_const117));
+extern void _VS1BOUNDS ELI_ARG((_TPPBOUNDS _currn,TreeNodePtr* _AS0tree,int* _AS0_const118));
+extern void _VS2BOUNDS ELI_ARG((_TPPBOUNDS _currn,TreeNodePtr* _AS0tree,int* _AS0_const118,int* _AS0_const117));
+extern void _VS1CLASS_ID_USE ELI_ARG((_TPPCLASS_ID_USE _currn,PTGNode* _AS0ClassArgsPtg));
+extern void _VS2CLASS_ID_USE ELI_ARG((_TPPCLASS_ID_USE _currn,PTGNode* _AS0ClassArgsPtg,DefTableKey* _AS0Key,TreeNodePtr* _AS0tree));
+extern void _VS1PARAMETER_KIND_INOUT ELI_ARG((_TPPPARAMETER_KIND_INOUT _currn,IntSet* _AS0KindSet));
+extern void _VS1PARAMETER_KIND_OUT ELI_ARG((_TPPPARAMETER_KIND_OUT _currn,IntSet* _AS0KindSet));
+extern void _VS1PARAMETER_KIND_ONCE ELI_ARG((_TPPPARAMETER_KIND_ONCE _currn,IntSet* _AS0KindSet));
+extern void _VS1PARAMETER_KIND_IN ELI_ARG((_TPPPARAMETER_KIND_IN _currn,IntSet* _AS0KindSet));
+extern void _VS1PARAMETER_TYPE ELI_ARG((_TPPPARAMETER_TYPE _currn,DefTableKeyList* _AS0Params_pre,TreeNodePtr* _AS0parameter_types_tree_pre));
+extern void _VS2PARAMETER_TYPE ELI_ARG((_TPPPARAMETER_TYPE _currn,DefTableKeyList* _AS0Params_pre,TreeNodePtr* _AS0parameter_types_tree_pre));
+extern void _VS1PARAMETER_TYPES ELI_ARG((_TPPPARAMETER_TYPES _currn,TreeNodePtr* _AS0tree,DefTableKeyList* _AS0ParamList));
+extern void _VS2PARAMETER_TYPES ELI_ARG((_TPPPARAMETER_TYPES _currn,TreeNodePtr* _AS0tree,DefTableKeyList* _AS0ParamList));
+extern void _VS1METHOD_SPECIFICATION ELI_ARG((_TPPMETHOD_SPECIFICATION _currn,TreeNodePtr* _AS0tree));
+extern void _VS2METHOD_SPECIFICATION ELI_ARG((_TPPMETHOD_SPECIFICATION _currn,TreeNodePtr* _AS0tree));
+extern void _VS1CLASS_ARGUMENT ELI_ARG((_TPPCLASS_ARGUMENT _currn));
+extern void _VS2CLASS_ARGUMENT ELI_ARG((_TPPCLASS_ARGUMENT _currn));
+extern void _VS3CLASS_ARGUMENT ELI_ARG((_TPPCLASS_ARGUMENT _currn));
+extern void _VS1CLASS_ARGUMENTS_LST ELI_ARG((_TPPCLASS_ARGUMENTS_LST _currn,PTGNode* _AS0ClassArgsPtg));
+extern void _VS2CLASS_ARGUMENTS_LST ELI_ARG((_TPPCLASS_ARGUMENTS_LST _currn,PTGNode* _AS0ClassArgsPtg,TreeNodePtr* _AS0tree));
+extern void _VS3CLASS_ARGUMENTS_LST ELI_ARG((_TPPCLASS_ARGUMENTS_LST _currn,PTGNode* _AS0ClassArgsPtg,TreeNodePtr* _AS0tree));
+extern void _VS1CLASS_ARGUMENTS_EMPTY ELI_ARG((_TPPCLASS_ARGUMENTS_EMPTY _currn,PTGNode* _AS0ClassArgsPtg));
+extern void _VS2CLASS_ARGUMENTS_EMPTY ELI_ARG((_TPPCLASS_ARGUMENTS_EMPTY _currn,PTGNode* _AS0ClassArgsPtg,TreeNodePtr* _AS0tree));
+extern void _VS3CLASS_ARGUMENTS_EMPTY ELI_ARG((_TPPCLASS_ARGUMENTS_EMPTY _currn,PTGNode* _AS0ClassArgsPtg,TreeNodePtr* _AS0tree));
+extern void _VS1CLASS_SPECIFIER ELI_ARG((_TPPCLASS_SPECIFIER _currn));
+extern void _VS2CLASS_SPECIFIER ELI_ARG((_TPPCLASS_SPECIFIER _currn,DefTableKey* _AS0Key,int* _AS0_const118));
+extern void _VS3CLASS_SPECIFIER ELI_ARG((_TPPCLASS_SPECIFIER _currn,DefTableKey* _AS0Key,int* _AS0_const118,int* _AS0_const117));
+extern void _VS1TYPE_SPECIFIER_STREAM ELI_ARG((_TPPTYPE_SPECIFIER_STREAM _currn));
+extern void _VS2TYPE_SPECIFIER_STREAM ELI_ARG((_TPPTYPE_SPECIFIER_STREAM _currn));
+extern void _VS1TYPE_SPECIFIER_SAME ELI_ARG((_TPPTYPE_SPECIFIER_SAME _currn));
+#define _VS2TYPE_SPECIFIER_SAME _VS0Empty
+
+extern void _VS1TYPE_SPECIFIER_SAME_POLY ELI_ARG((_TPPTYPE_SPECIFIER_SAME_POLY _currn));
+#define _VS2TYPE_SPECIFIER_SAME_POLY _VS0Empty
+
+extern void _VS1TYPE_SPECIFIER_PROC ELI_ARG((_TPPTYPE_SPECIFIER_PROC _currn));
+extern void _VS2TYPE_SPECIFIER_PROC ELI_ARG((_TPPTYPE_SPECIFIER_PROC _currn));
+extern void _VS1TYPE_SPECIFIER_EMPTY ELI_ARG((_TPPTYPE_SPECIFIER_EMPTY _currn));
+#define _VS2TYPE_SPECIFIER_EMPTY _VS0Empty
+
+extern void _VS1TYPE_SPECIFIER_CL ELI_ARG((_TPPTYPE_SPECIFIER_CL _currn));
+extern void _VS2TYPE_SPECIFIER_CL ELI_ARG((_TPPTYPE_SPECIFIER_CL _currn));
+extern void _VS1TYPE_SPECIFIER_CL_POLY ELI_ARG((_TPPTYPE_SPECIFIER_CL_POLY _currn));
+extern void _VS2TYPE_SPECIFIER_CL_POLY ELI_ARG((_TPPTYPE_SPECIFIER_CL_POLY _currn));
+extern void _VS1TYPE_SPECIFIERS_EMPTY ELI_ARG((_TPPTYPE_SPECIFIERS_EMPTY _currn));
+#define _VS2TYPE_SPECIFIERS_EMPTY _VS0Empty
+
+extern void _VS1TYPE_SPECIFIERS_LST ELI_ARG((_TPPTYPE_SPECIFIERS_LST _currn));
+extern void _VS2TYPE_SPECIFIERS_LST ELI_ARG((_TPPTYPE_SPECIFIERS_LST _currn));
+extern void _VS1CLASS_PARAMETER ELI_ARG((_TPPCLASS_PARAMETER _currn));
+extern void _VS2CLASS_PARAMETER ELI_ARG((_TPPCLASS_PARAMETER _currn));
+extern void _VS3CLASS_PARAMETER ELI_ARG((_TPPCLASS_PARAMETER _currn));
+extern void _VS1IDENT_DEF ELI_ARG((_TPPIDENT_DEF _currn));
+extern void _VS2IDENT_DEF ELI_ARG((_TPPIDENT_DEF _currn,TreeNodePtr* _AS0tree));
+extern void _VS3IDENT_DEF ELI_ARG((_TPPIDENT_DEF _currn,TreeNodePtr* _AS0tree));
+extern void _VS4IDENT_DEF ELI_ARG((_TPPIDENT_DEF _currn,TreeNodePtr* _AS0tree));
+extern void _VS1BOUND_IDENTIFIER_STAR ELI_ARG((_TPPBOUND_IDENTIFIER_STAR _currn));
+extern void _VS2BOUND_IDENTIFIER_STAR ELI_ARG((_TPPBOUND_IDENTIFIER_STAR _currn));
+extern void _VS3BOUND_IDENTIFIER_STAR ELI_ARG((_TPPBOUND_IDENTIFIER_STAR _currn));
+extern void _VS4BOUND_IDENTIFIER_STAR ELI_ARG((_TPPBOUND_IDENTIFIER_STAR _currn));
+extern void _VS1BOUND_IDENTIFIER ELI_ARG((_TPPBOUND_IDENTIFIER _currn));
+extern void _VS2BOUND_IDENTIFIER ELI_ARG((_TPPBOUND_IDENTIFIER _currn));
+extern void _VS3BOUND_IDENTIFIER ELI_ARG((_TPPBOUND_IDENTIFIER _currn));
+extern void _VS4BOUND_IDENTIFIER ELI_ARG((_TPPBOUND_IDENTIFIER _currn));
+extern void _VS1CLASS_PARAMETERS_EMPTY ELI_ARG((_TPPCLASS_PARAMETERS_EMPTY _currn));
+extern void _VS2CLASS_PARAMETERS_EMPTY ELI_ARG((_TPPCLASS_PARAMETERS_EMPTY _currn));
+#define _VS3CLASS_PARAMETERS_EMPTY _VS0Empty
+
+extern void _VS1CLASS_PARAMETERS_LST ELI_ARG((_TPPCLASS_PARAMETERS_LST _currn));
+extern void _VS2CLASS_PARAMETERS_LST ELI_ARG((_TPPCLASS_PARAMETERS_LST _currn));
+extern void _VS3CLASS_PARAMETERS_LST ELI_ARG((_TPPCLASS_PARAMETERS_LST _currn));
+extern void _VS1CLASS_BOUNDS_EMPTY ELI_ARG((_TPPCLASS_BOUNDS_EMPTY _currn));
+extern void _VS2CLASS_BOUNDS_EMPTY ELI_ARG((_TPPCLASS_BOUNDS_EMPTY _currn));
+extern void _VS3CLASS_BOUNDS_EMPTY ELI_ARG((_TPPCLASS_BOUNDS_EMPTY _currn));
+#define _VS4CLASS_BOUNDS_EMPTY _VS0Empty
+
+extern void _VS1CLASS_BOUNDS_LST ELI_ARG((_TPPCLASS_BOUNDS_LST _currn));
+extern void _VS2CLASS_BOUNDS_LST ELI_ARG((_TPPCLASS_BOUNDS_LST _currn));
+extern void _VS3CLASS_BOUNDS_LST ELI_ARG((_TPPCLASS_BOUNDS_LST _currn));
+extern void _VS4CLASS_BOUNDS_LST ELI_ARG((_TPPCLASS_BOUNDS_LST _currn));
+extern void _VS1CLASS_ID_DEF ELI_ARG((_TPPCLASS_ID_DEF _currn));
+extern void _VS2CLASS_ID_DEF ELI_ARG((_TPPCLASS_ID_DEF _currn));
+extern void _VS3CLASS_ID_DEF ELI_ARG((_TPPCLASS_ID_DEF _currn));
+extern void _VS1BUILTIN_OPT_CL ELI_ARG((_TPPBUILTIN_OPT_CL _currn));
+extern void _VS2BUILTIN_OPT_CL ELI_ARG((_TPPBUILTIN_OPT_CL _currn));
+extern void _VS1BUILTIN_OPT_ID ELI_ARG((_TPPBUILTIN_OPT_ID _currn));
+#define _VS2BUILTIN_OPT_ID _VS0Empty
+
+extern void _VS1BUILTIN_OPT ELI_ARG((_TPPBUILTIN_OPT _currn));
+#define _VS2BUILTIN_OPT _VS0Empty
+
+extern void _VS1BUILTIN_OPT_EMPTY ELI_ARG((_TPPBUILTIN_OPT_EMPTY _currn));
+#define _VS2BUILTIN_OPT_EMPTY _VS0Empty
+
+extern void _VS1CLASS_BODY ELI_ARG((_TPPCLASS_BODY _currn));
+extern void _VS2CLASS_BODY ELI_ARG((_TPPCLASS_BODY _currn));
+extern void _VS3CLASS_BODY ELI_ARG((_TPPCLASS_BODY _currn));
+extern void _VS4CLASS_BODY ELI_ARG((_TPPCLASS_BODY _currn));
+extern void _VS5CLASS_BODY ELI_ARG((_TPPCLASS_BODY _currn));
+extern void _VS1CLASS_HEAD ELI_ARG((_TPPCLASS_HEAD _currn));
+extern void _VS2CLASS_HEAD ELI_ARG((_TPPCLASS_HEAD _currn));
+extern void _VS3CLASS_HEAD ELI_ARG((_TPPCLASS_HEAD _currn));
+extern void _VS4CLASS_HEAD ELI_ARG((_TPPCLASS_HEAD _currn));
+extern void _VS5CLASS_HEAD ELI_ARG((_TPPCLASS_HEAD _currn));
+extern void _VS6CLASS_HEAD ELI_ARG((_TPPCLASS_HEAD _currn));
+extern void _VS1CLASS_ATTRIBUTE_VA ELI_ARG((_TPPCLASS_ATTRIBUTE_VA _currn));
+extern void _VS1CLASS_ATTRIBUTE_EX ELI_ARG((_TPPCLASS_ATTRIBUTE_EX _currn));
+extern void _VS1CLASS_ATTRIBUTE ELI_ARG((_TPPCLASS_ATTRIBUTE _currn));
+extern void _VS1CLASS_ATTRIBUTE_ABVA ELI_ARG((_TPPCLASS_ATTRIBUTE_ABVA _currn));
+extern void _VS1CLASS_ATTRIBUTE_AB ELI_ARG((_TPPCLASS_ATTRIBUTE_AB _currn));
+extern void _VS1CLASS_DECLARATION ELI_ARG((_TPPCLASS_DECLARATION _currn));
+extern void _VS2CLASS_DECLARATION ELI_ARG((_TPPCLASS_DECLARATION _currn));
+extern void _VS3CLASS_DECLARATION ELI_ARG((_TPPCLASS_DECLARATION _currn));
+extern void _VS4CLASS_DECLARATION ELI_ARG((_TPPCLASS_DECLARATION _currn));
+extern void _VS5CLASS_DECLARATION ELI_ARG((_TPPCLASS_DECLARATION _currn));
+extern void _VS6CLASS_DECLARATION ELI_ARG((_TPPCLASS_DECLARATION _currn));
+extern void _VS7CLASS_DECLARATION ELI_ARG((_TPPCLASS_DECLARATION _currn));
+extern void _VS1CLASS_DECLARATIONS ELI_ARG((_TPPCLASS_DECLARATIONS _currn));
+extern void _VS2CLASS_DECLARATIONS ELI_ARG((_TPPCLASS_DECLARATIONS _currn));
+extern void _VS3CLASS_DECLARATIONS ELI_ARG((_TPPCLASS_DECLARATIONS _currn));
+extern void _VS4CLASS_DECLARATIONS ELI_ARG((_TPPCLASS_DECLARATIONS _currn));
+extern void _VS5CLASS_DECLARATIONS ELI_ARG((_TPPCLASS_DECLARATIONS _currn));
+extern void _VS6CLASS_DECLARATIONS ELI_ARG((_TPPCLASS_DECLARATIONS _currn));
+extern void _VS7CLASS_DECLARATIONS ELI_ARG((_TPPCLASS_DECLARATIONS _currn));
+#endif

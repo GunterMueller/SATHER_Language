@@ -1,0 +1,27 @@
+---- Copyright (C) 2008 char.sa, by Maik Schoepe
+value class CHAR is builtin: "char"
+include SYS_SIMPLE_VALUE(CHAR);
+  is_lt (ch: CHAR): BOOL is res := self.int < ch.int end;
+  is_leq (ch: CHAR): BOOL is res := self.int <= ch.int end;
+  is_gt (ch: CHAR): BOOL is res := self.int > ch.int end;
+  is_geq (ch: CHAR): BOOL is res := self.int >= ch.int end;
+
+  int: INT is builtin 
+    "ldarg.0"
+    "ldobj valuetype 'CHAR'"
+    "call valuetype 'INT' SYS_CONVERSION::convert(valuetype 'CHAR')"
+    "ret"
+  end;
+
+  succ: CHAR is res := (self.int+1).char end;
+  pred: CHAR is res := (self.int-1).char end;
+
+  islower (c :CHAR): BOOL is
+    res := 'a' <= c and c <= 'z';
+  end;
+
+  isupper (c :CHAR): BOOL is
+    res := 'A' <= c and c <= 'Z';
+  end;
+
+end;

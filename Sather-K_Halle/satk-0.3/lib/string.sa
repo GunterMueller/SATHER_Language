@@ -1,0 +1,70 @@
+---- Copyright (C) 2008 string.sa, by Maik Schoepe
+class STRING[*] is builtin: "char[]"
+like ARRAY[*](CHAR): dimension->, boundsize->, get_value->, int_arr_inc->;
+
+	string:STRING[*] is 
+		res := self;
+	end;	
+
+  length: INT is builtin
+		"ldarg.0"
+		"ldfld char[] 'STRING[*]'::_val"
+    "ldlen"
+    "conv.i4"
+    "newobj instance void INT::.ctor(int32)"
+    "ret"
+  end;
+
+  asize: INT is 
+    res := length;
+  end;  
+
+	aget(i: INT):CHAR is builtin
+		".maxstack 1"
+		"ldarg.0"
+		"ldfld char[] 'STRING[*]'::_val"
+		"ldarg i"
+		"call int32 INT::_valueOut(valuetype 'INT')"
+		"ldelem char"
+		"newobj instance void CHAR::.ctor(char)"
+		"ret" 
+	end;
+
+	aset(i: INT; c: CHAR) is builtin
+		".maxstack 3"
+		"ldarg.0"
+		"ldfld char [] 'STRING[*]'::_val"
+		"ldarg i"
+		"call int32 'INT'::_valueOut(valuetype 'INT')"
+		"ldarg c"
+		"call char 'CHAR'::_valueOut(valuetype 'CHAR')"
+		"stelem char"
+		"ret" 
+	end;
+
+  str: STR[*] is builtin
+    "ldarg.s 0"
+		"ldfld char[] 'STRING[*]'::_val"
+    "newobj instance void string::.ctor(char [])"
+    "newobj instance void 'STR[*]'::.ctor(string)"
+    "ret"
+  end;
+  
+  append (other: STRING[*]): SAME is 
+    res := (self.str.append(other.str)).string;
+    sys_set_value(res);
+  end;
+
+  private sys_set_value(v: STRING[*]) is builtin
+    "ldarg.s 0"
+    "ldarg v"
+		"ldfld char[] 'STRING[*]'::_val"
+		"stfld char[] 'STRING[*]'::_val"
+		"ret"
+  end;
+  
+  int: INT is 
+    res := INT::from_str(self.str);
+  end;
+	
+end;

@@ -1,0 +1,31 @@
+---- Copyright (C) 2008 long_unsigned.sa, by Maik Schoepe
+value class LONG_UNSIGNED is builtin : "unsigned int64"
+include SYS_SIMPLE_INUM(LONG_UNSIGNED, LONG_UNSIGNED);
+include SYS_SIMPLE_VALUE(LONG_UNSIGNED);
+	is_equal (v: $OB): BOOL is
+    typecase v
+   	 when SAME then res := sys_is_equal (v);
+  	  when SHORT_UNSIGNED, UNSIGNED, SHORT_INT, INT, LONG_INT then
+    		res := sys_is_equal(v as LONG_UNSIGNED); 
+	 	  else res := false;
+    end;
+	end;
+  
+  stream upto (!to: LONG_UNSIGNED): LONG_UNSIGNED is
+    res := self;
+    loop
+      if res > to then return end;
+      resume;
+      res := res+1;
+    end;
+  end;
+
+  stream downto (!to: LONG_UNSIGNED): LONG_UNSIGNED is
+    res := self;
+    loop
+      if res < to then return end;
+      resume;
+      res := res-1;
+    end;
+  end;
+end;

@@ -1,0 +1,35 @@
+---- Copyright (C) 2008 value.sa, by Maik Schoepe
+abstract value class VALUE is builtin like OB;
+  
+  type: TYPE is builtin
+  	".maxstack 1"
+  	"ldarg.s 0"
+  	"ldobj" SAME
+  	"box" SAME
+  	"callvirt instance class [mscorlib]System.Type object::GetType()"
+  	"newobj instance void 'TYPE'::.ctor(class [mscorlib]System.Type)"
+  	"ret"
+  end;
+
+	private sys_is_equal(v: SAME): BOOL is builtin 
+		".maxstack 2"
+		"ldarg.s 0"
+		"ldobj " SAME
+		"box " SAME
+		"ldarg v"
+		"box " SAME
+		"call instance bool class [mscorlib]System.ValueType::Equals(object)"
+		"newobj instance void BOOL::.ctor(bool)"
+		"ret"
+	end;
+	
+  string: STRING[*] is builtin
+  	"ldarg.0"
+  	"ldobj" SAME
+  	"box " SAME
+  	"call instance string class [mscorlib]System.ValueType::ToString()"
+		"call instance char[] string::ToCharArray()"
+  	"newobj instance void 'STRING[*]'::.ctor (char[])"
+  	"ret"
+  end;
+end;

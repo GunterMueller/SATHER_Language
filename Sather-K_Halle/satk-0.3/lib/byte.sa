@@ -1,0 +1,5 @@
+---- Copyright (C) 2008 byte.sa, by Maik Schoepe
+value class BYTE is builtin : "unsigned int8"
+include SYS_SIMPLE_VALUE(BYTE);
+
+end;

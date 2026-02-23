@@ -1,0 +1,4 @@
+---- Copyright (C) 2008 numeric_error.sa, by Maik Schoepe
+class NUMERIC_ERROR is like EXCEPTION;
+	name: STRING[*] is res := "fpe exception".string; end;
+end;

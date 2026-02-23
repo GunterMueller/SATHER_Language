@@ -1,0 +1,24 @@
+---- Copyright (C) 2008 row.sa, by Maik Schoepe
+value class ROW[asize](T<$OB) is builtin [] T
+	aget (i: INT):T is builtin
+		".maxstack 1"
+		"ldarg.s 0"
+		"ldfld"	T	"[]" SAME "::_val"
+		"ldarga i"
+		"ldfld int32 'INT'::_val"
+		"ldelem " T
+		"ret"
+	end;
+
+	aset (i: INT; x: T) is builtin
+		".maxstack 1"
+		"ldarg.s 0"
+		"ldfld"	T	"[]" SAME "::_val"
+		"ldarga i"
+		"ldfld int32 'INT'::_val"
+		"ldarg x"
+		"stelem " T
+		"ret"
+	end;
+
+end;

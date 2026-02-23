@@ -1,0 +1,53 @@
+---- Copyright (C) 2008 array.sa, by Maik Schoepe
+-- DONT TOUCH ANYTHING UNDER THIS LINE --
+class ARRAY -- Arraygrenzen werden spaeter eingefuegt
+(T<$OB) is builtin [] T
+include SYS_SIMPLE_ARRAY;
+	aget is --Parameter und body werden spaeter generiert
+	end;
+
+	aset is --Parameter und body werden spaeter generiert
+	end;
+-- DONT TOUCH ANYTHING ABOVE THIS LINE --
+  
+  string: STRING is
+    indices: #ARRAY[dimension](INT);
+    bounds: #ARRAY[dimension](INT);
+    sep: STRING := "".string;
+    i,j, closed: INT := 0;  
+    object: $OB;
+
+    res := "".string;
+    
+    while i<dimension loop 
+    	bounds[i] := boundsize(i);
+    	i := i+1;
+      res := res.append("[".string);
+    end;
+
+    loop
+      object := get_value(indices);
+      res := res.append(sep);
+      if is_void(object) then
+        res := res.append(" # ".string); 
+      else res := res.append(get_value(indices).string) end;
+
+      closed := int_arr_inc(indices, bounds);
+     	if closed /= 0 then
+        i:=0;
+        while i<closed loop
+          res := res.append("]".string);
+          i := i+1;
+        end;
+        sep := "".string;
+        i:=0;
+        while i<closed and closed /= dimension loop
+          res := res.append("[".string);
+          i := i+1;
+        end;
+      else sep := ",".string end;
+        
+    until!(closed = dimension)
+    end;
+  end;
+end;

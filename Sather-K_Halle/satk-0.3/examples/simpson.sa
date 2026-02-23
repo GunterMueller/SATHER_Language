@@ -1,0 +1,16 @@
+-- Gauﬂ's "barrel" rule, approximate integration
+-- Copyright (C) 1996 Martin Trapp
+
+class SIMPSON is
+
+  simpson (f: procedure (FLTD): FLTD; a,b: FLTD): FLTD is
+    res := (b-a) * (f (a) + f ((a+b)/2) * 4 + f(b)) / 6;
+  end;
+  
+  pow (b: FLTD; e: UNSIGNED): FLTD is res := b.pow (e); end;
+  
+  main is
+    TEXT::sout << simpson (bind pow (,2), 0, 1) << '\n';
+  end;
+
+end;

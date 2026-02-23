@@ -1,0 +1,13 @@
+PREDEFINED FEATURES
+-------------------
+- classes that are not implemented: BITS, INTINF, FILE, TIME, MATH
+- there are problems with ROW
+
+TODOLIST
+--------
+- array elements as out/inout arguments
+- invariants
+- aggregate identifiers
+- assertions
+- object type constructors (##)
+- self-containment of value classes not checked

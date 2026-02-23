@@ -1,0 +1,58 @@
+---- Copyright (C) 2009 random.sa, by Maik Schoepe
+class RANDOM is builtin: "class [mscorlib]System.Random"
+
+	init is builtin
+	  ".maxstack 2"
+	  "ldarg 0"
+	  "newobj instance void [mscorlib]System.Random::.ctor()"
+	  "stfld class [mscorlib]System.Random 'RANDOM'::'_val'"
+	  "ret"
+	end;  
+
+	-- returns a random integer
+	next:INT is builtin
+		".maxstack 1"
+		"ldarg 0"
+		"ldfld class [mscorlib]System.Random 'RANDOM'::'_val'"
+		"callvirt instance int32 [mscorlib]System.Random::Next()"
+		"newobj instance void 'INT'::.ctor(int32)"
+		"ret"
+	end;
+
+	-- returns a random integer range 0 to max
+	next(max:INT):INT is builtin
+		".maxstack 2"
+		"ldarg 0"
+		"ldfld class [mscorlib]System.Random 'RANDOM'::'_val'"
+		"ldarg 'max'"
+    "call int32 INT::_valueOut(valuetype 'INT')"
+		"callvirt instance int32 [mscorlib]System.Random::Next(int32)"
+		"newobj instance void 'INT'::.ctor(int32)"
+		"ret"
+	end;
+
+	-- returns a random integer range min to max
+	next(min:INT;max:INT):INT is builtin
+		".maxstack 3"
+		"ldarg 0"
+		"ldfld class [mscorlib]System.Random 'RANDOM'::'_val'"
+		"ldarg 'min'"
+    "call int32 INT::_valueOut(valuetype 'INT')"
+		"ldarg 'max'"
+    "call int32 INT::_valueOut(valuetype 'INT')"
+		"callvirt instance int32 [mscorlib]System.Random::Next(int32,int32)"
+		"newobj instance void 'INT'::.ctor(int32)"
+		"ret"
+	end;
+
+	-- returns a floating number range 0.0 to 1.0
+	next_fltd:FLTD is builtin
+		".maxstack 1"
+		"ldarg 0"
+		"ldfld class [mscorlib]System.Random 'RANDOM'::'_val'"
+		"callvirt instance float64 [mscorlib]System.Random::NextDouble()"
+		"newobj instance void 'FLTD'::.ctor(float64)"
+		"ret"
+	end;
+
+end;

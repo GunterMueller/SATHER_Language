@@ -1,0 +1,69 @@
+---- Copyright (C) 2008 sys_simple_fnum.sa, by Maik Schoepe
+abstract value class SYS_SIMPLE_FNUM(T) is builtin
+include SYS_SIMPLE_NUM(T,UNSIGNED); 
+
+	plus (other: T): SAME is  
+    res := sys_plus(other);
+    if res = Inf or res = -Inf then raise FLOAT_OVERFLOW end;
+	end;
+	
+	minus (other: T): SAME is  
+    res := sys_minus(other);
+    if res = Inf or res = -Inf then raise FLOAT_OVERFLOW end;
+	end;
+	
+	times (other: T): SAME is  
+    res := sys_times(other);
+    if self /= 0 and other /= 0 and res = 0 then raise FLOAT_UNDERFLOW end;
+    if res = Inf or res = -Inf then raise FLOAT_OVERFLOW end;
+	end;
+	
+	quotient(other: T):FLTD is 
+		if (other=0) then raise ZERO_DIVIDE end;
+		res := sys_quotient(other);	
+    if self /= 0 and other /= 0 and res = 0 then raise FLOAT_UNDERFLOW end;
+    if res = Inf or res = -Inf then raise FLOAT_OVERFLOW end;
+	end;
+
+	pow(exp: UNSIGNED):T is
+    base: SAME := self;
+    res := 1;
+    while exp>0 loop
+      if exp mod 2 = 1 then
+        res := res * base;
+      end;
+      exp := exp div 2;
+      base := base * base;
+    end;
+	end;
+
+	private sys_plus (other: T): SAME is builtin 
+		"ldarg.0"
+		"ldfld " SAME@native " " SAME "::_val"
+		"ldarga other"
+		"ldfld " T@native " " T "::_val"
+		"add"
+		"newobj instance void " SAME "::.ctor (" SAME@native ")"
+		"ret"
+	end;
+
+	private sys_minus (other: T): SAME is builtin 
+		"ldarg.0"
+		"ldfld " SAME@native " " SAME "::_val"
+		"ldarga other"
+		"ldfld " T@native " " T "::_val"
+		"sub"
+		"newobj instance void " SAME "::.ctor (" SAME@native ")"
+		"ret"
+  end;
+
+	private sys_times (other: T): SAME is builtin 
+		"ldarg.0"
+		"ldfld " SAME@native " " SAME "::_val"
+		"ldarga other"
+		"ldfld " T@native " " T "::_val"
+		"mul"
+		"newobj instance void " SAME "::.ctor (" SAME@native ")"
+		"ret"
+  end;
+end;

@@ -1,0 +1,31 @@
+---- Copyright (C) 2008 unsigned.sa, by Maik Schoepe
+value class UNSIGNED is builtin : "unsigned int32"
+include SYS_SIMPLE_INUM(UNSIGNED, UNSIGNED);
+include SYS_SIMPLE_VALUE(UNSIGNED);
+	is_equal (v: $OB): BOOL is
+    typecase v
+   	 when SAME then res := sys_is_equal (v);
+  	  when SHORT_UNSIGNED, SHORT_INT, INT then
+    		res := sys_is_equal(v as UNSIGNED); 
+	 	  else res := false;
+    end;
+	end;
+  
+  stream upto (!to: UNSIGNED): UNSIGNED is
+    res := self;
+    loop
+      if res > to then return end;
+      resume;
+      res := res+1;
+    end;
+  end;
+
+  stream downto (!to: UNSIGNED): UNSIGNED is
+    res := self;
+    loop
+      if res < to then return end;
+      resume;
+      res := res-1;
+    end;
+  end;
+end;

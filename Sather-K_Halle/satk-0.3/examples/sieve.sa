@@ -1,0 +1,29 @@
+-- Erathosthenes's prime number sieve
+-- Copyright (C) 1996 Markus Armbruster & Christian von Roques
+
+class SIEVE is
+
+  main (args: ARRAY[*](STRING)) is
+    a: ARRAY[*](BOOL);
+    n: INT := 100;
+    c, i, p: INT;
+    if args.asize > 1 then n := args[1].int; end;
+    
+    a := #ARRAY[n](BOOL);
+  
+    i := 0; while i < n loop a[i] := false; i := i+1; end;
+  
+    p := 2;
+    while p < n loop
+      TEXT::sout << p << " is prime\n";
+      c := p * 2;
+      while c < n loop
+	a[c] := true;
+	c := c + p;
+      end;
+      p := p + 1;
+      while p < n and a[p] loop p := p + 1; end;
+    end
+  end;
+
+end;

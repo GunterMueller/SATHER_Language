@@ -1,0 +1,15 @@
+---- Copyright (C) 2008 flt.sa, by Maik Schoepe
+value class FLT is builtin : "float32"
+include SYS_SIMPLE_FNUM(FLT);
+include SYS_SIMPLE_VALUE(FLT);
+	
+	is_equal (v: $OB): BOOL is
+    typecase v
+   	 when SAME then res := sys_is_equal (v);
+  	  when INT, SHORT_INT, LONG_INT then
+    		res := sys_is_equal(v as FLT); 
+	 	  else res := false;
+    end;
+	end;
+
+end;

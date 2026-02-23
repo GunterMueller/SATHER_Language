@@ -1,0 +1,16 @@
+version 3.4.345
+===============
+- bug resolved: values assigned to attributes in value types in there init method are not
+	overwritten anymore
+- some bugs with array initialization solved
+- some semantic errors with copy semantic of value types solved
+- -i-option changed to -I
+- major errors with streams solved
+- console output of arrays should work now
+
+version 0.3.3-268
+=================
+- bugs with mono 2.0.1 solved
+- added versioninfo to "satk --help"
+- obstack.c added to source for non-linux-os'
+- minor bugfixing

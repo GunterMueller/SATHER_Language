@@ -1,0 +1,16 @@
+REQUIREMENTS
+------------
+- Multiprecision arithmetic library (libgmp)
+- mono (currently 1.9.1)
+- mono development tools (ilasm version 1.2.6.0 or higher)
+
+COMPILING
+---------
+- the command 'cd src && make && cd ..' should produce the executable 'bin/satk' 
+- copy the executable to a place reachable by $PATH
+
+ENVIRONMENT
+-----------
+- set SAKLIBPATH to the directory containing the predefined classes
+- set SAKCILCOMP to the CIL-Compiler (ilasm)
+

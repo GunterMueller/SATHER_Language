@@ -1,0 +1,48 @@
+---- Copyright (C) 2008 str.sa, by Maik Schoepe
+value class STR[*] is builtin : "string"
+like ARR[*](CHAR): dimension->, boundsize->, get_value->, int_arr_inc->, copy->,
+sys_is_equal->;
+
+	string: STRING[*] is builtin
+		".maxstack 1"
+		"ldarg 0"
+		"ldfld string 'STR[*]'::_val"
+		"call instance char[] string::ToCharArray()"
+		"newobj instance void 'STRING[*]'::.ctor(char[])"
+		"ret"
+	end;
+
+	aget(i: INT):CHAR is 
+	  res := self.string[i];
+	end;
+
+	aset(i:INT; c: CHAR) is 
+	end;
+
+	append(other: STR):STR is builtin
+		"ldarg 0"
+		"ldfld string 'STR[*]'::_val"
+		"ldarga other"
+		"ldfld string 'STR[*]'::_val"
+	  "call string string::Concat(string, string)"
+	  "newobj instance void 'STR[*]'::.ctor(string)"
+	  "ret"
+	end;
+
+  private sys_set_value(v: STR[*]) is builtin
+    "ldarg.s 0"
+    "ldarg v"
+		"ldfld string 'STR[*]'::_val"
+		"stfld string 'STR[*]'::_val"
+		"ret"
+  end;
+  
+	is_equal (v: $OB): BOOL is
+    typecase v
+   	 when SAME then res := sys_is_equal (v);
+  	  when STRING then
+    		res := sys_is_equal(v.str); 
+	 	  else res := false;
+    end;
+	end;
+end;

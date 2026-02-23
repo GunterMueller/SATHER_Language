@@ -1,0 +1,60 @@
+---- Copyright (C) 2008 ob.sa, by Maik Schoepe
+abstract value class OB is builtin
+  
+  type: TYPE is abstract
+  end;
+
+  string: STRING[*] is
+    attrs : ARRAY[*](SYS_ATTR) := self.type.attributes;
+    n: INT := attrs.asize;
+    sep: STRING[*] := "".string;
+    i: INT := 0;
+    res := "{ ".string;
+    while i/=n loop
+      a : $OB :=attrs[i].get_value(self);
+      res.append(sep);
+      sep := ", ".string;
+      if is_void (a) then res.append ("#".string);
+      else
+        typecase a
+          when $REFERENCE then res.append ("#".string);
+          else res.append (a.string);
+        end;
+      end;
+      i := i+1;
+    end;
+    res.append (" }".string);
+  end;
+
+	is_equal (v: $OB): BOOL is
+    if is_void(v) then res := is_void (self);
+    else
+      typecase v
+      when SAME then res := sys_is_equal (v);
+   	    else res := false;
+      end;
+    end;
+	end;
+
+	private sys_is_equal (v:SAME): BOOL is abstract
+	end;
+
+  private is_void(v: $OB): BOOL is builtin
+    "ldarg v"
+    "ldnull"
+    "ceq"
+		"newobj instance void 'BOOL'::.ctor(bool)"
+		"ret"
+  end;
+
+  stream until (b: BOOL) is
+    loop
+      if b then return; end;
+      resume;
+    end;
+  end;
+
+  copy: SAME is
+    res := self;  
+  end;
+end;

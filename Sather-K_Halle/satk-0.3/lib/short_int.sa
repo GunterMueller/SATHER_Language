@@ -1,0 +1,23 @@
+---- Copyright (C) 2008 short_int.sa, by Maik Schoepe
+value class SHORT_INT is builtin : "int16"
+include SYS_SIMPLE_INUM(SHORT_INT, UNSIGNED);
+include SYS_SIMPLE_VALUE(SHORT_INT);
+	
+  stream upto (!to: SHORT_INT): SHORT_INT is
+    res := self;
+    loop
+      if res > to then return end;
+      resume;
+      res := res+1;
+    end;
+  end;
+
+  stream downto (!to: SHORT_INT): SHORT_INT is
+    res := self;
+    loop
+      if res < to then return end;
+      resume;
+      res := res-1;
+    end;
+  end;
+end;

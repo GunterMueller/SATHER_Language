@@ -1,0 +1,64 @@
+---- Copyright (C) 2008 sys_simple_num.sa, by Maik Schoepe
+abstract value class SYS_SIMPLE_NUM(T; U) is builtin
+	
+	minus: SAME is builtin 
+		"ldarg.0"
+		"ldfld " SAME@native " " SAME "::_val"
+		"neg"
+		"newobj instance void " SAME "::.ctor (" SAME@native ")"
+		"ret"
+  end;
+
+	private sys_quotient(other:T):FLTD is builtin
+		"ldarg.0"
+		"ldobj " SAME
+    "call valuetype 'FLTD' 'SYS_CONVERSION'::convert (" SAME ")"
+    "call float64  'FLTD'::_valueOut(valuetype 'FLTD')"
+		"ldarg other"
+    "call valuetype 'FLTD' SYS_CONVERSION::convert (" T ")"
+    "call float64  'FLTD'::_valueOut(valuetype 'FLTD')"
+		"div"
+		"newobj instance void 'FLTD'::.ctor (float64)"
+		"ret"
+	end;
+
+  max (other: T): T is
+    if self<other then res:=other; else res:=self; end;
+  end;
+
+  min (other: T): T is
+    if self<other then res:=self; else res:=other; end;
+  end;
+
+	is_lt(other:T):BOOL is builtin
+		"ldarg.0"
+		"ldfld " SAME@native " " SAME "::_val"
+		"ldarga other"
+		"ldfld " T@native " " T "::_val"
+		"clt"
+		"newobj instance void 'BOOL'::.ctor (bool)"
+		"ret"
+	end;
+
+	is_leq(other:T):BOOL is 
+		res := (self = other) or (self < other);
+	end;
+
+	is_gt(other:T):BOOL is builtin
+		"ldarg.0"
+		"ldfld " SAME@native " " SAME "::_val"
+		"ldarga other"
+		"ldfld " T@native " " T "::_val"
+		"cgt"
+		"newobj instance void 'BOOL'::.ctor (bool)"
+		"ret"
+	end;
+
+	is_geq(other:T):BOOL is 
+		res := (self = other) or (self > other);
+	end;
+
+  abs: SAME is
+    if (self  < 0) then res := (-self) else res := self end;
+  end;
+end;

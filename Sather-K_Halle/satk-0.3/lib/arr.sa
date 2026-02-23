@@ -1,0 +1,87 @@
+---- Copyright (C) 2008 arr.sa, by Maik Schoepe
+-- DONT TOUCH ANYTHING UNDER THIS LINE --
+value class ARR -- bounds werden spaeter eingefuegt
+(T<$OB) is builtin [] T
+include SYS_SIMPLE_ARRAY: copy->, sys_is_equal->, type->;
+	
+	aget is --Parameter und body werden spaeter generiert
+	end;
+
+	aset is --Parameter und body werden spaeter generiert
+	end;
+-- DONT TOUCH ANYTHING ABOVE THIS LINE --
+  string: STRING is
+    indices: #ARRAY[dimension](INT);
+    bounds: #ARRAY[dimension](INT);
+    sep: STRING := "".string;
+    i,j, closed: INT := 0;  
+    object: $OB;
+
+    res := "".string;
+    
+    while i<dimension loop 
+    	bounds[i] := boundsize(i);
+    	i := i+1;
+      res := res.append("[".string);
+    end;
+
+    loop
+      object := get_value(indices);
+      res := res.append(sep);
+      if is_void(object) then
+        res := res.append(" # ".string); 
+      else res := res.append(get_value(indices).string) end;
+      closed := int_arr_inc(indices, bounds);
+     	if closed /= 0 then
+        i:=0;
+        while i<closed loop
+          res := res.append("]".string);
+          i := i+1;
+        end;
+        sep := "".string;
+        i:=0;
+        while i<closed and closed /= dimension loop
+          res := res.append("[".string);
+          i := i+1;
+        end;
+      else sep := ",".string end;
+        
+    until!(closed = dimension)
+    end;
+  end;
+  
+  copy: SAME is builtin
+    ".locals init (" SAME " res)"
+    ".maxstack 3"
+    "ldarg.0"
+    "ldobj " SAME
+    "stloc res"
+    "ldloca res"
+    "ldarg.0"
+    "ldfld " SAME@native " " SAME "::_val"
+    "callvirt instance object [mscorlib]System.Array::Clone()"
+    "castclass " SAME@native
+    "stfld " SAME@native " " SAME "::_val"
+    "ldloc res"
+    "ret"
+  end;
+	
+	private sys_is_equal(v: SAME): BOOL is  
+    indices: #ARRAY[dimension](INT);
+    bounds: #ARRAY[dimension](INT);
+	  i: INT := 0;
+
+	  while i<dimension loop
+      if boundsize(i) /= v.boundsize(i) then res := false; return; end;
+    	bounds[i] := boundsize(i);
+      i := i+1;
+    end;
+
+    loop
+      if get_value(indices) /= v.get_value(indices) then res := false; return; end;
+    until!(int_arr_inc(indices, bounds) = dimension) end;
+    
+    res := true;
+	end;
+	
+end;

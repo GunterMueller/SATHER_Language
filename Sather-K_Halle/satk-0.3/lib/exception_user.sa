@@ -1,0 +1,5 @@
+---- Copyright (C) 2008 exception_user.sa, by Maik Schoepe
+class EXCEPTION_USER is like EXCEPTION;
+  name: STRING[*] is res := "user defined exception".string end;
+end;
+
