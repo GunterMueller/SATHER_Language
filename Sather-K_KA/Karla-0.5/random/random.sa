@@ -1,0 +1,157 @@
+-- -*- Mode: Sather;  -*-
+-- FILE: random.sa
+-- AUTHOR: Wolf Zimmermann (zimmer@ira.uka.de)
+-- DATE:
+--
+-- Copyright (C) Universitaet Karlsruhe, 1994
+--
+--*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FILE: random.sa
+--*
+--* CLASSES: RANDOM_GENERATOR_32 EXCEPTION__RANDOM_GENERATOR_32_LOWER \
+--* EXCEPTION__RANDOM_GENERATOR_32_TOO_BIG
+--* 
+--* IMPLEMENTATION OF:
+--*
+--* CONFORMS TO:
+--*
+--* IS A:
+--*
+--* REQUIRED CLASSES: EXCEPTION__RANDOM_GENERATOR_32_LOWER \
+--* EXCEPTION__RANDOM_GENERATOR_32_TOO_BIG
+--*
+--* EXCEPTIONS: EXCEPTION__RANDOM_GENERATOR_32_LOWER \
+--* EXCEPTION__RANDOM_GENERATOR_32_TOO_BIG
+--*
+--* TEST CLASS: TEST__RANDOM_GENERATOR_32
+--*
+--* FOREIGN FILES:
+--*
+--*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-- RCS: $Id$
+-- HISTORY: $Log$
+
+abstract class RANDOM_GENERATOR_32 is
+  -- * CLASS: RANDOM_GENERATOR_32
+  -- * DESCRIPTION: abstract class for generation for random numbers based on 32-Bit\
+  -- *   integers in a specified range
+  -- * SUBCLASS OF:
+  -- * SPECIALIZATION OF:
+  -- * IMPLEMENTATION OF:
+  -- * EXCEPTIONS: EXCEPTION__RANDOM_GENERATOR_32
+  -- * INVARIANT: lower<=self.random<=upper AND\
+  -- *            #RANDOM_GENERATOR_32{lower,upper}.lower = l AND\ 
+  -- *            #RANDOM_GENERATOR_32{lower,upper}.upper = u AND\
+  -- *            -2^31 <= lower,upper <= 2^31-1 AND \
+  -- *            upper - lower + 1 <= 2^31-1
+  -- * REPRESENTATION:
+  -- * COMPLEXITY:
+  -- * REFERENCES:
+  -- * ATTRIBUTES: readonly lower,upper:INT; -- range of the random numbers 
+
+  readonly lower,upper:INT; -- range of the random numbers
+
+  init(l,u:INT):SAME is 
+    -- * METHOD: init:SAME
+    -- * DESCRIPTION: inits a new random number generator; call makes only sense as \
+    -- *              RAND::init(l,u) where RAND is an implementation of SAME
+    -- * PRE: self/=void
+    -- * POST: -2^31 <= res.lower <= res.upper <= 2^31-1 AND upper-lower+1 <= 2^31-1 
+    -- * COMPLEXITY: O(1)
+    -- * REFERENCES:
+
+    res := self;
+    res.lower := l;
+    res.upper := u;
+    if upper<lower then
+	#EXCEPTION__RANDOM_GENERATOR_32_LOWER.raise;
+    end;
+    if (upper>=0 and 1-lower >= 2147483647-upper) or (lower=-2147483648 and upper>-2)
+       or (lower=-2147483647 and upper>-1) then 
+	#EXCEPTION__RANDOM_GENERATOR_32_TOO_BIG.raise
+    end;
+  end;
+
+
+
+  random:INT is 
+  -- * METHOD: random:INT 
+  -- * DESCRIPTION: yields a random number in specified range
+  -- * PRE: true
+  -- * POST: lower<=res<=upper
+  -- * COMPLEXITY:
+  -- * REFERENCES:
+
+     deferred;
+  end;
+
+end; -- RANDOM_GENERATOR_32
+
+
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+class EXCEPTION__RANDOM_GENERATOR_32_LOWER is
+  -- * CLASS: EXCEPTION__RANDOM_GENERATOR_32_LOWER
+  -- * DESCRIPTION: exception of RANDOM_GENERATOR_32: undefined range
+  -- * SUBCLASS OF:
+  -- * SPECIALIZATION OF:
+  -- * IMPLEMENTATION OF:
+  -- * EXCEPTIONS:
+  -- * INVARIANT:
+  -- * REPRESENTATION:
+  -- * COMPLEXITY:
+  -- * REFERENCES:
+  -- * ATTRIBUTES: name:STR -- error message
+	  subtype of EXCEPTION_USER;
+   const name:STR := "WARNING: #RANDOM_GENERATOR_32{lower,upper}.init with upper<lower";
+
+end; --EXCEPTION__RANDOM_GENERATOR_32_LOWER
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+class EXCEPTION__RANDOM_GENERATOR_32_TOO_BIG is
+  -- * CLASS: EXCEPTION__RANDOM_GENERATOR_32_TOO_BIG
+  -- * DESCRIPTION: exception of RANDOM_GENERATOR_32: specified range too big
+  -- * SUBCLASS OF:
+  -- * SPECIALIZATION OF:
+  -- * IMPLEMENTATION OF:
+  -- * EXCEPTIONS:
+  -- * INVARIANT:
+  -- * REPRESENTATION:
+  -- * COMPLEXITY:
+  -- * REFERENCES:
+  -- * ATTRIBUTES: name:STR -- error message
+	  subtype of EXCEPTION_USER;
+   const name:STR := "WARNING: #RANDOM_GENERATOR_32{lower,upper}.init specified range too big";
+
+end; --EXCEPTION__RANDOM_GENERATOR_32_TOO_BIG
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+
+class TEST__RANDOM_GENERATOR_32 is
+ 
+     main is
+       x:$RANDOM_GENERATOR_32 := #RANDOM_GENERATOR_32.init(6,8);
+       ERR::s("creation of abstract class succeeded").nl;
+       begin
+	 x:=#RANDOM_GENERATOR_32.init(8,6);
+       except randexc
+       when EXCEPTION__RANDOM_GENERATOR_32_LOWER then 
+	  ERR::s(randexc.str).nl; 
+	  OUT::s("exception test EXCEPTION__RANDOM_GENERATOR_32_LOWER successfull").nl;
+       else OUT::s("exception test EXCEPTION__RANDOM_GENERATOR_32_LOWER not successfull").nl;
+       end;
+       begin
+	 x:=#RANDOM_GENERATOR_32.init(-5,2147483643);
+       except randexc
+       when EXCEPTION__RANDOM_GENERATOR_32_TOO_BIG then 
+	  ERR::s(randexc.str).nl;
+	  OUT::s("exception test EXCEPTION__RANDOM_GENERATOR_32_TOO_BIG successfull").nl;
+       else OUT::s("exception test EXCEPTION__RANDOM_GENERATOR_32_TOO_BIG not successfull").nl;
+       end;
+     end;
+end;

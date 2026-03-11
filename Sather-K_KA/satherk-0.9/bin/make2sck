@@ -1,0 +1,49 @@
+#!/bin/sh
+#
+# Script to convert Makefiles and .sather files
+# from Sather V0.2 to Sather-K
+#
+
+[ $SATHER_K_LIB ] && [ $SATHER_K_HOME ] ||
+{ echo '*** Shell variables $SATHER_K_LIB and $SATHER_K_HOME must be defined ! ***'
+  echo '*** See /uni/local/tools/sck/README for details.                       ***'
+  exit 1
+}
+
+echo Converting Makefiles and .sather-Files to Sather-K syntax... Please wait !
+selfpath=`pathname $0`
+
+while test $1 ; do
+  case $1 in
+    Makefile*.backup) ;;
+    Makefile*) echo Converting $1
+               if test -f $1.backup ; then
+                 source="$1.backup"
+               else
+                 source="$1"
+                 cp $source ${source}.backup
+               fi
+               sed -e 's/SATHER_LIB=${SATHER_LIB}/SATHER_K_LIB=${SATHER_K_LIB}/g' \
+                   -e 's/SATHER_HOME=${SATHER_HOME}/SATHER_K_HOME=${SATHER_K_HOME}/g' \
+                   < $source | grep -v "SATHER_[LH].*=" > $1.$$
+               sed -e "s/SATHER_HOME/SATHER_K_HOME/g" \
+                   -e "s/SATHER_LIB/SATHER_K_LIB/g" \
+                   -e 's|/bin/sun4/sc|/bin/sun4/sck|g' \
+                   < $1.$$ >$1
+		   rm -f $1.$$ ;;
+    *.sather)  echo Converting $1
+               if test -f $1.backup ; then
+                 source="$1.backup"
+               else
+                 source="$1"
+                 cp $source ${source}.backup
+               fi
+               sed -e "s/SATHER_HOME/SATHER_K_HOME/g" \
+                   < $source > $1.$$
+                   mv $1.$$ $1 ;;
+  esac
+  shift
+done
+
+echo -n done.
+echo

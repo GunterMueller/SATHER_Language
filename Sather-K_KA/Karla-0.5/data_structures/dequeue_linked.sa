@@ -1,0 +1,547 @@
+-- Author: Wolf Zimmermann
+-- Copyright (C) Universitaet Karlsruhe, 1994
+--
+-- COPYRIGHT NOTICE: This code is provided "AS IS" WITHOUT ANY WARRANTY
+-- and is subject to the terms of the KARLA LIBRARY GENERAL PUBLIC
+-- LICENSE contained in the file: "doc/license.txt" of the 
+-- distribution. 
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FILE: dequeue_linked.sa
+--*
+--* CLASSES: DEQUEUE__LINKED(T)
+--* 
+--* IMPLEMENTATION OF: DEQUEUE(T)
+--*
+--* CONFORMS TO:
+--*
+--* IS A:
+--*
+--* REQUIRED CLASSES: DEQUEUE(T) EXCEPTION__DEQUEUE__EMPTY CELL(T)\
+--* DEQUEUE__ARRAY(T) EXCEPTION__STACK__EMPTY EXCEPTION__QUEUE_EMPTY
+--*
+--* EXCEPTIONS: EXCEPTION__DEQUEUE__EMPTY EXCEPTION__QUEUE_EMPTY \
+--* EXCEPTION__STACK__EMPTY
+--*
+--* TEST CLASS: TEST__DEQUEUE__LINKED
+--*
+--* FOREIGN FILES:
+--*
+--  RCS: $Id$
+--  HISTORY: $Log$
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+class DEQUEUE__LINKED(T) is  -- subtype of
+-- * CLASS: DEQUEUE__LINKED(T)
+-- * DESCRIPTION: implementation of abstract data type dequeue via cells
+-- * SUBCLASS OF:
+-- * SPECIALIZATION OF:
+-- * IMPLEMENTATION OF: DEQUEUE(T)
+-- * EXCEPTIONS: EXCEPTION__DEQUEUE__EMPTY EXCEPTION__STACK__EMPTY\
+-- * EXCEPTION__QUEUE_EMPTY
+-- * INVARIANT: DEQUEUE(T)::Inv AND\
+-- *    (empty IFF frt=void AND lst=void) AND \
+-- *    (frt=void IFF lst=void) AND \
+-- *    (NOT empty IMPLIES frontl=frt.val AND deql=frt.links[0]
+-- * REPRESENTATION:
+-- * COMPLEXITY: \
+-- * static      SIZE = 0             IF empty \
+-- * |                = 1 + dequeue.SIZE  OTHERWISE \
+-- * static      MAXSIZE = 0                         IF empty \
+-- * |                   = max(front.SIZE,dequeue.MAXSIZE  OTHERWISE
+-- * cumulative SPACE(n) = O(n) \
+-- * additive TIME(n) = O(n)
+-- * REFERENCES:
+-- * ATTRIBUTES: frt: CELL(T) -- first element in dequeue \
+-- *             lst:CELL(T) -- last element in dequeue 
+
+
+
+   subtype of DEQUEUE(T);
+   include DEQUEUE__ARRAY(T)::dequeue,enqueue,front,push,pop,top;
+
+   frt: CELL(T);
+   lst: CELL(T);
+
+   init:SAME is 
+   -- * METHOD: init : SAME
+   -- * DESCRIPTION: initialization method 
+   -- * PRE: NOT self = void AND self.empty=true
+   -- * POST: NOT res = void AND res.empty=true
+   -- * COMPLEXITY: \
+   -- * SIZE__init = 0\
+   -- * MAXSIZE__init = 0\
+   -- * SPACE__init = O(1) \
+   -- * TIME__init = O(1)
+   -- * REFERENCES:
+
+
+     res:=self;
+   end;
+  
+  enql(a:T):SAME is
+  -- * METHOD: enql(a:T):SAME
+  -- * DESCRIPTION: inserts an element a into dequeue on the left 
+  -- * PRE: NOT self=void
+  -- * POST: (frt=void IMPLIES res.frt = res.lst) AND \
+  -- *       (NOT frt=void IMPLIES \
+  -- *              res.lst = lst AND res.frt.links[1]=frt AND frt.links[0]=res.frt) AND \
+  -- *       res.frt.val = a)
+  -- * COMPLEXITY: \
+  -- * SIZE__enql(self.SIZE,a.SIZE) = self.SIZE + 1 \
+  -- * MAXSIZE__enql(self.MAXSIZE,a.SIZE) = max(self.MAXSIZE,a.SIZE)\
+  -- * SPACE__enql(self.SIZE,a.SIZE) = O(self.SIZE) \
+  -- * TIME__enql(self.SIZE,a.SIZE) = O(1)
+  -- * REFERENCES:
+
+  --assert (pre) not(self = void) end;
+      h:CELL(T) := #CELL(T).init(2);
+      h.val := a;
+      h.links[1] := frt;
+      if not(frt=void) then frt.links[0] := h; else lst := h; end;
+      frt := h;
+      res := self;
+
+  end; -- enql
+
+
+
+  enqr(a:T):SAME is
+  -- * METHOD: enqr(a:T):SAME
+  -- * DESCRIPTION: inserts an element a into dequeue on the right 
+  -- * PRE: NOT self=void
+  -- * POST: (lst=void IMPLIES res.frt = res.lst) AND \
+  -- *       (NOT lst=void IMPLIES \
+  -- *              res.frt = frt AND res.lst.links[0]=lst AND lst.links[1]=res.lst) AND \
+  -- *       res.lst.val = a)
+  -- * COMPLEXITY: \
+  -- * SIZE__enqr(self.SIZE,a.SIZE) = self.SIZE + 1 \
+  -- * MAXSIZE__enqr(self.MAXSIZE,a.SIZE) = max(self.MAXSIZE,a.SIZE)\
+  -- * SPACE__enqr(self.SIZE,a.SIZE) = O(self.SIZE) \
+  -- * TIME__enqr(self.SIZE,a.SIZE) = O(1)
+  -- * REFERENCES:
+
+  --assert (pre) not(self = void) end;
+      h:CELL(T) := #CELL(T).init(2);   
+      h.val := a;
+      h.links[0] := lst;
+      if not(lst=void) then lst.links[1] := h; else frt := h; end;
+      lst := h;
+      res := self;
+
+  end; -- enql
+
+
+
+  frontl: T is
+  -- * METHOD: frontl:T
+  -- * DESCRIPTION: returns the left element in dequeue
+  -- * PRE: NOT self=void AND NOT self.empty
+  -- * POST: res = frt.val
+  -- * COMPLEXITY: \
+  -- * SIZE__frontl(self.SIZE,self.MAXSIZE) = self.MAXSIZE \
+  -- * SPACE__frontl(self.SIZE,self.MAXSIZE) = O(self.MAXSIZE) \
+  -- * TIME__frontl(self.SIZE) = O(1)
+  -- * REFERENCES:
+
+  --assert (pre) not(self=void) and not(self.empty) end;
+     
+     if self.empty 
+     then #EXCEPTION__DEQUEUE__EMPTY.raise;
+     else res := frt.val;
+     end;
+
+  end; -- frontl
+
+
+
+
+
+  frontr: T is
+  -- * METHOD: frontr:T
+  -- * DESCRIPTION: returns the right in dequeue
+  -- * PRE: NOT self=void AND NOT self.empty
+  -- * POST: res = lst.val
+  -- * COMPLEXITY: \
+  -- * SIZE__frontr(self.SIZE,self.MAXSIZE) = self.MAXSIZE \
+  -- * SPACE__frontr(self.SIZE,self.MAXSIZE) = O(self.MAXSIZE) \
+  -- * TIME__frontr(self.SIZE) = O(1)
+  -- * REFERENCES:
+
+  --assert (pre) not(self=void) and not(self.empty) end;
+     
+     if self.empty 
+     then #EXCEPTION__DEQUEUE__EMPTY.raise;
+     else res := lst.val;
+     end;
+
+  end; -- frontr
+
+
+
+
+
+  deql: SAME is
+  -- * METHOD: deql:SAME
+  -- * DESCRIPTION: deletes the left element in dequeue
+  -- * PRE: NOT self=void AND NOT self.empty
+  -- * POST: res.frt = frt.links[1] AND (res.frt=void IMPLIES res.lst=void)
+  -- * COMPLEXITY: \
+  -- * SIZE__deql(self.SIZE) = self.SIZE - 1 \
+  -- * MAXSIZE__deql(self.MAXSIZE) = self.MAXSIZE \
+  -- * SPACE__deql(self.SIZE) = O(self.SIZE) \
+  -- * TIME__deql(self.SIZE) = O(1)
+  -- * REFERENCES:
+
+  --assert (pre) not(self=void) and not(self.empty) end;
+
+    if self.empty 
+    then #EXCEPTION__DEQUEUE__EMPTY.raise;
+    else
+      frt := frt.links[1];
+      if frt=void then lst:=void; else frt.links[0] := void; end;
+      res := self;
+    end;
+
+  end; -- deql
+
+
+
+  deqr: SAME is
+  -- * METHOD: deqr:SAME
+  -- * DESCRIPTION: deletes the right element in dequeue
+  -- * PRE: NOT self=void AND NOT self.empty
+  -- * POST: res.lst = lst.links[0] AND (res.lst=void IMPLIES res.frt=void)
+  -- * COMPLEXITY: \
+  -- * SIZE__deqr(self.SIZE) = self.SIZE - 1 \
+  -- * MAXSIZE__deqr(self.MAXSIZE) = self.MAXSIZE \
+  -- * SPACE__deqr(self.SIZE) = O(self.SIZE) \
+  -- * TIME__deqr(self.SIZE) = O(1)
+  -- * REFERENCES:
+
+  --assert (pre) not(self=void) and not(self.empty) end;
+
+    if self.empty 
+    then #EXCEPTION__DEQUEUE__EMPTY.raise;
+    else
+      lst := lst.links[0];
+      if lst=void then frt:=void; else lst.links[1] := void; end;
+      res := self;
+    end;
+
+  end; -- deql
+
+
+
+  empty:BOOL is
+  -- * METHOD: empty:BOOL
+  -- * DESCRIPTION: checks whether self is empty
+  -- * PRE: NOT self=void
+  -- * POST: res = (frt=void AND lst=void)
+  -- * COMPLEXITY: \
+  -- * SIZE__empty(self.SIZE) = 1 \
+  -- * SPACE__empty(self.SIZE) = O(1) \
+  -- * TIME__empty(self.SIZE) = O(1)
+  -- * REFERENCES:
+
+  --assert (pre) not(self=void) end;
+
+    res := frt=void
+
+  end; -- empty
+
+
+
+
+
+
+  str:STR is
+  -- converting a queue into a string
+    i:CELL(T);
+    if empty then res := "[]"; -- if 1
+    else
+      i := frt;
+      res := "dequeue = [";
+      until i=lst loop
+	  res := res.s(i.val.str).s(",");
+	  i := i.links[1];
+      end; -- loop
+      res := res.s(i.val.str).s("]");
+    end; -- if
+  end; -- str
+
+end; -- DEQUEUE__LINKED
+
+
+
+class TEST__DEQUEUE__LINKED is
+   main is
+     q1 : $DEQUEUE(INT) := #DEQUEUE__LINKED(INT);
+     i : INT := 0;
+     x : INT;
+     -- test without cyclic shift
+     OUT::s("empty dequeue").nl;
+     OUT::s(q1.str).nl;
+     OUT::s("Testing empty").nl;
+     if q1.empty 
+     then OUT::s("dequeue is empty").nl; 
+     else OUT::s("dequeue is not empty").nl;
+     end; -- if
+     OUT::s("dequeue as a stack based on the left end").nl;
+     until i= 10 loop
+       i := i + 1;
+       OUT::s("enql (").i(i).s(")").nl;
+       q1 := q1.enql(i);
+       OUT::s(q1.str).nl;
+     end; -- loop
+     OUT::s("Testing empty").nl;
+     if q1.empty 
+     then OUT::s("dequeue is empty").nl; 
+     else OUT::s("dequeue is not empty").nl;
+     end; -- if
+     -- dequeueing the loop
+     until q1.empty loop
+       OUT::s("left front element: ");
+       OUT::i(q1.frontl).nl;
+       OUT::s("deql").nl;
+       q1 := q1.deql;
+       OUT::s(q1.str).nl;
+     end;
+
+     OUT::s("Testing empty").nl;
+     if q1.empty 
+     then OUT::s("dequeue is empty").nl; 
+     else OUT::s("dequeue is not empty").nl;
+     end; -- if
+     
+   OUT::s("Testing Exceptions: deql").nl;
+   begin
+      q1 := q1.deql;
+   except emptydeql
+   when EXCEPTION__DEQUEUE__EMPTY then
+      ERR::s(emptydeql.str).nl;
+      OUT::s("exception test EXCEPTION__DEQUEUE__EMPTY on deql successfull").nl;
+   else OUT::s("exception test EXCEPTION__DEQUEUE__EMPTY on deql not successfull").nl;
+   end;
+
+   OUT::s("Testing Exceptions: deqr").nl;
+   begin
+      q1 := q1.deqr;
+   except emptydeqr
+   when EXCEPTION__DEQUEUE__EMPTY then
+      ERR::s(emptydeqr.str).nl;
+      OUT::s("exception test EXCEPTION__DEQUEUE__EMPTY on deqr successfull").nl;
+   else OUT::s("exception test EXCEPTION__DEQUEUE__EMPTY on deqr not successfull").nl;
+   end;
+
+   OUT::s("Testing Exceptions: frontl").nl;
+   begin
+      x := q1.frontl;
+   except emptyfrontl
+   when EXCEPTION__DEQUEUE__EMPTY then
+      ERR::s(emptyfrontl.str).nl;
+      OUT::s("exception test EXCEPTION__DEQUEUE__EMPTY on frontl successfull").nl;
+   else OUT::s("exception test EXCEPTION__DEQUEUE__EMPTY on frontl not successfull").nl;
+   end;
+
+   OUT::s("Testing Exceptions: frontr").nl;
+   begin
+      x := q1.frontr;
+   except emptyfrontr
+   when EXCEPTION__DEQUEUE__EMPTY then
+      ERR::s(emptyfrontr.str).nl;
+      OUT::s("exception test EXCEPTION__DEQUEUE__EMPTY on frontr successfull").nl;
+   else OUT::s("exception test EXCEPTION__DEQUEUE__EMPTY on frontr not successfull").nl;
+   end;
+
+
+     OUT::s("dequeue as a stack based on the right end").nl;
+     q1 := #DEQUEUE__LINKED(INT);
+     i := 0;
+     until i= 10 loop
+       i := i + 1;
+       OUT::s("enqr (").i(i).s(")").nl;
+       q1 := q1.enqr(i);
+       OUT::s(q1.str).nl;
+     end; -- loop
+     OUT::s("Testing empty").nl;
+     if q1.empty 
+     then OUT::s("dequeue is empty").nl; 
+     else OUT::s("dequeue is not empty").nl;
+     end; -- if
+     -- dequeueing the loop
+     until q1.empty loop
+       OUT::s("right front element: ");
+       OUT::i(q1.frontr).nl;
+       OUT::s("deqr").nl;
+       q1 := q1.deqr;
+       OUT::s(q1.str).nl;
+     end;
+
+     OUT::s("Testing empty").nl;
+     if q1.empty 
+     then OUT::s("dequeue is empty").nl; 
+     else OUT::s("dequeue is not empty").nl;
+     end; -- if
+
+     OUT::s("dequeue as a queue whose front is the left end").nl;
+     q1 := #DEQUEUE__LINKED(INT);
+     i := 0;
+     until i= 10 loop
+       i := i + 1;
+       OUT::s("enqr (").i(i).s(")").nl;
+       q1 := q1.enqr(i);
+       OUT::s(q1.str).nl;
+     end; -- loop
+     OUT::s("Testing empty").nl;
+     if q1.empty 
+     then OUT::s("dequeue is empty").nl; 
+     else OUT::s("dequeue is not empty").nl;
+     end; -- if
+     -- dequeueing the loop
+     until q1.empty loop
+       OUT::s("left front element: ");
+       OUT::i(q1.frontl).nl;
+       OUT::s("deql").nl;
+       q1 := q1.deql;
+       OUT::s(q1.str).nl;
+     end;
+
+     OUT::s("Testing empty").nl;
+     if q1.empty 
+     then OUT::s("dequeue is empty").nl; 
+     else OUT::s("dequeue is not empty").nl;
+     end; -- if
+
+     OUT::s("  -->Testing Cyclic Behaviour").nl;
+     q1 := #DEQUEUE__LINKED(INT);
+     i := 0;
+     until i= 10 loop
+       i := i + 1;
+       OUT::s("enqr (").i(i).s(")").nl;
+       q1 := q1.enqr(i);
+       OUT::s(q1.str).nl;
+     end; -- loop
+     until i=20 loop
+       OUT::s("left front element: ");
+       OUT::i(q1.frontl).nl;
+       OUT::s("deql").nl;
+       q1 := q1.deql;
+       OUT::s(q1.str).nl;
+       i := i + 1;
+       OUT::s("enqr (").i(i).s(")").nl;
+       q1 := q1.enqr(i);
+       OUT::s(q1.str).nl;
+     end; -- loop
+
+     OUT::s("dequeue as a queue whose front is the right end").nl;
+     q1 := #DEQUEUE__LINKED(INT);
+     i := 0;
+     until i= 10 loop
+       i := i + 1;
+       OUT::s("enql (").i(i).s(")").nl;
+       q1 := q1.enql(i);
+       OUT::s(q1.str).nl;
+     end; -- loop
+     OUT::s("Testing empty").nl;
+     if q1.empty 
+     then OUT::s("dequeue is empty").nl; 
+     else OUT::s("dequeue is not empty").nl;
+     end; -- if
+     -- dequeueing the loop
+     until q1.empty loop
+       OUT::s("right front element: ");
+       OUT::i(q1.frontr).nl;
+       OUT::s("deqr").nl;
+       q1 := q1.deqr;
+       OUT::s(q1.str).nl;
+     end;
+
+     OUT::s("Testing empty").nl;
+     if q1.empty 
+     then OUT::s("dequeue is empty").nl; 
+     else OUT::s("dequeue is not empty").nl;
+     end; -- if
+
+     OUT::s("  -->Testing Cyclic Behaviour").nl;
+     q1 := #DEQUEUE__LINKED(INT);
+     i := 0;
+     until i= 10 loop
+       i := i + 1;
+       OUT::s("enql (").i(i).s(")").nl;
+       q1 := q1.enql(i);
+       OUT::s(q1.str).nl;
+     end; -- loop
+     until i=20 loop
+       OUT::s("right front element: ");
+       OUT::i(q1.frontr).nl;
+       OUT::s("deqr").nl;
+       q1 := q1.deqr;
+       OUT::s(q1.str).nl;
+       i := i + 1;
+       OUT::s("enql (").i(i).s(")").nl;
+       q1 := q1.enql(i);
+       OUT::s(q1.str).nl;
+     end; -- loop
+
+     OUT::s("Testing Left and Right Operations in Common").nl;
+     q1 := #DEQUEUE__LINKED(INT);
+     i := 0;
+     until i= 10 loop
+       i := i + 1;
+       OUT::s("enql (").i(i).s(")").nl;
+       q1 := q1.enql(i);
+       OUT::s(q1.str).nl;
+       OUT::s("enqr (").i(i).s(")").nl;
+       q1 := q1.enqr(i);
+       OUT::s(q1.str).nl;
+     end; -- loop
+     -- dequeueing the loop
+     until q1.empty loop
+       OUT::s("right front element: ");
+       OUT::i(q1.frontr).nl;
+       OUT::s("left front element: ");
+       OUT::i(q1.frontl).nl;
+       OUT::s("deqr").nl;
+       q1 := q1.deqr;
+       OUT::s(q1.str).nl;
+       OUT::s("deql").nl;
+       q1 := q1.deql;
+       OUT::s(q1.str).nl;
+     end; -- loop
+
+     OUT::s("  -->Testing Cyclic Behaviour").nl;
+     i := 0;
+     until i= 10 loop
+       i := i + 1;
+       OUT::s("enql (").i(i).s(")").nl;
+       q1 := q1.enql(i);
+       OUT::s(q1.str).nl;
+       OUT::s("enqr (").i(i).s(")").nl;
+       q1 := q1.enqr(i);
+       OUT::s(q1.str).nl;
+     end; -- loop
+     until i=40 loop
+       OUT::s("right front element: ");
+       OUT::i(q1.frontr).nl;
+       OUT::s("deqr").nl;
+       q1 := q1.deqr;
+       OUT::s(q1.str).nl;
+       i := i + 1;
+       OUT::s("enql (").i(i).s(")").nl;
+       q1 := q1.enql(i);
+       OUT::s(q1.str).nl;
+     end; -- loop
+     until i=70 loop
+       OUT::s("left front element: ");
+       OUT::i(q1.frontl).nl;
+       OUT::s("deql").nl;
+       q1 := q1.deql;
+       OUT::s(q1.str).nl;
+       i := i + 1;
+       OUT::s("enqr (").i(i).s(")").nl;
+       q1 := q1.enqr(i);
+       OUT::s(q1.str).nl;
+     end; -- loop
+  end; -- main    
+
+end; --TEST__DEQUEUE__LINKED

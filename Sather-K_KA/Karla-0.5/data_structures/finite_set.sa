@@ -1,0 +1,65 @@
+-- File: finite_set.sa
+-- Author: Arne Frick (frick@ira.uka.de)
+-- Copyright (C) Universitaet Karlsruhe, 1994
+--
+-- COPYRIGHT NOTICE: This code is provided "AS IS" WITHOUT ANY WARRANTY
+-- and is subject to the terms of the KARLA LIBRARY GENERAL PUBLIC
+-- LICENSE contained in the file: "doc/license.txt" of the 
+-- distribution. 
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FILE: finite_set.sa
+--*
+--* CLASSES: FINITE_SET(T1,T<FINITE(T1))  
+--* 
+--* IMPLEMENTATION OF: 
+--*
+--* CONFORMS TO: SET(T)
+--*
+--* IS A: FINITE_MULTISET(T1,T)
+--*
+--* REQUIRED CLASSES: SET(T) FINITE(T) FINITE_INT EXCEPTION__MULTISET \
+--* EXCEPTION__SET_ADD EXCEPTION__SET_DISJOINT_UNION FINITE_MULTISET
+--*
+--* EXCEPTIONS: EXCEPTION__MULTISET EXCEPTION__SET_ADD EXCEPTION__SET_DISJOINT_UNION
+--*
+--* TEST CLASS: TEST__FINITE_SET
+--*
+--* FOREIGN FILES:
+--*
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--
+-- RCS: $Id$
+-- HISTORY:
+--  * Last edited: Apr 13 14:29 1994 (frick)
+-- Created: Wed Mar 16 18:43:26 1994 (frick)
+--
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+abstract class FINITE_SET(T1,T < FINITE(T1)) is
+   -- * CLASS: FINITE_SET(T<FINITE(T))
+   -- * DESCRIPTION: abstract class defining sets over finite domains
+   -- * SUBCLASS OF: SET(T)
+   -- * SPECIALIZATION OF: FINITE_MULTISET(T1,T)
+   -- * IMPLEMENTATION OF: 
+   -- * EXCEPTIONS: EXCEPTION__MULTISET EXCEPTION__SET_ADD\
+   -- * EXCEPTION__SET_DISJOINT_UNION
+   -- * INVARIANT: SET(T)::Inv AND FINITE_MULTISET(T1,T)::Inv
+   -- * REPRESENTATION:
+   -- * COMPLEXITY:
+   -- * REFERENCES: [Aho, Hopcroft, Ullman: "The Design and Analysis \
+   -- *               of Computer Algorithms", Addison-Wesley, 1974]
+   -- * ATTRIBUTES: size : INT
+
+   include FINITE_MULTISET(T1,T);
+   subtype of SET(T);
+
+end;
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+
+class TEST__FINITE_SET is
+   main is
+      a:$SET(FINITE_INT):=#FINITE_SET(INT,FINITE_INT);
+      ERR::s("creation of abstract class succeeded.\n");
+   end;
+end;

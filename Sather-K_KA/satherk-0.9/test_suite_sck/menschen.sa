@@ -1,0 +1,59 @@
+--* Last edited: Dec  9 00:12 1993 (holzw)
+--
+-- Testprogramm fuer Wertetypen
+--
+   
+value class PAAR is
+   -- ein Paar
+   const befreundet :INT:= 1;
+   const verliebt   :INT:= 2;
+   const verlobt    :INT:= 3;
+   const verheiratet:INT:= 4;
+   
+   mann: MENSCH;
+   frau: MENSCH;
+   beziehung: INT;
+
+   heiraten: SAME is
+      res:= self;
+      res.beziehung:= verheiratet;
+   end;
+
+   altern: SAME is
+      res:=self;
+      res.mann:= res.mann.altert;
+      res.frau:= res.frau.altert;
+   end;
+end;
+
+value class MENSCH is
+   -- ein Mensch
+
+   alter: INT;
+   groesse: FLT;
+
+   altert: SAME is
+      res:= self;
+      res.alter:= self.alter+1;
+   end;
+
+   waechst(zuwachs: FLT):SAME is
+      res:=self;
+      res.groesse:= groesse+zuwachs;
+   end;
+end;
+
+class MENSCHEN is
+   -- Testklasse
+
+   main is
+      maiers,schmidts: PAAR;
+
+      maiers.mann.alter:= 50;
+      maiers.frau.alter:= 45;
+      schmidts.mann.groesse:= 1.70;
+      schmidts.frau.groesse:= 1.65;
+      maiers:= maiers.heiraten;
+      schmidts:= schmidts.altern;
+   end;
+end;

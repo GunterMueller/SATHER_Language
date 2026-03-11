@@ -1,0 +1,482 @@
+-- -*-MODE : SATHER; -*-
+-- Author : Wolf Zimmermann
+-- Date : August 19, 1994
+--
+-- Copyright (C) Universitaet Karlsruhe, 1994
+-- This file is part of Karla, the Karlsruhe Library of Algorithms. 
+-- COPYRIGHT NOTICE: This code is provided "AS IS" WITHOUT ANY WARRANTY
+-- and is subject to the terms of the KARLA LIBRARY GENERAL PUBLIC
+-- LICENSE contained in the file: "doc/license.txt" of the
+-- distribution.
+--
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FILE: finite_bag_array.sa
+--*
+--* CLASSES: FINITE_MULTISET__ARRAY(T)
+--*
+--* IMPLEMENTATION OF: FINITE_MULTISET(T)
+--*
+--* CONFORMS TO:
+--*
+--* IS A:
+--*
+--* REQUIRED CLASSES: FINITE_MULTISET(T) MULTISET(T) FINITE(T) RANDOM_GENERATOR_32 TIMER RANDOM_GENERATOR_32__MINIMAL_STANDARD
+--*
+--* EXCEPTIONS: EXCEPTION__MULTISET
+--*
+--* TEST CLASS: TEST__FINITE_MULTISET__ARRAY
+--*
+--* FOREIGN FILES:
+--*
+-- RCS: $ld$
+-- HISTORY: $log$
+--  * Last edited: May  6 11:50 1994 (algprak0)
+--
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+class FINITE_MULTISET__ARRAY(T1,T<FINITE(T1)) is
+-- * CLASS: FINITE_MULTISET__ARRAY(T1,T<FINITE(T1))
+-- * DESCRIPTION: Implementation of abstract type MULTISET(T) for finite types via arrays
+-- * SUBCLASS OF:
+-- * SPECIALIZATION OF:
+-- * IMPLEMENTATION OF: FINITE_MULTISET(T1,T<FINITE(T1))
+-- * EXCEPTIONS: EXCEPTION__MULTISET
+-- * INVARIANT: FINITE_MULTISET::Inv AND \
+-- * max_size=T::n AND FORALL i:INT: 0<=i<max_size: hold[i]=multiplicity[i]
+-- * REPRESENTATION: 
+-- * COMPLEXITY: \
+-- * static SIZE = size \
+-- *                 ##.init.MAXSIZE = 0 AND \
+-- *                 MAXSIZE = max(choose.SIZE,delete(choose).MAXSIZE)
+-- * cumulative SPACE(n) = max_size \
+-- * additive TIME(n) = O(n)
+-- * REFERENCES:
+-- * ATTRIBUTES: size:INT; -- size of set \
+-- *             hold: ARR[*](INT);  -- vector holding the multiset
+-- *             max_size:INT; -- maximal size of set
+   
+   subtype of FINITE_MULTISET(T1,T);
+
+   hold:ARR[*](INT);
+   size,max_size:INT;
+
+
+     init:SAME is
+-- * METHOD: init:SAME
+-- * DESCRIPTION: initializes the multiset
+-- * PRE: NOT self=void
+-- * POST: max_size'=T::SIZE AND \
+-- * (FORALL i:INT: 0<=i<max_size' IMPLIES hold'[i]=0) AND size'=0 AND res=self'
+-- * COMPLEXITY: \
+-- * SIZE__init = 0 \
+-- * MAXSIZE__init=0 \
+-- * SPACE__init=max_size \
+-- * TIME__init = O(T::SIZE)
+-- * REFERENCES:
+
+      i:INT;
+      max_size := #T.n;
+      hold:=#ARR[max_size](INT);
+      loop
+	 i := 0.upto!(max_size-1);
+	 hold[i]:=0;
+      end; --loop;
+      size := 0;
+      res:=self;
+   end; --init
+
+
+   
+   add(x:T):SAME is
+-- * METHOD: add(x:T):SAME
+-- * DESCRIPTION: adds element x into self
+-- * PRE: self/=void AND hold /= void
+-- * POST: hold'[x.elt]=hold[x.elt]+1 AND self'=res AND size'=size+1 AND \
+-- * (FORALL i:INT: 0<=i<max_size AND i/=x.el IMPLIES hold'[i]=hold[i]) AND \
+-- * max_size'=max_size AND res=self'
+-- * COMPLEXITY: \
+-- * SIZE_add(self.SIZE,x.SIZE) = self.SIZE \
+-- * MAXSIZE_add(self.MAXSIZE,x.SIZE) = max(self.MAXSIZE,x.SIZE) \
+-- * SPACE_add(self.SIZE,x.SIZE) = O(T::SIZE) \
+-- * TIME_add(self.SIZE,x.SIZE) = O(1)
+-- * REFERENCES:
+
+     hold[x.elt] := hold[x.elt]+1;
+     size := size+1;
+     res := self
+   end; --add
+
+   insert(x:T):SAME is
+   -- * METHOD: insert(x:T):SAME
+   -- * DESCRIPTION: abstract method adding t into self idempotent
+   -- * PRE: true
+   -- * POST: res.multiplicity(t) =  1 AND \
+   -- *    (member(t) IMPLIES res.size=size) AND \
+   -- *    (NOT member(t) IMPLIES res.size=size+1) AND \
+   -- * COMPLEXITY:  \
+   -- * SIZE__insert(self.SIZE,t.SIZE) = self.SIZE; \
+   -- * MAXSIZE__insert(self.MAXSIZE,t.SIZE) = max(self.MAXSIZE,x.SIZE); \
+   -- * SPACE__insert(self.SIZE,t.SIZE) = O(T::SIZE); \
+   -- * additive   TIME(self.SIZE,t.SIZE) = O(1);
+   -- * REFERENCES:
+
+     if hold[x.elt]=0 then hold[x.elt] := 1; size := size + 1; end;
+     res := self;
+   end;
+
+   delete(x:T):SAME is
+-- * METHOD: delete(x:T):SAME
+-- * DESCRIPTION: deletes x from self
+-- * PRE: self/=void AND hold/=void
+-- * POST: hold'[x.el]=max(0,hold[x.el]-1) AND max_size'=max_size AND \
+-- * FORALL i:INT: 0<=i<max_size AND i/=x.el IMPLIES hold'[i]=hold[i]) AND \
+-- * (hold[x.el]=0 IMPLIES size'=size) AND (hold[x.el]>0 IMPLIES size'=size -1) AND \
+-- * res = self'
+-- * COMPLEXITY: \
+-- * SIZE_delete(self.SIZE,x.SIZE) = self.SIZE \
+-- * MAXSIZE_delete(self.MAXSIZE,x.SIZE) = self.MAXSIZE \
+-- * SPACE_delete(self.SIZE,x.SIZE) = O(T::SIZE) \
+-- * TIME_delete(self.SIZE,x.SIZE) = O(1)
+-- * REFERENCES:
+
+      if hold[x.elt]>0 then size := size - 1; hold[x.elt] := hold[x.elt] - 1; end;
+      res := self;
+   end; --delete
+
+
+   member(x:T):BOOL is
+-- * METHOD: member(x:T):BOOL
+-- * DESCRIPTION: returns true if x is in self
+-- * PRE: self/=void AND hold/=void
+-- * POST: self'=self AND res = hold[x.elt]>0
+-- * COMPLEXITY: \
+-- * SIZE_member(self.SIZE,x.SIZE) = 1 \
+-- * SPACE_member(self.SIZE,x.SIZE) = O(T::SIZE) \
+-- * TIME_member(self.SIZE,x.SIZE) = O(1)
+-- * REFERENCES:
+
+	 res:=(hold[x.elt] > 0)
+   end; --member
+
+
+
+   multiplicity(x:T):INT is
+-- * METHOD: multiplicity(x:T):INT
+-- * DESCRIPTION: returns the multiplicity of x in self
+-- * PRE: self/=void AND hold/=void
+-- * POST: self'=self AND res = hold[x.elt]
+-- * COMPLEXITY: \
+-- * SIZE_multiplicty(self.SIZE,x.SIZE) = 1 \
+-- * SPACE_multiplicty(self.SIZE,x.SIZE) = O(T::SIZE) \
+-- * TIME_multiplicty(self.SIZE,x.SIZE) = O(1)
+-- * REFERENCES:
+
+	 res:=hold[x.elt];
+   end; --member
+
+
+
+   choose:T is
+   -- * METHOD: choose:T
+   -- * DESCRIPTION: method for non-deterministic choice of an element in self
+   -- * PRE: NOT empty
+   -- * POST: self.member(res)=true self'=self
+   -- * COMPLEXITY: \
+   -- * SIZE_choose(self.SIZE,self.MAXSIZE) = self.MAXSIZE \
+   -- * SPACE_choose(self.SIZE) = O(T::SIZE) \
+   -- * TIME_choose(self.SIZE) = O(1)
+   -- * REFERENCES:
+      
+      i:INT;
+      res := ##res;
+      if empty then #EXCEPTION__MULTISET.raise; end;
+      loop
+	i:=0.upto!(max_size-1);
+	if hold[i]>0 then res.elt := i;  return; end;
+      end;
+   end;
+
+
+   stream elts:T is
+      -- * METHOD: stream elts:T
+      -- * DESCRIPTION: iterator iterating over all elements of self
+      -- * PRE: true
+      -- * POST: (elts.terminated IFF i=max_size)  \
+      -- * (res[sum(multiplicity(x); member(x) AND 0<=x.elt <i)+j].elts=i IFF j<hold[i]) AND\
+      -- * self'=self
+      -- * COMPLEXITY: \
+      -- * SIZE__elts(self.SIZE) = self.SIZE \
+      -- * SPACE__elts(self.SIZE;k) = O(max(self.SIZE,T::SIZE)) \
+      -- * TIME__elts(self.SIZE;k) = O(max(self.SIZE,T::SIZE))
+      -- * REFERENCES:
+
+   
+     i,j:INT;
+     loop
+       i := 0.upto!(max_size-1);
+       loop
+         j := 1.upto!(hold[i]);
+         res := #T;
+         res.elt := i;
+         resume;
+       end;
+     end;
+   end;
+
+
+   str: STR is
+
+      x:T;
+      first:BOOL := false;
+      res:="{";
+      loop
+	x := elts!;
+	if not first then res := res.s(x.str); first := true;
+	else res := res.s(",").s(x.str);
+	end;
+      end;
+      res := res.s("}");
+   end; --str
+
+end; -- class FINITE_MULTISET__ARRAY
+
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+class TEST__FINITE_MULTISET__ARRAY is
+
+
+  performancetest(n:INT) is
+    i:INT;
+    x:FINITE_INT_FLEX := #FINITE_INT_FLEX.init(n);
+    s:$MULTISET(FINITE_INT_FLEX) := #FINITE_MULTISET__ARRAY(INT,FINITE_INT_FLEX).init;
+    timer:TIMER := #TIMER;
+    timer.reset;
+    timer.go;
+    loop
+      i := 0.upto!(n-1);
+      x.elt := i;
+      s := s.add(x.copy);
+    end;
+    timer.stop;
+    OUT::s(n.str).s(" times add cost time ").s(timer.mean.str).nl.nl;
+    timer.reset;
+    timer.go;
+    loop
+      i:=0.upto!(n-1);
+      x.elt := i;
+      if not(s.member(x)) then break; end;
+    end;
+    timer.stop;
+    OUT::s(n.str).s(" times member cost time ").s(timer.mean.str).nl.nl;
+    if i<n-1 then OUT::s("membership test not succeeded for i=").s(i.str).nl.nl;
+    else OUT::s("membership test succeeded").nl.nl;
+    end;
+    timer.reset;
+    timer.go;
+    loop
+      i:= 0.upto!(n-1);
+      x.elt := i;
+      s := s.delete(x);
+    end;
+    timer.stop;
+    OUT::s(n.str).s(" times delete cost time ").s(timer.mean.str).nl.nl;
+    if s.empty then OUT::s("deletion succeeded").nl.nl;
+    else OUT::s("deletion not succeeded: s=").s(s.str).nl.nl;
+    end;
+  end; -- performancetest
+
+
+  main is
+    x:FINITE_INT_FLEX := #FINITE_INT_FLEX.init(100);
+    s:$MULTISET(FINITE_INT_FLEX) := #FINITE_MULTISET__ARRAY(INT,FINITE_INT_FLEX).init;
+    s1:$MULTISET(FINITE_INT_FLEX) := #FINITE_MULTISET__ARRAY(INT,FINITE_INT_FLEX).init;
+    s2:$MULTISET(FINITE_INT_FLEX) := #FINITE_MULTISET__ARRAY(INT,FINITE_INT_FLEX).init;
+    i:INT;
+    r:$RANDOM_GENERATOR_32:=#RANDOM_GENERATOR_32__MINIMAL_STANDARD.init(0,99);
+    s3 : $MULTISET(EMPTY) := #FINITE_MULTISET__ARRAY(INT,EMPTY).init;
+    s4:$FINITE_MULTISET(INT,FINITE_INT_FLEX) := #FINITE_MULTISET__ARRAY(INT,FINITE_INT_FLEX).init;
+    OUT::s("s is created: empty set").nl;
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.empty? ").s(s.empty.str).nl.nl;
+    begin
+      x := s.choose;
+    except excptset
+      when EXCEPTION__MULTISET 
+	then ERR::s(excptset.str).nl;
+	     OUT::s("exception test successfull").nl;
+      else OUT::s("exception test not successfull").nl;
+    end;
+    OUT::s("s := s.delete(10)").nl;
+    x.elt := 5;
+    s := s.delete(x);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.member(10)? ");
+    OUT::s(s.member(x).str).nl.nl;
+    OUT::s("s.multiplicity(10) = ").i(s.multiplicity(x)).nl;
+    OUT::s("s.add(10)").nl;
+    s := s.add(x.copy);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.empty? ").s(s.empty.str).nl.nl;
+    OUT::s("s.multiplicity(10) = ").i(s.multiplicity(x)).nl;
+    OUT::s("s.add(10)").nl;
+    s := s.add(x.copy);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.multiplicity(10) = ").i(s.multiplicity(x)).nl;
+    OUT::s("s.add(20)").nl;
+    x.elt := 10;
+    s := s.add(x);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.member(10)? ");
+    x.elt := 5;
+    OUT::s(s.member(x).str).nl.nl;
+    x.elt := 6;
+    OUT::s("s.member(12)? ");
+    OUT::s(s.member(x).str).nl;
+    OUT::s("s.choose = ").s(s.choose.str).nl.nl;
+    OUT::s("s := s.delete(10)").nl;
+    x.elt := 5;
+    s := s.delete(x);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.choose = ").s(s.choose.str).nl.nl;
+    x.elt := 10;
+    OUT::s("s := s.delete(20)").nl;
+    s := s.delete(x);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s := s.delete(10)").nl;
+    x.elt := 5;
+    s := s.delete(x);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.empty? ").s(s.empty.str).nl.nl;
+    begin
+      x := s.choose;
+    except excptset
+      when EXCEPTION__MULTISET 
+	then ERR::s(excptset.str).nl;
+	     OUT::s("exception test successfull").nl;
+      else OUT::s("exception test not successfull").nl;
+    end;
+    OUT::s("s.add(20)").nl;
+    s := s.add(x);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.empty? ").s(s.empty.str).nl.nl;
+    OUT::s("s.add(10)").nl;
+    x.elt := 5;
+    s := s.add(x);
+    OUT::s("s = ").s(s.str).nl.nl;
+    s := #FINITE_MULTISET__ARRAY(INT,FINITE_INT_FLEX).init;
+    OUT::s("s is created: empty set").nl;
+    OUT::s("s = ").s(s.str).nl.nl;
+    loop
+      i:=1.upto!(20);
+      x.elt := i;
+      s := s.add(x.copy);
+    end;
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("Set over the finite type with 0 elements").nl;
+    OUT::s("s = ").s(s3.str).nl.nl;
+    loop
+      i := 1.upto!(20);
+      x.elt := i;
+      s1 := s1.add(x.copy);
+    end;
+    OUT::s("s1 = ").s(s1.str).nl;
+    loop
+      i := 0.upto!(20);
+      x.elt := i;
+      OUT::s("s1.multiplicity(").s(x.str).s(") = ").i(s1.multiplicity(x)).nl;
+    end;
+    OUT::s("Testing stream elts").nl;
+    loop
+      OUT::s(s1.elts!.str).s(" ");
+    end;
+    OUT::nl;
+    OUT::s("s1 = ").s(s1.str).nl;
+    OUT::s("s2 = ").s(s2.str).nl;
+    OUT::s("s1.disjoint_union(s2) = ").s(s1.disjoint_union(s2).str).nl;
+    OUT::s("s1.union(s2) = ").s(s1.union(s2).str).nl;
+    OUT::s("s1.intersect(s2) = ").s(s1.intersect(s2).str).nl;
+    OUT::s("s1.diff(s2) = ").s(s1.diff(s2).str).nl;
+    OUT::s("s1.subset(s2) = ").s(s1.subset(s2).str).nl;
+    OUT::s("s2.subset(s1) = ").s(s2.subset(s1).str).nl;
+
+    loop
+      i := 1.upto!(20);
+      x.elt := i;
+      s2 := s2.add(x.copy);
+      if i.mod(2)=0 then s2 := s2.add(x.copy); end;
+      if i.mod(3)=0 then s2 := s2.add(x.copy); end;
+      if i.mod(4)=0 then s2 := s2.add(x.copy); end;
+    end;
+    OUT::s("s2 = ").s(s2.str).nl;
+    loop
+      i := 0.upto!(20);
+      x.elt := i;
+      OUT::s("s2.multiplicity(").s(x.str).s(") = ").i(s2.multiplicity(x)).nl;
+    end;
+    OUT::s("Testing stream elts").nl;
+    loop
+      OUT::s(s2.elts!.str).s(" ");
+    end;
+    OUT::nl;
+    OUT::s("s1 = ").s(s1.str).nl;
+    OUT::s("s2 = ").s(s2.str).nl;
+    OUT::s("s1.disjoint_union(s2) = ").s(s1.disjoint_union(s2).str).nl;
+    OUT::s("s1.union(s2) = ").s(s1.union(s2).str).nl;
+    OUT::s("s1.intersect(s2) = ").s(s1.intersect(s2).str).nl;
+    OUT::s("s1.diff(s2) = ").s(s1.diff(s2).str).nl;
+    OUT::s("s1.subset(s2) = ").s(s1.subset(s2).str).nl;
+    OUT::s("s2.subset(s1) = ").s(s2.subset(s1).str).nl;
+
+    s2 := #FINITE_MULTISET__ARRAY(INT,FINITE_INT_FLEX).init;
+    loop
+      i := 1.upto!(10);
+      x.elt := i;
+      s2 := s2.add(x.copy);
+      if i.mod(2)=0 then s2 := s2.add(x.copy); end;
+      if i.mod(3)=0 then s2 := s2.add(x.copy); end;
+      if i.mod(4)=0 then s2 := s2.add(x.copy); end;
+    end;
+    OUT::s("s2 = ").s(s2.str).nl;
+    loop
+      i := 0.upto!(20);
+      x.elt := i;
+      OUT::s("s2.multiplicity(").s(x.str).s(") = ").i(s2.multiplicity(x)).nl;
+    end;
+    OUT::s("Testing stream elts").nl;
+    loop
+      OUT::s(s2.elts!.str).s(" ");
+    end;
+    OUT::nl;
+    OUT::s("s1 = ").s(s1.str).nl;
+    OUT::s("s2 = ").s(s2.str).nl;
+    OUT::s("s1.disjoint_union(s2) = ").s(s1.disjoint_union(s2).str).nl;
+    OUT::s("s1.union(s2) = ").s(s1.union(s2).str).nl;
+    OUT::s("s1.intersect(s2) = ").s(s1.intersect(s2).str).nl;
+    OUT::s("s1.diff(s2) = ").s(s1.diff(s2).str).nl;
+    OUT::s("s1.subset(s2) = ").s(s1.subset(s2).str).nl;
+    OUT::s("s2.subset(s1) = ").s(s2.subset(s1).str).nl;
+
+    loop
+      i := 1.upto!(10);
+      x.elt := i;
+      s4 := s4.add(x.copy);
+      if i.mod(2)=0 then s4 := s4.add(x.copy); end;
+      if i.mod(3)=0 then s4 := s4.add(x.copy); end;
+      if i.mod(4)=0 then s4 := s4.add(x.copy); end;
+    end;
+    OUT::s("s4 = ").s(s4.str).nl;
+    OUT::s("s4.complement = ").s(s4.complement.str).nl;
+
+
+    --performancetest(100);
+    --performancetest(1000);
+    --performancetest(10000);
+    --performancetest(100000);
+    --performancetest(200000);
+    --performancetest(300000);
+    
+  end; -- main
+
+end; -- TEST__FINITE_MULTISET__ARRAY

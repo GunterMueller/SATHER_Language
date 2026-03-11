@@ -1,0 +1,37 @@
+--* Last edited: Dec 16 15:13 1993 (holzw)
+--
+-- test classes for out parameters
+--
+
+value class COMPLEX is
+   -- Billigstausfuehrung
+   shared vgl: COMPLEX;
+
+   real, imag: FLT;
+   v: $COMPLEX;
+end;
+
+class OUT_EP is
+   foo(in:COMPLEX): : COMPLEX is	-- syntax error for return value
+     OUT::s("blah").nl;
+   end;
+
+   foo2(in, :out:COMPLEX) is
+     out:=in;
+   end;
+
+   main is
+     c1: COMPLEX;
+     foo(c1);
+     foo2(c1,c1);
+     foo2(:c1,:c1);
+     foo2(c1,: :c1);		-- ":" too much
+
+     foo3(c1,:c1);
+   end;
+
+   foo3(in,out: COMPLEX) is
+     out:=in;
+   end;
+
+end;

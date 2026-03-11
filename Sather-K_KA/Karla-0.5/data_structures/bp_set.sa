@@ -1,0 +1,93 @@
+-- File: bp_set.sa
+-- Author: Arne Frick (frick@ira.uka.de)
+-- Copyright (C) Universitaet Karlsruhe, 1994
+--
+-- COPYRIGHT NOTICE: This code is provided "AS IS" WITHOUT ANY WARRANTY
+-- and is subject to the terms of the KARLA LIBRARY GENERAL PUBLIC
+-- LICENSE contained in the file: "doc/license.txt" of the 
+-- distribution. 
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FILE: bp_set.sa
+--*
+--* CLASSES: BOUNDED_PARTIAL_SET(K,T1,T) 
+--* 
+--* IMPLEMENTATION OF: 
+--*
+--* CONFORMS TO: BOUNDED_SET(T)
+--*
+--* IS A: PARTIAL_SET(K,T) BOUNDED_PARTIAL_MULTISET(K,T1,T)
+--*
+--* REQUIRED CLASSES: BOUNDED_SET(T) PARTIAL_SET(K,T1,T) EXCEPTION__BOUNDED_MULTISET_INS\
+--* EXCEPTION__BOUNDED_MULTISET_UNION EXCEPTION__MULTISET EXCEPTION__SET_ADD \
+--* EXCEPTION__SET_DISJOINT_UNION EXCEPTION__PARTIAL_MULTISET_LOOKUP
+--*
+--* EXCEPTIONS: EXCEPTION__BOUNDED_MULTISET_INS EXCEPTION__BOUNDED_MULTISET_UNION \
+--* EXCEPTION__MULTISET EXCEPTION__SET_ADD EXCEPTION__SET_DISJOINT_UNION \
+--* EXCEPTION__PARTIAL_MULTISET_LOOKUP
+--*
+--* TEST CLASS: TEST__BOUNDED_PARTIAL_SET
+--*
+--* FOREIGN FILES:
+--*
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--
+-- RCS: $Id$
+-- HISTORY:
+--  * Last edited: Apr 13 14:07 1994 (frick)
+-- Created: Wed Mar 16 18:43:26 1994 (frick)
+--
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+abstract class BOUNDED_PARTIAL_SET(K,T1,T<PARTIAL(K,T1)) is
+   -- * CLASS: BOUNDED_PARTIAL_SET(K,T1,T<PARTIAL(K,T1))
+   -- * DESCRIPTION: abstract class defining Sets with limited number of elements \
+   -- *              partial key access
+   -- * SUBCLASS OF: BOUNDED_SET(T)
+   -- * SPECIALIZATION OF: PARTIAL_SET(K,T1,T) BOUNDED_PARTIAL_MULTISET(K,T1,T)
+   -- * IMPLEMENTATION OF: 
+   -- * EXCEPTIONS: EXCEPTION__BOUNDED_MULTISET_INS EXCEPTION__BOUNDED_MULTISET_UNION \
+   -- * EXCEPTION__MULTISET EXCEPTION__SET_ADD EXCEPTION__SET_DISJOINT_UNION \
+   -- * EXCEPTION__PARTIAL_MULTISET_LOOKUP
+   -- * INVARIANT: BOUNDED_SET(T)::Inv AND PARTIAL_SET(K,T1,T)::Inv
+   -- * REPRESENTATION:
+   -- * COMPLEXITY: \
+   -- *     static      SIZE = size; \
+   -- *                 ##.init.MAXSIZE = 0 AND \
+   -- *                 MAXSIZE = max(choose.SIZE,delete(choose).MAXSIZE)
+   -- * REFERENCES: [Aho, Hopcroft, Ullman: "The Design and Analysis \
+   -- *               of Computer Algorithms", Addison-Wesley, 1974]
+   -- * ATTRIBUTES: size:INT \
+   -- *     max_size:INT 
+
+   include PARTIAL_SET(K,T1,T);
+   subtype of BOUNDED_SET(T);
+
+   
+end;
+
+
+
+
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+
+class TEST__BOUNDED_PARTIAL_SET is
+-- * CLASS: TEST__BOUNDED_SET
+-- * DESCRIPTION: 
+-- * SUBCLASS OF: 
+-- * SPECIALIZATION OF: 
+-- * IMPLEMENTATION OF: 
+-- * EXCEPTIONS: 
+-- * INVARIANT: 
+-- * COMPLEXITY: 
+-- * REFERENCES: 
+
+
+   main is
+      a:$BOUNDED_SET(PARTIAL_INT):=# BOUNDED_PARTIAL_SET(INT,INT,PARTIAL_INT); -- {max_size:=10};
+      ERR::s("creation of abstract class succeeded.\n");
+   end;
+
+end; -- class TEST__BOUNDED_SET
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

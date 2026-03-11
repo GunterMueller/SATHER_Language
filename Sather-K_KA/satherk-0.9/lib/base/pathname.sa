@@ -1,0 +1,180 @@
+-- -*- Mode: Sather;  -*-
+-- File: pathname.sa
+-- Author: Heinz Schmidt (hws@csis.dit.csiro.AU)
+-- Copyright (C) CSIRO Division of Information Technology, 1992
+--
+-- COPYRIGHT NOTICE: This code is provided "AS IS" WITHOUT ANY WARRANTY
+-- and is subject to the terms of the SATHER LIBRARY GENERAL PUBLIC
+-- LICENSE contained in the file: "sather/doc/license.txt" of the Sather
+-- distribution. The license is also available from ICSI, 1947 Center
+-- St., Suite 600, Berkeley CA 94704, USA.
+--*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FUNCTION: pathname canonicalization
+--*
+--* CLASSES: UNIX_PATH
+--* 
+--* REQUIRED FILES: lib/base/unix
+--*
+--* RELATED FILES: compiler/dot_sather_handler
+--*
+--* HISTORY:
+--* Last edited: Mar  9 14:21 1992 (hws)
+--*  Feb 15 22:08 1992 (hws): extracted off dot_sather_handler now
+--*                           replaces the tilde_expand hacks.
+--* Created: Sat Feb 15 22:05:03 1992 (hws)
+--*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+class UPATHS is -- portable logical pathnames.
+
+   env_v_val(st:STRING):STRING is
+      -- the value of the environment variable `st' or `default'.
+      res := UNIX::getenv(st);
+      if res = void then res := STRING::create.s("$").s(st) end;
+   end;
+
+   canonicalize(st:STRING):STRING is
+      -- Given the path `st' substitute
+      -- all environment variables (terminated by . and /) by their values
+      -- a leading ~/ by the user home,
+      -- a leading ./ by the working directory,
+      -- leading ../'s by the working directory parent(s).
+      -- With dbg_key `paths' show the result on stdout.
+      debug(paths) OUT::s("What is: ").s(st).nl; end;
+      var: STRING; len:INT := st.length;
+      if st = void then return end;
+
+      -- substitute envi vars
+      i,j: INT; len := st.length; until i = len loop
+	 if st[i] = '$' then
+	    -- find end which must be either / or .
+	    j := i+1;
+	    until j = len or st[j] = '/' or st[j] = '.' loop j := j+1 end;
+	    var := env_v_val(st.substring(i+1,j-1));
+	    st := st.substring(0,i-1).s(var).s(st.substring(j,len));
+	    len := len-j+i+var.length; i := i+var.length;
+	 else
+	    i := i+1;	       
+	 end;
+      end;
+
+      debug(paths) OUT::s("Subst: ").s(st).nl; end;
+      
+      -- relative      
+      if st[0] = '~' and len > 1 and st[1] = '/' then -- relative to home
+	 res := env_v_val("HOME").s(st.substring(1,len-1));
+	 debug(paths) OUT::s("Full: ").s(res).nl; end;
+      elsif st[0] = '.' then -- relative to working directory
+	 w: STRING := UNIX::getcwd;
+	 if w /= void then
+	    debug(paths) OUT::s("WD: ").s(w).nl; end;
+	    res := patronize(st,st.length,w,w.length)
+	 end;
+	 debug(paths) OUT::s("Full: ").s(res).nl; end;
+      else
+	 res := st;
+      end;      
+   end;
+
+   patronize(st:STRING; len_st:INT; wd:STRING; len_wd:INT):STRING is
+      -- strip off leading '..' off `st' and prepend appropriate prefix of `wd'.
+      if st[0] = '.' then
+	 if len_st > 1 and st[1] = '/' then
+	    res := STRING::create.s(wd).s(st.substring(1,len_st-1));
+	 elsif len_st > 2 and st[1] = '.' and st[2] = '/' then
+	    until len_wd = 1 or wd[len_wd] = '/' loop len_wd := len_wd-1 end;
+	    res := patronize(st.substring(3,len_st-1),len_st-3,
+		      wd.substring(0,len_wd-1),len_wd);
+	 elsif len_st = 2 and st[1] = '.' then
+	    until len_wd = 1 or wd[len_wd] = '/' loop len_wd := len_wd-1 end;
+	    res := wd.substring(0,len_wd-1);	    
+	 else -- neither ./ nor ../ treat as name
+	    res := STRING::create.s(wd).s("/").s(st);
+	 end;
+      else
+	 res := STRING::create.s(wd).s("/").s(st);
+      end;
+   end;
+
+   filename(st:STRING):STRING is
+      -- the name (spoons.sa) in the path `st' (/user/me/spoons.sa)
+      st_end:INT := st.length-1;
+      stop:INT := st_end;
+      until stop < 0 or st[stop] = '/' loop stop := stop-1 end;
+      res := st.substring(stop+1,st_end);
+   end;
+
+   dirname(st:STRING):STRING is
+      -- the directory name (/user/me) in the path `st' (/user/me/spoons.sa)
+      stop:INT := st.length-1;
+      until stop = 0 or st[stop] = '/' loop stop := stop-1 end;
+      if stop = 0 then
+	 res := STRING::create;
+      else
+	 res := st.substring(0,stop-1);
+      end;
+   end;
+
+   suffix(st:STRING):STRING is
+      -- the suffix (sa) in the path `st' (/user/me/spoons.sa)
+      st_end:INT := st.length-1;
+      stop:INT := st_end;
+      until stop < 0 or st[stop] = '/' or st[stop] = '.' loop stop := stop-1 end;
+      res := st.substring(stop+1,st_end);
+   end;
+
+   filename_sans(st:STRING):STRING is
+      -- name without (sans) suffix (spoons) in the path `st' (/user/me/spoons.sa)
+      stop: INT := suffix(st).length;
+      name: STRING := filename(st);
+      if name.length = stop then
+	 res := STRING::create;
+      else 
+	 res := name.substring(0,name.length-stop-2);
+      end;
+   end;
+   
+   concat(p1,p2:STRING):STRING is
+      -- concatenate the paths p1 and p2, get rid of unnecessary '/' chars.
+      -- return p1/p2 as a new string
+      p1 := p1.copy;
+      if p1 = void then
+	 res := p2.copy;
+	 return;
+      elsif p2 = void then
+	 res := p1;
+	 return;
+      end;
+
+      -- get p1 to end in '/', and p2 to not start in "/" or "./"
+      len:INT := p1.length;
+      if p1[len-1] /= '/' then
+	 p1 := p1.c('/');
+      end;
+
+      p2start:INT := 0;
+      if p2[0] = '.' and p2[1] = '/' then
+	 p2start := 2;
+      elsif p2[0] = '/' then
+	 p2start := 1;
+      end;
+      if p2start /= 0 then
+	 p2 := p2.substring(p2start,p2.length-1);
+      end;
+      res := p1.s(p2);
+      debug(paths) OUT::s("UPATH::concat: ").s(res).nl end;
+   end; -- concat
+
+end;
+
+class UPATHS_TEST is
+
+   main(args: ARRAY(STRING)) is
+      s: STRING := UPATHS::canonicalize(args[1]);
+      OUT::s("Can: ").s(s).nl;
+      OUT::s("Dir: ").s(UPATHS::dirname(s)).nl;
+      OUT::s("Nam: ").s(UPATHS::filename(s)).nl;
+      OUT::s("Suf: ").s(UPATHS::suffix(s)).nl;
+      OUT::s("San: ").s(UPATHS::filename_sans(s)).nl;
+   end;
+   
+end; -- class UPATHS_TEST

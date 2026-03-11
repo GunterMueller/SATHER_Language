@@ -1,0 +1,265 @@
+--  * Last edited: Jul 29 11:02 1994 (frick)
+-- -*- Mode : Sather; -*-
+-- AUTHOR : Ulrike Hartmer
+-- DATE : Nov 30, 1992
+--
+-- Copyright (C) Universitaet Karlsruhe, 1992
+--
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FILE: stack_array.sa
+--*
+--* CLASSES: STACK__ARRAY(T)
+--*
+--* IMPLEMENTATION OF: STACK(T)
+--*
+--* CONFORMS TO:
+--*
+--* IS A:
+--* 
+--* REQUIRED CLASSES: STACK(T) EXCEPTION__STACK__EMPTY
+--* 
+--* EXCEPTIONS: EXCEPTION__STACK__EMPTY
+--*
+--* TEST CLASS: TEST__STACK__ARRAY
+--* 
+--* FOREIGN FILES:
+--*
+-- RCS : $Id$
+-- HISTORY : $log$
+-- Last edited: Mar 7 1994 (Wolf Zimmermann)
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+class STACK__ARRAY(T) is  -- subtype of
+-- * CLASS: STACK__ARRAY(T)
+-- * DESCRIPTION: Implementation of abstract type STACK(T) via arrays
+-- * SUBCLASS OF:
+-- * SPECIALIZATION OF:
+-- * IMPLEMENTATION OF: STACK(T)
+-- * EXCEPTIONS: EXCEPTION__STACK 
+-- * INVARIANT: STACK::Inv AND size>=0 AND \
+-- * (empty IFF size=0) AND top=arr[size-1] AND pop.size=size-1 \
+-- * AND (FORALL a:T: push(a).size=size+1 AND push(a).arr[size]=a
+-- * REPRESENTATION:
+-- * COMPLEXITY: \
+-- *   static SIZE=size \
+-- *   static      MAXSIZE = 0                         IF empty \
+-- * |                     = max(top.SIZE,pop.MAXSIZE  OTHERWISE
+-- *   cumulative SPACE(n) = O(n) \
+-- *   additive TIME(n) = O(n) \
+-- *          potential function: PHI(self) = min(2*size - arr.asize,0)
+-- * REFERENCES: 
+-- * ATTRIBUTES: arr : ARRAY[*](T) \
+-- *             size:INT      -- size of the stack \
+-- *             const initsize : INT := 5
+   
+   subtype of STACK(T);
+   arr : ARRAY[*](T);
+   size:INT;
+   const initsize : INT := 5;
+
+   init:SAME is
+      -- * METHOD: init:SAME
+      -- * DESCRIPTION: initialization method
+      -- * PRE: self/=void
+      -- * POST: res.arr/=void AND res.size=0
+      -- * COMPLEXITY: \
+      -- *   SIZE__init = 0 \
+      -- *   MAXSIZE__init = 0 \
+      -- *   SPACE__init = O(1) \
+      -- *   TIME__init = O(1) 
+      -- * REFERENCES:
+      res:=self;
+      res.arr:=#ARRAY[initsize](T);
+      res.size:=0;
+   end;
+
+   push (a : T):SAME  is
+   -- * METHOD: push (a : T):SAME   
+   -- * DESCRIPTION: inserts an element onto stack (the last element of arr)
+   -- * PRE: NOT self = void
+   -- * POST: res.size = self.size + 1 AND res.arr[self.size]=a AND
+   -- *       FORALL 0 <= i < self.size: res.arr[i] = self.arr[i]
+   -- * COMPLEXITY: \
+   -- *   SIZE__push(self.SIZE,a.SIZE)=self.SIZE + 1 \
+   -- *   MAXSIZE__push(self.MAXSIZE,a.SIZE)=max(self.MAXSIZE,a.SIZE) \
+   -- *   SPACE__push(self.SIZE,a.SIZE)=O(self.SIZE) \
+   -- *   TIME__push(self.SIZE,a.SIZE)=O(self.SIZE) 
+   -- * REFERENCES: 
+
+      i:INT;
+      old:ARRAY[*](T);
+
+      if arr=void then 
+	 arr := #ARRAY[initsize](T);
+	 size := 0;
+      end;
+      if size >= arr.asize
+        then 
+	 old:=arr;
+	 arr := #ARRAY[2 * old.asize](T);
+
+	 -- 94-07-29 AF: iterator currently not used to avoid sob@... warnings
+	 i:=0; while i<old.asize loop arr[i]:=old[i]; i:=i+1; end;
+--	 loop
+--	    i:=0.upto!(old.asize-1);
+--	    arr[i]:=old[i];
+--	 end;
+      end; --if
+      arr[size] := a;
+      size := size + 1;
+      res:=self;
+
+      --assert (post) res.arr[size-1]=a end;
+
+   end;-- Push
+
+
+   empty : BOOL is
+   -- * METHOD: empty:BOOL
+   -- * DESCRIPTION: checks whether the stack is empty (size = 0)
+   -- * PRE: NOT self = void
+   -- * POST: res = (self.size==0)
+   -- * COMPLEXITY: \
+   -- *   SIZE__empty(self.SIZE)=1\
+   -- *   SPACE__empty(self.SIZE)=O(self.SIZE) \
+   -- *   TIME__empty(self.SIZE)=O(1) 
+   -- * REFERENCES:
+
+
+      res := (size = 0);
+
+
+   end;--empty
+
+
+   pop:SAME  is
+   -- * METHOD: pop:SAME   
+   -- * DESCRIPTION: removes last inserted element (size decremented by 1)
+   -- * PRE: not self.empty
+   -- * POST: res.arr[self.size-1]=void AND res.size = self.size-1 AND
+   -- *       FORALL 0 <= i < res.size: res.arr[i] = self.arr[i]
+   -- * COMPLEXITY: \
+   -- *   SIZE__pop(self.SIZE) = self.SIZE - 1 \
+   -- *   MAXSIZE__pop(self.MAXSIZE) = self.MAXSIZE \
+   -- *   SPACE__pop(self.SIZE) = O(self.SIZE)  \
+   -- *   TIME__pop(self.SIZE) = O(1)  \
+   -- * REFERENCES: 
+
+      --assert (pre) not self.empty end;
+
+      if not empty
+      then size := size - 1;
+	 arr[size] := void;
+	 res := self;
+      else #EXCEPTION__STACK__EMPTY.raise;
+	 res := self;
+      end;--if
+
+      --assert (post) not empty or res.arr[size] = void end;
+
+   end;-- Pop      
+
+
+   top : T is
+   -- * METHOD: top:T 
+   -- * DESCRIPTION: returns the last inserted element
+   -- * PRE: not self.empty
+   -- * POST: res = self.arr[self.size-1]
+   -- * COMPLEXITY: \
+   -- *   SIZE__top(self.SIZE.self.MAXSIZE) = self.MAXSIZE \
+   -- *   SPACE__top(self.SIZE) = O(self.SIZE) \
+   -- *   TIME__top(self.SIZE) = O(1) \
+   -- * REFERENCES:
+
+      --assert (pre) not self.empty end;
+
+      if not empty        
+      then res := arr[size-1];
+      else #EXCEPTION__STACK__EMPTY.raise;
+	 res := void;
+      end;--if
+
+      --assert (post) res = arr[size-1] end;
+   end;--top
+        
+   str:STR is
+    i:INT;
+    if empty then res := "[]";
+    else res := "[";
+	 i  := 0;
+	 until i=size loop
+	   res := res.s(arr[i].str);
+	   i := i + 1;
+	   if i /= size then res := res.s(","); end; --if
+         end;
+	 res := res.s("]");
+    end; -- if
+  end; -- str
+
+end;--class STACK__ARRAY(T)
+	
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+class TEST__STACK__ARRAY is
+   -- tests class STACK__ARRAY(T)
+
+   main is
+      s : $STACK(INT) := #STACK__ARRAY(INT).init;
+      x : INT;
+      if s.empty
+         then OUT::s("s.empty is true").nl;
+         else OUT::s("s.empty is false").nl;
+      end;--if
+      OUT::s("s = ");
+      OUT::s(s.str).nl;
+      s := s.push(1);
+      OUT::s("s.push(").i(s.top).s(")").nl;
+      OUT::s("s = ");
+      OUT::s(s.str).nl;
+      s := s.push(2);
+      OUT::s("s.push(").i(s.top).s(")").nl;
+      OUT::s("s = ");
+      OUT::s(s.str).nl;
+      s := s.push(3);
+      OUT::s("s.push(").i(s.top).s(")").nl;
+      OUT::s("s = ");
+      OUT::s(s.str).nl;
+
+      if s.empty
+        then OUT::s("s.empty is true").nl;
+        else OUT::s("s.empty is false").nl;
+      end;--if
+
+      -- skip first element
+      s := s.pop;
+      OUT::s("s.pop").nl;
+      OUT::s("s = ");
+      OUT::s(s.str).nl;
+      OUT::s("s.top = ").i(s.top).nl;
+
+      s := s.pop;
+      OUT::s("s.pop").nl;
+      OUT::s("s = ");
+      OUT::s(s.str).nl;
+      OUT::s("s.top = ").i(s.top).nl;
+
+      -- now pop until error
+      begin
+	 s := s.pop;
+	 OUT::s("s = ");
+	 OUT::s(s.str).nl;
+	 s := s.pop;
+	 OUT::s("s = ");
+	 OUT::s(s.str).nl;
+	 x := s.top;
+      except emptypop
+      when EXCEPTION__STACK__EMPTY then 
+	 OUT::s("exception test EXCEPTION__STACK__EMPTY successfull").nl;
+	 ERR::s(emptypop.str).nl;
+      else OUT::s("exception test EXCEPTION__STACK__EMPTY not successfull").nl;
+      end;
+   end;--main
+   
+
+end; --class TEST__STACK__ARRAY

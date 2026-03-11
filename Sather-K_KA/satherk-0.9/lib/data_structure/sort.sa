@@ -1,0 +1,177 @@
+-- -*- Mode: Sather;  -*-
+-- File: sather/lib/data_structure/sort.sa
+-- Author: Stephen M. Omohundro (om@ICSI.Berkeley.EDU)
+-- Copyright (C) International Computer Science Institute, 1991
+--
+-- COPYRIGHT NOTICE: This code is provided "AS IS" WITHOUT ANY WARRANTY
+-- and is subject to the terms of the SATHER LIBRARY GENERAL PUBLIC
+-- LICENSE contained in the file: "sather/doc/license.txt" of the Sather
+-- distribution. The license is also available from ICSI, 1947 Center
+-- St., Suite 600, Berkeley CA 94704, USA.
+--*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FUNCTION: Sorting algorithms.
+--*
+--* CLASSES: QUICKSORT(T), STRING_SORT, SORT_TEST
+--* 
+--* REQUIRED FILES:
+--*
+--* RELATED FILES:
+--*
+--* HISTORY:
+--* Last edited: Mar  8 21:43 1992 (hws)
+--* Created: Sun Mar 11 22:24:50 1990 (om)
+--*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+class QUICKSORT(T) is
+   -- An empty class for sorting `LIST(T)'.  `T' may be `INT', `FLT', or 
+   -- `FLTD'. By inheriting `QUICKSORT(T)' and redefining `compare',
+   -- `LIST''s of elements of other types may be sorted as demonstrated
+   -- in `STRING_SORT'.
+   
+   const qs_lim:INT:=10;	-- When to stop the quicksort recursion.
+
+   compare(a,b:T):BOOL is
+      -- Comparison for `INT', `FLT' and `FLTD'. Redefine for others. 
+      res:=(a<=b);
+   end; -- compare
+
+   insertion_sort_range(ls:LIST(T); l,u:INT) is
+      -- Stably sort the elements in the range `self[i,j]' of `l' by insertion
+      -- sort.
+      i:INT:=l+1; until i>u loop
+	 e:T:=ls[i];
+	 j:INT:=i-1; until j<l loop
+	    if compare(ls[j], e) then break end;
+	    ls[j+1]:=ls[j]; j:=j-1
+	 end; -- loop
+	 ls[j+1]:=e;
+	 i:=i+1
+      end; -- loop
+   end; -- insertion_sort_range
+   
+   insertion_sort(ls:LIST(T)) is
+      -- Sort `ls' by insertion sort.
+      insertion_sort_range(ls,0,ls.size-1);
+   end; -- insertion_sort
+   
+   quicksort_range(ls:LIST(T); l,u:INT) is
+      -- Use quicksort to sort the range `self[l,u]' of `ls'.
+      if u-l>qs_lim then
+	 r:INT:=RANDOM::int_range(l,u);
+	 t:T:=ls[r]; ls[r]:=ls[l]; ls[l]:=t; -- swap r and l
+	 m:INT:=l;
+	 i:INT:= l+1; until i>u loop
+	    if compare(ls[i], t) then 
+	       m:=m+1; 
+	       s:T:=ls[m]; ls[m]:=ls[i]; ls[i]:=s; -- swap m and i
+	    end; -- if
+	    i:=i+1
+	 end; -- loop
+	 v:T:=ls[l]; ls[l]:=ls[m]; ls[m]:=v;
+	 quicksort_range(ls,l,m-1); quicksort_range(ls,m+1,u);
+      else
+	 insertion_sort_range(ls,l,u)
+      end; -- if
+   end; -- quicksort_range
+   
+   quicksort(ls:LIST(T)) is
+      -- Sort `ls' by quicksort.
+      quicksort_range(ls,0,ls.size-1);
+   end; -- quicksort
+
+   is_sorted(ls:LIST(T)):BOOL is
+      -- Trueif `ls' is sorted.
+      res:=true;
+      i:INT; until i>=ls.size-1 loop
+	 if not compare(ls[i],ls[i+1]) then res:=false; return end;
+	 i:=i+1
+      end; -- loop
+   end; -- is_sorted
+   
+end; -- class QUICKSORT(T)
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   
+class STRING_SORT is
+   -- Sort `LIST(STRING)' alphabetically. Usage: `STRING_SORT::sort(l)'.
+   -- Also supports `STRING_SORT::is_sorted(l):BOOL'.
+   
+   subtype of QUICKSORT(STRING);
+   
+   compare(a,b:STRING):BOOL is
+      -- Redefined comparison for strings.
+      res:= (not b.is_less_than(a));
+   end; -- compare
+   
+   sort(l:LIST(STRING)) is
+      -- Sort the strings in `l' lexicographically.
+      quicksort(l)
+   end; -- sort
+   
+end; -- class STRING_SORT
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   
+class SORT_TEST is
+   -- Test `QUICKSORT(INT)', `QUICKSORT(FLT)', and `STRING_SORT'.
+   subtype of TEST;
+
+   main is
+      -- Test `QUICKSORT(INT)', `QUICKSORT(FLT)', and `STRING_SORT'.
+      isort_test; rsort_test; ssort_test;
+   end; -- main
+   
+   isort_test is
+      -- Test QUICKSORT(INT).
+      class_name("QUICKSORT(INT)");
+      l:LIST(INT):=l.create;
+      i:INT; until i=200 loop
+	 l:=l.push(RANDOM::int_range(1,1000));
+	 i:=i+1
+      end; -- loop
+      test("is_sorted", QUICKSORT(INT)::is_sorted(l).to_s, "F");
+      m:LIST(INT):=l.copy;
+      QUICKSORT(INT)::insertion_sort(m);
+      test("insertion_sort", QUICKSORT(INT)::is_sorted(m).to_s, "T");
+      m:=l.copy;
+      QUICKSORT(INT)::quicksort(m);
+      test("quick_sort", QUICKSORT(INT)::is_sorted(m).to_s, "T");
+      finish;
+   end; -- isort_test
+   
+   rsort_test is 
+      -- Test QUICKSORT(FLT).
+      class_name("QUICKSORT(FLT)");
+      l:LIST(FLT):=l.create;
+      i:INT; until i=200 loop
+	 l:=l.push(RANDOM::uniform);
+	 i:=i+1
+      end; -- loop
+      test("is_sorted", QUICKSORT(FLT)::is_sorted(l).to_s, "F");
+      m:LIST(FLT):=l.copy;
+      QUICKSORT(FLT)::insertion_sort(m);
+      test("insertion_sort", QUICKSORT(FLT)::is_sorted(m).to_s, "T");
+      m:=l.copy;
+      QUICKSORT(FLT)::quicksort(m);
+      test("quick_sort", QUICKSORT(FLT)::is_sorted(m).to_s, "T");
+      finish;
+   end; -- rsort_test
+
+   ssort_test is
+      -- Test STRING_SORT.
+      class_name("STRING_SORT");
+      l:LIST(STRING):=l.create;
+      l:=l.push("one"); l:=l.push("two"); l:=l.push("three"); 
+      l:=l.push("four"); l:=l.push("five"); l:=l.push("six"); 
+      l:=l.push("seven"); l:=l.push("eight"); l:=l.push("nine"); 
+      l:=l.push("ten"); l:=l.push("eleven"); l:=l.push("twelve"); 
+      l:=l.push("thirteen"); l:=l.push("fourteen"); l:=l.push("fifteen");
+      test("is_sorted", STRING_SORT::is_sorted(l).to_s, "F");
+      STRING_SORT::sort(l);
+      test("sort", STRING_SORT::is_sorted(l).to_s, "T");
+      finish;
+   end; -- ssort_test
+   
+end; -- class SORT_TEST
+   
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

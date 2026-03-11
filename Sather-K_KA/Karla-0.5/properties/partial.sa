@@ -1,0 +1,55 @@
+-- File: partial.sa
+-- Author: Arne Frick (frick@ira.uka.de)
+-- Copyright (C) Universitaet Karlsruhe, 1994
+--
+-- COPYRIGHT NOTICE: This code is provided "AS IS" WITHOUT ANY WARRANTY
+-- and is subject to the terms of the KARLA LIBRARY GENERAL PUBLIC
+-- LICENSE contained in the file: "doc/license.txt" of the 
+-- distribution. 
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FILE: partial.sa
+--*
+--* CLASSES: PARTIAL(K,T) 
+--* 
+--* IMPLEMENTATION OF: 
+--*
+--* CONFORMS TO: 
+--*
+--* IS A: 
+--*
+--* REQUIRED CLASSES: 
+--*
+--* EXCEPTIONS: 
+--*
+--* TEST CLASS: 
+--*
+--* FOREIGN FILES:
+--*
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--
+-- RCS: $Id$
+-- HISTORY:
+--  * Last edited: Apr 15 14:58 1994 (frick)
+-- Created: Wed Mar 16 18:43:26 1994 (frick)
+--
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+abstract class PARTIAL(K,T) is
+   -- * CLASS: PARTIAL(K,T)
+   -- * DESCRIPTION: property class defining partial key access for objects \
+   -- *        key defines a key attribute, makes only sense as T<PARTIAL(K,T)
+   -- * SUBCLASS OF: 
+   -- * SPECIALIZATION OF: 
+   -- * IMPLEMENTATION OF: 
+   -- * EXCEPTIONS: 
+   -- * INVARIANT: FORALL a,b:SAME: a.key=b.key IFF a.val=b.val
+   -- * REPRESENTATION:
+   -- * COMPLEXITY:
+   -- * REFERENCES: 
+   -- * ATTRIBUTES: key:K -- unique key for val \
+   -- *             val:T
+
+   key:K;
+   val:T;
+
+end;

@@ -1,0 +1,296 @@
+-- Author: Frank Abegg, Frank Schmiedle, Juergen Ruf
+-- Copyright (C) Universitaet Karlsruhe, 1994
+--
+-- COPYRIGHT NOTICE: This code is provided "AS IS" WITHOUT ANY WARRANTY
+-- and is subject to the terms of the KARLA LIBRARY GENERAL PUBLIC
+-- LICENSE contained in the file: "doc/license.txt" of the 
+-- distribution. 
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FILE: bounded_dequeue_array.sa
+--*
+--* CLASSES: BOUNDED_DEQUEUE__ARRAY(T)
+--* 
+--* IMPLEMENTATION OF: BOUNDED_DEQUEUE(T) 
+--*
+--* CONFORMS TO: 
+--*
+--* IS A: 
+--*
+--* REQUIRED CLASSES: DEQUEUE__ARRAY(T) BOUNDED_DEQUEUE(T) EXCEPTION__BOUNDED_DEQUEUE__OVERFLOW
+--*
+--* EXCEPTIONS: EXCEPTION__BOUNDED_DEQUEUE__OVERFLOW
+--*
+--* TEST CLASS: TEST__BOUNDED_DEQUEUE__ARRAY
+--*
+--* FOREIGN FILES:
+--*
+--  RCS: $Id$
+--  HISTORY: $Log$
+--  * Last edited: May 17 14:18 1994 (algprak5)
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+class BOUNDED_DEQUEUE__ARRAY(T) is  -- subtype of
+   -- * CLASS: BOUNDED_DEQUEUE__ARRAY(T)
+   -- * DESCRIPTION: implementation of abstract data type bounded DEQUEUE via arrays
+   -- * SUBCLASS OF: 
+   -- * SPECIALIZATION OF:
+   -- * IMPLEMENTATION OF: BOUNDED_DEQUEUE(T)
+   -- * EXCEPTIONS: EXCEPTION__BOUNDED_DEQUEUE__OVERFLOW
+   -- * INVARIANT: FORALL n IN NAT: \
+   -- *      act_size < max_size AND \
+   -- *      NOT self=void AND\
+   -- *      #BOUNDED_DEQUEUE(T).init(n).empty = true AND \
+   -- *      self.enqr(a).empty =false AND \
+   -- *      self.enql(a).empty = false AND \
+   -- *      (self.empty IMPLIES self.enql(a)=self.enqr(a)) AND \
+   -- *      self.enql(a).enqr(b) = self.enqr(b).enql(a) AND \
+   -- *      self.enql(a).frontl = a AND \
+   -- *      self.empty IMPLIES self.enqr(a).frontr = a AND \
+   -- *      (EXISTS q: DEQUEUE(T), a.b: T :self == q.enql(a).enql(b) IMPLIES \
+   -- *                                   self.frontr = q.enql(a).frontr)        AND \
+   -- *      (self.empty IMPLIES self.frontl = error) AND \
+   -- *      (self.empty IMPLIES self.frontr = error) AND \
+   -- *      self.enql(a).deql = self AND \
+   -- *      (self.empty IMPLIES self.enqr(a).deqr == #SAME.init(n) AND \
+   -- *      (EXISTS q: DEQUEUE(T), a.b: T :self == q.enql(a).enql(b) IMPLIES \
+   -- *                                   self.deqr == q.enql(a).deqr.enql(b)) AND \
+   -- *      (self.empty IMPLIES self.deql = error) AND \
+   -- *      (self.empty IMPLIES self.deqr = error)
+   -- *   
+   -- * REPRESENTATION: rho: DEQUEUE__ARRAY(T) -> DEQUEUE(T) \
+   -- *    n = dequeue.asize \
+   -- *    rho(self) = \( \
+   -- *      | #DEQUEUE.init IF dsize = 0 \
+   -- *      | #DEQUEUE.init.enql(dequeue[frt])...enql(dequeue[lst]) \
+   -- *                               IF frt <= lst AND dsize>0 \
+   -- *      | #DEQUEUE.init.enql(dequeue[frt])...enql(dequeue[n]).enql[dequeue[0])\
+   -- *        ...enql(dequeue[lst]) \
+   -- *                               IF lst<frt
+   -- * COMPLEXITY: O(n) \
+   -- *     Potential function: PHI(self) = min(2*dsize - dequeue.asize,0)
+   -- * REFERENCES:
+   -- * ATTRIBUTES: act_size:INT -- size of dequeue
+   -- *             max_size:INT -- maximum size of dequeue
+   -- *             dequeue:DEQUEUE__ARRAY(T) -- representation of the dequeue by an array
+
+
+  subtype of BOUNDED_DEQUEUE(T);
+  private dequeue:DEQUEUE__ARRAY(T);
+
+
+  init(size: INT):SAME is
+   -- * METHOD: init(size: INT):SAME
+   -- * DESCRIPTION: method initializing a bounded dequeue
+   -- * PRE: NOT self = void 
+   -- * POST:NOT res = void
+   -- *      res.act_size = 0 AND \
+   -- *      res.max_size = size
+   -- * COMPLEXITY: O(1)
+   -- * REFERENCES:
+
+     res:=self;
+     res.max_size := size;
+     res.act_size := 0;
+     res.dequeue  := #DEQUEUE__ARRAY(T).init;
+  end;
+
+  enql(a:T):SAME is
+  -- * METHOD: enql(a:T):SAME
+  -- * DESCRIPTION: inserts an element a into dequeue on the left \
+  -- *              if dequeue is not full (act_size < max_size)
+  -- * PRE: NOT self = void AND \
+  -- *      act_size < max_size
+  -- * POST:res.dequeue.deql == self AND \
+  -- *      res.dequeue.frontl = a AND \
+  -- *      res.act_size = self.act_size + 1
+  -- * COMPLEXITY: O(act_size)
+  -- * REFERENCES:
+
+      if act_size = max_size
+	 then # EXCEPTION__BOUNDED_DEQUEUE__OVERFLOW.raise;
+	 else
+	      res := self;
+	      act_size := act_size + 1;
+	      res.dequeue := self.dequeue.enql(a);
+      end; -- if
+	 
+  end; -- enql
+
+
+
+
+
+  enqr(a:T):SAME is
+  -- * METHOD: enqr(a:T):SAME
+  -- * DESCRIPTION: inserts an element a into dequeue on the right \
+  -- *              if dequeue is not full (act_size < max_size) 
+  -- * PRE: NOT self = void AND \
+  -- *      act_size < max_size
+  -- * POST:res.dequeue.deqr == self AND \
+  -- *      res.dequeue.frontr = a AND \
+  -- *      res.act_size = self.act_size + 1
+  -- * COMPLEXITY: O(act_size)
+  -- * REFERENCES:
+
+       if act_size = max_size
+	 then # EXCEPTION__BOUNDED_DEQUEUE__OVERFLOW.raise;
+	 else
+	      res := self;
+	      act_size := act_size + 1;
+	      res.dequeue := self.dequeue.enqr(a);
+       end; -- if
+	
+  end; -- enqr
+
+
+   
+  frontl: T is
+  -- * METHOD: frontl:T
+  -- * DESCRIPTION: returns the left element in dequeue
+  -- * PRE: NOT self=void AND NOT self.empty
+  -- * POST: res = self.dequeue.frontl
+  -- * COMPLEXITY: O(1)
+  -- * REFERENCES:
+
+      res := self.dequeue.frontl;
+     
+  end; -- frontl
+
+
+
+
+
+  frontr: T is
+  -- * METHOD: frontr:T
+  -- * DESCRIPTION: returns the right in dequeue
+  -- * PRE: NOT self=void AND NOT self.empty
+  -- * POST: res = self.dequeue.frontr
+  -- * COMPLEXITY: O(1)
+  -- * REFERENCES:
+
+      res := self.dequeue.frontr;
+     
+  end; -- frontr
+
+
+
+
+
+  deql: SAME is
+  -- * METHOD: deql:SAME
+  -- * DESCRIPTION: deletes the left element in dequeue
+  -- * PRE: NOT self=void AND NOT self.empty
+  -- * POST: self == res.dequeue.enql(self.dequeue.frontl) AND \
+  -- *       self.act_size = res.act_size + 1
+  -- * COMPLEXITY: O(1)
+  -- * REFERENCES:
+
+      res := self;
+      res.dequeue := self.dequeue.deql;
+      res.act_size := self.act_size - 1;
+     
+  end; -- deql
+
+
+
+
+
+  deqr: SAME is
+  -- * METHOD: deqr:SAME
+  -- * DESCRIPTION: deletes the right element in dequeue
+  -- * PRE: NOT self=void AND NOT self.empty
+  -- * POST: self == res.dequeue.enqr(self.dequeue.frontr) AND \
+  -- *       self.act_size = res.act_size + 1
+  -- * COMPLEXITY: O(1)
+  -- * REFERENCES:
+
+      res := self;
+      res.dequeue := self.dequeue.deqr;
+      res.act_size := self.act_size - 1;
+ 
+  end; -- deqr
+
+
+  empty:BOOL is
+  -- * METHOD: empty:BOOL
+  -- * DESCRIPTION: checks whether self is empty
+  -- * PRE: NOT self=void
+  -- * POST: res = (act_size = 0)
+  -- * COMPLEXITY: O(1)
+  -- * REFERENCES:
+
+    res := (act_size = 0);
+
+  end; -- empty
+
+
+
+
+
+
+  str:STR is
+  -- converting a DEQUEUE into a string
+
+     res := self.dequeue.str;
+     
+  end; -- str
+
+
+end; -- BOUNDED_DEQUEUE__ARRAY
+
+
+
+class TEST__BOUNDED_DEQUEUE__ARRAY is
+   main is
+      q : BOUNDED_DEQUEUE__ARRAY(INT) := #BOUNDED_DEQUEUE__ARRAY(INT).init(3);
+      OUT::s(" q := #BOUNDED_DEQUEUE__ARRAY(INT).init(3)").nl;
+      OUT::s(" q.max_size = ").i(q.max_size).nl;
+      OUT::s(" q.act_size = ").i(q.act_size).nl;
+      OUT::s(" empty(q) = ");
+      if q.empty then OUT::s("true").nl;
+	         else OUT::s("false").nl;
+      end;
+
+      q := q.enqr(2);
+      OUT::s(" q.enqr(2) -> ").s(q.str).nl;
+      OUT::s(" q.act_size = ").i(q.act_size).nl;
+
+      q := q.enqr(3);
+      OUT::s(" q.enqr(3) -> ").s(q.str).nl;
+      OUT::s(" q.act_size = ").i(q.act_size).nl;
+
+      q := q.enql(1);
+      OUT::s(" q.enql(1) -> ").s(q.str).nl;
+      OUT::s(" q.act_size = ").i(q.act_size).nl;
+
+      OUT::s(" q.frontl = ").i(q.frontl).nl;
+
+      OUT::s(" q.frontr = ").i(q.frontr).nl;
+
+      q := q.deql;
+      OUT::s(" q.deql -> ").s(q.str).nl;
+      OUT::s(" q.act_size = ").i(q.act_size).nl;
+
+      q := q.deqr;
+      OUT::s(" q.deqr -> ").s(q.str).nl;
+      OUT::s(" q.act_size = ").i(q.act_size).nl;
+
+      q := q.enqr(4).enqr(8);
+      OUT::s(" q.enqr(4).enqr(8) -> ").s(q.str).nl;
+      OUT::s(" q.act_size = ").i(q.act_size).nl;
+
+      OUT::s(" q.enqr(5) = ").nl;     
+      begin
+	 q := q.enqr(5);
+      except fullqueue
+      when EXCEPTION__BOUNDED_DEQUEUE__OVERFLOW then ERR::s(fullqueue.str).nl;
+      end;
+      
+      begin
+	 q := q.deqr.deqr.deqr.deqr;
+      except emptyqueue
+      when EXCEPTION__DEQUEUE__EMPTY then ERR::s(emptyqueue.str).nl;
+      end;
+  end; -- main    
+
+end; -- TEST__BOUNDED_DEQUEUE__ARRAY

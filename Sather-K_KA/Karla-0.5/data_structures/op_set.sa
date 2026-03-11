@@ -1,0 +1,102 @@
+-- Author: Arne Frick (frick@ira.uka.de)
+-- Copyright (C) Universitaet Karlsruhe, 1994
+--
+-- COPYRIGHT NOTICE: This code is provided "AS IS" WITHOUT ANY WARRANTY
+-- and is subject to the terms of the KARLA LIBRARY GENERAL PUBLIC
+-- LICENSE contained in the file: "doc/license.txt" of the 
+-- distribution. 
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FILE: op_set.sa
+--*
+--* CLASSES: ORDERED_PARTIAL_SET(K<ORDERED(K),T1,T<ORDERED_PARTIAL(K,T),ORDER<ORDER_RELATION(T)) EXCEPTION__ORDERED_PARTIAL_SET_NEXT EXCEPTION__ORDERED_PARTIAL_SET_PREVIOUS
+--* 
+--* IMPLEMENTATION OF: 
+--*
+--* CONFORMS TO: ORDERED_SET(T,ORDER) PARTIAL_SET(K,T1,T)
+--*
+--* IS A: ORDERED_PARTIAL_MULTISET(K,T1,T,ORDER) 
+--*
+--* REQUIRED CLASSES: ORDERED_SET(T,ORDER) ORDER_RELATION(T) ORDERED_PARTIAL(K,T) \
+--* ORDER_LT(T) PARTIAL_SET(K,T1,T) ORDERED_PARTIAL_INT ORDERED_PARTIAL_MULTISET \
+--* EXCEPTION__MULTISET EXCEPTION__PARTIAL_MULTISET_LOOKUP EXCEPTION__SET_ADD \
+--* EXCEPTION__SET_DISJOINT_UNION EXCEPTION__ORDERED_MULTISET_MIN \
+--* EXCEPTION__ORDERED_MULTISET_MAX EXCEPTION__ORDERED_MULTISET_NEXT \
+--* EXCEPTION__ORDERED_MULTISET_PREVIOUS EXCEPTION__ORDERED_PARTIAL_MULTISET_NEXT \
+--* EXCEPTION__ORDERED_PARTIAL_MULTISET_PREVIOUS
+--*
+--* EXCEPTIONS: EXCEPTION__MULTISET EXCEPTION__PARTIAL_MULTISET_LOOKUP \
+--* EXCEPTION__SET_ADD EXCEPTION__SET_DISJOINT_UNION EXCEPTION__ORDERED_MULTISET_MIN \
+--* EXCEPTION__ORDERED_MULTISET_MAX EXCEPTION__ORDERED_MULTISET_NEXT \
+--* EXCEPTION__ORDERED_MULTISET_PREVIOUS EXCEPTION__ORDERED_PARTIAL_MULTISET_NEXT \
+--* EXCEPTION__ORDERED_PARTIAL_MULTISET_PREVIOUS
+--*
+--* TEST CLASS: TEST__ORDERED_PARTIAL_SET
+--*
+--* FOREIGN FILES:
+--*
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--
+-- RCS: $Id$
+-- HISTORY:
+--  * Last edited: Apr 15 12:49 1994 (frick)
+-- Created: Wed Mar 16 18:43:26 1994 (frick)
+--
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+abstract class ORDERED_PARTIAL_SET(
+   K<ORDERED(K),
+   T1,T<ORDERED_PARTIAL(K,T1),
+   ORDER<ORDER_RELATION(T))
+is
+   -- * CLASS: ORDERED_PARTIAL_SET(K<ORDERED(K),T1,T<ORDERED_PARTIAL(K,T1),ORDER<ORDER_RELATION(T)) 
+   -- * DESCRIPTION: abstract class defining ordered sets with partial key access \
+   -- *              the order is defined on the partial key
+   -- * SUBCLASS OF: ORDERED_SET(T,ORDER) PARTIAL_SET(K,T1,T)
+   -- * SPECIALIZATION OF: ORDERED_SET(T,ORDER) PARTIAL_SET(K,T1,T)
+   -- * IMPLEMENTATION OF: 
+   -- * EXCEPTIONS: EXCEPTION__MULTISET EXCEPTION__PARTIAL_MULTISET_LOOKUP \
+   -- * EXCEPTION__SET_ADD EXCEPTION__SET_DISJOINT_UNION EXCEPTION__ORDERED_MULTISET_MIN \
+   -- * EXCEPTION__ORDERED_MULTISET_MAX EXCEPTION__ORDERED_MULTISET_NEXT \
+   -- * EXCEPTION__ORDERED_MULTISET_PREVIOUS EXCEPTION__ORDERED_PARTIAL_MULTISET_NEXT \
+   -- * EXCEPTION__ORDERED_PARTIAL_MULTISET_PREVIOUS
+   -- * INVARIANT: ORDERED_SET(K,T1,T,ORDER)::Inv AND PARTIAL_SET(K,T)::Inv
+   -- * REPRESENTATION:
+   -- * COMPLEXITY: \
+   -- *     static      SIZE = size; \
+   -- *                 ##.init.MAXSIZE = 0 AND \
+   -- *                 MAXSIZE = max(choose.SIZE,delete(choose).MAXSIZE) \
+   -- *                 ##.init.KEYSIZE = 0 AND \
+   -- *                 KEYSIZE = max(choose.key.SIZE,delete(choose).KEYSIZE)
+   -- * REFERENCES: [Aho, Hopcroft, Ullman: "The Design and Analysis \
+   -- *               of Computer Algorithms", Addison-Wesley, 1974]
+   -- * ATTRIBUTES: size:INT \
+   -- *            const order:ORDER:= #ORDER
+
+   include ORDERED_PARTIAL_MULTISET(K,T1,T,ORDER);
+   subtype of PARTIAL_SET(K,T1,T);
+   subtype of ORDERED_SET(T,ORDER);
+
+end;
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+class TEST__ORDERED_PARTIAL_SET is
+-- * CLASS: TEST__ORDERED_PARTIAL_SET
+-- * DESCRIPTION: 
+-- * SUBCLASS OF: 
+-- * SPECIALIZATION OF: 
+-- * IMPLEMENTATION OF: 
+-- * EXCEPTIONS: 
+-- * INVARIANT: 
+-- * COMPLEXITY: 
+-- * REFERENCES: 
+
+
+   main is
+      a:$SET(ORDERED_PARTIAL_INT):=
+         #ORDERED_PARTIAL_SET(INT,INT,ORDERED_PARTIAL_INT,ORDER_LT(ORDERED_PARTIAL_INT)).init;
+      ERR::s("creation of abstract class succeeded.\n");
+   end;
+
+end; -- class TEST__ORDERED_PARTIAL_SET
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

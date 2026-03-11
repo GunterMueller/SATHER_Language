@@ -1,0 +1,84 @@
+-- -*- Mode: Sather; -*-
+-- Author: group:algprak0 : Speise, Nguyen, Tri
+--
+-- Copyright (C) Universitaet Karlsruhe, 1994
+--
+-- COPYRIGHT NOTICE:
+-- LICENSE
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FILE: collision.sa
+--*
+--* CLASSES: PARTIAL_COLLISION(K,T1,T<PARTIAL(K,T1)) EXCEPTION__COLLISION
+--*
+--* IMPLEMENTATION OF: 
+--*
+--* CONFORMS TO: COLLISION(T)
+--*
+--* IS A:
+--*
+--* REQUIRED CLASSES: COLLISION(T) EXCEPTION__COLLISION PARTIAL(K,T1)
+--*
+--* EXCEPTIONS:  EXCEPTION__COLLISION 
+--*
+--* TEST CLASS: 
+--*
+--* FOREIGN FILES:
+--*
+-- RCS: $ld$
+-- HISTORY: $Log$
+--  * Last edited: May 20 13:55 1994 (algprak0)
+-- Last edited: May  6 14:22 1994 (algprak0)
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   
+abstract class PARTIAL_COLLISION(K,T1,T<PARTIAL(K,T1)) is
+
+-- * CLASS: PARTIAL_COLLISION(K,T1,T<PARTIAL(K,T1))
+-- * DESCRIPTION: abstract class defining collision resolution methods based on K \
+-- * to be used in connection with implementations and subclasses of \
+-- * BOUNDED_PARTIAL_SET(K,T1,T)
+-- * SUBCLASS OF: COLLISION(T)
+-- * SPECIALIZATION OF: 
+-- * IMPLEMENTATION OF:
+-- * EXCEPTIONS:
+-- * INVARIANT:
+-- * REPRESENTATION:
+-- * COMPLEXITY:
+-- * REFERENCES:
+-- * ATTRIBUTES:  readonly tab_size: INT 
+
+subtype of COLLISION(T);   
+   
+     -- * METHOD: init(size:INT):SAME
+     -- * DESCRIPTION: initializes the size of the hash table
+     -- * PRE: NOT self=void
+     -- * POST: FORALL s:$BOUNDED_SET, 0<=i<size,x:T: \
+     -- * s.size < size IMPLIES NOT EXCEPTION__COLLISION is raised
+     -- * COMPLEXITY:
+     -- * REFERENCES:
+
+   
+h(i:INT; x:T):INT is
+     
+-- * METHOD: h(i:INT; x:T):INT 
+-- * DESCRIPTION: returns key to insert after collision
+-- * PRE: true
+-- * POST: res=h_key(i,x.key)
+-- * COMPLEXITY: O(TIME_h_key)
+-- * REFERENCES:
+     
+    res := h_key(i,x.key);
+end;
+
+h_key(i:INT; k:K):INT is 
+     -- * METHOD: h_key(i:INT; k:K):INT
+     -- * DESCRIPTION: collision resolution method begin h(0,k)...h(size-1,k)
+     -- * PRE: true
+     -- * POST: 0<=h(i,k) < size
+     -- * COMPLEXITY:
+     -- * REFERENCES:
+ deferred 
+end;
+
+end;-- * PARTIAL_COLLISION(T)
+
+

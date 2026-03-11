@@ -1,0 +1,295 @@
+--  * Last edited: May 17 10:37 1994 (algprak9)
+-- File: set_list.sa
+-- Author: Johannes Stober, Bui Anh Toan (Gruppe 5)
+-- Copyright (C) Universitaet Karlsruhe, 1994
+--
+-- COPYRIGHT NOTICE: This code is provided "AS IS" WITHOUT ANY WARRANTY
+-- and is subject to the terms of the KARLA LIBRARY GENERAL PUBLIC
+-- LICENSE contained in the file: "doc/license.txt" of the 
+-- distribution. 
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FILE: set_list.sa
+--*
+--* CLASSES: SET__LIST(T) 
+--* 
+--* IMPLEMENTATION OF: SET(T)
+--*
+--* CONFORMS TO: 
+--*
+--* IS A:
+--*
+--* REQUIRED CLASSES: LIST(T) SET(T) LIST__LINKED(T) MULTISET__LIST(T)
+--*
+--* EXCEPTIONS: EXCEPTION__MULTISET EXCEPTION__SET_ADD \
+--* EXCEPTION__SET_DISJOINT_UNION
+--*
+--* TEST CLASS: TEST__SET__LIST
+--*
+--* FOREIGN FILES:
+--*
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+class SET__LIST(T) is
+   -- * CLASS: SET__LIST(T)
+   -- * DESCRIPTION: class defining sets based on lists 
+   -- * SUBCLASS OF: 
+   -- * SPECIALIZATION OF: 
+   -- * IMPLEMENTATION OF: SET(T)
+   -- * EXCEPTIONS: 
+   -- * INVARIANT: SET(T)::Inv AND \
+   -- * (l.empty IFF empty) AND \
+   -- * (FORALL x:T: member(x) IFF EXISTS n:INT:n>=0 AND l.pos_begin.next^n.element=x) AND \
+   -- * (FORALL x:T: member(x) IMPLIES \
+   -- * |             NOT EXISTS n,m:INT: n,m>=0 AND NOT n=m AND \
+   -- * |             l.pos_begin.next^n.element=x AND \
+   -- * |             l.pos_begin.next^m.element=x)
+   -- * REPRESENTATION:
+   -- * COMPLEXITY: \
+   -- *     static      SIZE = size; \
+   -- *                 ##.init.MAXSIZE = 0 AND \
+   -- *                 MAXSIZE = max(choose.SIZE,delete(choose).MAXSIZE)
+   -- * cumulative SPACE(n) = O(n) \
+   -- * additive   TIME(n) = O(n^2)
+   -- * REFERENCES: [Aho, Hopcroft, Ullman: "The Design and Analysis \
+   -- *               of Computer Algorithms", Addison-Wesley, 1974]
+   -- * ATTRIBUTES: size:INT \
+   -- *             l:$LIST(T)
+
+subtype of SET(T);
+include MULTISET__LIST(T)::delete,choose,elts,str;
+
+   l:$LIST(T);
+
+   init:SAME is
+     -- * METHOD: init:SAME
+     -- * DESCRIPTION: initialization
+     -- * PRE: NOT self=void
+     -- * POST: res=self' AND size'=0 AND l'=#LIST__LINKED(T).init
+     -- * COMPLEXITY: \
+     -- * SIZE__init = 0; \
+     -- * SPACE__init = O(1); \
+     -- * TIME__init = O(1);
+     -- * REFERENCES:
+
+     res := self;
+     size := 0;
+     l := #LIST__LINKED(T).init;
+   end;
+
+   choose : T
+   is
+      -- * METHOD: choose:T
+      -- * DESCRIPTION:  method for non-deterministic choice of an element in self
+      -- * PRE: NOT empty
+      -- * POST: res = l.first;
+      -- * COMPLEXITY: \
+      -- * SIZE__choose(self.SIZE,self.MAXSIZE)= self.MAXSIZE
+      -- * SPACE__choose(self.SIZE,self.MAXSIZE)=O(self.MAXSIZE) \
+      -- * TIME__chooses(self.SIZE)=O($LIST(T)::TIME__first(self.SIZE))
+      -- * REFERENCES:
+
+
+      if self.empty then #EXCEPTION__MULTISET.raise; end;
+      res := l.first;
+
+   end; -- choose
+
+
+
+   insert(t: T) : SAME is 
+   -- * METHOD: insert(t:T):SAME
+   -- * DESCRIPTION:  method inserting t into self
+   -- * PRE: true
+   -- * POST: res.member(t) AND \
+   -- * (member(t) IMPLIES res.size=size) AND \
+   -- * NOT member(t) IMPLIES res.size=size+1) AND \
+   -- * self'=res
+   -- * COMPLEXITY: \
+   -- * SIZE__insert(self.SIZE,t.SIZE) = self.SIZE+1 \
+   -- * MAXSIZE__insert(self.MAXSIZE,t.SIZE) = max(self.MAXSIZE,t.SIZE) \
+   -- * SPACE__insert(self.SIZE,t.SIZE,self.MAXSIZE) = O(\
+   -- * |     max(SPACE__member(self.SIZE,t.SIZE,self.MAXSIZE), \
+   -- * |         LIST__LINKED(T)::SPACE__ins_frt(self.SIZE,t.SIZE))) \
+   -- * TIME__insert(self.SIZE,t.SIZE,self.MAXSIZE) = O(\
+   -- * |     TIME__member(self.SIZE,t.SIZE,self.MAXSIZE) + \
+   -- * |     LIST__LINKED(T)::TIME__ins_frt(self.SIZE,t.SIZE))
+   -- * REFERENCES:
+
+      if not self.member(t) then 
+         l := l.ins_frt(t);
+         size := size + 1;
+      end; -- if	 
+      res := self;
+      
+   end;
+
+
+   member(t : T) : BOOL
+   is
+      -- * METHOD: member(t:T):BOOL
+      -- * DESCRIPTION:  predicate check wether t is in self
+      -- * PRE: NOT self =void
+      -- * POST: (empty IMPLIES res=false) AND \
+      -- * (NOT empty AND (EXISTS n:INT: n>=0 AND l.pos_begin.next^n.element=t) IMPLIES res=true) AND \
+      -- * (NOT empty AND NOT (EXISTS n:INT: n>=0 AND l.pos_begin.next^n.element=t) IMPLIES res=false)
+      -- * COMPLEXITY: \
+      -- * SIZE__member(self.SIZE,t.SIZE) = 1 \
+      -- * SPACE__member(self.SIZE,t.SIZE,self.MAXSIZE) = O( \
+      -- * |     max(SPACE__empty(self.SIZE), \
+      -- * |         LIST__LINKED(T)::SPACE__pos_begin(self.SIZE), \
+      -- * |         LIST__LINKED(T)::SPACE__at_end(self.SIZE), \
+      -- * |         LIST__LINKED(T)::SPACE__element(self.SIZE), \
+      -- * |         LIST__LINKED(T)::SPACE__next(self.SIZE), \
+      -- * |         T::SPACE__is_equal(self.MAXSIZE,t.SIZE))) \
+      -- * TIME__member(self.SIZE,t.SIZE,self.MAXSIZE) = O( \
+      -- * |     TIME__empty(self.SIZE) +  \
+      -- * |     LIST__LINKED(T)::TIME__pos_begin(self.SIZE) +  \
+      -- * |     LIST__LINKED(T)::TIME__at_end(self.SIZE) +  \
+      -- * |     LIST__LINKED(T)::TIME__element(self.SIZE) +  \
+      -- * |     LIST__LINKED(T)::TIME__next(self.SIZE) +  \
+      -- * |     T::TIME__is_equal(self.MAXSIZE,t.SIZE))
+      -- * REFERENCES:
+
+      if self.empty then
+	 res := false;
+      else
+	 l:= l.pos_begin;
+	 until l.at_end or (l.element = t) loop
+	    l := l.next;
+	 end;
+	 res := (l.element = t);
+      end; -- if 
+      
+   end; -- member
+
+end;
+   
+class TEST__SET__LIST is
+-- * CLASS: TEST__SET__LIST
+-- * DESCRIPTION: 
+-- * SUBCLASS OF: 
+-- * SPECIALIZATION OF: 
+-- * IMPLEMENTATION OF: 
+-- * EXCEPTIONS: 
+-- * INVARIANT: 
+-- * COMPLEXITY: 
+-- * REFERENCES: 
+
+
+  performancetest(n:INT) is
+    s:$SET(INT) := #SET__LIST(INT).init;
+    i:INT;
+    timer:TIMER := #TIMER;
+    timer.reset;
+    timer.go;
+    loop
+      i := 1.upto!(n);
+      s := s.insert(i);
+    end;
+    timer.stop;
+    OUT::s(n.str).s(" times insert cost time ").s(timer.mean.str).nl.nl;
+    timer.reset;
+    timer.go;
+    loop
+      i:=1.upto!(n);
+      if not(s.member(i)) then break; end;
+    end;
+    timer.stop;
+    OUT::s(n.str).s(" times member cost time ").s(timer.mean.str).nl.nl;
+    if i<n then OUT::s("membership test not succeeded for i=").s(i.str).nl.nl;
+    else OUT::s("membership test succeeded").nl.nl;
+    end;
+    timer.reset;
+    timer.go;
+    loop
+      i:= 1.upto!(n);
+      s := s.delete(i);
+    end;
+    timer.stop;
+    OUT::s(n.str).s(" times delete cost time ").s(timer.mean.str).nl.nl;
+    if s.empty then OUT::s("deletion succeeded").nl.nl;
+    else OUT::s("deletion not succeeded: s=").s(s.str).nl.nl;
+    end;
+  end; -- performancetest
+
+
+  main is
+    s:$SET(INT) := #SET__LIST(INT).init;
+    x:INT;
+    OUT::s("s is created: empty set").nl;
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.empty? ").s(s.empty.str).nl.nl;
+    begin
+      x := s.choose;
+    except excptset
+      when EXCEPTION__MULTISET 
+         then ERR::s(excptset.str).nl;
+	      OUT::s("exception test successfull").nl;
+      else OUT::s("exception test not successfull").nl;
+    end;
+    OUT::s("s := s.delete(5)").nl;
+    s := s.delete(5);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.member(5)? ");
+    OUT::s(s.member(5).str).nl.nl;
+    OUT::s("s.insert(5)").nl;
+    s := s.insert(5);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.empty? ").s(s.empty.str).nl.nl;
+    OUT::s("s.insert(5)").nl;
+    s := s.insert(5);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.insert(10)").nl;
+    s := s.insert(10);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.member(5)? ");
+    OUT::s(s.member(5).str).nl.nl;
+    OUT::s("s.member(6)? ");
+    OUT::s(s.member(6).str).nl;
+    OUT::s("s.choose = ").s(s.choose.str).nl.nl;
+    OUT::s("s := s.delete(5)").nl;
+    s := s.delete(5);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.choose = ").s(s.choose.str).nl.nl;
+    OUT::s("s := s.delete(10)").nl;
+    s := s.delete(10);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.empty? ").s(s.empty.str).nl.nl;
+    begin
+      x := s.choose;
+    except excptset
+      when EXCEPTION__MULTISET 
+         then ERR::s(excptset.str).nl;
+	      OUT::s("exception test successfull").nl;
+      else OUT::s("exception test not successfull").nl;
+    end;
+    OUT::s("s.insert(10)").nl;
+    s := s.insert(10);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.empty? ").s(s.empty.str).nl.nl;
+    OUT::s("s.insert(5)").nl;
+    s := s.insert(5);
+    OUT::s("s = ").s(s.str).nl.nl;
+    s := #SET__LIST(INT).init;
+    OUT::s("s is created: empty set").nl;
+    OUT::s("s = ").s(s.str).nl.nl;
+    --performancetest(100);
+    --performancetest(200);
+    --performancetest(300);
+    --performancetest(400);
+    --performancetest(500);
+    --performancetest(600);
+    --performancetest(700);
+    --performancetest(800);
+    --performancetest(900);
+    --performancetest(1000);
+    --performancetest(1500);
+    --performancetest(2000);
+  end; -- main
+
+end; -- TEST__SET__LIST
+
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+

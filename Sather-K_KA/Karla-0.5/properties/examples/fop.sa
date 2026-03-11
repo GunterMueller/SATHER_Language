@@ -1,0 +1,759 @@
+-- -*- Mode: Sather;  -*-
+-- File: fop.sa
+-- Author: Wolf Zimmermann (zimmer@ira.uka.de)
+-- Copyright (C) Universitaet Karlsruhe, 1994
+--
+-- COPYRIGHT NOTICE: This code is provided "AS IS" WITHOUT ANY WARRANTY
+-- and is subject to the terms of the KARLA LIBRARY GENERAL PUBLIC
+-- LICENSE contained in the file: "doc/license.txt" of the 
+-- distribution. 
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FILE: fop.sa
+--*
+--* CLASSES: FINITE_INT EMPTY FINITE_INT_FLEX PARTIAL_INT PARTIAL_STR\
+--* FINITE_PARTIAL_INT ORDERED_PARTIAL_INT KEY_UPPER_CASE_ALPHABET \
+--* FINITE_ORDERED_PARTIAL_INT
+--* 
+--* IMPLEMENTATION OF: 
+--*
+--* CONFORMS TO:
+--*
+--* IS A:
+--*
+--* REQUIRED CLASSES: 
+--*
+--* EXCEPTIONS: 
+--*
+--* TEST CLASS: 
+--*
+--* FOREIGN FILES:
+--*
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--
+-- RCS: $Id$
+-- HISTORY: $Log$
+--
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+class FINITE_INT is
+  -- * CLASS: FINITE_INT
+  -- * DESCRIPTION: example of a finite type over integers
+  -- * SUBCLASS OF:
+  -- * SPECIALIZATION OF:
+  -- * IMPLEMENTATION OF:
+  -- * EXCEPTIONS:
+  -- * INVARIANT: map[i]<map[j] IFF i<j
+  -- * REPRESENTATION:
+  -- * COMPLEXITY: O(n)
+  -- * REFERENCES:
+  -- * ATTRIBUTES: const n :INT := 10; \
+  -- * const map:ARR[10](INT) := #ARR[10](INT){0,1,2,3,4,5,6,7,8,9}; \
+  -- * elt:INT;
+
+  const n :INT := 10;
+  const map:ARR[10](INT) := #ARR[10](INT){0,1,2,3,4,5,6,7,8,9};
+  elt:INT;
+
+  is_lt(x:FINITE_INT):SAME is
+     -- * METHOD: is_lt(x:FINITE_INT):SAME
+     -- * DESCRIPTION: self < x 
+     -- * PRE: true
+     -- * POST: res = elt<x.elt
+     -- * COMPLEXITY: O(1)
+     -- * REFERENCES:
+    res := elt<x.elt;
+  end;
+
+  is_leq(x:FINITE_INT):SAME is
+     -- * METHOD: is_leq(x:FINITE_INT):SAME
+     -- * DESCRIPTION: self <= x 
+     -- * PRE: true
+     -- * POST: res = elt<=x.elt
+     -- * COMPLEXITY: O(1)
+     -- * REFERENCES:
+    res := elt<=x.elt;
+  end;
+
+  is_gt(x:FINITE_INT):SAME is
+     -- * METHOD: is_gt(x:FINITE_INT):SAME
+     -- * DESCRIPTION: self > x 
+     -- * PRE: true
+     -- * POST: res = elt>x.elt
+     -- * COMPLEXITY: O(1)
+     -- * REFERENCES:
+    res := elt>x.elt;
+  end;
+
+  is_geq(x:FINITE_INT):SAME is
+     -- * METHOD: is_geq(x:FINITE_INT):SAME
+     -- * DESCRIPTION: self <= x 
+     -- * PRE: true
+     -- * POST: res = elt>=x.elt
+     -- * COMPLEXITY: O(1)
+     -- * REFERENCES:
+    res := elt>=x.elt;
+  end;
+
+  str:STR is
+    res := map[elt].str;
+  end;
+end;
+
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+class EMPTY is
+  -- * CLASS: EMPTY
+  -- * DESCRIPTION: finite type with no elements
+  -- * SUBCLASS OF:
+  -- * SPECIALIZATION OF:
+  -- * IMPLEMENTATION OF:
+  -- * EXCEPTIONS:
+  -- * INVARIANT: elt=void
+  -- * REPRESENTATION:
+  -- * COMPLEXITY: O(n)
+  -- * REFERENCES:
+  -- * ATTRIBUTES: const n:INT := 0; \
+  -- * const map:ARR[*](INT) := #ARR[n](INT) \
+  -- * elt:INT;
+  const n:INT := 0;
+  const map:ARR[*](INT) := #ARR[n](INT);
+  elt:INT;
+
+
+  is_equal(x:EMPTY):BOOL is
+     -- * METHOD: is_equal(x:EMPTY):BOOL
+     -- * DESCRIPTION: test equality on empty objects
+     -- * PRE: true
+     -- * POST: true
+     -- * COMPLEXITY: O(1)
+     -- * REFERENCES:
+    res := true
+  end;
+
+  is_lt(x:EMPTY):BOOL is
+     -- * METHOD: is_lt(x:EMPTY):BOOL
+     -- * DESCRIPTION: self<x
+     -- * PRE: true
+     -- * POST: false
+     -- * COMPLEXITY: O(1)
+     -- * REFERENCES:
+    res := false;
+  end;
+
+  is_gt(x:EMPTY):BOOL is
+     -- * METHOD: is_gt(x:EMPTY):BOOL
+     -- * DESCRIPTION: self>x
+     -- * PRE: true
+     -- * POST: false
+     -- * COMPLEXITY: O(1)
+     -- * REFERENCES:
+    res := false;
+  end;
+
+  is_leq(x:EMPTY):BOOL is
+     -- * METHOD: is_leq(x:EMPTY):BOOL
+     -- * DESCRIPTION: self<=x
+     -- * PRE: true
+     -- * POST: true
+     -- * COMPLEXITY: O(1)
+     -- * REFERENCES:
+    res := true;
+  end;
+
+  is_geq(x:EMPTY):BOOL is
+     -- * METHOD: is_leq(x:EMPTY):BOOL
+     -- * DESCRIPTION: self>=x
+     -- * PRE: true
+     -- * POST: true
+     -- * COMPLEXITY: O(1)
+     -- * REFERENCES:
+    res := true;
+  end;
+
+
+  str:STR is res := "EMPTY:: no object"; end;
+end;
+
+value class FINITE_INT_FLEX is
+  -- * CLASS: FINITE_INT_FLEX
+  -- * DESCRIPTION: example of a finite type over integers \
+  -- *    the size can be determined by init
+  -- * SUBCLASS OF:
+  -- * SPECIALIZATION OF:
+  -- * IMPLEMENTATION OF:
+  -- * EXCEPTIONS:
+  -- * INVARIANT: map[i]<map[j] IFF i<j
+  -- * REPRESENTATION:
+  -- * COMPLEXITY: O(n)
+  -- * REFERENCES:
+  -- * ATTRIBUTES: shared n :INT; \
+  -- * shared map:ARR[*](INT); \
+  -- * elt:INT;
+  shared n:INT;
+  shared map:ARR[*](INT);
+  elt:INT;
+
+  init(size:INT):SAME is
+     -- * METHOD: init(size:INT):SAME
+     -- * DESCRIPTION: initializes finite type over INT with size elements \
+     -- * elt=i if and only if map[i]=2*i
+     -- * PRE: NOT self=void
+     -- * POST: n=size AND FORALL 0<=i<n: map[i]=2*i
+     -- * COMPLEXITY: O(n)
+     -- * REFERENCES:
+    res := self;
+    n := size;
+    map := #ARR[n](INT);
+    i:INT;
+    loop
+      i := 0.upto!(n-1);
+      map[i] := 2*i;
+    end;
+  end;
+
+  str:STR is
+    res := map[elt].str;
+  end;
+
+  is_equal(x:FINITE_INT_FLEX):BOOL is
+     -- * METHOD: is_equal(x:FINITE_INT_FLEX):SAME
+     -- * DESCRIPTION: self = x 
+     -- * PRE: true
+     -- * POST: res = elt=x.elt
+     -- * COMPLEXITY: O(1)
+     -- * REFERENCES:
+    res := elt=x.elt;
+  end;
+
+  is_lt(x:FINITE_INT_FLEX):BOOL is
+     -- * METHOD: is_lt(x:FINITE_INT_FLEX):SAME
+     -- * DESCRIPTION: self < x 
+     -- * PRE: true
+     -- * POST: res = elt<x.elt
+     -- * COMPLEXITY: O(1)
+     -- * REFERENCES:
+    res := elt<x.elt;
+  end;
+
+  is_gt(x:FINITE_INT_FLEX):BOOL is
+     -- * METHOD: is_gt(x:FINITE_INT_FLEX):SAME
+     -- * DESCRIPTION: self > x 
+     -- * PRE: true
+     -- * POST: res = elt>x.elt
+     -- * COMPLEXITY: O(1)
+     -- * REFERENCES:
+    res := elt>x.elt;
+  end;
+
+  is_leq(x:FINITE_INT_FLEX):BOOL is
+     -- * METHOD: is_leq(x:FINITE_INT_FLEX):SAME
+     -- * DESCRIPTION: self <= x 
+     -- * PRE: true
+     -- * POST: res = elt<=x.elt
+     -- * COMPLEXITY: O(1)
+     -- * REFERENCES:
+    res := elt<=x.elt;
+  end;
+
+  is_geq(x:FINITE_INT_FLEX):BOOL is
+     -- * METHOD: is_geq(x:FINITE_INT_FLEX):SAME
+     -- * DESCRIPTION: self >= x 
+     -- * PRE: true
+     -- * POST: res = elt<=x.elt
+     -- * COMPLEXITY: O(1)
+     -- * REFERENCES:
+    res := elt>=x.elt;
+  end;
+
+end;
+
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+value class PARTIAL_INT is
+  -- * CLASS: PARTIAL_INT
+  -- * DESCRIPTION: example of a type over integers with partial key access
+  -- * SUBCLASS OF:
+  -- * SPECIALIZATION OF:
+  -- * IMPLEMENTATION OF:
+  -- * EXCEPTIONS:
+  -- * INVARIANT: 
+  -- * REPRESENTATION:
+  -- * COMPLEXITY: O(n)
+  -- * REFERENCES:
+  -- * ATTRIBUTES: key:INT \
+  -- * val:INT
+  key:INT;
+  val:INT;
+
+  str:STR is
+    res := "(".s("key = ").s(key.str).s(",").s("val = ").s(val.str).s(")");
+  end;
+  
+  is_equal(x:PARTIAL_INT):BOOL is
+     -- * METHOD: is_equal(x:PARTIAL_INT):BOOL
+     -- * DESCRIPTION: self=x
+     -- * PRE: true
+     -- * POST: key=x.key
+     -- * COMPLEXITY: O(1)
+     -- * REFERENCES:
+    res := x.key=key
+  end;
+
+  init:SAME is
+     -- * METHOD: init:SAME
+     -- * DESCRIPTION: sets val to key
+     -- * PRE: NOT self=void
+     -- * POST: res.key=val AND res=self'
+     -- * COMPLEXITY: O(1)
+     -- * REFERENCES:
+     res := self;
+     res.val := key;
+  end;
+end;
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ class PARTIAL_STR is
+  -- * CLASS: PARTIAL_STR
+  -- * DESCRIPTION: example of a type over STR with partial key access
+  -- * SUBCLASS OF:
+  -- * SPECIALIZATION OF:
+  -- * IMPLEMENTATION OF:
+  -- * EXCEPTIONS:
+  -- * INVARIANT: 
+  -- * REPRESENTATION:
+  -- * COMPLEXITY: O(n)
+  -- * REFERENCES:
+  -- * ATTRIBUTES: key:INT \
+  -- * val:STR
+  key:INT;
+  val:STR;
+
+  str:STR is
+    res := "(".s("key = ").s(key.str).s(",").s("val = ").s(val.str).s(")");
+  end;
+  
+  is_equal(x:PARTIAL_STR):BOOL is
+     -- * METHOD: is_equal(x:PARTIAL_STR):BOOL
+     -- * DESCRIPTION: self=x
+     -- * PRE: true
+     -- * POST: key=x.key
+     -- * COMPLEXITY: O(1)
+     -- * REFERENCES:
+    res := x.key=key
+  end;
+
+end;
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+value class FINITE_PARTIAL_INT is
+  -- * CLASS: FINITE_PARTIAL_INT
+  -- * DESCRIPTION: example of a finite type over integers with \
+  -- * partial key access
+  -- * SUBCLASS OF:
+  -- * SPECIALIZATION OF:
+  -- * IMPLEMENTATION OF:
+  -- * EXCEPTIONS:
+  -- * INVARIANT: map[i]<map[j] IFF i<j AND key=map[elt].key AND val=map[elt].val AND \
+  -- * elt=key AND (x<y IFF x.elt < y.elt)
+  -- * REPRESENTATION:
+  -- * COMPLEXITY: O(n)
+  -- * REFERENCES:
+  -- * ATTRIBUTES: const n :INT := 100; \
+  -- * const map:ARR[10](INT) :=  #ARR[100](PARTIAL_INT){...}\
+  -- * elt:INT; \
+  -- * key:INT; \
+  -- * val:INT;
+  const n:INT := 100;
+  const map:ARR[*](PARTIAL_INT) := create;
+
+  elt:INT;
+
+  create:ARR[*](PARTIAL_INT) is
+    i:INT;
+    res := #ARR[n](PARTIAL_INT);
+    loop
+      i:=0.upto!(n-1);
+      res[i] := #PARTIAL_INT{key:=i,val:=i};
+    end;
+  end;
+
+  init:SAME is
+     -- * METHOD: init:SAME
+     -- * DESCRIPTION: sets val to key
+     -- * PRE: NOT self=void 
+     -- * POST: res=self' AND val=map[elt].val AND key=elt
+     -- * COMPLEXITY: O(1)
+     -- * REFERENCES:
+    res := self;
+  end;
+
+  set_key(k:INT) is
+    elt:=k;
+  end;
+
+  set_val(v:INT) is
+    elt:=v;
+  end;
+
+  key:INT is
+    res := map[elt].key;
+  end;
+
+  val:INT is
+    res := map[elt].val;
+  end;
+
+  is_equal(x:FINITE_PARTIAL_INT):BOOL is
+     -- * METHOD: is_equal(x:PARTIAL_INT):BOOL
+     -- * DESCRIPTION: self=x
+     -- * PRE: true
+     -- * POST: elt=x.elt
+     -- * COMPLEXITY: O(1)
+     -- * REFERENCES:
+    res := x.elt=elt
+  end;
+
+  is_lt(x:FINITE_PARTIAL_INT):BOOL is
+     -- * METHOD: is_lt(x:FINITE_PARTIAL_INT):BOOL
+     -- * DESCRIPTION: self < x 
+     -- * PRE: true
+     -- * POST: res = key<x.key
+     -- * COMPLEXITY: O(1)
+     -- * REFERENCES:
+    res := key<x.key;
+  end;
+
+  is_leq(x:FINITE_PARTIAL_INT):BOOL is
+     -- * METHOD: is_leq(x:FINITE_PARTIAL_INT):BOOL
+     -- * DESCRIPTION: self <= x 
+     -- * PRE: true
+     -- * POST: res = key<=x.key
+     -- * COMPLEXITY: O(1)
+     -- * REFERENCES:
+    res := key<=x.key;
+  end;
+
+  is_gt(x:FINITE_PARTIAL_INT):BOOL is
+     -- * METHOD: is_gt(x:FINITE_PARTIAL_INT):BOOL
+     -- * DESCRIPTION: self > x 
+     -- * PRE: true
+     -- * POST: res = key>x.key
+     -- * COMPLEXITY: O(1)
+     -- * REFERENCES:
+    res := key>x.key;
+  end;
+
+  is_geq(x:FINITE_PARTIAL_INT):BOOL is
+     -- * METHOD: is_geq(x:FINITE_PARTIAL_INT):BOOL
+     -- * DESCRIPTION: self >= x 
+     -- * PRE: true
+     -- * POST: res = key>=x.key
+     -- * COMPLEXITY: O(1)
+     -- * REFERENCES:
+    res := key>=x.key;
+  end;
+
+  str:STR is
+    res := map[elt].str;
+  end;
+
+end;
+
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+value class ORDERED_PARTIAL_INT is
+  -- * CLASS: PARTIAL_INT
+  -- * DESCRIPTION: example of a type over integers with partial key access
+  -- * SUBCLASS OF:
+  -- * SPECIALIZATION OF:
+  -- * IMPLEMENTATION OF:
+  -- * EXCEPTIONS:
+  -- * INVARIANT: FORALL x,y:SAME: x<y IFF x.key < y.key
+  -- * REPRESENTATION:
+  -- * COMPLEXITY: O(n)
+  -- * REFERENCES:
+  -- * ATTRIBUTES: key:INT \
+  -- * val:INT
+  key:INT;
+  val:INT;
+
+  str:STR is
+    res := "(".s("key = ").s(key.str).s(",").s("val = ").s(val.str).s(")");
+  end;
+
+  is_equal(x:ORDERED_PARTIAL_INT):BOOL is
+     -- * METHOD: is_equal(x:PARTIAL_INT):BOOL
+     -- * DESCRIPTION: self=x
+     -- * PRE: true
+     -- * POST: key=x.key
+     -- * COMPLEXITY: O(1)
+     -- * REFERENCES:
+    res := x.key=key
+  end;
+
+
+  is_lt(x:ORDERED_PARTIAL_INT):BOOL is
+     -- * METHOD: is_lt(x:ORDERED_PARTIAL_INT):SAME
+     -- * DESCRIPTION: self < x 
+     -- * PRE: true
+     -- * POST: res = key<x.key
+     -- * COMPLEXITY: O(1)
+     -- * REFERENCES:
+    res := key < x.key;
+  end;
+
+  is_leq(x:ORDERED_PARTIAL_INT):BOOL is
+     -- * METHOD: is_leq(x:ORDERED_PARTIAL_INT):SAME
+     -- * DESCRIPTION: self <= x 
+     -- * PRE: true
+     -- * POST: res = key<=x.key
+     -- * COMPLEXITY: O(1)
+     -- * REFERENCES:
+    res := key <= x.key;
+  end;
+
+  is_geq(x:ORDERED_PARTIAL_INT):BOOL is
+     -- * METHOD: is_geq(x:ORDERED_PARTIAL_INT):SAME
+     -- * DESCRIPTION: self >= x 
+     -- * PRE: true
+     -- * POST: res = key>=x.key
+     -- * COMPLEXITY: O(1)
+     -- * REFERENCES:
+    res := key >= x.key;
+  end;
+
+  is_gt(x:ORDERED_PARTIAL_INT):BOOL is
+     -- * METHOD: is_gt(x:ORDERED_PARTIAL_INT):SAME
+     -- * DESCRIPTION: self > x 
+     -- * PRE: true
+     -- * POST: res = key>x.key
+     -- * COMPLEXITY: O(1)
+     -- * REFERENCES:
+    res := key > x.key;
+  end;
+
+end;
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+value class KEY_UPPER_CASE_ALPHABET is
+  -- * CLASS: KEY_UPPER_CASE_ALPHABET
+  -- * DESCRIPTION: finite type for "A"--"Z" with partial key access where the keys numbers are 0--25
+  -- * SUBCLASS OF:
+  -- * SPECIALIZATION OF:
+  -- * IMPLEMENTATION OF:
+  -- * EXCEPTIONS:
+  -- * INVARIANT: key=elt AND map[elt].key=elt AND map[elt].val = val
+  -- * REPRESENTATION:
+  -- * COMPLEXITY: O(n)
+  -- * REFERENCES:
+  -- * ATTRIBUTES: const n:INT := 26;\
+  -- * shared map:ARR[*](PARTIAL_STR):=#ARR[26](PARTIAL_STR);  \
+  -- * key:INT \
+  -- * val:STR \
+  -- * elt:INT
+
+  const n:INT := 26;
+  shared map:ARR[*](PARTIAL_STR):=#ARR[26](PARTIAL_STR);
+  set_key(x:INT) is end;
+  key:INT is res := map[elt].key; end;
+  set_val(x:STR) is end;
+  val:STR is res := map[elt].val; end;
+  elt:INT;
+ 
+  init:SAME is
+     -- * METHOD: init:SAME
+     -- * DESCRIPTION: initializes the alphabet
+     -- * PRE: NOT self=void
+     -- * POST: map[0]=(0,A) AND ... AND map[25]=(25,Z)
+     -- * COMPLEXITY: O(1)
+     -- * REFERENCES:
+    res := self;
+    map[0] := #PARTIAL_STR{key := 0,val := "A"};
+    map[1] := #PARTIAL_STR{key := 1,val := "B"};
+    map[2] := #PARTIAL_STR{key := 2,val := "C"};
+    map[3] := #PARTIAL_STR{key := 3,val := "D"};
+    map[4] := #PARTIAL_STR{key := 4,val := "E"};
+    map[5] := #PARTIAL_STR{key := 5,val := "F"};
+    map[6] := #PARTIAL_STR{key := 6,val := "G"};
+    map[7] := #PARTIAL_STR{key := 7,val := "H"};
+    map[8] := #PARTIAL_STR{key := 8,val := "I"};
+    map[9] := #PARTIAL_STR{key := 9,val := "J"};
+    map[10] := #PARTIAL_STR{key := 10,val := "K"};
+    map[11] := #PARTIAL_STR{key := 11,val := "L"};
+    map[12] := #PARTIAL_STR{key := 12,val := "M"};
+    map[13] := #PARTIAL_STR{key := 13,val := "N"};
+    map[14] := #PARTIAL_STR{key := 14,val := "O"};
+    map[15] := #PARTIAL_STR{key := 15,val := "P"};
+    map[16] := #PARTIAL_STR{key := 16,val := "Q"};
+    map[17] := #PARTIAL_STR{key := 17,val := "R"};
+    map[18] := #PARTIAL_STR{key := 18,val := "S"};
+    map[19] := #PARTIAL_STR{key := 19,val := "T"};
+    map[20] := #PARTIAL_STR{key := 20,val := "U"};
+    map[21] := #PARTIAL_STR{key := 21,val := "V"};
+    map[22] := #PARTIAL_STR{key := 22,val := "W"};
+    map[23] := #PARTIAL_STR{key := 23,val := "X"};
+    map[24] := #PARTIAL_STR{key := 24,val := "Y"};
+    map[25] := #PARTIAL_STR{key := 25,val := "Z"};
+  end;
+
+
+  str:STR is
+     res := map[elt].str;
+  end;
+
+  is_equal(x:KEY_UPPER_CASE_ALPHABET):BOOL is
+     -- * METHOD: is_equal(x:KEY_UPPER_CASE_ALPHABET):BOOL
+     -- * DESCRIPTION: self=x?
+     -- * PRE: true
+     -- * POST: elt = x.elt
+     -- * COMPLEXITY: O(1)
+     -- * REFERENCES:
+    res := elt = x.elt;
+  end;
+
+  is_lt(x:KEY_UPPER_CASE_ALPHABET):BOOL is
+     -- * METHOD: is_lt(x:KEY_UPPER_CASE_ALPHABET):BOOL
+     -- * DESCRIPTION: self<x?
+     -- * PRE: true
+     -- * POST: elt < x.elt
+     -- * COMPLEXITY: O(1)
+     -- * REFERENCES:
+    res := elt < x.elt;
+  end;
+
+  is_gt(x:KEY_UPPER_CASE_ALPHABET):BOOL is
+     -- * METHOD: is_gt(x:KEY_UPPER_CASE_ALPHABET):BOOL
+     -- * DESCRIPTION: self>x?
+     -- * PRE: true
+     -- * POST: elt > x.elt
+     -- * COMPLEXITY: O(1)
+     -- * REFERENCES:
+    res := elt > x.elt;
+  end;
+
+  is_leq(x:KEY_UPPER_CASE_ALPHABET):BOOL is
+     -- * METHOD: is_leq(x:KEY_UPPER_CASE_ALPHABET):BOOL
+     -- * DESCRIPTION: self<=x?
+     -- * PRE: true
+     -- * POST: elt <= x.elt
+     -- * COMPLEXITY: O(1)
+     -- * REFERENCES:
+    res := elt <= x.elt;
+  end;
+
+  is_geq(x:KEY_UPPER_CASE_ALPHABET):BOOL is
+     -- * METHOD: is_geq(x:KEY_UPPER_CASE_ALPHABET):BOOL
+     -- * DESCRIPTION: self>=x?
+     -- * PRE: true
+     -- * POST: elt >= x.elt
+     -- * COMPLEXITY: O(1)
+     -- * REFERENCES:
+    res := elt >= x.elt;
+  end;
+
+end;
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+value class FINITE_ORDERED_PARTIAL_INT is
+  -- * CLASS: FINITE_ORDERED PARTIAL_INT
+  -- * DESCRIPTION: example of a finite type over integers with \
+  -- * partial key access and order relation
+  -- * SUBCLASS OF:
+  -- * SPECIALIZATION OF:
+  -- * IMPLEMENTATION OF:
+  -- * EXCEPTIONS:
+  -- * INVARIANT: map[i]<map[j] IFF i<j AND key=map[elt].key AND val=map[elt].val AND \
+  -- * elt=key AND (x<y IFF x.elt < y.elt)
+  -- * REPRESENTATION:
+  -- * COMPLEXITY: O(n)
+  -- * REFERENCES:
+  -- * ATTRIBUTES: shared n :INT; \
+  -- * shared map:ARR[*](INT) \
+  -- * elt:INT; \
+  -- * key:INT; \
+  -- * val:INT
+  shared n:INT;
+  shared map:ARR[*](PARTIAL_INT);
+  elt:INT;
+  key:INT;
+  val:INT;
+
+  init(x:INT):SAME is
+     -- * METHOD: init(size:INT):SAME
+     -- * DESCRIPTION: initializes finite type over PARTIAL_INT with size elements \
+     -- * elt=i if and only if map[i]=2*i
+     -- * PRE: NOT self=void
+     -- * POST: n=size AND FORALL 0<=i<n: map[i]=(i,i)
+     -- * COMPLEXITY: O(n)
+     -- * REFERENCES:
+    res := self;
+    res.n := x;
+    res.map := #ARR[x](PARTIAL_INT);
+    i:INT;
+    loop
+      i:=0.upto!(x-1);
+      res.map[i] := #PARTIAL_INT{key:=i,val:=i};
+    end;
+  end; -- init
+
+  str:STR is
+    res := map[elt].str;
+  end;
+
+
+  is_equal(x:FINITE_ORDERED_PARTIAL_INT):BOOL is
+     -- * METHOD: is_equal(x:FINITE_ORDERED_PARTIAL_INT):BOOL
+     -- * DESCRIPTION: self=x
+     -- * PRE: true
+     -- * POST: key=x.key
+     -- * COMPLEXITY: O(1)
+     -- * REFERENCES:
+    res := x.key=key
+  end;
+
+  is_lt(x:FINITE_ORDERED_PARTIAL_INT):SAME is
+     -- * METHOD: is_lt(x:FINITE_ORDERED_PARTIAL_INT):SAME
+     -- * DESCRIPTION: self < x 
+     -- * PRE: true
+     -- * POST: res = key<x.key
+     -- * COMPLEXITY: O(1)
+     -- * REFERENCES:
+    res := key<x.key;
+  end;
+
+  is_leq(x:FINITE_ORDERED_PARTIAL_INT):SAME is
+     -- * METHOD: is_leq(x:FINITE_ORDERED_PARTIAL_INT):SAME
+     -- * DESCRIPTION: self <= x 
+     -- * PRE: true
+     -- * POST: res = key<=x.key
+     -- * COMPLEXITY: O(1)
+     -- * REFERENCES:
+    res := key<=x.key;
+  end;
+
+  is_gt(x:FINITE_ORDERED_PARTIAL_INT):SAME is
+     -- * METHOD: is_gt(x:FINITE_ORDERED_PARTIAL_INT):SAME
+     -- * DESCRIPTION: self > x 
+     -- * PRE: true
+     -- * POST: res = key>x.key
+     -- * COMPLEXITY: O(1)
+     -- * REFERENCES:
+    res := key>x.key;
+  end;
+
+  is_geq(x:FINITE_ORDERED_PARTIAL_INT):SAME is
+     -- * METHOD: is_geq(x:FINITE_ORDERED_PARTIAL_INT):SAME
+     -- * DESCRIPTION: self >= x 
+     -- * PRE: true
+     -- * POST: res = key>=x.key
+     -- * COMPLEXITY: O(1)
+     -- * REFERENCES:
+    res := key>=x.key;
+  end;
+
+
+end;
+

@@ -1,0 +1,67 @@
+# simple example of a Makefile for sather programms compiled with sc.
+# Reiner Mauch und Martin Trapp 27.8.92
+
+#change the following variables to your installation
+
+#include m_${ARCH}
+
+SC_LIB_PATH	= ${SATHER_K_HOME}/sc_lib
+# where the sather 0.1 library resides
+# name of  the sc library (run time system)
+SC_LIB		= -lsa
+# name of the garbage collector lib (run time system)
+GC_LIB		= -lgc
+
+#sc flags
+SCFLAGS		= -g
+#SCFLAGS		= -NoCheck -NoVoidCheck -nicenames
+
+# math lib
+LIBS=		-lm 
+
+SRC=		${PRG}.sa ${SATHER_K_LIB}/numerical/math.sa
+
+##########################################################################
+${PRG}:		${PRG}.o
+		${LD} -dc -dp -e start -o ${PRG} /usr/lib/crt0.o ${PRG}.o -L${SC_LIB_PATH} ${SC_LIB} ${GC_LIB} ${LIBS} -lc
+
+${PRG}.o:	${PRG}.s
+		${AS} -o ${PRG}.o ${PRG}.s
+
+${PRG}.s:	${PRG}.sa ${PRG}.sather Makefile Makefile_sather
+		${SC} ${SCFLAGS} ${PRG}
+
+${PRG}.sather:	Makefile_sather
+		@echo ">> making ${PRG}.sather"
+		@echo "SOURCE_FILES are"	 > $@
+		@echo -n "   "			>> $@
+		@echo ${SRC} | sed -e 's/ /\
+   /g'						>> $@
+		@echo "end;" 			>> $@
+		@echo 				>> $@
+		@echo "KEYS are" 		>> $@
+		@echo -n "   "			>> $@
+		@echo ${KEYS} | sed -e 's/ /\
+   /g'						>> $@
+		@echo "end;"			>> $@
+		@echo 				>> $@		
+		@echo "C_NAMES are"		>> $@
+		@echo -n "   "			>> $@
+		@echo ${C_NAMES} | sed -e 's/ /\
+   /g'						>> $@
+		@echo ${FUNPTRS} | sed -e 's/ /\
+   /g' | sed -e 's/\([A-Za-z_]*\)::\([A-Za-z_]*\)/\1_\2 ::= \1::\2/g'\
+						>> $@
+		@echo "end;"			>> $@
+
+_${PRG}_addr.c: Makefile
+		@echo '#include "_sather_${PRG}.h"' >$@
+		@echo				>> $@
+		@echo ${FUNPTRS} | sed -e 's/ /\
+/g' | sed -e 's/\([A-Za-z_]*\)::\([A-Za-z_]*\)/void *addr_\1_\2(void){return \1_\2;}/g'	       					>> $@
+
+_${PRG}_addr.sa: Makefile
+		@echo "class C is"		 > $@
+		@echo ${FUNPTRS} | sed -e 's/ //g' | sed -e 's/\([A-Za-z_]*\)::\([A-Za-z_]*\)/  addr_\1_\2:F_OB is end;/g'\
+						>> $@
+		@echo "end;"			>> $@

@@ -1,0 +1,26 @@
+INSTALLATION:
+1. There is an environment variable KARLA which you should set to your
+   local Karla directory.  
+
+2. In order to use
+   $(KARLA)/config/sk.tcl, put it somewhere in your path and add the
+
+	#!/usr/local/bin/wish
+
+   to wherever your 'wish' is to be found.  Then, adapt the data base in $KARLA/karla.sko using
+
+	perl -pe "s*/usr/public/Karla-0.5*YOUR_KARLA_DIR*g" $KARLA/karla.sko > $(KARLA)/karla.sko.new
+
+   where YOUR_KARLA_DIR points to your local Karla directory.
+
+3.  Replace $(Karla)/karla.sko with $(Karla)/karla.sko.new
+
+4.  edit $KARLA/config/sk.tcl to point to the right location for your
+    FSBox widget. The original statement is
+
+	source /usr/public/tools/TclTk/lib/FSBox.tcl
+
+    and most likely useless in your environment.
+
+A good point to get started is to run sk.tcl and play with it.
+Initial documentation is provided in $KARLA/doc/Karla_II.ps

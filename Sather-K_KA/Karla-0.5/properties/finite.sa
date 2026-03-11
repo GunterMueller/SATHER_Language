@@ -1,0 +1,62 @@
+-- -*- Mode: Sather;  -*-
+-- File: finite.sa
+-- Author: Arne Frick (frick@ira.uka.de)
+-- Copyright (C) Universitaet Karlsruhe, 1994
+--
+-- COPYRIGHT NOTICE: This code is provided "AS IS" WITHOUT ANY WARRANTY
+-- and is subject to the terms of the KARLA LIBRARY GENERAL PUBLIC
+-- LICENSE contained in the file: "doc/license.txt" of the 
+-- distribution. 
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FILE: finite.sa
+--*
+--* CLASSES: FINITE(T) 
+--* 
+--* IMPLEMENTATION OF: 
+--*
+--* CONFORMS TO: 
+--*
+--* IS A: 
+--*
+--* REQUIRED CLASSES: 
+--*
+--* EXCEPTIONS: 
+--*
+--* TEST CLASS: 
+--*
+--* FOREIGN FILES:
+--*
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--
+-- RCS: $Id$
+-- HISTORY:
+--  * Last edited: Apr 13 17:52 1994 (frick)
+-- Created: Wed Mar 16 18:43:26 1994 (frick)
+--
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+abstract class FINITE(T) is
+   -- * CLASS: FINITE(T) 
+   -- * DESCRIPTION: abstract class defining the element of a finite universe \
+   -- *              by default, all elements of the universe are stored by \
+   -- *              a mapping in a shared array map. Objects are represented by \
+   -- *              map[elts].
+   -- * SUBCLASS OF: 
+   -- * SPECIALIZATION OF: 
+   -- * IMPLEMENTATION OF: 
+   -- * EXCEPTIONS: 
+   -- * INVARIANT: FORALL a,b:SAME : \
+   -- *              elt<n AND \
+   -- *              (a.map[a.elt]=a.map[b.elt] IFF a.elt=b.elt)
+   -- * REPRESENTATION:
+   -- * COMPLEXITY:
+   -- * REFERENCES: 
+   -- * ATTRIBUTES: const n:INT := void; -- size of the universe \
+   -- *   const map:ARR[n](T) -- stores all elements of universe \ 
+   -- *   elt:INT  -- represents object map[elt]
+
+   const n:INT := 1; -- size of the universe
+   const map:ARR[*](T) := #ARR[n](T);  -- where all the elements are stored
+   elt:INT;                       -- index of element in universe
+
+end;

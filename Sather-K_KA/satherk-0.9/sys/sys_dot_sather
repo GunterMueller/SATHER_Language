@@ -1,0 +1,35 @@
+--* Last edited: Jan 10 15:42 1993 (mauch)
+SOURCE_FILES are
+      ${SATHER_K_LIB}/base/base.sa
+      ${SATHER_K_LIB}/base/str.sa
+      ${SATHER_K_LIB}/base/file.sa
+      ${SATHER_K_LIB}/base/unix.sa
+      ${SATHER_K_LIB}/base/exception.sa
+end;
+
+KEYS are
+-- exceptions
+end;
+
+C_NAMES are
+   main				::= SAINT::main
+   STRabfba_new_1		::= STR::new
+   STRINGabfba_new_1		::= STRING::new
+   ARRabfbaofSTRabfbafo_new_1	::= ARR[*](STR[*])::new
+   ARRabfbaofSTRabfbafo_aset_1	::= ARR[*](STR[*])::aset
+   -- auxiliary functions of exception handling
+   SAINT_get_exception_base_1	::= SAINT::exception_base
+   SAINT_set_exception_base_1	::= SAINT::set_exception_base
+   SAINT_set_exception_linenumber_1	::= SAINT::set_exception_linenumber
+   SAINT_set_exception_filename_1	::= SAINT::set_exception_filename
+   -- recognized hardware signals
+   EXCEPTION_INT_create_2        ::= EXCEPTION_INT::create
+   EXCEPTION_INT_raise_2         ::= EXCEPTION_INT::raise
+   EXCEPTION_FPE_create_2        ::= EXCEPTION_FPE::create_fpe
+   EXCEPTION_FPE_raise_2         ::= EXCEPTION_FPE::raise
+   EXCEPTION_SEGV_create_2       ::= EXCEPTION_SEGV::create_segv
+   EXCEPTION_SEGV_raise_2        ::= EXCEPTION_SEGV::raise
+   -- software signals
+   EXCEPTION_ARRAY_BOUND_raise_3  ::= EXCEPTION_ARRAY_BOUND::raise
+   EXCEPTION_ARRAY_BOUND_create_3 ::= EXCEPTION_ARRAY_BOUND::create_array_bound
+end;

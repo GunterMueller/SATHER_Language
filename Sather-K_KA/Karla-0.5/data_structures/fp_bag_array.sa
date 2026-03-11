@@ -1,0 +1,298 @@
+-- Author : Wolf Zimmermann
+-- Date : August 31, 1994
+--
+-- Copyright (C) Universitaet Karlsruhe, 1994
+-- This file is part of Karla, the Karlsruhe Library of Algorithms. 
+-- COPYRIGHT NOTICE: This code is provided "AS IS" WITHOUT ANY WARRANTY
+-- and is subject to the terms of the KARLA LIBRARY GENERAL PUBLIC
+-- LICENSE contained in the file: "doc/license.txt" of the
+-- distribution.
+--
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FILE: fp_bag_array.sa
+--*
+--* CLASSES: FINITE_PARTIAL_MULTISET__ARRAY(T)
+--*
+--* IMPLEMENTATION OF: FINITE_PARTIAL_MULTISET(T)
+--*
+--* CONFORMS TO:
+--*
+--* IS A:
+--*
+--* REQUIRED CLASSES: FINITE_PARTIAL_MULTISET(T) MULTISET(T) FINITE_PARTIAL(T) \
+--* EXCEPTION__PARTIAL_MULTISET_LOOKUP EXCEPTION__MULTISET FINITE_MULTISET__ARRAY
+--*
+--* EXCEPTIONS: EXCEPTION__MULTISET EXCEPTION__PARTIAL_MULTISET_LOOKUP
+--*
+--* TEST CLASS: TEST__FINITE_PARTIAL_MULTISET__ARRAY
+--*
+--* FOREIGN FILES:
+--*
+-- RCS: $ld$
+-- HISTORY: $log$
+--
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+class FINITE_PARTIAL_MULTISET__ARRAY(K,T1,T2<PARTIAL(K,T1),T<FINITE_PARTIAL(K,T1,T2)) is
+-- * CLASS: FINITE_PARTIAL_MULTISET__ARRAY(K,T1,T2<PARTIAL(K,T1),T<FINITE_PARTIAL(K,T1,T2))
+-- * DESCRIPTION: Implementation of abstract type FINITE_PARTIAL_MULTISET(K,T1,T) for  \
+-- * finite types with partial key access via arrays
+-- * SUBCLASS OF:
+-- * SPECIALIZATION OF:
+-- * IMPLEMENTATION OF: FINITE_PARTIAL_MULTISET(T1,T<FINITE_PARTIAL(T1))
+-- * EXCEPTIONS: EXCEPTION__MULTISET EXCEPTION__PARTIAL_MULTISET_LOOKUP
+-- * INVARIANT: FINITE_PARTIAL_MULTISET::Inv AND \
+-- * max_size=T::n AND FORALL i:INT: 0<=i<max_size: hold[i]=multiplicity[i]
+-- * REPRESENTATION: 
+-- * COMPLEXITY: \
+-- * static SIZE = size \
+-- *                 ##.init.MAXSIZE = 0 AND \
+-- *                 MAXSIZE = max(choose.SIZE,delete(choose).MAXSIZE)\ 
+-- *                 ##.init.KEYSIZE = 0 AND \
+-- *                 KEYSIZE = max(choose.key.SIZE,delete(choose).KEYSIZE)
+-- * cumulative SPACE(n) = max_size \
+-- * additive TIME(n) = O(n)
+-- * REFERENCES:
+-- * ATTRIBUTES: size:INT; -- size of set \
+-- *             hold: ARR[*](INT);  -- vector holding the multiset
+-- *             max_size:INT; -- maximal size of set
+   
+   subtype of FINITE_PARTIAL_MULTISET(K,T1,T2,T);
+   include FINITE_MULTISET__ARRAY(T1,T);
+
+end;
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+class TEST__FINITE_PARTIAL_MULTISET__ARRAY is
+
+   main is
+    x:FINITE_PARTIAL_INT;
+    s:$FINITE_PARTIAL_MULTISET(INT,INT,PARTIAL_INT,FINITE_PARTIAL_INT) 
+           := #FINITE_PARTIAL_MULTISET__ARRAY(INT,INT,PARTIAL_INT,FINITE_PARTIAL_INT).init;
+    s1:$FINITE_PARTIAL_MULTISET(INT,INT,PARTIAL_INT,FINITE_PARTIAL_INT) 
+           := #FINITE_PARTIAL_MULTISET__ARRAY(INT,INT,PARTIAL_INT,FINITE_PARTIAL_INT).init;
+    s2:$FINITE_PARTIAL_MULTISET(INT,INT,PARTIAL_INT,FINITE_PARTIAL_INT) 
+           := #FINITE_PARTIAL_MULTISET__ARRAY(INT,INT,PARTIAL_INT,FINITE_PARTIAL_INT).init;
+    s3:$FINITE_PARTIAL_MULTISET(INT,INT,PARTIAL_INT,FINITE_PARTIAL_INT) 
+           := #FINITE_PARTIAL_MULTISET__ARRAY(INT,INT,PARTIAL_INT,FINITE_PARTIAL_INT).init;
+    s4:$FINITE_PARTIAL_MULTISET(INT,INT,PARTIAL_INT,FINITE_PARTIAL_INT) 
+           := #FINITE_PARTIAL_MULTISET__ARRAY(INT,INT,PARTIAL_INT,FINITE_PARTIAL_INT).init;
+    i:INT;
+    OUT::s("s is created: empty set").nl;
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.empty? ").s(s.empty.str).nl.nl;
+    begin
+      x := s.choose;
+    except excptset
+      when EXCEPTION__MULTISET 
+        then ERR::s(excptset.str).nl;
+             OUT::s("exception test successfull").nl;
+      else OUT::s("exception test not successfull").nl;
+    end;
+    OUT::s("s := s.delete(5)").nl;
+    x := #FINITE_PARTIAL_INT{elt:=5}.init;
+    s := s.delete(x);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.member(5)? ");
+    OUT::s(s.member(x).str).nl.nl;
+    OUT::s("s.multiplicity(5) = ").i(s.multiplicity(x)).nl;
+    OUT::s("s.add(5)").nl;
+    s := s.add(x);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.empty? ").s(s.empty.str).nl.nl;
+    OUT::s("s.multiplicity(5) = ").i(s.multiplicity(x)).nl;
+    OUT::s("s.add(5)").nl;
+    s := s.add(x);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.multiplicity(5) = ").i(s.multiplicity(x)).nl;
+    OUT::s("s.add(10)").nl;
+    x := #FINITE_PARTIAL_INT{elt:=10}.init;
+    s := s.add(x);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.member(5)? ");
+    x := #FINITE_PARTIAL_INT{elt:=5}.init;
+    OUT::s(s.member(x).str).nl.nl;
+    x := #FINITE_PARTIAL_INT{elt:=6}.init;
+    OUT::s("s.member(6)? ");
+    OUT::s(s.member(x).str).nl;
+    OUT::s("s.choose = ").s(s.choose.str).nl.nl;
+    OUT::s("s := s.delete(5)").nl;
+    x := #FINITE_PARTIAL_INT{elt:=5}.init;
+    s := s.delete(x);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.choose = ").s(s.choose.str).nl.nl;
+    x := #FINITE_PARTIAL_INT{elt:=10}.init;
+    OUT::s("s := s.delete(10)").nl;
+    s := s.delete(x);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s := s.delete(10)").nl;
+    x := #FINITE_PARTIAL_INT{elt:=5}.init;
+    s := s.delete(x);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.empty? ").s(s.empty.str).nl.nl;
+    begin
+      x := s.choose;
+    except excptset
+      when EXCEPTION__MULTISET 
+        then ERR::s(excptset.str).nl;
+             OUT::s("exception test successfull").nl;
+      else OUT::s("exception test not successfull").nl;
+    end;
+    OUT::s("s.add(10)").nl;
+    x := #FINITE_PARTIAL_INT{elt:=10}.init;
+    s := s.add(x);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.empty? ").s(s.empty.str).nl.nl;
+    OUT::s("s.add(5)").nl;
+    x := #FINITE_PARTIAL_INT{elt:=5}.init;
+    s := s.add(x);
+    OUT::s("s = ").s(s.str).nl.nl;
+    s := #FINITE_PARTIAL_MULTISET__ARRAY(INT,INT,PARTIAL_INT,FINITE_PARTIAL_INT).init;
+    OUT::s("s is created: empty set").nl;
+    OUT::s("s = ").s(s.str).nl.nl;
+    loop
+      i:=1.upto!(20);
+      x := #FINITE_PARTIAL_INT{elt:=i}.init;
+      s := s.add(x);
+    end;
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("testing stream elts").nl;
+    loop
+      x := s.elts!;
+      OUT::s(x.str).s(" ");
+    end;
+    OUT::nl;
+    loop 
+      i := 1.upto!(20);
+      x := #FINITE_PARTIAL_INT{elt:=i}.init;
+      OUT::s("s.partial_multiplicity(").i(i).s(") = ").i(s.partial_multiplicity(i)).nl;
+      OUT::s("s.partial_member(").i(i).s(") = ").s(s.partial_member(i).str).nl;
+      OUT::s("s.partial_lookup(").i(i).s(") = ").s(s.partial_lookup(i).str).nl;
+    end;
+    begin
+      OUT::s("s.partial_lookup(0) = ").s(s.partial_lookup(0).str).nl;
+    except lookup
+       when EXCEPTION__PARTIAL_MULTISET_LOOKUP then
+          ERR::s(lookup.str).nl;
+          OUT::s("Testing exception EXCEPTION__PARTIAL_MULTISET_LOOKUP successfull").nl;
+       else OUT::s("Testing exception EXCEPTION__PARTIAL_MULTISET_LOOKUP not successfull").nl;
+    end;
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.partial_delete(12) = ");
+    s := s.partial_delete(12);
+    OUT::s(s.str).nl;
+    OUT::s("s.partial_member(0) = ").s(s.partial_member(0).str).nl;
+    OUT::s("s.partial_multiplicity(0) = ").s(s.partial_multiplicity(0).str).nl;
+    OUT::s("s.partial_delete(0) = ");
+    s := s.partial_delete(0);
+    OUT::s(s.str).nl;
+    loop
+      i := 1.upto!(20);
+      x := #FINITE_PARTIAL_INT{elt:=i}.init;
+      s1 := s1.add(x);
+    end;
+    OUT::s("s1 = ").s(s1.str).nl;
+    loop
+      i := 0.upto!(20);
+      x := #FINITE_PARTIAL_INT{elt:=i}.init;
+      OUT::s("s1.multiplicity(").s(x.str).s(") = ").i(s1.multiplicity(x)).nl;
+      OUT::s("s1.partial_multiplicity(").i(i).s(") = ").i(s1.partial_multiplicity(i)).nl;
+      OUT::s("s1.partial_member(").i(i).s(") = ").s(s1.partial_member(i).str).nl;
+      if i>0 then OUT::s("s1.partial_lookup(").i(i).s(") = ").s(s1.partial_lookup(i).str).nl;
+      end;
+    end;
+    OUT::s("Testing stream elts").nl;
+    loop
+      OUT::s(s1.elts!.str).s(" ");
+    end;
+    OUT::nl;
+    OUT::s("s1 = ").s(s1.str).nl;
+    OUT::s("s2 = ").s(s2.str).nl;
+    OUT::s("s1.disjoint_union(s2) = ").s(s1.disjoint_union(s2).str).nl;
+    OUT::s("s1.union(s2) = ").s(s1.union(s2).str).nl;
+    OUT::s("s1.intersect(s2) = ").s(s1.intersect(s2).str).nl;
+    OUT::s("s1.diff(s2) = ").s(s1.diff(s2).str).nl;
+    OUT::s("s1.subset(s2) = ").s(s1.subset(s2).str).nl;
+    OUT::s("s2.subset(s1) = ").s(s2.subset(s1).str).nl;
+
+    loop
+      i := 1.upto!(20);
+      x := #FINITE_PARTIAL_INT{elt:=i}.init;
+      s2 := s2.add(x);
+      if i.mod(2)=0 then s2 := s2.add(x); end;
+      if i.mod(3)=0 then s2 := s2.add(x); end;
+      if i.mod(4)=0 then s2 := s2.add(x); end;
+    end;
+    OUT::s("s2 = ").s(s2.str).nl;
+    loop
+      i := 0.upto!(20);
+      x := #FINITE_PARTIAL_INT{elt:=i}.init;
+      OUT::s("s2.multiplicity(").s(x.str).s(") = ").i(s2.multiplicity(x)).nl;
+      OUT::s("s2.partial_multiplicity(").i(i).s(") = ").i(s2.partial_multiplicity(i)).nl;
+      OUT::s("s2.partial_member(").i(i).s(") = ").s(s2.partial_member(i).str).nl;
+      if i>0 then OUT::s("s2.partial_lookup(").i(i).s(") = ").s(s2.partial_lookup(i).str).nl;
+      end;
+    end;
+    OUT::s("Testing stream elts").nl;
+    loop
+      OUT::s(s2.elts!.str).s(" ");
+    end;
+    OUT::nl;
+    OUT::s("s1 = ").s(s1.str).nl;
+    OUT::s("s2 = ").s(s2.str).nl;
+    OUT::s("s1.disjoint_union(s2) = ").s(s1.disjoint_union(s2).str).nl;
+    OUT::s("s1.union(s2) = ").s(s1.union(s2).str).nl;
+    OUT::s("s1.intersect(s2) = ").s(s1.intersect(s2).str).nl;
+    OUT::s("s1.diff(s2) = ").s(s1.diff(s2).str).nl;
+    OUT::s("s1.subset(s2) = ").s(s1.subset(s2).str).nl;
+    OUT::s("s2.subset(s1) = ").s(s2.subset(s1).str).nl;
+
+    s2 := #FINITE_PARTIAL_MULTISET__ARRAY(INT,INT,PARTIAL_INT,FINITE_PARTIAL_INT).init;
+    loop
+      i := 1.upto!(20);
+      x := #FINITE_PARTIAL_INT{elt:=i}.init;
+      s2 := s2.add(x);
+      if i.mod(2)=0 then s2 := s2.add(x); end;
+      if i.mod(3)=0 then s2 := s2.add(x); end;
+      if i.mod(4)=0 then s2 := s2.add(x); end;
+    end;
+    OUT::s("s2 = ").s(s2.str).nl;
+    loop
+      i := 0.upto!(20);
+      x.elt := i;
+      OUT::s("s2.multiplicity(").s(x.str).s(") = ").i(s2.multiplicity(x)).nl;
+      OUT::s("s2.multiplicity(").s(x.str).s(") = ").i(s2.multiplicity(x)).nl;
+      OUT::s("s2.partial_multiplicity(").i(i).s(") = ").i(s2.partial_multiplicity(i)).nl;
+      OUT::s("s2.partial_member(").i(i).s(") = ").s(s2.partial_member(i).str).nl;
+      if i>0 then OUT::s("s2.partial_lookup(").i(i).s(") = ").s(s2.partial_lookup(i).str).nl;
+      end;
+    end;
+    OUT::s("Testing stream elts").nl;
+    loop
+      OUT::s(s2.elts!.str).s(" ");
+    end;
+    OUT::nl;
+    OUT::s("s1 = ").s(s1.str).nl;
+    OUT::s("s2 = ").s(s2.str).nl;
+    OUT::s("s1.disjoint_union(s2) = ").s(s1.disjoint_union(s2).str).nl;
+    OUT::s("s1.union(s2) = ").s(s1.union(s2).str).nl;
+    OUT::s("s1.intersect(s2) = ").s(s1.intersect(s2).str).nl;
+    OUT::s("s1.diff(s2) = ").s(s1.diff(s2).str).nl;
+    OUT::s("s1.subset(s2) = ").s(s1.subset(s2).str).nl;
+    OUT::s("s2.subset(s1) = ").s(s2.subset(s1).str).nl;
+
+    loop
+      i := 1.upto!(10);
+      x := #FINITE_PARTIAL_INT{elt:=i}.init;
+      s4 := s4.add(x);
+      if i.mod(2)=0 then s4 := s4.add(x); end;
+      if i.mod(3)=0 then s4 := s4.add(x); end;
+      if i.mod(4)=0 then s4 := s4.add(x); end;
+    end;
+    OUT::s("s4 = ").s(s4.str).nl;
+    OUT::s("s4.complement = ").s(s4.complement.str).nl;
+
+  end;
+
+end;
+

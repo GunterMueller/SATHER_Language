@@ -1,0 +1,145 @@
+-- AUTHOR: Frank Schmiedle, Juergen Ruf, Frank Abegg (algprak5@ira.uka.de)
+-- DATE: 28/4/1994
+--
+-- Copyright (C) Universitaet Karlsruhe, 1994
+--
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FILE: bounded_stack.sa
+--*
+--* CLASSES: BOUNDED_STACK(T) EXCEPTION__BOUNDED_STACK__OVERFLOW 
+--* 
+--* IMPLEMENTATION OF:
+--*
+--* CONFORMS TO: 
+--*
+--* IS A: STACK(T)
+--* 
+--* REQUIRED CLASSES: STACK(T) 
+--*
+--* EXCEPTIONS: EXCEPTION__STACK__EMPTY EXCEPTION__BOUNDED_STACK__OVERFLOW EXCEPTION_USER
+--*
+--* TEST CLASS: TEST__BOUNDED_STACK
+--*
+--* FOREIGN FILES: 
+--*
+--  RCS: $Id$
+--  HISTORY: $Log$
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+abstract class BOUNDED_STACK(T) is
+-- * CLASS: BOUNDED_STACK(T)
+-- * DESCRIPTION: standard abstract data type stack with limitation
+-- * SUBCLASS OF:
+-- * SPECIALIZATION OF: STACK(T)
+-- * IMPLEMENTATION OF:
+-- * EXCEPTIONS: EXCEPTION__STACK__EMPTY EXCEPTION__BOUNDED_STACK
+-- * INVARIANT: \
+-- *            act_size < max_size AND \
+-- *            self.push(a).pop = self AND \
+-- *            self.push(a).top = a AND \
+-- *            self.push(a).empty = false AND \
+-- *            FORALL n IN NAT  :  #SAME.init(n).empty = true AND \
+-- *            (self.empty IMPLIES self.pop = error) AND \
+-- *            (self.empty IMPLIES self.top = error) 
+-- * REPRESENTATION:
+-- * COMPLEXITY:
+-- * REFERENCES:
+-- * ATTRIBUTES: readonly max_size:INT -- maximum size of stack \
+-- *             readonly act_size:INT -- actual size of stack
+
+
+   include STACK(T);
+
+   readonly max_size:INT;
+   readonly act_size:INT;
+   
+   init(size:INT) : SAME is 
+   -- * METHOD: init(size:INT) : SAME
+   -- * DESCRIPTION: initialization of bounds
+   -- * PRE: NOT self = void
+   -- * POST: NOT res = void AND \
+   -- *       max_size = size AND \
+   -- *       act_size = 0    
+   -- * COMPLEXITY: 
+   -- * REFERENCES:
+
+      deferred;
+   end;
+
+   push (a : T):SAME is 
+   -- * METHOD: push(a:T) : SAME
+   -- * DESCRIPTION: abstract constructor method inserting a
+   -- * PRE: NOT self = void AND \
+   -- *      act_size < max_size 
+   -- * POST: res.top = a AND \
+   -- *       res.act_size = self.act_size + 1
+   -- * COMPLEXITY:
+   -- * REFERENCES:
+
+      deferred;
+   end;
+
+   empty:BOOL is
+   -- * METHOD: empty:BOOL
+   -- * DESCRIPTION: abstract method checking whether stack is empty
+   -- * PRE: NOT self = void
+   -- * POST: res = (act_size = 0)
+   -- * COMPLEXITY:
+   -- * REFERENCES:
+
+
+     deferred;
+   end;
+
+   pop:SAME is 
+   -- * METHOD: pop:SAME
+   -- * DESCRIPTION: abstract method deleting the last insertion
+   -- * PRE: NOT self = void AND NOT self.empty
+   -- * POST: self == res.push(self.top)
+   -- * COMPLEXITY:
+   -- * REFERENCES:
+
+
+     deferred;
+
+   end;
+
+   top : T is 
+   -- * METHOD: top:T
+   -- * DESCRIPTION: abstract method returning the last inserted element
+   -- * PRE: NOT self = void AND NOT self.empty
+   -- * POST: EXISTS l:STACK(T),a:T : self = l.push(a) AND res=a
+   -- * COMPLEXITY:
+   -- * REFERENCES:
+
+
+     deferred;
+   end;
+
+   str : STR is 
+
+     deferred;
+   end;
+
+end;--class BOUNDED_STACK(T)
+
+
+class EXCEPTION__BOUNDED_STACK__OVERFLOW is
+  subtype of EXCEPTION_USER;
+
+  const name:STR := "ERROR: stack overflow in bounded stack";
+
+end; -- class EXCEPTION__BOUNDED_STACK__OVERFLOW
+
+class TEST__BOUNDED_STACK is
+  main is
+    st:$BOUNDED_STACK(INT) := #BOUNDED_STACK(INT).init(5);
+    ERR::s("creation of abstract class succeeded").nl;
+  end;
+end; -- class TEST__BOUNDED_STACK
+
+
+
+
+
+

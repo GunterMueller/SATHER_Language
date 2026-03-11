@@ -1,0 +1,51 @@
+--* Last edited: Feb  2 23:06 1994 (holzw)
+--
+-- test conformance in used features
+
+value class A is
+  i: INT;
+end;
+
+value class B is
+  subtype of A;
+end;
+
+value class D is
+  subtype of B;
+  i: $A;		-- error: not under INT
+  foo is
+    i:=i;
+  end;
+end;
+
+class s1 is
+  f: FLT;
+
+  foo(x:SAME):SAME is
+    res:= x;
+  end;
+end;
+
+class s2 is
+  subtype of s1;
+end;
+
+class s3 is
+  subtype of s2: f->flt, 
+		 doesnt_exist -> doesnt_matter;
+  f: INT;
+end;
+
+class SBINC_E2 is
+  main is
+    a:A;
+    b:B;
+    c:D;
+
+    x:$A;
+
+    a.i:=1;
+    b.i:=1;
+    c.i:=a;
+  end;
+end;

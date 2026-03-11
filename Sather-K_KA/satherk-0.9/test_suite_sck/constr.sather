@@ -1,0 +1,13 @@
+SOURCE_FILES are
+   constr.sa
+   /uni/local/tools/sck/lib/data_structure/queue.sa
+end;
+
+KEYS are
+   
+end;
+
+C_NAMES are
+   
+
+end;

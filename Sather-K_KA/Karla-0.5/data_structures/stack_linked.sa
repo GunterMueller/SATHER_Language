@@ -1,0 +1,247 @@
+-- AUTHOR: Wolf Zimmermann
+-- DATE: Mar 8, 1994
+--
+-- Copyright (C) Universitaet Karlsruhe, 1994
+--
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FILE: stack_linked.sa
+--*
+--* CLASSES: STACK__LINKED(T)
+--*
+--* IMPLEMENTATION OF: STACK(T)
+--*
+--* CONFORMS TO:
+--*
+--* IS A:
+--* 
+--* REQUIRED CLASSES: STACK(T) EXCEPTION__STACK__EMPTY
+--* 
+--* EXCEPTIONS: EXCEPTION__STACK__EMPTY
+--*
+--* TEST CLASS: TEST__STACK__LINKED
+--* 
+--* FOREIGN FILES:
+--*
+-- RCS: $Id$
+-- HISTORY: $log$
+--  * Last edited: Apr 13 17:40 1994 (frick)
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+class STACK__LINKED(T) is -- subtype of
+   -- * CLASS: STACK__LINKED(T)
+   -- * DESCRIPTION: implementation of abstract data type stack via pointers
+   -- * SUBCLASS OF:
+   -- * SPECIALIZATION OF:
+   -- * IMPLEMENTATION OF: STACK(T)
+   -- * EXCEPTIONS: EXCEPTION__STACK
+   -- * INVARIANT: STACK::Inv AND \
+   -- *    empty IFF self=void AND  top=a AND pop=s
+   -- * REPRESENTATION:
+   -- * COMPLEXITY: \
+   -- *   static SIZE = 1 + s.SIZE \
+   -- *   static MAXSIZE = max(a.SIZE,s.MAXSIZE) AND void.MAXSIZE=0\
+   -- *   cumulative SPACE(n) = O(n) \
+   -- *   additive TIME(n) = O(n) \
+   -- * REFERENCES: 
+   -- * ATTRIBUTES: a:T                -- top element \
+   -- *             s:STACK__LINKED(T) -- stack without top element \
+   -- *             size: INT          -- size of stack
+
+
+   subtype of STACK(T);
+   a:T; -- entry for insertion
+   s:STACK__LINKED(T); -- remaining stack
+
+   init:SAME is 
+     -- * METHOD: init:SAME
+     -- * DESCRIPTION: initialization of STACK__LINKED
+     -- * PRE: NOT self=void
+     -- * POST: res=self
+     -- * COMPLEXITY: \
+     -- * SIZE__init = 0 \
+     -- * MAXSIZE__init = 0 \
+     -- * SPACE__init = O(1) \
+     -- * TIME__init = O(1)
+     -- * REFERENCES:
+
+     res:=self; 
+   end;
+   
+
+   push(a:T):SAME is
+      -- * METHOD: push(a:T):SAME
+      -- * DESCRIPTION: inserts an element onto stack
+      -- * PRE: NOT self=void
+      -- * POST: res.a = a AND res.s = self
+      -- * COMPLEXITY: \
+      -- * SIZE__push(self.SIZE,a.SIZE) = self.SIZE + 1\
+      -- * MAXSIZE__push(self.MAXSIZE,a.SIZE) = max(self.MAXSIZE,a.SIZE)\
+      -- * SPACE__push(self.SIZE,a.SIZE) = O(1) \
+      -- * TIME__push(self.SIZE,a.SIZE) = O(1)
+      -- * REFERENCES:
+
+      --assert (pre) not(self=void) end;
+
+      res := #SAME;
+      res.a := a;
+      res.s := self;
+
+      --assert (post) res.a = a and res.s = self end;
+
+   end; -- push
+
+
+
+
+   empty:BOOL is
+      -- * METHOD: empty:BOOL
+      -- * DESCRIPTION: checks whether the stack is empty
+      -- * PRE: NOT self=void
+      -- * POST: res = (self.a=void AND self.s=void)
+      -- * COMPLEXITY: \
+      -- * SIZE__empty(self.SIZE) = 1 \
+      -- * SPACE__empty(self.SIZE) = O(1) \
+      -- * TIME__empty(self.SIZE) = O(1)
+      -- * REFERENCES:
+
+
+      res := (a=void and s=void);
+
+
+   end; -- empty
+
+
+
+   
+   pop:SAME is
+      -- * METHOD: pop:SAME
+      -- * DESCRIPTION: removes the last inserted element
+      -- * PRE: NOT self=void AND NOT self.empty
+      -- * POST: res = s
+      -- * COMPLEXITY:\
+      -- * SIZE__pop(self.SIZE) = self.SIZE - 1 \
+      -- * MAXSIZE__pop(self.MAXSIZE) = self.MAXSIZE \
+      -- * SPACE__pop(self.SIZE) = O(1) \
+      -- * TIME__pop(self.SIZE) = O(1)
+      -- * REFERENCES:
+
+      --assert (pre)  not(self.empty) end;
+
+   if empty then #EXCEPTION__STACK__EMPTY.raise;
+   else res := s; end;
+
+
+end; -- pop
+
+
+
+
+
+   top:T is
+      -- * METHOD: top:T
+      -- * DESCRIPTION: returns the last inserted element
+      -- * PRE: NOT self=void AND NOT self.empty
+      -- * POST: res = a
+      -- * COMPLEXITY:\
+      -- * SIZE__top(self.SIZE,self.MAXSIZE) = self.MAXSIZE \
+      -- * SPACE__top(self.SIZE,self.MAXSIZE) = O(self.MAXSIZE) \
+      -- * TIME__pop(self.SIZE) = O(1)
+      -- * REFERENCES:
+
+      --assert (pre) not(self.empty) end;
+
+   if empty then #EXCEPTION__STACK__EMPTY.raise;
+   else res := a; end;
+   
+
+end; -- top
+
+
+
+
+
+
+   str:STR is
+      -- transforming a stack into string representation
+      s: STACK__LINKED(T) := self;
+      res := "[";
+      until s.empty loop 
+	 typecase x:T := s.top
+	 when STR then res := res.s(x);
+	 else res := res.s(x.str);
+	 end;
+	 s := s.pop;
+	 if not s.empty then res := res.s(","); end;
+      end;
+      res := res.s("]");
+   end; -- str
+
+
+end; -- STACK__LINKED
+
+
+
+
+
+class TEST__STACK__LINKED is
+   -- tests class STACK__LINKED(T)
+
+   main is
+      s : $STACK(INT) := #STACK__LINKED(INT).init;
+      x : INT;
+      if s.empty
+      then OUT::s("s.empty is true").nl;
+      else OUT::s("s.empty is false").nl;
+      end;--if
+      OUT::s("s = ");
+      OUT::s(s.str).nl;
+      s := s.push(1);
+      OUT::s("s.push(").i(s.top).s(")").nl;
+      OUT::s("s = ");
+      OUT::s(s.str).nl;
+      s := s.push(2);
+      OUT::s("s.push(").i(s.top).s(")").nl;
+      OUT::s("s = ");
+      OUT::s(s.str).nl;
+      s := s.push(3);
+      OUT::s("s.push(").i(s.top).s(")").nl;
+      OUT::s("s = ");
+      OUT::s(s.str).nl;
+
+      if s.empty
+      then OUT::s("s.empty is true").nl;
+      else OUT::s("s.empty is false").nl;
+      end;--if
+
+	 -- skip first element
+      s := s.pop;
+      OUT::s("s.pop").nl;
+      OUT::s("s = ");
+      OUT::s(s.str).nl;
+      OUT::s("s.top = ").i(s.top).nl;
+
+      s := s.pop;
+      OUT::s("s.pop").nl;
+      OUT::s("s = ");
+      OUT::s(s.str).nl;
+      OUT::s("s.top = ").i(s.top).nl;
+
+	 -- now pop until error
+      begin
+	 s := s.pop;
+	 OUT::s("s = ");
+	 OUT::s(s.str).nl;
+	 s := s.pop;
+	 OUT::s("s = ");
+	 OUT::s(s.str).nl;
+	 x := s.top;
+	 except emptypop
+      when EXCEPTION__STACK__EMPTY then 
+	  ERR::s(emptypop.str).nl;
+	  OUT::s("exception test EXCEPTION__STACK__EMPTY successfull").nl;
+      else OUT::s("exception test EXCEPTION__STACK__EMPTY not successfull").nl;
+      end;
+   end;--main
+
+
+end; --class TEST__STACK__LINKED

@@ -1,0 +1,31 @@
+--* Last edited: Feb  2 23:06 1994 (holzw)
+--
+-- mini test file for temp tests
+
+pragma rhabarber rhabarber schwupp di doo! @#$% ))*&^
+
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+class ZWEI is
+--   a,b: INT;
+   str: STR;
+end;
+
+class MINI is
+  private i: INT;
+
+  main is
+     x,y: ZWEI;
+--     x:= #ZWEI{1,2};
+     y:= #ZWEI{"Huhu".s(" Peter")};
+--     OUT::s("y.a: ").i(y.a).s(",  y.b: ").i(y.b).nl;
+OUT::s("huhu".s(" Peter")).nl;
+OUT::s(y.str);
+     n: SAME:= #SAME;
+     n.i:= 5;
+     n.huihu;
+  end;
+
+  private huihu is
+     OUT::s("fadsas").nl;
+  end;
+end;

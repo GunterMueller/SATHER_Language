@@ -1,0 +1,15 @@
+SOURCE_FILES are
+   mini.sa
+   /uni/holzw/sather-k/test_lib/numerical/math.sa
+   /uni/holzw/sather-k/test_lib/base/random.sa
+   /uni/holzw/sather-k/test_lib/base/time.sa
+end;
+
+KEYS are
+   
+end;
+
+C_NAMES are
+   
+
+end;

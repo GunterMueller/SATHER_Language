@@ -1,0 +1,211 @@
+-- Author: Wolf Zimmermann (zimmer@ira.uka.de)
+-- Copyright (C) Universitaet Karlsruhe, 1994
+--
+-- COPYRIGHT NOTICE: This code is provided "AS IS" WITHOUT ANY WARRANTY
+-- and is subject to the terms of the KARLA LIBRARY GENERAL PUBLIC
+-- LICENSE contained in the file: "doc/license.txt" of the 
+-- distribution. 
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FILE: partial_bag.sa
+--*
+--* CLASSES: PARTIAL_MULTISET(K,T1,T<PARTIAL(K,T1)) EXCEPTION__PARTIAL_MULTISET_LOOKUP EXCEPTION__PARTIAL_MULTISET_INS
+--* 
+--* IMPLEMENTATION OF: 
+--*
+--* CONFORMS TO: MULTISET(T)
+--*
+--* IS A: MULTISET(T)
+--*
+--* REQUIRED CLASSES: MULTISET(T) PARTIAL(K,T) PARTIAL_INT
+--*
+--* EXCEPTIONS: EXCEPTION__PARTIAL_MULTISET_LOOKUP  EXCEPTION__MULTISET
+--*
+--* TEST CLASS: TEST__PARTIAL_MULTISET
+--*
+--* FOREIGN FILES:
+--*
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--
+-- RCS: $Id$
+-- HISTORY:$Log$
+--
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+abstract class PARTIAL_MULTISET(K,T1,T<PARTIAL(K,T1)) is
+   -- * CLASS: PARTIAL_MULTISET(K,T1,T<PARTIAL(K,T1))
+   -- * DESCRIPTION: abstract class defining multisets with partial key access
+   -- * SUBCLASS OF: MULTISET(T)
+   -- * SPECIALIZATION OF: MULTISET(T)
+   -- * IMPLEMENTATION OF: 
+   -- * EXCEPTIONS: EXCEPTION__PARTIAL_MULTISET_LOOKUP  EXCEPTION__MULTISET
+   -- * INVARIANT: MULTISET(T)::Inv AND \
+   -- *     (FORALL a:K: EXISTS t:T: t.key=a IMPLIES partial_member(a)=true) AND \
+   -- *     (FORALL a:K: partial_member(a) IMPLIES partial_lookup(a).key = a) AND \
+   -- *     (FORALL a:K: NOT partial_member(a) IMPLIES partial_multiplicity(a) = 0) AND \
+   -- *     (FORALL a:K: EXISTS s':PARTIAL_MULTISET(T),x:T: s = s'.insert(x) AND x.key=a IMPLIES s.partial_multiplicity(a) = s'.partial_multiplicity(a) + 1 ) AND \
+   -- *     (FORALL a:K: EXISTS s':PARTIAL_MULTISET(T),x:T: s = s'.insert(x) AND NOT x.key=a IMPLIES s.partial_multiplicity(a) = s'.partial_multiplicity(a)) AND \
+   -- *     (FORALL a:K: NOT partial_member(a) IMPLIES s.partial_delete(a)==s) AND \
+   -- *     (FORALL a:K: partial_member(a) IMPLIES s.partial_delete(a).partial_multiplicity(a) = s.partial_multiplicity(a)-1)
+   -- * REPRESENTATION:
+   -- * COMPLEXITY:
+   -- *     static      SIZE = size; \
+   -- *                 ##.init.MAXSIZE = 0 AND \
+   -- *                 MAXSIZE = max(choose.SIZE,delete(choose).MAXSIZE)\ 
+   -- *                 ##.init.KEYSIZE = 0 AND \
+   -- *                 KEYSIZE = max(choose.key.SIZE,delete(choose).KEYSIZE)
+   -- * REFERENCES: [Aho, Hopcroft, Ullman: "The Design and Analysis \
+   -- *               of Computer Algorithms", Addison-Wesley, 1974]
+   -- * ATTRIBUTES: size : INT
+
+   subtype of MULTISET(T);
+
+   partial_lookup(k:K):T is
+      -- * METHOD: partial_lookup(k:K):T
+      -- * DESCRIPTION: finds an element with k as key
+      -- * PRE: partial_member(k)
+      -- * POST: res.key=k AND member(res)
+      -- * COMPLEXITY: \
+      -- * SIZE__partial_lookup(self.SIZE,k.SIZE) = max(x.SIZE; member(x))
+      -- * SPACE__partial_lookup(self.SIZE,k.SIZE,self.KEYSIZE) = O(\
+      -- * |    max(SPACE_elts(self.SIZE,self.SIZE),
+      -- * |        K::TIME__is_equal(self.KEYSIZE,k.SIZE))) \
+      -- * TIME__partial_lookup(self.SIZE,k.SIZE,self.KEYSIZE) = O( \
+      -- * |   TIME__elts(self.SIZE,self.SIZE) + \
+      -- * |   self.SIZE*K::TIME__is_equal(self.KEYSIZE,k.SIZE))
+      -- * REFERENCES: 
+
+      loop
+	 item:T:=elts!;
+	 if item.key=k then
+	    res:=item;
+            return;
+	 end;
+      end;
+      #EXCEPTION__PARTIAL_MULTISET_LOOKUP.raise;
+   end;
+
+   partial_delete(k:K):SAME is
+     -- * METHOD: partial_delete(k:K):SAME
+     -- * DESCRIPTION: deletes an element with key k if there is one in self
+     -- * PRE: true
+     -- * POST: (partial_member(k) IMPLIES \
+     -- * |   res.partial_multiplicity(k)=partial_multiplicity(k)-1 AND \
+     -- * |   FORALL k1:K: NOT k1=k IMPLIES res.partial_multiplicity(k1)=partial_multiplicity(k1)) AND \
+     -- * (NOT partial_member(k) IMPLIES res==self)
+     -- * COMPLEXITY: \
+     -- * SIZE__partial_delete(self.SIZE,k.SIZE) = self.SIZE \
+     -- * MAXSIZE__partial_delete(self.MAXSIZE,k.SIZE) = self.MAXSIZE \
+     -- * KEYSIZE__partial_delete(self.KEYSIZE,k.SIZE) = self.KEYSIZE \
+     -- * SPACE__partial_delete(self.SIZE,k.SIZE,self.MAXSIZE,self.KEYSIZE) = O( \
+     -- * |  max(SPACE__member(self.SIZE,k.SIZE,self.KEYSIZE),\
+     -- * |      SPACE__partial_lookup(self.SIZE,k.SIZE,self.KEYSIZE),\
+     -- * |      SPACE__delete(self.SIZE,self.MAXSIZE))) \
+     -- * TIME__partial_delete(self.SIZE,k.SIZE,self.MAXSIZE,self.KEYSIZE) = O(\
+     -- * |   TIME__partial_member(self.SIZE,k.SIZE,self.KEYSIZE) + \
+     -- * |   TIME__partial_lookup(self.SIZE,k.SIZE,self.KEYSIZE) + \
+     -- * |   TIME__delete(self.SIZE,self.MAXSIZE))
+     -- * REFERENCES:
+
+     if partial_member(k) 
+     then x:T := partial_lookup(k);
+	  res := delete(x);
+     else res := self;
+     end;
+   end;
+
+   partial_member(k:K):BOOL is
+      -- * METHOD:  partial_member(k:K):BOOL
+      -- * DESCRIPTION: determines whether there exists an entry for key k
+      -- * PRE: true
+      -- * POST: res=true IFF  EXISTS item: member(item) AND item.key=k
+      -- * COMPLEXITY: \
+      -- * SIZE__partial_member(self.SIZE,k.SIZE) = 1\
+      -- * SPACE__partial_member(self.SIZE,k.SIZE,self.KEYSIZE) = O(\
+      -- * |      max(SPACE__elts(self.SIZE,self.SIZE),
+      -- * |          K::SPACE__is_equal(self.KEYSIZE,k.SIZE)))\
+      -- * TIME__partial_member(self.SIZE,k.SIZE,self.KEYSIZE) = O( \
+      -- * |   TIME__elts(self.SIZE,self.SIZE) + \
+      -- * |   self.SIZE*K::TIME__is_equal(self.KEYSIZE,k.SIZE))
+      -- * REFERENCES: 
+
+      item:T;
+      res:=false;
+      loop
+	 item:=elts!;
+	 if item.key=k then
+	    res:=true; 
+            return;
+	 end;
+      end;     
+   end;
+
+   partial_multiplicity(k:K):INT is
+      -- * METHOD:  partial_multiplicity(k:K):INT
+      -- * DESCRIPTION: determines the number of elements with key k
+      -- * PRE: true
+      -- * POST: NOT partial_member(k) IMPLIES res=0 AND \
+      -- * partial_member(k) IMPLIES res=1+partial_delete(k).partial_multiplicity(k)
+      -- * COMPLEXITY: \
+      -- * SIZE__partial_multiplicity(self.SIZE,k.SIZE) = 1\
+      -- * SPACE__partial_multiplicity(self.SIZE,k.SIZE,self.KEYSIZE) = O(\
+      -- * |      max(SPACE__elts(self.SIZE,self.SIZE),
+      -- * |          K::SPACE__is_equal(self.KEYSIZE,k.SIZE)))\
+      -- * TIME__partial_multiplicity(self.SIZE,k.SIZE,self.KEYSIZE) = O( \
+      -- * |   TIME__elts(self.SIZE,self.SIZE) + \
+      -- * |   self.SIZE*K::TIME__is_equal(self.KEYSIZE,k.SIZE))
+      -- * REFERENCES: 
+
+      item:T;
+      res:=0;
+      loop
+	 item:=elts!;
+	 if item.key=k then res:=res+1; end;
+      end;     
+   end;
+
+end;
+
+
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+class EXCEPTION__PARTIAL_MULTISET_LOOKUP is
+   -- * CLASS: EXCEPTION__PARTIAL_MULTISET_LOOKUP
+   -- * DESCRIPTION: exceptions of partial set: lookup on non-existent key
+   -- * SUBCLASS OF: 
+   -- * SPECIALIZATION OF: 
+   -- * IMPLEMENTATION OF: 
+   -- * EXCEPTIONS: 
+   -- * INVARIANT: 
+   -- * COMPLEXITY: 
+   -- * REFERENCES:
+   -- * ATTRIBUTES: name:STR -- error message
+
+   subtype of EXCEPTION_USER;
+   const name:STR := "PARTIAL_MULTISET::partial_lookup: element not in set";
+
+end;
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+class TEST__PARTIAL_MULTISET is
+-- * CLASS: TEST__PARTIAL_MULTISET
+-- * DESCRIPTION: 
+-- * SUBCLASS OF: 
+-- * SPECIALIZATION OF: 
+-- * IMPLEMENTATION OF: 
+-- * EXCEPTIONS: 
+-- * INVARIANT: 
+-- * COMPLEXITY: 
+-- * REFERENCES: 
+
+
+   main is
+      a:$MULTISET(PARTIAL_INT):=#PARTIAL_MULTISET(INT,INT,PARTIAL_INT).init;
+      ERR::s("creation of abstract class succeeded.\n");
+   end;
+
+end; -- class TEST__PARTIAL_MULTISET
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

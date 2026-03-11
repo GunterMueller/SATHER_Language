@@ -1,0 +1,90 @@
+# 1 "sys/C/GC/Mkf.cpp" 
+# 
+# HISTORY:
+# *  Mar  1 22:57 1992 (hws): Integrated GC V1.9
+# *  Feb  2 15:10 1992 (hws): Shared defaults by prefixing later.
+
+
+OBJS= alloc.o reclaim.o allochblk.o misc.o mach_dep.o mark_roots.o
+# add rt_allocobj.o for RT version
+# 11 "sys/C/GC/Mkf.cpp" 
+
+
+SRCS= reclaim.c allochblk.c misc.c alloc.c mach_dep.c rt_allocobj.s mips_dep.s mark_roots.c
+
+# 17 "sys/C/GC/Mkf.cpp" 
+
+CFLAGS= -O -D${GCSILENT}
+
+
+# Set SPECIALCFLAGS to -q nodirect_code on Encore.
+# On Sun systems under 4.0, it is probably safer to link with -Bstatic.
+# I am not sure that all static data will otherwise be found.
+# It also makes sense to replace -O with -O4, though it does not appear
+# to make much difference.
+
+# added above encore as conditionalization, is "NS32K" the right symbol?
+# Also merged the reported mips option.
+# 31 "sys/C/GC/Mkf.cpp" 
+
+# 34 "sys/C/GC/Mkf.cpp" 
+
+SPECIALCFLAGS =
+
+
+
+all: gc.a gctest
+
+$(OBJS): gc.h
+
+# ranlib on SysV not used. Use - in front.
+
+gc.a: $(OBJS)
+	$(AR) ru gc.a $(OBJS)
+	-$(RANLIB) gc.a
+
+# mach_dep.c does not like optimization
+# on a MIPS machine, move mips_dep.s to mach_dep.s and remove
+# mach_dep.c as well as the following two lines from this Makefile
+# 55 "sys/C/GC/Mkf.cpp" 
+
+# 59 "sys/C/GC/Mkf.cpp" 
+
+mach_dep.o: mach_dep.c
+	$(CC) -c ${SPECIALCFLAGS} mach_dep.c
+
+
+
+clean: 
+	-rm -f gc.a test.o cons.o gctest output-local output-diff $(OBJS) \
+	   setjmp_test
+
+test.o: cons.h test.c
+
+cons.o: cons.h cons.c
+
+# On a MIPS system, the BSD version of libc.a should be used to get
+# sigsetmask.  I found it necessary to link against the system V
+# library first, to get a working version of fprintf.  But this may have
+# been due to my failure to find the right version of stdio.h or some
+# such thing.
+gctest: test.o cons.o gc.a
+	if [ ${SKIPGC} = NO ] ; then \
+	   $(CC) $(CFLAGS) -o gctest test.o cons.o gc.a ; \
+	else \
+	   $(CC) $(CFLAGS) -c -o gctest test.o cons.o gc.a ; \
+	fi
+
+setjmp_test: setjmp_test.c gc.h
+	$(CC) -o setjmp_test -O setjmp_test.c
+
+test: setjmp_test gctest
+	./setjmp_test
+	@echo "WARNING: for GC test to work, all debugging output must be turned off"
+	rm -f output-local
+	gctest > output-local
+	-diff correct-output output-local > output-diff
+	-@test -s output-diff && ${ECHO} 'Output of program "gctest" is not correct.  GC does not work.' || ${ECHO} 'Output of program "gctest" is correct.  GC probably works.' 
+	
+shar:
+	makescript -o gc.shar README Makefile.cpp gc.h ${SRCS} test.c cons.c cons.h

@@ -1,0 +1,349 @@
+-- File: bounded_bag.sa
+-- Author: Wolf Zimmermann
+-- Copyright (C) Universitaet Karlsruhe, 1994
+--
+-- COPYRIGHT NOTICE: This code is provided "AS IS" WITHOUT ANY WARRANTY
+-- and is subject to the terms of the KARLA LIBRARY GENERAL PUBLIC
+-- LICENSE contained in the file: "doc/license.txt" of the 
+-- distribution. 
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FILE: bounded_bag.sa
+--*
+--* CLASSES: BOUNDED_MULTISET(T) EXCEPTION__BOUNDED_MULTISET_INS EXCEPTION__BOUNDED_MULTISET_UNION
+--* 
+--* IMPLEMENTATION OF: 
+--*
+--* CONFORMS TO: 
+--*
+--* IS A: MULTISET(T)
+--*
+--* REQUIRED CLASSES: MULTISET(T)
+--*
+--* EXCEPTIONS: EXCEPTION__BOUNDED_MULTISET_INS EXCEPTION__BOUNDED_MULTISET_UNION EXCEPTION_USER EXCEPTION__MULTISET
+--*
+--* TEST CLASS: TEST__BOUNDED_MULTISET
+--*
+--* FOREIGN FILES:
+--*
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--
+-- RCS: $Id$
+-- HISTORY: $Log$
+--
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+abstract class BOUNDED_MULTISET(T) is
+   -- * CLASS: BOUNDED_MULTISET(T)
+   -- * DESCRIPTION: abstract class defining Sets with limited number of elements
+   -- * SUBCLASS OF: 
+   -- * SPECIALIZATION OF: MULTISET(T)
+   -- * IMPLEMENTATION OF: 
+   -- * EXCEPTIONS: EXCEPTION__BOUNDED_MULTISET_INS EXCEPTION__BOUNDED_MULTISET_UNION \
+   -- * EXCEPTION__MULTISET
+   -- * INVARIANT: BOUNDED_MULTISET::Inv AND  size<=max_size
+   -- * REPRESENTATION:
+   -- * COMPLEXITY: \
+   -- *     static      SIZE = size; \
+   -- *                 ##.init.MAXSIZE = 0 AND \
+   -- *                 MAXSIZE = max(choose.SIZE,delete(choose).MAXSIZE)
+   -- * REFERENCES: [Aho, Hopcroft, Ullman: "The Design and Analysis \
+   -- *               of Computer Algorithms", Addison-Wesley, 1974]
+   -- * ATTRIBUTES: size:INT \
+   -- *     readonly max_size:INT 
+
+   include MULTISET(T): init ->, disjoint_union ->, subset ->, union-> , diff -> , intersect -> ;
+
+   readonly max_size:INT;
+
+init(size:INT):SAME is
+-- * METHOD: init(size:INT):SAME
+-- * DESCRIPTION: initializes bounded multiset with at most size elemtens
+-- * PRE: NOT self=void
+-- * POST: NOT res=void
+-- * COMPLEXITY: \
+-- *     SIZE__init = 0; \
+-- *     MAXSIZE__init = 0; \
+-- * REFERENCES:
+
+  deferred;
+end;
+
+   add(t:T) : SAME is
+   -- * METHOD: add(t:T):SAME
+   -- * DESCRIPTION: abstract method adding t into self \
+   -- *              If self.size=max_size an exception is raised
+   -- * PRE: size < max_size
+   -- * POST: res.multiplicity(t) = multiplicity(t) + 1 AND res.size=size+1
+   -- * COMPLEXITY: \
+   -- *     SIZE__add(self.SIZE,t.SIZE) = self.SIZE+1; \
+   -- *     MAXSIZE__add(self.MAXSIZE,t.SIZE) = max(self.MAXSIZE,t.SIZE);
+   -- * REFERENCES:
+
+      deferred;
+   end;
+
+   insert(t:T):SAME is
+   -- * METHOD: insert(t:T):SAME
+   -- * DESCRIPTION: abstract method adding t into self idempotent
+   -- * PRE: member(t) OR size<max_size
+   -- * POST: res.multiplicity(t) =  1 AND \
+   -- *    (member(t) IMPLIES res.size=size) AND \
+   -- *    (NOT member(t) IMPLIES res.size=size+1) AND \
+   -- * COMPLEXITY:  \
+   -- *     SIZE__insert(self.SIZE,t.SIZE) = self.SIZE+1; \
+   -- *     MAXSIZE__insert(self.MAXSIZE,t.SIZE) = max(self.MAXSIZE,t.SIZE);
+   -- * REFERENCES:
+      deferred;
+   end;
+
+
+   disjoint_union(s : $BOUNDED_MULTISET(T)) : SAME
+   is
+      -- * METHOD: disjoint_union(s:$BOUNDED_MULTISET(T)):SAME
+      -- * DESCRIPTION: abstract method for disjoint union of self and s
+      -- * PRE:   size+s.size<=max_size
+      -- * POST:  FORALL x:T: res.multiplicity(x)  = multiplicity(x) + s.multiplicity(x) AND \
+      -- * res.size = size+s.size
+      -- * COMPLEXITY: \
+      -- *  SIZE__disjoint_union(self.SIZE,s.SIZE) = self.SIZE + s.SIZE \
+      -- *  MAXSIZE__disjoint_union(self.MAXSIZE,s.MAXSIZE) = max(self.MAXSIZE,s.MAXSIZE) \
+      -- * cumulative SPACE(self.SIZE,s.SIZE) = \
+      -- * |     O(max(SIZE_copy_set(self.SIZE),res.SIZE,\
+      -- *         $BOUNDED_MULTISET(T)::SPACE_elts(s.SIZE,SIZE__elts(s.SIZE)), \
+      -- *         SPACE_add(self.SIZE+s.SIZE,s.MAXSIZE))) \
+      -- * additive TIME(self.SIZE,s.SIZE) =O( \
+      -- * |  TIME_copy_set(self.SIZE) + \
+      -- * |  $BOUNDED_MULTISET(T)::TIME_elts(s.SIZE,s.SIZE) + \
+      -- * |  SIZE__elts(s.SIZE)*TIME_add(self.SIZE+s.SIZE,s.MAXSIZE))
+      -- * REFERENCES:
+  
+      if size+s.size>=max_size then #EXCEPTION__BOUNDED_MULTISET_UNION.raise; end;
+      res := copy_set;
+      loop
+         res.add(s.elts!);
+      end; -- loop
+   end; -- disjoint_union
+
+   union(s:$BOUNDED_MULTISET(T)):SAME is
+   -- * METHOD: union(s:$BOUNDED_MULTISET(T)):SAME
+   -- * DESCRIPTION: abstract method for union of self and s. If the size of the 
+   -- *              result would be larger than max_size an exception is raised
+   -- * PRE:  self.size + s.diff(self).size<=max_size
+   -- * POST:  FORALL x:T: res.multiplicity(x) = max(multiplicity(x),s.multiplicity(x)) AND \
+   -- * res.size = sum(x:T,res.multiplicity(x))
+   -- * COMPLEXITY: \
+      -- * SIZE__union(self.SIZE,s.SIZE) = self.SIZE + s.SIZE \
+      -- * MAXSIZE__union(self.MAXSIZE,s.MAXSIZE) = max(self.MAXSIZE,s.MAXSIZE) \
+      -- * SPACE__union(self.SIZE,s.SIZE,s.MAXSIZE) = O(\
+      -- * |   max(SPACE_copy_set(self.SIZE), \
+      -- * |       $BOUNDED_MULTISET(T)::SPACE_elts(s.SIZE,s.SIZE), \
+      -- * |       SPACE_multiplicity(res.SIZE,item.SIZE), \
+      -- * |       $BOUNDED_MULTISET(T)::SPACE_multiplicity(s.SIZE,item.SIZE), \
+      -- * |       SPACE_add(res.SIZE,item.SIZE), \
+      -- * |       self.SIZE+s.SIZE)) \
+      -- * additive TIME__union(self.SIZE,s.SIZE,s.MAXSIZE) = O( \
+      -- * |  TIME_copy_set(self.SIZE) + \
+      -- * |  $BOUNDED_MULTISET(T)::TIME_elts(s.SIZE,s.SIZE) + \
+      -- * |  s.SIZE*TIME_multiplicity(self.SIZE+s.SIZE,s.MAXSIZE) + \
+      -- * |  s.SIZE*$BOUNDED_MULTISET(T)::TIME_multiplicity(s.SIZE,s.MAXSIZE) + \
+      -- * |  s.SIZE*TIME_add(self.SIZE+s.SIZE,s.MAXSIZE))
+   -- * REFERENCES:
+
+      item:T;
+      res := copy_set;
+
+      loop
+         item :=s.elts!;
+         if  res.multiplicity(item) < s.multiplicity(item)
+         then
+            if res.size >=max_size then #EXCEPTION__BOUNDED_MULTISET_UNION.raise;
+            else res.add(item);
+            end;
+         end; -- if
+      end; -- loop
+
+   end; -- union
+
+
+   intersect(s:$BOUNDED_MULTISET(T)):SAME is
+   -- * METHOD: intersect(s:$BOUNDED_MULTISET(T)):SAME
+   -- * DESCRIPTION: abstract method for intersection of self and s
+   -- * PRE:   true
+   -- * POST:  FORALL x:T: res.multiplicity(x) = min(multiplicity(x),s.multiplicity(x)) AND \
+   -- * res.size = sum(x:T,res.multiplicity(x))
+   -- * COMPLEXITY: \
+   -- * SIZE__intersect(self.SIZE,s.SIZE) = min(self.SIZE,s.SIZE) \
+   -- * MAXSIZE__intersect(self.MAXSIZE,s.MAXSIZE) = min(self.MAXSIZE,s.MAXSIZE) \
+   -- * SPACE__intersect(self.SIZE,s.SIZE,self.MAXSIZE) = O(\
+   -- * |   max(SPACE_elts(s.SIZE,s.SIZE), \
+   -- * |       SPACE_init, \
+   -- * |       SPACE_multiplicity(min(self.SIZE,s.SIZE),self.MAXSIZE), \
+   -- * |       $BOUNDED_MULTISET(T)::SPACE_multiplicity(s.SIZE,self.MAXSIZE), \
+   -- * |       SPACE_add(min(self.SIZE,s.SIZE),s.MAXSIZE), \
+   -- * |       min(self.SIZE,s.SIZE))) \
+   -- * TIME__intersect(self.SIZE,s.SIZE,self.MAXSIZE) = O( \
+   -- * |  TIME_elts(self.SIZE,self.SIZE) + TIME_init +  \
+   -- * |  self.SIZE*TIME_multiplicity(self.SIZE+s.SIZE,self.MAXSIZE) + \
+   -- * |  self.SIZE*$BOUNDED_MULTISET(T)::TIME_multiplicity(s.SIZE,self.MAXSIZE) + \
+   -- * |  self.SIZE*TIME_add(min(self.SIZE,s.SIZE),self.MAXSIZE))
+   -- * REFERENCES:
+
+
+      item:T;
+      res := #SAME.init(max_size);
+
+      loop
+         item :=elts!;
+         if  res.multiplicity(item) < s.multiplicity(item)
+         then
+            res.add(item);
+         end; -- if
+      end; -- loop
+   end; -- intersect
+
+
+   diff(s:$BOUNDED_MULTISET(T)):SAME is
+   -- * METHOD: diff(s:$BOUNDED_MULTISET(T)):SAME
+   -- * DESCRIPTION: abstract method for set difference of self and s
+   -- * PRE:         true
+   -- * POST:  FORALL x:T: res.multiplicity(x) = max(0,multiplicity(x)-s.multiplicity(x)) AND \
+   -- * res.size = sum(x:T,res.multiplicity(x))
+   -- * COMPLEXITY: \
+      -- * SIZE__diff(self.SIZE,s.SIZE) = self.SIZE \
+      -- * MAXSIZE__diff(self.SIZE,s.SIZE) = self.MAXSIZE \
+      -- * SPACE__diff(self.SIZE,s.SIZE,s.MAXSIZE) = O(\
+      -- * |   max($BOUNDED_MULTISET(T)::SPACE_elts(s.SIZE,s.SIZE), \
+      -- * |       SPACE_copy_set(self.SIZE), \
+      -- * |       SPACE_delete(self.SIZE,s.MAXSIZE), \
+      -- * |       self.SIZE)) \
+      -- * additive TIME(self.SIZE,s.SIZE) = O( \
+      -- * |  $BOUNDED_MULTISET(T)::TIME_elts(s.SIZE,s.SIZE) + \
+      -- * |  TIME__copy_set(self.SIZE) + \
+      -- * |  s.SIZE*TIME_delete(self.SIZE,s.MAXSIZE)
+   -- * REFERENCES:
+
+      item:T;
+      res := copy_set;
+      loop
+         item :=s.elts!;
+         res.delete(item);
+      end; -- loop
+   end; -- diff
+
+
+   subset(s:$BOUNDED_MULTISET(T)):BOOL is
+      -- * METHOD: subset(s:$BOUNDED_MULTISET(T)):BOOL
+      -- * DESCRIPTION: true iff self is subset of s
+      -- * PRE: true
+      -- * POST: res = FORALL x:T: multiplicity(x) <= s.multiplicity(x)
+      -- * COMPLEXITY: \
+      -- * SIZE__subset(self.SIZE,s.SIZE) = 1 \
+      -- * SPACE__subset(self.SIZE,s.SIZE,self.MAXSIZE) = O(\
+      -- * |   max(SPACE_elts(self.SIZE,self.SIZE), \
+      -- * |       SPACE_multiplicity(self.SIZE,item.SIZE), \
+      -- * |       $BOUNDED_MULTISET(T)::SPACE_multiplicity(s.SIZE,self.MAXSIZE))) \
+      -- * TIME__subset(self.SIZE,s.SIZE) = O( \
+      -- * |  TIME_elts(self.SIZE,self.SIZE,self.MAXSIZE) + \
+      -- * |  self.SIZE*TIME_multiplicity(self.SIZE,self.MAXSIZE) + \
+      -- * |  self.SIZE*$BOUNDED_MULTISET(T)::TIME_multiplicity(s.SIZE,self.MAXSIZE))
+      -- * REFERENCES:
+
+      item : T;
+      res := true;
+      while res loop
+        item := elts!;
+        res := multiplicity(item) <= s.multiplicity(item);
+      end;
+   end;
+
+
+
+   copy_set:SAME is
+      -- * METHOD: copy_set:SAME
+      -- * DESCRIPTION: abstract method copying a set
+      -- * PRE: true
+      -- * POST: FORALL x:T: multiplicity(x) = res.multiplicity(x) AND self'=self
+      -- * COMPLEXITY: \
+      -- * SIZE__copy_set(self.SIZE) = self.SIZE \
+      -- * MAXSIZE__copy_set(self.MAXSIZE) = self.MAXSIZE \
+      -- * SPACE__copy_set(self.SIZE,self.MAXSIZE) = O( \
+      -- * | max(self.SIZE, \
+      -- * |     SPACE_init, \
+      -- * |     SPACE_add(self.SIZE,self.MAXSIZE))) \
+      -- * TIME__copy_set(self.SIZE,self.MAXSIZE) = O( \
+      -- * | TIME_init + TIME_elts(self.SIZE,self.SIZE) + \
+      -- * | self.SIZE*TIME_add(self.SIZE,self.MAXSIZE) )
+      -- * REFERENCES:
+      res := #SAME.init(max_size);
+      loop
+        res := res.add(elts!);
+      end;
+  end;
+
+end;
+
+
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+class EXCEPTION__BOUNDED_MULTISET_INS is
+   -- * CLASS: EXCEPTION__BOUNDED_MULTISET_INS
+   -- * DESCRIPTION: exception for bounded sets: overflow at add
+   -- * SUBCLASS OF: EXCEPTION_USER
+   -- * SPECIALIZATION OF: 
+   -- * IMPLEMENTATION OF: 
+   -- * EXCEPTIONS: 
+   -- * INVARIANT: 
+   -- * COMPLEXITY: 
+   -- * REFERENCES:
+   -- * ATTRIBUTES: name:STR -- error message
+   
+   subtype of EXCEPTION_USER;
+
+   const name : STR :="BOUNDED_MULTISET::add: overflow";
+   
+end;
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+class EXCEPTION__BOUNDED_MULTISET_UNION is
+   -- * CLASS: EXCEPTION__BOUNDED_MULTISET_UNION
+   -- * DESCRIPTION: exception for bounded sets: overflow at union
+   -- * SUBCLASS OF: EXCEPTION_USER
+   -- * SPECIALIZATION OF: 
+   -- * IMPLEMENTATION OF: 
+   -- * EXCEPTIONS: 
+   -- * INVARIANT: 
+   -- * COMPLEXITY: 
+   -- * REFERENCES:
+   -- * ATTRIBUTES: name:STR -- error message
+   
+   subtype of EXCEPTION_USER;
+
+   const name : STR :="BOUNDED_MULTISET::union: overflow";
+   
+end;
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+ 
+
+class TEST__BOUNDED_MULTISET is
+-- * CLASS: TEST__BOUNDED_MULTISET
+-- * DESCRIPTION: 
+-- * SUBCLASS OF: 
+-- * SPECIALIZATION OF: 
+-- * IMPLEMENTATION OF: 
+-- * EXCEPTIONS: 
+-- * INVARIANT: 
+-- * COMPLEXITY: 
+-- * REFERENCES: 
+
+
+   main is
+      a:$BOUNDED_MULTISET(INT):=# BOUNDED_MULTISET(INT); -- {max_size:=10};
+      ERR::s("creation of abstract class succeeded.\n");
+   end;
+
+end; -- class TEST__BOUNDED_MULTISET
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

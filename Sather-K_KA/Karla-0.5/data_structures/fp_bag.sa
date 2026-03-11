@@ -1,0 +1,67 @@
+-- File: fp_set.sa
+-- Author: Wolf Zimmermann
+-- Copyright (C) Universitaet Karlsruhe, 1994
+--
+-- COPYRIGHT NOTICE: This code is provided "AS IS" WITHOUT ANY WARRANTY
+-- and is subject to the terms of the KARLA LIBRARY GENERAL PUBLIC
+-- LICENSE contained in the file: "doc/license.txt" of the 
+-- distribution. 
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FILE: fp_bag.sa
+--*
+--* CLASSES: FINITE_PARTIAL_MULTISET(K,T1,T2<PARTIAL(K,T1),T<FINITE_PARTIAL(K,T1,T2))
+--* 
+--* IMPLEMENTATION OF: 
+--*
+--* CONFORMS TO: FINITE_MULTISET(T1,T) PARTIAL_MULTISET(K,T1,T)
+--*
+--* IS A: FINITE_MULTISET(T1,T) PARTIAL_MULTISET(K,T1,T)
+--*
+--* REQUIRED CLASSES: FINITE_MULTISET(T1,T) PARTIAL_MULTISET(K,T1,T) FINITE_PARTIAL(K,T1) \
+--* FINITE_PARTIAL_INT PARTIAL_INT
+--*
+--* EXCEPTIONS: EXCEPTION__MULTISET  EXCEPTION__PARTIAL_MULTISET_LOOKUP
+--*
+--* TEST CLASS: TEST__FINITE_PARTIAL_MULTISET
+--*
+--* FOREIGN FILES:
+--*
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--
+-- RCS: $Id$
+-- HISTORY: $Log$
+--
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+abstract class FINITE_PARTIAL_MULTISET(K,T1,T2<PARTIAL(K,T1),T<FINITE_PARTIAL(K,T1,T2)) is
+   -- * CLASS: FINITE_PARTIAL_MULTISET(K,T1,T2<PARTIAL(K,T1),T<FINITE_PARTIAL(K,T1,T2))
+   -- * DESCRIPTION: abstract class defining mulitsets over finite domains with partial \
+   -- * key access
+   -- * SUBCLASS OF: FINITE_MULTISET(T1,T) PARTIAL_MULTISET(K,T1,T)
+   -- * SPECIALIZATION OF: FINITE_MULTISET(T1,T) PARTIAL_MULTISET(K,T1,T)
+   -- * IMPLEMENTATION OF: 
+   -- * EXCEPTIONS: EXCEPTION__MULTISET EXCEPTION__PARTIAL_MULTISET_LOOKUP
+   -- * INVARIANT: FINITE_MULTISET::Inv AND PARTIAL_MULTISET::Inv
+   -- * REPRESENTATION:
+   -- * COMPLEXITY:
+   -- *     static      SIZE = size; \
+   -- *                 ##.init.MAXSIZE = 0 AND \
+   -- *                 MAXSIZE = max(choose.SIZE,delete(choose).MAXSIZE)\ 
+   -- *                 ##.init.KEYSIZE = 0 AND \
+   -- *                 KEYSIZE = max(choose.key.SIZE,delete(choose).KEYSIZE)
+   -- * REFERENCES: [Aho, Hopcroft, Ullman: "The Design and Analysis \
+   -- *               of Computer Algorithms", Addison-Wesley, 1974]
+   -- * ATTRIBUTES: size : INT 
+
+   subtype of FINITE_MULTISET(T1,T);
+   subtype of PARTIAL_MULTISET(K,T1,T);
+
+
+end;
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+class TEST__FINITE_PARTIAL_MULTISET is
+   main is
+      a:$MULTISET(FINITE_PARTIAL_INT):=#FINITE_PARTIAL_MULTISET(INT,INT,PARTIAL_INT,FINITE_PARTIAL_INT).init;
+      ERR::s("creation of abstract class succeeded.\n");
+   end;
+end;

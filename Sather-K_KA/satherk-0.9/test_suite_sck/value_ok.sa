@@ -1,0 +1,289 @@
+--* Last edited: Feb  2 23:06 1994 (holzw)
+--
+-- test classes for value types
+--
+
+value class COMPLEX is
+   -- extremly simple
+   shared vgl: COMPLEX;
+
+   real, imag: FLT;
+   --v: $COMPLEX; -- causes too many void pointers for copy
+   v: FLT;
+   plus (z:COMPLEX):SAME is
+      -- addition
+      res.real:= self.real+z.real;
+      res.imag:= self.imag+z.imag;
+   end;
+
+   inc: SAME is
+      -- increment real
+      res:=self;
+      res.real:= res.real+1;
+   end;
+
+   times (z:COMPLEX):SAME is
+      -- multiplication
+      res.real:= real*z.real + imag*z.imag;
+      res.imag:= real*z.imag - imag*z.real;
+   end;
+
+   pow_2: SAME is
+      -- power of 2
+      res:= times(self);
+      print;
+   end;
+
+   generator: SAME is
+      res:=void; -- unnecessary, because res gets initialized anyway
+   end;
+
+   print is
+     OUT::s("(").d(self.real).s(",").d(self.imag).s(")").nl;
+   end;
+end;
+
+value class SUB_COMPLEX is
+   -- a subtype of COMPLEX
+   -- smaller, because v is not used
+   subtype of COMPLEX;
+   shared sub_vgl: INT;
+
+   plus (z:$COMPLEX):SAME is
+      -- addition
+      res.real:= self.real+z.real;
+      res.imag:= self.imag+z.imag;
+   end;
+
+   generator: SAME is
+      res:=void;
+      res.real:=98;
+      res.imag:=87;
+   end;
+end;
+
+value class U1 is
+   -- uses COMPLEX
+   shared vgl: COMPLEX;
+
+   c: COMPLEX;
+
+   fooi(ob:COMPLEX):COMPLEX is
+      ob.real:= 1111;
+      ob.imag:= 2222;
+      res:=ob;
+      res.print;
+   end;
+
+   foon(ob:U2):U2 is
+      ob.c1.real:= 3333;
+      ob.c1.imag:= 4444;
+      res:=ob;
+      res.c1.print;
+      res.c2.print;
+   end;
+
+   food(ob:$COMPLEX):$COMPLEX is
+      if ob=void then
+        ob:=COMPLEX::generator;
+      end;
+      ob.real:= 5555;
+      ob.imag:= 6666;
+      res:=ob;
+      res.print;
+   end;
+
+   fond(ob:$U2):$U2 is
+      ob.c1.real:= 7777;
+      ob.c1.imag:= 8888;
+      res:=ob;
+      res.c1.print;
+      res.c2.print;
+   end;
+end;
+
+value class U2 is
+   -- too big to be held in place
+   shared vgl: COMPLEX;		-- test, if names are different
+
+   c1,c2,c3,c4,c5,c6: COMPLEX;
+   foo is 			-- returns nothing
+      c1.real:= 9999;		-- => does nothing (except side effects)
+      c1.imag:= 1010;
+      c2:=c1;
+      c3:=c1;
+      c4:=c1;
+      c5:=c1;
+      c6:=c1;
+      c1.print;
+   end;
+
+   generator: SAME is
+      -- c1 .. c5 are set to (0,0)
+      -- c6       is  set to (1,1)
+      res.c1:=COMPLEX::generator;
+      res.c6.real:=1;
+      res.c6.imag:=res.c6.real;
+   end;
+end;
+
+class VALUE_OK is
+   shared val: COMPLEX;
+   
+   main is
+      ---------------------------- variable declarations
+      z1,z2: $COMPLEX;		-- dollared variables => pointers
+      z3,z4: COMPLEX;		-- object variables, objects to be held in place
+
+      u1,u2: $U2;		-- dollared variables => pointers
+      u3,u4: U2;		-- object variables for too big objects => pointers
+
+      us: U1;			-- object variable
+
+      ---------------------------- initialize variables
+      u3.foo;
+
+      z3.real:= 2020;		-- attribute access
+      z3.imag:= 3030;
+      z3.print;
+      ---------------------------- test assignment expressions
+--      z3.v:= z3;		-- dt:=it
+      z3.v:= z3.real;		-- attrib:=attrib
+      z1:= z3;			-- dt:=it
+      u1:=u3;			-- dt:=nt
+      u2:=u1;			-- dt:=dt
+
+      z4:=z3;			-- it:=it
+--      z3:=z3.v;			-- it:=dt, rttc
+
+      u4:=u3;			-- nt:=nt
+      u4:=u2;			-- nt:=dt, rttc
+
+      u4.c1.real:=4040;		-- attribute access, ipVO in nipVO
+      u4.c1.imag:=u4.c2.real+2;	-- attribute access, ipVO in nipVO
+
+      ---------------------------- test value semantic of assignment and comparison
+      z3.real:= 5050;
+      z3.imag:= 6060;
+      z4:=z1;
+      z2:=z3;
+
+      OUT::s("2020=").r(z1.real).nl;		-- test value semantic of assignment
+      OUT::s("3030=").r(z1.imag).nl;
+      OUT::s("5050=").r(z3.real).nl;
+      OUT::s("6060=").r(z3.imag).nl.nl;
+      OUT::s("(2020,3030)=(5050,6060): ")	-- test value semantic of comparison
+	    .b(z3=z4).nl;
+      OUT::s("(2020,3030)=(5050,6060): ")
+	    .b(z1=z2).nl;
+      OUT::s("(2020,3030)/=(5050,6060): ")
+	    .b(z3/=z4).nl;
+      OUT::s("(2020,3030)/=(5050,6060): ")
+	    .b(z1/=z2).nl;
+      OUT::s("(2020,3030)=(2020,3030): ")
+	    .b(z4=z4).nl;
+      OUT::s("(2020,3030)=(2020,3030): ")
+	    .b(z1=z1).nl;
+
+      ---------------------------- test object call
+      z3.print;
+      u3.foo;
+      ---------------------------- test dispatched object call
+      z1:=SUB_COMPLEX::generator;
+      z1.print;
+      u1.foo;
+      ---------------------------- test class call
+      OUT::s("Class call: ");
+      z2:=COMPLEX::generator.inc;
+      if z2.real=1 and 0=z2.imag then
+        OUT::s("OK.").nl;
+      else
+        OUT::s("failed!").nl;
+      end;
+      ---------------------------- test self call
+      OUT::s("Self call: ");
+      z2:=generator.c1.inc;	-- self has no attribs
+      if z2.real=1 and 0=z2.imag then
+        OUT::s("OK.").nl;
+      else
+        OUT::s("failed!").nl;
+      end;
+
+      OUT::s("Calling pow with ");
+      z2:=z3.pow_2;		-- for print self is an ipVO
+      OUT::s("results in ");
+      z2.print;
+
+      ---------------------------- test passing it->it
+      U1::fooi(z3);      
+      ---------------------------- test passing nt->nt
+      U1::foon(u3);      
+      ---------------------------- test passing it->dt
+      U1::food(z3);      
+      ---------------------------- test passing nt->dt
+      U1::fond(u3);      
+      ---------------------------- test passing dt->dt
+      U1::food(z1);      
+      ---------------------------- test passing dt->dt
+      U1::fond(u1);      
+
+      ---------------------------- test naming of shareds
+      OUT::s("Naming of shareds: ");
+      z3.vgl.real:= 2121;
+      z3.vgl.imag:= 2929;
+      u1.vgl.real:= 3131;
+      us.vgl.real:= 8181;
+      if z3.vgl.real+u1.vgl.real=us.vgl.real-z3.vgl.imag then
+        OUT::s("OK.").nl;
+      else
+        OUT::s("failed!").nl;
+      end;
+
+      ---------------------------- test passing shareds
+      local;
+
+      z3.vgl.real:=1.1;
+      z3.vgl.imag:=2.5;
+      z3.vgl.print;
+      z3.vgl:=U1::fooi(z3.vgl);
+      z3.vgl.print;
+      COMPLEX::vgl.print;
+
+      ---------------------------- test assigning void
+      z1:=void;			-- dt:=void
+      u3:=void;			-- nt:=void
+      z3:=void;			-- it:=void
+      z4:=z1;			-- it:=dt(==void)
+
+      ---------------------------- test passing void arguments
+      z3.plus(void);		-- passes void->it
+      U1::foon(void);		-- passes void->nt
+      U1::food(void);		-- passes void->dt
+
+      ---------------------------- test discarding return values
+      U1::fooi(z1);		-- discard it, z1=void
+      U1::fooi(z2);		-- discard it
+      U1::foon(U2::generator);	-- discard nt
+      U1::food(z2);		-- discard dt
+   end;
+
+   local is
+      z3:COMPLEX;
+      z3.vgl:=z3;
+
+      z3.vgl.real:=1.1;
+      z3.vgl.imag:=2.5;
+      z3.vgl.print;
+      z3.vgl:=U1::fooi(z3.vgl);
+      z3.vgl.print;
+      COMPLEX::vgl.print;
+   end;
+
+   generator: U2 is
+      -- c1 .. c5 are set to (0,0)
+      -- c6       is  set to (1,1)
+      res.c1:=COMPLEX::generator;
+      res.c6.real:=1;
+      res.c6.imag:=res.c6.real;
+   end;
+end;

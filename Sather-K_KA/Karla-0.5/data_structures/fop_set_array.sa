@@ -1,0 +1,249 @@
+-- File: fop_set_array.sa
+-- Author: Valdimar Bragason, Matthias Mueller, Frank Schuster
+-- Copyright (C) Universitaet Karlsruhe, 1994
+--
+-- COPYRIGHT NOTICE: This code is provided "AS IS" WITHOUT ANY WARRANTY
+-- and is subject to the terms of the KARLA LIBRARY GENERAL PUBLIC
+-- LICENSE contained in the file: "doc/license.txt" of the 
+-- distribution. 
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FILE: fop_set_array.sa
+--*
+--* CLASSES: FINITE_ORDERED_PARTIAL_SET__ARRAY(K<ORDERED(K),T1,T<FINITE_ORDERED_PARTIAL(K,T1),ORDER<ORDER_RELATION(T))
+--* 
+--* IMPLEMENTATION OF: FINITE_ORDERED_PARTIAL_SET(K,T1,T,ORDER)
+--*
+--* CONFORMS TO: 
+--*
+--* IS A:
+--*
+--* REQUIRED CLASSES: FINITE_ORDERED_PARTIAL_SET(K,T1,T,ORDER) ORDER_RELATION(T) \
+--* FINITE_ORDERED_PARTIAL(K,T) ORDER_LT(T)  FINITE_SET__ARRAY(T) \
+--* ORDERED_PARTIAL_SET(K,T1,T,ORDER)  FINITE_PARTIAL_SET(K,T1,T2,T) \
+--* FINITE_ORDERED_SET(T1,T,ORDER) KEY_UPPER_CASE_ALPHABET \
+--* PARTIAL_INT FINITE_ORDERED_PARTIAL_INT PARTIAL_STR \
+--* EXCEPTION__MULTISET EXCEPTION__PARTIAL_MULTISET_LOOKUP EXCEPTION__SET_ADD \
+--* EXCEPTION__SET_DISJOINT_UNION EXCEPTION__ORDERED_MULTISET_MIN \
+--* EXCEPTION__ORDERED_MULTISET_MAX EXCEPTION__ORDERED_MULTISET_NEXT \
+--* EXCEPTION__ORDERED_MULTISET_PREVIOUS EXCEPTION__ORDERED_PARTIAL_MULTISET_NEXT \
+--* EXCEPTION__ORDERED_PARTIAL_MULTISET_PREVIOUS
+--*
+--* EXCEPTIONS: EXCEPTION__MULTISET EXCEPTION__PARTIAL_MULTISET_LOOKUP\
+--* EXCEPTION__SET_ADD EXCEPTION__SET_DISJOINT_UNION EXCEPTION__ORDERED_MULTISET_MIN \
+--* EXCEPTION__ORDERED_MULTISET_MAX EXCEPTION__ORDERED_MULTISET_NEXT \
+--* EXCEPTION__ORDERED_MULTISET_PREVIOUS EXCEPTION__ORDERED_PARTIAL_MULTISET_NEXT \
+--* EXCEPTION__ORDERED_PARTIAL_MULTISET_PREVIOUS
+--*
+--* TEST CLASS: TEST__FINITE_ORDERED_PARTIAL_SET__ARRAY
+--*
+--* FOREIGN FILES:
+--*
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--
+-- RCS: $Id$
+-- HISTORY:
+--  * Last edited: May 18 09:40 1994 (algprak8)
+-- Created: Wed Mar 16 18:43:26 1994 (frick)
+--
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+class FINITE_ORDERED_PARTIAL_SET__ARRAY(
+	 K<ORDERED(K),
+	 T1,T2<ORDERED_PARTIAL(K,T1),
+	 T<FINITE_ORDERED_PARTIAL(K,T1,T2),
+	 ORDER<ORDER_RELATION(T)) is
+   
+   -- * CLASS: FINITE_ORDERED_PARTIAL_SET__ARRAY(K<ORDERED(K),\
+   -- * T1,T2<ORDERED_PARTIAL(K,T1), \
+   -- * T<FINITE_ORDERED_PARTIAL(K,T1,T2),\
+   -- * ORDER<ORDER_RELATION(T))	
+   -- * DESCRIPTION: class defining finite ordered sets with partial key access \
+   -- *              the order is defined on the partial key
+   -- * SUBCLASS OF:  FINITE_ORDERED_PARTIAL_SET(K,T1,T2,T,ORDER)
+   -- * SPECIALIZATION OF:
+   -- * IMPLEMENTATION OF:  FINITE_ORDERED_PARTIAL_SET(K,T1,T2,T,ORDER)
+   -- * EXCEPTIONS: EXCEPTION__MULTISET EXCEPTION__PARTIAL_MULTISET_LOOKUP\
+   -- * EXCEPTION__SET_ADD EXCEPTION__SET_DISJOINT_UNION EXCEPTION__ORDERED_MULTISET_MIN \
+   -- * EXCEPTION__ORDERED_MULTISET_MAX EXCEPTION__ORDERED_MULTISET_NEXT \
+   -- * EXCEPTION__ORDERED_MULTISET_PREVIOUS EXCEPTION__ORDERED_PARTIAL_MULTISET_NEXT \
+   -- * EXCEPTION__ORDERED_PARTIAL_MULTISET_PREVIOUS
+   -- * INVARIANT: FINITE_ORDERED_PARTIAL_SET(K,T1,T2,T,ORDER)::Inv AND \
+   -- * FINITE_SET__ARRAY(T)::Inv
+   -- * REPRESENTATION:
+   -- * COMPLEXITY: \
+   -- *     static      SIZE = size; \
+   -- *                 ##.init.MAXSIZE = 0 AND \
+   -- *                 MAXSIZE = max(choose.SIZE,delete(choose).MAXSIZE)\ 
+   -- *                 ##.init.KEYSIZE = 0 AND \
+   -- *                 KEYSIZE = max(choose.key.SIZE,delete(choose).KEYSIZE)
+   -- * cumulative SPACE(n) = max_size \
+   -- * additive TIME(n) = O(n)
+   -- * REFERENCES: [Aho, Hopcroft, Ullman: "The Design and Analysis \
+   -- *               of Computer Algorithms", Addison-Wesley, 1974]
+   -- * ATTRIBUTES: size:INT \
+   -- *            const order:ORDER:= #ORDER
+
+   subtype of FINITE_ORDERED_PARTIAL_SET(K,T1,T2,T,ORDER);
+   include FINITE_SET__ARRAY(T1,T); 
+
+end; -- class
+
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+class TEST__FINITE_ORDERED_PARTIAL_SET__ARRAY is
+
+  performancetest(n:INT) is
+    x:FINITE_ORDERED_PARTIAL_INT := #FINITE_ORDERED_PARTIAL_INT.init(n);
+    s:$SET(FINITE_ORDERED_PARTIAL_INT) := #FINITE_ORDERED_PARTIAL_SET__ARRAY(INT,INT,PARTIAL_INT,FINITE_ORDERED_PARTIAL_INT,ORDER_LT(FINITE_ORDERED_PARTIAL_INT)).init;
+    i:INT;
+    timer:TIMER := #TIMER;
+    timer.reset;
+    timer.go;
+    loop
+      i := 0.upto!(n-1);
+      x := #FINITE_ORDERED_PARTIAL_INT{elt:=i,key:=i,val:=i};
+      s := s.insert(x.copy);
+    end;
+    timer.stop;
+    OUT::s(n.str).s(" times insert cost time ").s(timer.mean.str).nl.nl;
+    timer.reset;
+    timer.go;
+    loop
+      i:=0.upto!(n-1);
+      x := #FINITE_ORDERED_PARTIAL_INT{elt:=i,key:=i,val:=i};
+      if not(s.member(x)) then break; end;
+    end;
+    timer.stop;
+    OUT::s(n.str).s(" times member cost time ").s(timer.mean.str).nl.nl;
+    if i<n-1 then OUT::s("membership test not succeeded for i=").s(i.str).nl.nl;
+    else OUT::s("membership test succeeded").nl.nl;
+    end;
+    timer.reset;
+    timer.go;
+    loop
+      i:= 0.upto!(n-1);
+      x := #FINITE_ORDERED_PARTIAL_INT{elt:=i,key:=i,val:=i};
+      s := s.delete(x);
+    end;
+    timer.stop;
+    OUT::s(n.str).s(" times delete cost time ").s(timer.mean.str).nl.nl;
+    if s.empty then OUT::s("deletion succeeded").nl.nl;
+    else OUT::s("deletion not succeeded: s=").s(s.str).nl.nl;
+    end;
+  end; -- performancetest
+
+
+  main is
+    x:FINITE_ORDERED_PARTIAL_INT := #FINITE_ORDERED_PARTIAL_INT.init(100);
+    s:$SET(FINITE_ORDERED_PARTIAL_INT) 
+	 := #FINITE_ORDERED_PARTIAL_SET__ARRAY(
+		    INT,INT,PARTIAL_INT,FINITE_ORDERED_PARTIAL_INT,ORDER_LT(FINITE_ORDERED_PARTIAL_INT)).init;
+    i:INT;
+    r:$RANDOM_GENERATOR_32:=#RANDOM_GENERATOR_32__MINIMAL_STANDARD.init(0,25);
+    y:KEY_UPPER_CASE_ALPHABET := #KEY_UPPER_CASE_ALPHABET.init;
+    s1:$ORDERED_PARTIAL_SET(INT,STR,KEY_UPPER_CASE_ALPHABET,ORDER_LT(KEY_UPPER_CASE_ALPHABET)) 
+          := #FINITE_ORDERED_PARTIAL_SET__ARRAY(INT,STR,PARTIAL_STR,KEY_UPPER_CASE_ALPHABET,ORDER_LT(KEY_UPPER_CASE_ALPHABET)).init;
+    OUT::s("s is created: empty set").nl;
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.empty? ").s(s.empty.str).nl.nl;
+    begin
+      x := s.choose;
+    except excptset
+      when EXCEPTION__MULTISET then OUT::s("exception test successfull").nl;
+      else OUT::s("exception test not successfull").nl;
+    end;
+    OUT::s("s := s.delete(5)").nl;
+    x := #FINITE_ORDERED_PARTIAL_INT{elt:=5,key:=5,val:=5};
+    s := s.delete(x);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.member(5)? ");
+    OUT::s(s.member(x).str).nl.nl;
+    OUT::s("s.insert(5)").nl;
+    s := s.insert(x);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.empty? ").s(s.empty.str).nl.nl;
+    OUT::s("s.insert(5)").nl;
+    s := s.insert(x);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.insert(10)").nl;
+    x := #FINITE_ORDERED_PARTIAL_INT{elt:=10,key:=10,val:=10};
+    s := s.insert(x);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.member(5)? ");
+    x := #FINITE_ORDERED_PARTIAL_INT{elt:=5,key:=5,val:=5};
+    OUT::s(s.member(x).str).nl.nl;
+    x := #FINITE_ORDERED_PARTIAL_INT{elt:=6,key:=6,val:=6};
+    OUT::s("s.member(6)? ");
+    OUT::s(s.member(x).str).nl;
+    OUT::s("s.choose = ").s(s.choose.str).nl.nl;
+    OUT::s("s := s.delete(5)").nl;
+    x := #FINITE_ORDERED_PARTIAL_INT{elt:=5,key:=5,val:=5};
+    s := s.delete(x);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.choose = ").s(s.choose.str).nl.nl;
+    OUT::s("s := s.delete(10)").nl;
+    x := #FINITE_ORDERED_PARTIAL_INT{elt:=10,key:=10,val:=10};
+    s := s.delete(x);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.empty? ").s(s.empty.str).nl.nl;
+    begin
+      x := s.choose;
+    except excptset
+      when EXCEPTION__MULTISET then OUT::s("exception test successfull").nl;
+      else OUT::s("exception test not successfull").nl;
+    end;
+    OUT::s("s.insert(10)").nl;
+    s := s.insert(x);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.empty? ").s(s.empty.str).nl.nl;
+    OUT::s("s.insert(5)").nl;
+    x := #FINITE_ORDERED_PARTIAL_INT{elt:=5,key:=5,val:=5};
+    s := s.insert(x);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s1 is created: empty set").nl;
+    OUT::s("s1 = ").s(s1.str).nl.nl;
+    h:INT;
+    loop
+      i:=1.upto!(13);
+      h := r.random;
+      y := #KEY_UPPER_CASE_ALPHABET{elt:=h};
+      s1 := s1.insert(y);
+    end;
+    OUT::s("s = ").s(s1.str).nl.nl;
+    OUT::s("s.sort = ").s(s1.sort.str).nl.nl;
+    s1 := #FINITE_ORDERED_PARTIAL_SET__ARRAY(INT,STR,PARTIAL_STR,KEY_UPPER_CASE_ALPHABET,ORDER_LT(KEY_UPPER_CASE_ALPHABET)).init;
+    OUT::s("s1 is created: empty set").nl;
+    OUT::s("s1 = ").s(s1.str).nl.nl;
+    loop
+      i:=0.upto!(12);
+      y:= #KEY_UPPER_CASE_ALPHABET{elt:=i};
+      s1 := s1.insert(y);
+    end;
+    OUT::s("Testing stream elts").nl;
+    loop
+      OUT::s(s1.elts!.str).s(" ").nl;
+    end;
+    OUT::s("s = ").s(s1.str).nl.nl;
+    OUT::s("s.partial_lookup(7) = H ?").nl;
+    OUT::s("res = ").s(s1.partial_lookup(7).str).nl.nl;
+    begin
+      y := s1.partial_lookup(17);
+    except excptpartial
+      when EXCEPTION__PARTIAL_MULTISET_LOOKUP then OUT::s("exception test successfull").nl.nl;
+      else OUT::s("exception test not successfull").nl.nl;
+    end;
+
+--    performancetest(1000);
+    --performancetest(10000);
+    --performancetest(50000);
+    --performancetest(100000);
+    --performancetest(150000);
+    --performancetest(200000);
+    --performancetest(250000);
+    --performancetest(300000);
+    
+  end; -- main
+
+end; -- TEST__FINITE_ORDERED_SET

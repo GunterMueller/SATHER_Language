@@ -1,0 +1,350 @@
+-- AUTHOR : Tri Chi Toan, Tan Loc Nguyen, Hans-Martin Speiser
+-- DATE : Apr 29, 1994
+--
+-- Copyright (C) Universitaet Karlsruhe, 1994
+-- This file is part of Karla, the Karlsruhe Library of Algorithms. 
+-- COPYRIGHT NOTICE: This code is provided "AS IS" WITHOUT ANY WARRANTY
+-- and is subject to the terms of the KARLA LIBRARY GENERAL PUBLIC
+-- LICENSE contained in the file: "doc/license.txt" of the
+-- distribution.
+--
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FILE: finite_set_array.sa
+--*
+--* CLASSES: FINITE_SET__ARRAY(T)
+--*
+--* IMPLEMENTATION OF: FINITE_SET(T)
+--*
+--* CONFORMS TO: FINITE_SET(T1,T)
+--*
+--* IS A: 
+--*
+--* REQUIRED CLASSES: FINITE_SET(T) SET(T) FINITE(T) TIMER FINITE_INT_FLEX
+--* EXCEPTION__MULTISET EXCEPTION__SET_ADD EXCEPTION__SET_DISJOINT_UNION
+--*
+--* EXCEPTIONS: EXCEPTION__MULTISET EXCEPTION__SET_ADD EXCEPTION__SET_DISJOINT_UNION
+--*
+--* TEST CLASS: TEST__FINITE_SET__ARRAY
+--*
+--* FOREIGN FILES:
+--*
+-- RCS: $ld$
+-- HISTORY: $log$
+--  * Last edited: May  6 11:50 1994 (algprak0)
+--
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+class FINITE_SET__ARRAY(T1,T<FINITE(T1)) is
+-- * CLASS: FINITE_SET__ARRAY(T1,T<FINITE(T1))
+-- * DESCRIPTION: Implementation of abstract type SET(T) for finite types via boolean arrays
+-- * SUBCLASS OF: FINITE_SET(T1,T)
+-- * SPECIALIZATION OF: 
+-- * IMPLEMENTATION OF: FINITE_SET(T1,T)
+-- * EXCEPTIONS: EXCEPTION__MULTISET EXCEPTION__SET_ADD EXCEPTION__SET_DISJOINT_UNION
+-- * INVARIANT: FINITE_SET(T1,T)::Inv AND FINITE_MULTISET__ARRAY(T1,T)
+-- * REPRESENTATION: 
+-- * COMPLEXITY: \
+-- * static SIZE = size \
+-- *                 ##.init.MAXSIZE = 0 AND \
+-- *                 MAXSIZE = max(choose.SIZE,delete(choose).MAXSIZE)
+-- * cumulative SPACE(n) = max_size \
+-- * additive TIME(n) = O(n)
+-- * REFERENCES:
+-- * ATTRIBUTES:  size:INT; -- size of set \
+-- *     hold: ARR[*](BOOL);  -- bit vector
+-- *     max_size:INIT;
+   
+   subtype of FINITE_SET(T1,T);
+
+   hold:ARR[*](BOOL);
+   max_size:INT;
+
+
+     init:SAME is
+     -- * METHOD: init:SAME
+     -- * DESCRIPTION: initializes hold
+     -- * PRE: NOT self=void
+     -- * POST: max_size'=T::SIZE AND \
+     -- * (FORALL i:INT: 0<=i<max_size' IMPLIES hold'[i]=false) AND size'=0 AND res=self'
+     -- * COMPLEXITY: \
+     -- * SIZE__init = 0 \
+     -- * MAXSIZE__init=0 \
+     -- * SPACE__init=max_size \
+     -- * TIME__init = O(T::SIZE)
+     -- * REFERENCES:
+
+      i:INT;
+      max_size := #T.n;
+      hold:=#ARR[max_size](BOOL);
+      loop
+         i := 0.upto!(max_size-1);
+         hold[i]:=false;
+      end; --loop;
+      size := 0;
+      res:=self;
+   end; --init
+
+
+   
+   insert(x:T):SAME is
+   -- * METHOD: insert(x:T):SAME
+   -- * DESCRIPTION: inserts an element in the set
+   -- * PRE: true
+   -- * POST: res.hold[x.el]=true AND self'=res AND \
+   -- * (hold[x.el] IMPLIES size'=size) AND \
+   -- * (NOT hold[x.el] IMPLIES size'=size+1)
+   -- * COMPLEXITY: \
+   -- * SIZE__insert(self.SIZE,t.SIZE) = self.SIZE; \
+   -- * MAXSIZE__insert(self.MAXSIZE,t.SIZE) = max(self.MAXSIZE,x.SIZE); \
+   -- * SPACE__insert(self.SIZE,t.SIZE) = O(T::SIZE); \
+   -- * TIME__insert(self.SIZE,t.SIZE) = O(1);
+   -- * REFERENCES:
+
+      res:=self;
+      if not hold[x.elt] then size := size + 1; end;
+      hold[x.elt]:=true;
+   end; --insert
+
+
+   delete(x:T):SAME is
+   -- * METHOD: delete(x:T):SAME
+   -- * DESCRIPTION: deletes element x from the set
+   -- * PRE: true
+   -- * POST: hold[x.el]=false AND self'=res AND \
+   -- * (hold[x.el] IMPLIES size'=size - 1) AND \
+   -- * (NOT hold[x.el] IMPLIES size'=size)
+   -- * COMPLEXITY: \
+   -- * SIZE_delete(self.SIZE,x.SIZE) = self.SIZE \
+   -- * MAXSIZE_delete(self.MAXSIZE,x.SIZE) = self.MAXSIZE \
+   -- * SPACE_delete(self.SIZE,x.SIZE) = O(T::SIZE) \
+   -- * TIME_delete(self.SIZE,x.SIZE) = O(1)
+   -- * REFERENCES:
+
+      res := self;
+      if hold[x.elt] then size := size - 1; end;
+      hold[x.elt]:=false;
+   end; --delete
+
+
+   member(x:T):BOOL is
+   -- * METHOD: member(x:T):SAME
+   -- * DESCRIPTION: returns true if x is in the set
+   -- * PRE: true
+   -- * POST: res = hold[x.elt]
+   -- * COMPLEXITY: \
+   -- * SIZE_member(self.SIZE,x.SIZE) = 1 \
+   -- * SPACE_member(self.SIZE,x.SIZE) = O(T::SIZE) \
+   -- * TIME_member(self.SIZE,x.SIZE) = O(1)
+   -- * REFERENCES:
+
+	 res:=hold[x.elt]
+   end; --member
+
+
+   choose:T is
+   -- * METHOD: choose:T
+   -- * DESCRIPTION: abstract method for non-deterministic choice of an element in self
+   -- * PRE: NOT empty
+   -- * POST: self.member(res)=true AND self'=self
+   -- * COMPLEXITY: \
+   -- * SIZE_choose(self.SIZE,self.MAXSIZE) = self.MAXSIZE \
+   -- * SPACE_choose(self.SIZE) = O(T::SIZE) \
+   -- * TIME_choose(self.SIZE) = O(1)
+   -- * REFERENCES:
+      
+      i:INT;
+      res := ##res;
+      if empty then #EXCEPTION__MULTISET.raise; end;
+      loop
+	i:=0.upto!(hold.asize-1);
+	if hold[i] then res.elt := i;  return; end;
+      end;
+   end;
+
+
+   stream elts:T is
+      -- * METHOD: stream elts:T
+      -- * DESCRIPTION: iterator iterating over all elements of self
+      -- * PRE: true
+      -- * POST: (elts.terminated IFF i=max_size)  \
+      -- * (res[sum(multiplicity(x); member(x) AND 0<=x.elt <i)+j].elts=i IFF j<hold[i]) AND\
+      -- * self'=self
+      -- * COMPLEXITY: \
+      -- * SIZE__elts(self.SIZE) = self.SIZE \
+      -- * SPACE__elts(self.SIZE;k) = O(max(self.SIZE,T::SIZE)) \
+      -- * TIME__elts(self.SIZE;k) = O(max(self.SIZE,T::SIZE))
+      -- * REFERENCES:
+
+   
+     i:INT;
+     loop
+       i := 0.upto!(max_size-1);
+       if hold[i] then
+         res := #T;
+         res.elt := i;
+         resume;
+       end;
+     end;
+   end;
+
+
+   str: STR is
+
+      i,j: INT;
+      x:T;
+      m:INT := hold.asize - 1;
+      res:="{";
+      loop
+	i := 0.upto!(m);
+        if hold[i] then 
+	  res := res.s(x.map[i].str);
+	  j := i+1;
+	  break;
+        end;
+      end; --loop
+      loop
+	i := j.upto!(m);
+	if hold[i] then
+	   res := res.s(",").s(x.map[i].str);
+        end;
+      end; -- loop
+      res := res.s("}");
+   end; --str
+
+end; -- class FINITE_SET__ARRAY
+
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+class TEST__FINITE_SET__ARRAY is
+
+
+  performancetest(n:INT) is
+    i:INT;
+    x:FINITE_INT_FLEX := #FINITE_INT_FLEX.init(n);
+    s:$SET(FINITE_INT_FLEX) := #FINITE_SET__ARRAY(INT,FINITE_INT_FLEX).init;
+    timer:TIMER := #TIMER;
+    timer.reset;
+    timer.go;
+    loop
+      i := 0.upto!(n-1);
+      x.elt := i;
+      s := s.insert(x.copy);
+    end;
+    timer.stop;
+    OUT::s(n.str).s(" times insert cost time ").s(timer.mean.str).nl.nl;
+    timer.reset;
+    timer.go;
+    loop
+      i:=0.upto!(n-1);
+      x.elt := i;
+      if not(s.member(x)) then break; end;
+    end;
+    timer.stop;
+    OUT::s(n.str).s(" times member cost time ").s(timer.mean.str).nl.nl;
+    if i<n-1 then OUT::s("membership test not succeeded for i=").s(i.str).nl.nl;
+    else OUT::s("membership test succeeded").nl.nl;
+    end;
+    timer.reset;
+    timer.go;
+    loop
+      i:= 0.upto!(n-1);
+      x.elt := i;
+      s := s.delete(x);
+    end;
+    timer.stop;
+    OUT::s(n.str).s(" times delete cost time ").s(timer.mean.str).nl.nl;
+    if s.empty then OUT::s("deletion succeeded").nl.nl;
+    else OUT::s("deletion not succeeded: s=").s(s.str).nl.nl;
+    end;
+  end; -- performancetest
+
+
+  main is
+    x:FINITE_INT_FLEX := #FINITE_INT_FLEX.init(100);
+    s:$SET(FINITE_INT_FLEX) := #FINITE_SET__ARRAY(INT,FINITE_INT_FLEX).init;
+    i:INT;
+    s1 : $SET(EMPTY) := #FINITE_SET__ARRAY(INT,EMPTY).init;
+    OUT::s("s is created: empty set").nl;
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.empty? ").s(s.empty.str).nl.nl;
+    begin
+      x := s.choose;
+    except excptset
+      when EXCEPTION__MULTISET 
+	then ERR::s(excptset.str).nl;
+	     OUT::s("exception test successfull").nl;
+      else OUT::s("exception test not successfull").nl;
+    end;
+    OUT::s("s := s.delete(10)").nl;
+    x.elt := 5;
+    s := s.delete(x);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.member(10)? ");
+    OUT::s(s.member(x).str).nl.nl;
+    OUT::s("s.insert(10)").nl;
+    s := s.insert(x.copy);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.empty? ").s(s.empty.str).nl.nl;
+    OUT::s("s.insert(10)").nl;
+    s := s.insert(x.copy);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.insert(20)").nl;
+    x.elt := 10;
+    s := s.insert(x);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.member(10)? ");
+    x.elt := 5;
+    OUT::s(s.member(x).str).nl.nl;
+    x.elt := 6;
+    OUT::s("s.member(12)? ");
+    OUT::s(s.member(x).str).nl;
+    OUT::s("s.choose = ").s(s.choose.str).nl.nl;
+    OUT::s("s := s.delete(10)").nl;
+    x.elt := 5;
+    s := s.delete(x);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.choose = ").s(s.choose.str).nl.nl;
+    x.elt := 10;
+    OUT::s("s := s.delete(20)").nl;
+    s := s.delete(x);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.empty? ").s(s.empty.str).nl.nl;
+    begin
+      x := s.choose;
+    except excptset
+      when EXCEPTION__MULTISET 
+	then ERR::s(excptset.str).nl;
+	     OUT::s("exception test successfull").nl;
+      else OUT::s("exception test not successfull").nl;
+    end;
+    OUT::s("s.insert(20)").nl;
+    s := s.insert(x);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.empty? ").s(s.empty.str).nl.nl;
+    OUT::s("s.insert(10)").nl;
+    x.elt := 5;
+    s := s.insert(x);
+    OUT::s("s = ").s(s.str).nl.nl;
+    s := #FINITE_SET__ARRAY(INT,FINITE_INT_FLEX).init;
+    OUT::s("s is created: empty set").nl;
+    OUT::s("s = ").s(s.str).nl.nl;
+    loop
+      i:=1.upto!(20);
+      x.elt := i;
+      s := s.insert(x.copy);
+    end;
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("Set over the finite type with 0 elements").nl;
+    OUT::s("s = ").s(s1.str).nl.nl;
+    --performancetest(100);
+    --performancetest(1000);
+    --performancetest(10000);
+    --performancetest(100000);
+    --performancetest(200000);
+    --performancetest(300000);
+    
+  end; -- main
+
+end; -- TEST__FINITE_SET__ARRAY

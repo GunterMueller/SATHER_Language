@@ -1,0 +1,155 @@
+-- AUTHOR: Wolf Zimmermann (zimmer@ira.uka.de)
+-- DATE: 06/21/1993
+--
+-- Copyright (C) Universitaet Karlsruhe, 1993
+--
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FILE: stack.sa
+--*
+--* CLASSES: STACK(T) EXCEPTION__STACK__EMPTY
+--* 
+--* IMPLEMENTATION OF:
+--*
+--* CONFORMS TO: 
+--*
+--* IS A: 
+--* 
+--* REQUIRED CLASSES: 
+--*
+--* EXCEPTIONS: EXCEPTION__STACK__EMPTY
+--*
+--* TEST CLASS: TEST__STACK
+--*
+--* FOREIGN FILES: 
+--*
+--  RCS: $Id$
+--  HISTORY: $Log$
+--* Last edited: Mar 14 13:31 1994 (frick)
+--  Last edited: Dec  2 16:10 1993 (frick)
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+abstract class STACK(T) is
+-- * CLASS: STACK(T)
+-- * DESCRIPTION: standard abstract data type stack
+-- * SUBCLASS OF:
+-- * SPECIALIZATION OF:
+-- * IMPLEMENTATION OF:
+-- * EXCEPTIONS: EXCEPTION__STACK__EMPTY
+-- * INVARIANT: FORALL a:T\
+-- *            push(a).pop = self AND \
+-- *            push(a).top = a AND \
+-- *            push(a).empty = false AND \
+-- *            ##.init.empty = true AND \
+-- *            (empty IMPLIES pop = error) AND \
+-- *            (empty IMPLIES top = error)
+-- * REPRESENTATION:
+-- * COMPLEXITY: \
+-- * static      SIZE = 0             IF empty \
+-- * |                = 1 + pop.SIZE  OTHERWISE \
+-- * static      MAXSIZE = 0                         IF empty \
+-- * |                   = max(top.SIZE,pop.MAXSIZE  OTHERWISE
+-- * REFERENCES:
+-- * ATTRIBUTES:
+
+
+   init : SAME is 
+   -- * METHOD: init : SAME
+   -- * DESCRIPTION: abstract initialization method 
+   -- * PRE: NOT self = void 
+   -- * POST: NOT res = void AND res.empty=true
+   -- * COMPLEXITY: \
+   -- * SIZE__init=0 \
+   -- * MAXSIZE__init=0
+   -- * REFERENCES:
+
+      deferred;
+   end;
+
+   push (a : T):SAME is 
+   -- * METHOD: push(a:T) : SAME
+   -- * DESCRIPTION: abstract constructor method inserting a
+   -- * PRE: NOT self = void
+   -- * POST: res.top = a
+   -- * COMPLEXITY: \
+   -- * SIZE__push(self.SIZE,a.SIZE) = self.SIZE + 1\
+   -- * MAXSIZE__push(self.MAXSIZE,a.SIZE) = max(self.MAXSIZE,a.SIZE)
+   -- * REFERENCES:
+
+      deferred;
+   end;
+
+   empty:BOOL is
+   -- * METHOD: empty:BOOL
+   -- * DESCRIPTION: abstract method checking whether stack is empty
+   -- * PRE: NOT self = void
+   -- * POST: res = (self == STACK(T).create)
+   -- * COMPLEXITY: \
+   -- * SIZE__empty(self.SIZE) = 1
+   -- * REFERENCES:
+
+
+     deferred;
+   end;
+
+   pop:SAME is 
+   -- * METHOD: pop:SAME
+   -- * DESCRIPTION: abstract method deleting the last insertion
+   -- * PRE: NOT self = void AND NOT self.empty
+   -- * POST: self == res.push(self.top)
+   -- * COMPLEXITY: \
+   -- * SIZE__pop(self.SIZE) = self.SIZE - 1
+   -- * MAXSIZE__pop(self.MAXSIZE) = self.MAXSIZE 
+   -- * REFERENCES:
+
+
+     deferred;
+
+   end;
+
+   top : T is 
+   -- * METHOD: top:T
+   -- * DESCRIPTION: abstract method returning the last inserted element
+   -- * PRE: NOT self = void AND NOT self.empty
+   -- * POST: EXISTS l:STACK(T),a:T : self = l.push(a) AND res=a
+   -- * COMPLEXITY: \
+   -- * SIZE__top(self.SIZE,self.MAXSIZE) = self.MAXSIZE
+   -- * REFERENCES:
+
+
+     deferred;
+   end;
+
+   str : STR is 
+
+     deferred;
+   end;
+
+end;--class STACK(T)
+
+
+class EXCEPTION__STACK__EMPTY is
+  -- * CLASS: EXCEPTION__STACK__EMPTY
+  -- * DESCRIPTION: exceptions on STACK: pop or top on empty stack
+  -- * SUBCLASS OF: EXCEPTION_USER
+  -- * SPECIALIZATION OF:
+  -- * IMPLEMENTATION OF:
+  -- * EXCEPTIONS:
+  -- * INVARIANT:
+  -- * REPRESENTATION:
+  -- * COMPLEXITY: O(1)
+  -- * REFERENCES:
+  -- * ATTRIBUTES: name:STR -- error message
+
+   subtype of EXCEPTION_USER;
+   const name:STR:="ERROR: top/pop operation on empty stack";
+ 
+end; -- class EXCEPTION__STACK__EMPTY
+
+class TEST__STACK is
+  main is
+    a: INT;
+    b: BOOL;
+    st:$STACK(INT) := #STACK(INT).init;
+    ERR::s("creation of abstract class succeeded").nl;
+  end;
+end;

@@ -1,0 +1,81 @@
+--* Last edited: Dec 16 15:13 1993 (holzw)
+--
+-- test classes for out parameters
+--
+
+value class COMPLEX is
+   -- Billigstausfuehrung
+   shared vgl: COMPLEX;
+
+   real, imag: FLT;
+   v: $COMPLEX;
+   plus (z:$COMPLEX):SAME is
+      -- addition komplexer Zahlen
+      res.real:= self.real+z.real;
+      res.imag:= self.imag+z.imag;
+   end;
+
+   times (z:$COMPLEX):SAME is
+      -- multiplikation komplexer Zahlen
+      res.real:= self.real*z.real + self.imag*z.imag;
+      res.imag:= self.real*z.imag - self.imag*z.real;
+   end;
+
+   pow_2: SAME is
+      -- Quadrat einer komplexen Zahl
+      res:= times(self);
+   end;
+
+   print is
+     OUT::s("(").d(self.real).s(",").d(self.imag).s(")").nl;
+   end;
+end;
+
+value class U2 is
+   -- too big to be held in place
+   shared vgl: COMPLEX;		-- test, if names are different
+
+   c1,c2,c3,c4,c5,c6: COMPLEX;
+   foo is
+      c1.real:= 1;
+      c1.imag:= 2;
+      c2:=c1;
+      c3:=c1;
+      c4:=c1;
+      c5:=c1;
+      c6:=c1;
+   end;
+
+   pipe_thru (u1,:u2:COMPLEX) is
+     c2:=c1;
+   end;
+end;
+
+class OUT_E1 is
+   shared var: COMPLEX;	-- no object attribute can be an out parameter
+   const b: INT:= 5;
+
+   main is
+     z1: COMPLEX;
+     z2: $COMPLEX;
+     u1: U2;
+     u2: $U2;
+     out:COMPLEX;		-- no local out variables exist
+
+     z1.real:=1;
+     z1.imag:=z1.real+1;
+
+------------------------------------------ test illegal out parameters
+      U2::pipe_thru (z1,:1);				-- a constant
+      U2::pipe_thru (z1,:U2::type);			-- the type attrib
+      U2::pipe_thru (z1,:void);				-- void
+      U2::pipe_thru (z1,:COMPLEX::generator.pow_2);	-- a function
+
+      z2:= foo(z2);
+   end;
+
+   foo(:in:COMPLEX):COMPLEX is        
+     OUT::s("blah").nl;
+   end;
+
+end;

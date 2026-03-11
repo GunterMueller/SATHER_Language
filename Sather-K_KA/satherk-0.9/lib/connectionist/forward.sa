@@ -1,0 +1,601 @@
+-- -*- Mode: Sather;  -*-
+-- File: sather/lib/connectionist/forward.sa
+-- Author: Subutai Ahmad (ahmad@ICSI.Berkeley.EDU)
+-- Copyright (C) International Computer Science Institute, 1991
+--
+-- COPYRIGHT NOTICE: This code is provided "AS IS" WITHOUT ANY WARRANTY
+-- and is subject to the terms of the SATHER LIBRARY GENERAL PUBLIC
+-- LICENSE contained in the file: "sather/doc/license.txt" of the Sather
+-- distribution. The license is also available from ICSI, 1947 Center
+-- St., Suite 600, Berkeley CA 94704, USA.
+--*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FUNCTION: Implements general feed forward connectionist networks.
+--*
+--*
+--* CLASSES: FEED_FORWARD_NET, BACK_PROP, FEED_FORWARD_NET_TEST,
+--*          BACK_PROP_TEST
+--*
+--* REQUIRED FILES: ../data_structure/list.sa, ../geomebegin/matrix.sa,
+--*      ../geomebegin/vector.sa, ../geomebegin/vector_map.sa,
+--*      ../numerical/math.sa, ../base/random.sa, ../base/time.sa, ../base/test.sa,
+--*      ../base/C/time_.o
+--*
+--* RELATED FILES:
+--*
+--* HISTORY:
+--* Last edited: Mar 10 15:01 1993 (mauch)
+--*  Mar 10 15:00 1993 (mauch): changed name of set_weight/get_weight to
+--*           set_all_weight/set_all_weight, because attribute weight exists.
+--* Created: Wed May 22 15:49:42 1991 (ahmad)
+--*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+class FEED_FORWARD_NET is
+   -- Feed forward connectionist networks.
+   --
+   -- The representation of networks in FEED_FORWARD_NET is designed to be
+   -- flexible enough to represent all possible network topologies, without
+   -- sacrificing efficiency for the most widely used network types.  The
+   -- network is represented as an array of units. The bias is represented
+   -- as the `0''th unit; its state is always `1'.  The units are partitioned
+   -- into a disjoint set of layers. Each layer is simply a range of unit
+   -- numbers.
+   --
+   -- The connectivity of the network is specified as an array of groups.
+   -- Each group is simply a pair of layers (source and destination) which
+   -- are fully connected.  This also allows a compact representation of the
+   -- weights.  They are stored as an array of matrices, with one matrix for
+   -- each group.
+   --
+   -- Any network topology can be specified. (In the worst case,
+   -- each unit may need to be in a separate layer.) The representation and
+   -- update algorithms are near optimal (in space and time complexity) for
+   -- large back-propagation networks which typically have a very small
+   -- number of fully connected layers.
+
+   subtype of VECTOR_MAP;
+
+   -- Variables (defaults in parentheses).
+   rand_min,rand_max: FLT;  -- Range of initial random weights (-0.5,0.5).
+   n_units: INT;             -- Total number of units.
+   n_inps,n_outs: INT;       -- Number of input and output units.
+   n_hiddens: INT;           -- Number of hidden units.
+   first_out: INT;           -- Index of first output unit.
+   state: ARRAY2(FLT);      -- Unit states:
+			     --   `state[0,i]' - Output of `i''th unit.
+			     --   `state[1,i]' - Net input (weighted sum).
+			     --   `state[2,i]' - Error value (delta).
+   weight: ARRAY2(MATRIX);   -- Matrix of weights for each group:
+			     --   `weight[0,g]' - Weight values for group `g'.
+			     --   `weight[1,g]' - Last weight update (delta w)
+			     --   `weight[2,g]' - Changes since last update
+   layers: ARRAY2(INT);	     -- Range of layer `l' is `layer[0,l]'...`layer[1,l]'
+   groups: ARRAY2(INT);      -- Ranges for the 2 layers in each group:
+			     --   `groups[0,g]'...`groups[1,g]' (source layer)
+			     --   `groups[2,g]'...`groups[3,g]' (dest layer)
+
+   ---------------- Creation routines
+   
+   create:SAME is 
+      -- A new network.
+      res := new;
+   end; -- create
+
+   create_sized(inps,hids,outs:INT):SAME is
+      -- Returns a basic network with `inps' input units,
+      -- `hids' hidden units, and `outs' output units.
+      -- Weights are randomized.
+      res := new;
+      if hids = 0 then res.init_1_layer(inps,outs);
+      else res.init_2_layer(inps,hids,outs); end;
+   end; -- create_sized
+
+   ----------------- VECTOR_MAP routines
+   
+   map_in(vi,vo:VECTOR) is
+      -- Put the value of the map on `vi' into `vo'.
+      clamp_net(1,n_inps,vi);
+      forward;
+      i:INT; until i =vo.dim loop
+	 vo[i] := state[0,i +first_out]; i := i +1;
+      end; -- loop
+   end; -- map_in
+
+   in_dim:INT is 
+      -- Dimension of the input space.
+      res := n_inps;
+   end; -- in_dim
+
+   out_dim:INT is
+      -- Dimension of the output space.
+      res := n_outs;
+   end; -- out_dim
+
+   ------------------ Routines specific to FEED_FORWARD_NET 
+
+   clamp_net(i1,i2:INT; vec:VECTOR) is
+      -- Clamps units `i1' thru `i2' with `vec'.
+      i:INT := i1; until i >i2 loop
+	 state[0,i] := vec[i -i1];
+	 i := i +1;
+      end; -- loop
+   end; -- clamp_net
+
+   forward is
+      -- Propagate input through all layers.
+      l: INT; until l = layers.asize2 loop
+	 compute_output(l);
+	 l := l + 1;
+      end; -- loop
+   end; -- forward
+
+   randomize_weights is
+      -- Use uniform distribution on `self[rand_min,rand_max]' to initialize
+      -- weights.
+      g,i,j:INT;
+      until g =groups.asize2 loop
+	 m:MATRIX := weight[0,g];
+      	 i := 0; until i =m.nr loop
+      	    j := 0; until j =m.nc loop
+	       m[i,j] := RANDOM::uniform_range(rand_min,rand_max); j := j +1;
+	    end; -- loop
+	    i := i +1;
+	 end; -- end
+	 g := g +1;
+      end; -- end
+   end; -- randomize_weights
+
+   get_all_weight(i,j:INT):FLT is
+      -- Return the value of the weight from unit `i' to unit `j'.
+      -- Return `0' if there is no such connection.
+      g:INT := 0; until g =groups.asize2 loop
+	 if (i >=groups[0,g]) and (i <=groups[1,g]) 
+	    and (j >=groups[2,g]) and (j <= groups[3,g]) then 
+	    res := weight[0,g][i -groups[0,g],j -groups[2,g]];
+	    break;
+	 end; -- if
+	 g := g +1;
+      end; -- loop
+   end; -- get_all_weight
+
+   set_all_weight(i,j:INT; r:FLT) is
+      -- Set the weight from unit `i' to `j' to be `r'.
+      g:INT := 0; until g =groups.asize2 loop
+	 if (i >=groups[0,g]) and (i <=groups[1,g]) 
+	    and (j >=groups[2,g]) and (j <= groups[3,g]) then 
+	    weight[0,g][i -groups[0,g],j -groups[2,g]] := r;
+	    break;
+	 end; -- if
+	 g := g +1;
+      end; -- loop
+   end; -- set_all_weight
+
+   layer_of(i:INT):INT is
+      -- Returns unit `i''s layer number (`-1' if none).
+      res := -1;
+      l:INT := 0; until l =layers.asize2 loop
+	 if (i >= layers[0,l]) and (i <= layers[1,l]) then
+	    res := l; break;
+	 end; -- if
+	 l := l +1;
+      end; -- loop
+   end; -- layer_of
+
+   outfun(x:FLT):FLT is
+      -- Unit output function. Default is `sigmoid(x)'.
+      if x >10 then res := 1.;
+      elsif x <-10 then res := 0.;
+      else res := outfun_table[((1. -x /10.) *half_table).to_i];
+      end; -- if
+   end; -- outfun
+
+   d_outfun(x:FLT):FLT is
+      -- Returns derivative of output function at `x'.
+      -- Default derivative of sigmoid is f'(x) = f(x)*(1-f(x)).
+      fx:FLT := outfun(x);
+      res := fx *(1. -fx);
+   end; -- d_outfun
+
+------------ Private --------------------
+   
+   structure: INT;   -- 1 => Standard one layer perceptron.
+                             -- 2 => Standard 2 layer net.
+                             -- 0 => Anything.
+                             -- Used to optimize propagation routines.
+
+   outfun_table:ARRAY(FLT);
+   half_table:INT; -- 1/2 of the number of table entries.
+
+   init_outfun (ts:INT) is
+      -- Initialize table of function values.
+      i:INT; 
+      outfun_table := outfun_table.new(ts);
+      i := 0; until i =ts  loop
+	 outfun_table[i] := 1.0 /(1.0 + MATH::exp( -10.0 *(1.0 - 2. *i /ts)));
+	 i := i +1;
+      end; -- loop
+      half_table := ts /2;
+   end; -- init_outfun
+
+   init_defaults is
+      -- Initialize the default values.
+      rand_min := -.5; rand_max := .5; init_outfun(10000);
+   end; -- init_defaults
+
+   init_1_layer(inps,outs:INT) is
+      -- Create a 1 layer perceptron.
+      init_defaults;
+      n_inps := inps; n_hiddens := 0; n_outs := outs; 
+      init_units;
+      layers := ARRAY2(INT)::new(2,3);
+      set_layer(0,0,0); set_layer(1,1,n_inps); 
+      set_layer(2,first_out,n_units);
+      --Create 2 groups: bias->out, inp->out
+      weight := ARRAY2(MATRIX)::new(3,2); groups := ARRAY2(INT)::new(4,2);
+      set_group(0,0,0,first_out,n_units);
+      set_group(1,1,n_inps,first_out,n_units);
+      randomize_weights;
+      structure := 1;
+   end; -- init_1_layer
+
+   init_2_layer(inps,hids,outs:INT) is
+      -- Create a 2 layer net.
+      init_defaults;
+      n_inps := inps; n_hiddens := hids; n_outs := outs;
+      init_units;
+      layers := ARRAY2(INT)::new(2,4);
+      set_layer(0,0,0); set_layer(1,1,n_inps);
+      set_layer(2,n_inps +1,first_out -1); set_layer(3,first_out,n_units);
+      weight := ARRAY2(MATRIX)::new(3,4);
+      groups := ARRAY2(INT)::new(4,4);
+      set_group(0,0,0,n_inps +1,first_out -1);
+      set_group(1,0,0,first_out,n_units);
+      set_group(2,1,n_inps,n_inps +1,first_out -1);
+      set_group(3,n_inps +1,first_out -1,first_out,n_units);
+      randomize_weights;
+      structure := 2;
+   end; -- init_2_layer
+
+   init_units is
+      first_out := n_inps +n_hiddens +1; n_units := n_inps +n_hiddens +n_outs;
+      state := ARRAY2(FLT)::new(3,n_units +1);
+      state[0,0] := 1.0;
+   end;
+
+   set_layer(l,b,e:INT) is
+      layers[0,l] := b; layers[1,l] := e;
+   end; -- set_layer
+
+   set_group(g,beg1,end1,beg2,end2:INT) is
+      groups[0,g] := beg1; groups[1,g] := end1;
+      groups[2,g] := beg2; groups[3,g] := end2;
+      i:INT; until i =3 loop
+	 wt:MATRIX := MATRIX::new(end1 -beg1 +1,end2 -beg2 +1);
+	 weight[i,g] := wt;
+	 i := i +1; 
+      end; -- loop
+   end; -- set_group
+
+   compute_output(l:INT) is
+      -- Compute the output for all units in layer `l'.
+      g,i,j,end1,end2:INT; wt:MATRIX;
+      if layers[0,l] > n_inps then
+	 -- Set net input to 0
+	 i := layers[0,l]; until i >layers[1,l] loop
+	    state[1,i] := 0.; i := i +1;
+	 end; -- loop
+         --- For all groups g...
+	 g := 0; until g =groups.asize2  loop
+	    -- ...if destination is layer l, then accumulate net input
+	    if groups[2,g] =layers[0,l] then
+	       wt := weight[0,g]; end1 := groups[1,g]; end2 := groups[3,g];
+	       i := groups[0,g]; until i >end1 loop
+		  j := groups[2,g]; until j >end2  loop
+		     state[1,j] := state[1,j] +
+			state[0,i] *wt[i -groups[0,g],j -groups[2,g]];
+		     j := j +1;
+		  end; -- loop
+		  i := i +1;
+	       end; -- loop
+	    end; -- if
+	    g := g +1;
+	 end; -- loop
+	 -- Now compute output for each unit in layer.
+	 i := layers[0,l]; 
+	 until i >layers[1,l] loop
+	    state[0,i] := outfun(state[1,i]); i := i +1;
+	 end;
+      end; -- if
+   end; -- compute_output
+
+end; -- class FEED_FORWARD_NET
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+class BACK_PROP is
+   -- Implements the back propagation learning algorithm on
+   -- `FEED_FORWARD_NET's. Inherits from `LEARNED_VECTOR_MAP'.
+   
+   subtype of LEARNED_VECTOR_MAP;
+   subtype of FEED_FORWARD_NET;
+
+   -- Variables (defaults in parentheses)
+   
+   train_in,train_out:VECTOR_LIST;  -- List of training/teacher vectors.
+   teacher:VECTOR;              -- Current teacher vector.
+   n_train:INT;                 -- Number of training patterns.
+   max_iter:INT;                -- Maximum # of training iterations (1000).
+   cwts_every:INT;              -- How often to change weights (1).
+   learn_rate,momentum:FLT;    -- Step size (0.5) and momentum (0.9).
+
+   -------- LEARNED_VECTOR_MAP routines
+
+   train(in,out:VECTOR_LIST) is
+      -- Use the vectors `in' and `out' to train the map.
+      train_in := in; train_out := out;
+      train_network(max_iter);
+   end; -- train
+
+   -------- Back Prop specific routines
+
+   train_network(maxi:INT) is
+       -- Train net for `maxi' iterations.
+      if n_train =0 then n_train := train_in.size; end;
+      i:INT := 0; until i =maxi loop
+	 clamp(i); forward; back_pass;
+	 if i.mod(cwts_every) =0 then update_weights(true) 
+	 else update_weights(false); end;
+	 i := i +1;
+      end; -- loop
+   end;
+
+   clamp(i:INT) is
+      -- Clamp network with input/teacher pattern `i'.
+      clamp_net(1,n_inps,train_in[i.mod(n_train)]);
+      teacher := train_out[i.mod(n_train)];
+   end; -- clamp
+
+   back_pass is
+      -- Compute error gradient
+      i,l:INT; 
+	 -- For output units ...
+      i := first_out; until i >n_units loop
+	 state[2,i] := (teacher[i -first_out] -state[0,i]) *d_outfun(state[1,i]);
+	 i := i +1;
+      end; -- loop
+	 -- ... and hidden units
+      l := layers.asize2 -1; until l <1  loop 
+	 if layers[1,l] <first_out and layers[0,l] >n_inps then 	 
+	    compute_gradient(l);
+	 end;
+	 l := l -1; 
+      end; -- loop
+   end; -- back_pass
+
+   compute_gradient(l:INT) is
+      -- Compute delta's for layer `l'.
+      i,j,g,end1,end2:INT; wt:MATRIX; deriv:FLT;
+      i := layers[0,l]; until i >layers[1,l] loop
+	 state[2,i] := 0.;
+	 i := i +1;
+      end; -- loop
+      g := 0; until g =groups.asize2 loop
+	 if groups[0,g] =layers[0,l] then  -- source of group g is layer l
+	    wt := weight[0,g]; end1 := groups[1,g]; end2 := groups[3,g]; 
+	    i := groups[0,g]; until i >end1 loop
+               deriv:= d_outfun(state[1,i]);
+	       j:= groups[2,g]; until j>end2 loop
+		  state[2,i]:= state[2,i]+
+                             deriv*wt[i-groups[0,g],j-groups[2,g]]*state[2,j];
+		  j:= j+1;
+	       end; -- loop
+	       i:= i+1;
+	    end; -- loop
+	 end; -- if
+	 g:= g+1;
+      end;
+   end; -- compute_gradient
+
+   update_weights (chng:BOOL) is
+      -- Update each weights' acumulated gradient.  If `chng'=`true'
+      -- then also update weights.
+      g,i,j,r,c,end1,end2:INT; wt,cum_del,dw:MATRIX;
+      g:= 0; until g=groups.asize2  loop
+	 wt:= weight[0,g]; dw:= weight[1,g]; cum_del:= weight[2,g]; 
+	 end1:= groups[1,g]; end2:= groups[3,g];
+	 i:= groups[0,g]; until i>end1 loop 
+	    r:= i-groups[0,g]; 
+	    j:= groups[2,g]; until j>end2  loop
+	       c:= j-groups[2,g];
+	       cum_del[r,c]:= cum_del[r,c]+learn_rate*state[0,i]*state[2,j];
+	       if chng then 
+		  dw[r,c]:= cum_del[r,c] + momentum*dw[r,c];
+		  wt[r,c]:= wt[r,c]+dw[r,c]; cum_del[r,c]:= 0.;
+	       end; -- if
+	       j:= j+1;
+	    end; -- loop
+	    i:= i+1;
+	 end; -- loop
+	 g:= g+1;
+      end; -- loop
+   end; -- update_weights
+
+   init_defaults is
+      learn_rate:= 0.5; momentum:= 0.9;
+      rand_min:= -.5; rand_max:= .5;
+      teacher:= teacher.create(n_outs);
+      train_in:= train_in.create; train_out:= train_out.create;
+      cwts_every:= 1; max_iter:= 1000; init_outfun(10000);
+   end; -- init_defaults
+
+end; -- class BACK_PROP
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+class FEED_FORWARD_NET_TEST is
+   subtype of TEST;
+
+   main is
+      ----- Test of FEED_FORWARD_NET
+      class_name("FEED_FORWARD_NET");
+      net:FEED_FORWARD_NET;
+      RANDOM::init(42);
+      
+      ----- 1 layer network. 3 inps, 2 outs.
+      net:= net.create_sized(3,0,2);
+      test("n_inps",net.n_inps.to_s,"3");
+      test("n_hiddens",net.n_hiddens.to_s,"0");
+      test("n_outs",net.n_outs.to_s,"2");
+      test("first_out",net.first_out.to_s,"4");
+      test("layer(0)",net.layer_of(0).to_s,"0");
+      test("layer(1)",net.layer_of(1).to_s,"1");
+      test("layer(4)",net.layer_of(4).to_s,"2");
+
+      ---------2 layer network. 2 inps, 3 hids, 4 outs.-------
+      RANDOM::init(42); net:= net.create_sized(2,3,4);
+      test("n_inps",net.n_inps.to_s,"2");
+      test("n_hiddens",net.n_hiddens.to_s,"3");
+      test("n_outs",net.n_outs.to_s,"4");
+      test("first_out",net.first_out.to_s,"6");
+      test("layer(1)",net.layer_of(1).to_s,"1");
+
+      ---------- Read and set individual weights --------
+      RANDOM::init(42);
+      net:= net.create_sized(2,1,2);
+      test("get_all_weight(0,4)",net.get_all_weight(0,4).to_s,"0.024587");
+      test("get_all_weight(2,3)",net.get_all_weight(2,3).to_s,"-0.123776");
+      test("get_all_weight(3,5)",net.get_all_weight(3,5).to_s,"0.475874");
+      net.set_all_weight(1,3,1.1);
+      test("set_all_weight(1,3,1.1)",net.get_all_weight(1,3).to_s,"1.100000");
+      net.set_all_weight(3,5,0.9);
+      test("set_all_weight(3,5,0.9)",net.get_all_weight(3,5).to_s,"0.900000");
+
+      ---------- Test Output function ------------
+      test("f(-2)",net.outfun(-2).to_s,"0.119203");
+      test("f(-1)",net.outfun(-1).to_s,"0.268941");
+      test("f(0)",net.outfun(0).to_s,"0.500000");
+      test("f(1)",net.outfun(1).to_s,"0.731059");
+      test("f(2)",net.outfun(2).to_s,"0.880797");
+
+      test("df(-2)",net.d_outfun(-2).to_s,"0.104994");
+      test("df(-1)",net.d_outfun(-1).to_s,"0.196612");
+      test("df(0)",net.d_outfun(0).to_s,"0.250000");
+      test("df(1)",net.d_outfun(1).to_s,"0.196612");
+      test("df(2)",net.d_outfun(2).to_s,"0.104994");
+
+      -------- Clamp and forward prop ------------
+      RANDOM::init(42); net:= net.create_sized(2,1,2);
+      v1:VECTOR:= v1.create(2); v1[0]:= 0.2; v1[1]:= 0.3;
+      clamp_test(net,v1);
+
+      ----- VECTOR_MAP test --------
+      v1:VECTOR:= v1.create(2); v1[0]:= 0.8; v1[1]:= 0.9;
+      v2:VECTOR:= v2.create(2);
+      net.map_in(v1,v2);
+      test("in_dim",net.in_dim.to_s,"2");
+      test("out_dim",net.out_dim.to_s,"2");
+      test("output1",v2[0].to_s,net.state[0,4].to_s);
+      test("output2",v2[1].to_s,net.state[0,5].to_s);
+      finish;
+   end;
+     
+   clamp_test(net:$FEED_FORWARD_NET; v1:VECTOR) is
+      net.clamp_net(1,2,v1);
+      net.forward;
+      n3,n4,n5,s3,s4,s5:FLT;
+      n3:= net.get_all_weight(0,3)+
+	 v1[0]*net.get_all_weight(1,3)+v1[1]*net.get_all_weight(2,3);
+      s3:= net.outfun(n3);
+      n4:= net.get_all_weight(0,4)+s3*net.get_all_weight(3,4); s4:= net.outfun(n4); 
+      n5:= net.get_all_weight(0,5)+s3*net.get_all_weight(3,5); s5:= net.outfun(n5); 
+      test("Net input of unit 3",net.state[1,3].to_s,n3.to_s);
+      test("Net input of unit 4",net.state[1,4].to_s,n4.to_s);
+      test("Net input of unit 5",net.state[1,5].to_s,n5.to_s);
+      test("Output of unit 3",net.state[0,3].to_s,s3.to_s);
+      test("Output of unit 4",net.state[0,4].to_s,s4.to_s);
+      test("Output of unit 5",net.state[0,5].to_s,s5.to_s);
+   end; -- clamp_test
+
+end; -- class FEED_FORWARD_NET_TEST
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+class BACK_PROP_TEST is
+   subtype of TEST;
+
+   main is
+      --- Test of BACK_PROP
+      class_name("BACK_PROP");
+      net:BACK_PROP;
+      RANDOM::init(42);
+
+      ------------ Perceptron test ------------
+      -- 3 inputs, 2 outputs.  out1=OR, out2=MAJORITY.
+      RANDOM::init(42); net:= net.create_sized(3,0,2);
+      v1,v2:VECTOR; v_in,v_out:VECTOR_LIST;
+      v_in:= v_in.create; v_out:= v_out.create;
+      v1:= v1.create(3); v1[0]:= 0.; v1[1]:= 0.; v1[2]:= 0.; 
+      v2:= v2.create(2); v2[0]:= 0.; v2[1]:= 0.;
+      v_in:= v_in.push(v1); v_out:= v_out.push(v2);
+      v1:= v1.create(3); v1[0]:= 1.; v1[1]:= 0.; v1[2]:= 0.; 
+      v2:= v2.create(2); v2[0]:= 1.; v2[1]:= 0.;
+      v_in:= v_in.push(v1); v_out:= v_out.push(v2);
+      v1:= v1.create(3); v1[0]:= 0.; v1[1]:= 1.; v1[2]:= 0.; 
+      v2:= v2.create(2); v2[0]:= 1.; v2[1]:= 0.;
+      v_in:= v_in.push(v1); v_out:= v_out.push(v2);
+      v1:= v1.create(3); v1[0]:= 0.; v1[1]:= 0.; v1[2]:= 1.; 
+      v2:= v2.create(2); v2[0]:= 1.; v2[1]:= 0.;
+      v_in:= v_in.push(v1); v_out:= v_out.push(v2);
+      v1:= v1.create(3); v1[0]:= 1.; v1[1]:= 1.; v1[2]:= 0.; 
+      v2:= v2.create(2); v2[0]:= 1.; v2[1]:= 1.;
+      v_in:= v_in.push(v1); v_out:= v_out.push(v2);
+      v1:= v1.create(3); v1[0]:= 0.; v1[1]:= 1.; v1[2]:= 1.; 
+      v2:= v2.create(2); v2[0]:= 1.; v2[1]:= 1.;
+      v_in:= v_in.push(v1); v_out:= v_out.push(v2);
+      v1:= v1.create(3); v1[0]:= 1.; v1[1]:= 0.; v1[2]:= 1.; 
+      v2:= v2.create(2); v2[0]:= 1.; v2[1]:= 1.;
+      v_in:= v_in.push(v1); v_out:= v_out.push(v2);
+      v1:= v1.create(3); v1[0]:= 1.; v1[1]:= 1.; v1[2]:= 1.; 
+      v2:= v2.create(2); v2[0]:= 1.; v2[1]:= 1.;
+      v_in:= v_in.push(v1); v_out:= v_out.push(v2);
+
+      test("Error before training on OR/MAJORITY",
+	 net.mse(v_in,v_out).to_s,"0.564579");
+      net.train(v_in,v_out);
+      test("Error after training on OR/MAJORITY",
+	 net.mse(v_in,v_out).to_s,"0.004030");
+
+      ------------ Test with 1 hidden layer ------------
+      --output= XOR
+      RANDOM::init(42); net:= net.create_sized(2,2,1);  
+      
+      v_in:= v_in.create; v_out:= v_out.create;
+      v1:= v1.create(2); v1[0]:= 0.; v1[1]:= 0.;
+      v2:= v2.create(1); v2[0]:= 0.;
+      v_in:= v_in.push(v1); v_out:= v_out.push(v2);
+      v1:= v1.create(2); v1[0]:= 1.; v1[1]:= 0.;
+      v2:= v2.create(1); v2[0]:= 1.;
+      v_in:= v_in.push(v1); v_out:= v_out.push(v2);
+      v1:= v1.create(2); v1[0]:= 0.; v1[1]:= 1.;
+      v2:= v2.create(1); v2[0]:= 1.;
+      v_in:= v_in.push(v1); v_out:= v_out.push(v2);
+      v1:= v1.create(2); v1[0]:= 1.; v1[1]:= 1.;
+      v2:= v2.create(1); v2[0]:= 0.;
+      v_in:= v_in.push(v1); v_out:= v_out.push(v2);
+
+      test("Error before training on XOR",
+	 net.mse(v_in,v_out).to_s,"0.254083");
+      net.train(v_in,v_out);
+      test("Error after training on XOR",net.mse(v_in,v_out).to_s,"0.003428");
+
+      ------------ Batch Mode ------------
+      --- output= XOR
+      RANDOM::init(43); net.randomize_weights;
+      net.cwts_every:= 4;
+      test("Error before batch training on XOR",
+	 net.mse(v_in,v_out).to_s,"0.254872");
+      net.train(v_in,v_out);
+      test("Error after batch training on XOR",
+	 net.mse(v_in,v_out).to_s,"0.159521");
+      finish;
+   end;
+
+end; -- class BACK_PROP_TEST
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

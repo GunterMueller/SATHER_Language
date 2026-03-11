@@ -1,0 +1,16 @@
+File: sather/lib/connectionist/README
+Author: Stephen M. Omohundro
+Created: Wed May  8 16:54:10 1991
+Copyright (C) International Computer Science Institute, 1990
+
+This directory contains Sather classes implementing a variety of 
+connectionist networks and algorithms.
+
+README: This file.
+
+TEST.sa: Test all connectionist classes: CONNECTIONIST_CLASSES_TEST.
+
+feed_forward_net.sa: General feed-forward networks and versions 
+   trainable by back-propagation: FEED_FORWARD_NET, BACK_PROP, 
+   FEED_FORWARD_NET_TEST, BACK_PROP_TEST.
+

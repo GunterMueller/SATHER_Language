@@ -1,0 +1,486 @@
+-- AUTHOR: Wolf Zimmermann (zimmer@ira.uka.de)
+-- DATE:
+--
+-- Copyright (C) Universitaet Karlsruhe, 1993
+--
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FILE: set_hash_chain.sa
+--*
+--* CLASSES: SET__HASH_CHAIN(T,HASH<HASHFUNCTION(T))
+--* 
+--* IMPLEMENTATION OF: SET(T)
+--*
+--* CONFORMS TO: 
+--*
+--* IS A: 
+--* 
+--* REQUIRED CLASSES: HASHFUNCTION(T) SIMPLE_HASH(T) HASH__MINIMAL_STANDARD(T) \
+--* INT_HASH__MINIMAL_STANDARD EXCEPTION__MULTISET SET(T) TIME RANDOM_GENERATOR_32 \
+--* RANDOM_GENERATOR_32__MINIMAL_STANDARD SET__LIST(T) STR_HASH_SIMPLE \
+--* EXCEPTION__SET_ADD EXCEPTION__SET_DISJOINT_UNION 
+--*
+--* EXCEPTIONS: EXCEPTION__MULTISET EXCEPTION__SET_ADD EXCEPTION__SET_DISJOINT_UNION
+--*
+--* TEST CLASS: TEST__SET__HASH_CHAIN
+--*
+
+
+class SET__HASH_CHAIN(T,HASH<HASHFUNCTION(T)) is
+  -- * CLASS: SET__HASH_CHAIN(T,HASH<HASHFUNCTION(T))
+  -- * DESCRIPTION: implementation of sets via hash tables, collision resolution \
+  -- * by chaining. \
+  -- * For creating a set a hash function has to be given on the second parameter
+  -- * SUBCLASS OF:
+  -- * SPECIALIZATION OF:
+  -- * IMPLEMENTATION OF: SET(T)
+  -- * EXCEPTIONS: EXCEPTION__MULTISET EXCEPTION__SET_ADD EXCEPTION__SET_DISJOINT_UNION
+  -- * INVARIANT: SET(T)::Inv AND \
+  -- * FORALL x:T: member(x) IFF EXISTS i:INT: tab[i].member(x)
+  -- * REPRESENTATION:
+  -- * COMPLEXITY: \
+  -- * static SIZE = sum(tab[i].SIZE,i=0..tab_size-1) \
+  -- * static MAXSIZE = max(tab[i].MAXSIZE,i=0..tab_size-1) \
+  -- * cumulative SPACE(n) = O(n) \
+  -- * additive TIME(n) = O(n^2) \
+  -- * |        E[TIME(n)] = O(n) (uniform distribution)
+  -- * REFERENCES:
+  -- * ATTRIBUTES: readonly size:INT;                    -- set size \
+  -- *             hash:HASH;                   -- hashfunction \
+  -- *             tab :ARR[tab_size]($SET(T)); -- hash table \
+  -- *             tab_size:INT;                -- hash table size
+
+   subtype of SET(T);
+   hash:HASH;
+   tab: ARR[*]($SET(T));
+   tab_size:INT;
+   const default_size:INT := 100;
+
+   init:SAME is
+     -- * METHOD: init:SAME
+     -- * DESCRIPTION: initializes hash table with predefined size
+     -- * PRE: NOT self=void
+     -- * POST: 
+     -- * COMPLEXITY: \
+     -- * SIZE__init = 0 \
+     -- * MAXSIZE__init = 0 \
+     -- * SPACE__init = O(1) \
+     -- * TIME__init = O(1) 
+     -- * REFERENCES:
+     res := init_default(100);
+   end;
+
+   init_default(def_tab_size:INT):SAME is
+     -- * METHOD: init_default(def_tab_size:INT):SAME
+     -- * DESCRIPTION: initializes hash table with def_tab_size slots
+     -- * PRE: NOT self=void
+     -- * POST: self'=res AND tab_size'=def_tab_size AND size'=0 AND\
+     -- * FORALL 0<=i<tab_size: tab[i].empty
+     -- * COMPLEXITY: \
+     -- * SIZE__init_default(self.SIZE,def_tab_size) = 0 \
+     -- * MAXSIZE__init_default(self.MAXSIZE,def_tab_size) = 0 \
+     -- * SPACE__init_default(self.SIZE,def_tab_size) = O( \
+     -- * |    max(HASH::SPACE__init(def_tab_size),\
+     -- * |        HASH::SIZE__init(def_tab_size), \
+     -- * |        SET__LIST::SPACE__init)) \
+     -- * TIME__init_default(self.SIZE,def_tab_size) = O( \
+     -- * |    HASH::TIME__init(def_tab_size) + \
+     -- * |    HASH::SIZE__init(def_tab_size)*SET__LIST::TIME__init)
+     -- * REFERENCES:
+     i:INT;
+     res := self;
+     hash := #HASH.init(def_tab_size);
+     tab_size := hash.tab_size;
+     tab := #ARR[tab_size]($SET(T));
+     size := 0;
+     loop
+       i := 0.upto!(tab_size - 1);
+       tab[i] := #SET__LIST(T).init;
+     end; -- loop;
+   end; -- create;
+
+   insert(a:T):SAME is
+     -- * METHOD: insert(a:T):SAME
+     -- * DESCRIPTION: inserts a into hash table
+     -- * PRE: true
+     -- * POST: res = self' AND tab'[hash.hash(a)].member(a) AND \
+     -- * tab'[hash.hash(a)] = tab[hash.hash(a)].insert(a) AND \
+     -- * size' =  tab'[hash.hash(a)].size - tab[hash.hash(a)].size AND \
+     -- * FORALL 0<=i<tab_size: i /= hash.hash(a) IMPLIES tab'[i]=tab[i]
+     -- * COMPLEXITY: \
+     -- * SIZE__insert(self.SIZE,a.SIZE) = self.SIZE + 1 \
+     -- * MAXSIZE__insert(self.MAXSIZE,a.SIZE) = max(self.MAXSIZE,a.SIZE) \
+     -- * SPACE__insert(self.SIZE,a.SIZE,self.MAXSIZE) = O(\
+     -- * |      max(HASH::SPACE__hash(a.SIZE), \
+     -- * |          $SET(T)::SPACE__insert(self.SIZE,a.SIZE,self.MAXSIZE))) \
+     -- * E[SPACE__insert(self.SIZE,a.SIZE,self.MAXSIZE)] = O(\
+     -- * |      max(HASH::SPACE__hash(a.SIZE), \
+     -- * |          $SET(T)::SPACE__insert(1,a.SIZE,self.MAXSIZE))) \
+     -- * TIME__insert(self.SIZE,a.SIZE,self.MAXSIZE) = O(\
+     -- * |      HASH::TIME__hash(a.SIZE) + \
+     -- * |      $SET(T)::TIME__insert(self.SIZE,a.SIZE,self.MAXSIZE)) \
+     -- * E[TIME__insert(self.SIZE,a.SIZE,self.MAXSIZE)] = O(\
+     -- * |      HASH::TIME__hash(a.SIZE) + \
+     -- * |      $SET(T)::TIME__insert(1,a.SIZE,self.MAXSIZE)) 
+     -- * REFERENCES:
+     val : INT := hash.hash(a);
+     oldsize:INT := tab[val].size;
+     res := self;
+     tab[val] := tab[val].insert(a);
+     size := size + tab[val].size - oldsize;
+   end; -- insert
+
+   member(a:T):BOOL is
+     -- * METHOD: member(a:A):BOOL
+     -- * DESCRIPTION: checks whether a is member of self
+     -- * PRE: true
+     -- * POST: res = tab[hash.hash(a)].member(a) AND self'=self
+     -- * COMPLEXITY: \
+     -- * SIZE__member(self.SIZE,a.SIZE) = 1 \
+     -- * SPACE__member(self.SIZE,a.SIZE,self.MAXSIZE) = O(\
+     -- * |      max(HASH::SPACE__hash(a.SIZE), \
+     -- * |          $SET(T)::SPACE__member(self.SIZE,a.SIZE,self.MAXSIZE))) \
+     -- * E[SPACE__member(self.SIZE,a.SIZE,self.MAXSIZE)] = O(\
+     -- * |      max(HASH::SPACE__hash(a.SIZE), \
+     -- * |          $SET(T)::SPACE__member(1,a.SIZE,self.MAXSIZE))) \
+     -- * TIME__member(self.SIZE,a.SIZE,self.MAXSIZE) = O(\
+     -- * |      HASH::TIME__hash(a.SIZE) + \
+     -- * |      $SET(T)::TIME__member(self.SIZE,a.SIZE,self.MAXSIZE)) \
+     -- * E[TIME__member(self.SIZE,a.SIZE,self.MAXSIZE)] = O(\
+     -- * |      HASH::TIME__hash(a.SIZE) + \
+     -- * |      $SET(T)::TIME__member(1,a.SIZE,self.MAXSIZE)) 
+     -- * REFERENCES:
+     -- * REFERENCES:
+     res := tab[hash.hash(a)].member(a);
+   end; -- member
+
+   delete(a:T):SAME is
+     -- * METHOD: delete(a:A):SAME
+     -- * DESCRIPTION: deletes a from the hash table
+     -- * PRE: true
+     -- * POST: res = self' AND NOT tab'[hash.hash(a)].member(a) AND \
+     -- * tab'[hash.hash(a)] = tab[hash.hash(a)].delete(a) AND \
+     -- * size' = size + tab'[hash.hash(a)].size - tab[hash.hash(a)].size AND \
+     -- * FORALL 0<=i<tab_size: i /= hash.hash(a) IMPLIES tab'[i]=tab[i]
+     -- * COMPLEXITY:  \
+     -- * SIZE__delete(self.SIZE,a.SIZE) = self.SIZE \
+     -- * MAXSIZE__delete(self.MAXSIZE,a.SIZE) = self.MAXSIZE \
+     -- * SPACE__delete(self.SIZE,a.SIZE,self.MAXSIZE) = O(\
+     -- * |      max(HASH::SPACE__hash(a.SIZE), \
+     -- * |          $SET(T)::SPACE__delete(self.SIZE,a.SIZE,self.MAXSIZE))) \
+     -- * E[SPACE__delete(self.SIZE,a.SIZE,self.MAXSIZE)] = O(\
+     -- * |      max(HASH::SPACE__hash(a.SIZE), \
+     -- * |          $SET(T)::SPACE__delete(1,a.SIZE,self.MAXSIZE))) \
+     -- * TIME__insert(self.SIZE,a.SIZE,self.MAXSIZE) = O(\
+     -- * |      HASH::TIME__hash(a.SIZE) + \
+     -- * |      $SET(T)::TIME__delete(self.SIZE,a.SIZE,self.MAXSIZE)) \
+     -- * E[TIME__delete(self.SIZE,a.SIZE,self.MAXSIZE)] = O(\
+     -- * |      HASH::TIME__hash(a.SIZE) + \
+     -- * |      $SET(T)::TIME__delete(1,a.SIZE,self.MAXSIZE)) 
+     -- * REFERENCES:
+     -- * REFERENCES:
+     val : INT := hash.hash(a);
+     oldsize:INT := tab[val].size;
+     res := self;
+     tab[val] := tab[val].delete(a);
+     size := size + tab[val].size - oldsize;
+   end; -- insert
+
+   choose:T is
+     -- * METHOD: choose:T
+     -- * DESCRIPTION: selects one element of self
+     -- * PRE: NOT empty
+     -- * POST: self'=self AND member(res)
+     -- * COMPLEXITY: \
+     -- * SIZE__choose(self.SIZE,self.MAXSIZE) = self.MAXSIZE \
+     -- * SPACE__choose(self.SIZE,self.MAXSIZE) = O($SET(T)::SPACE__choose(self.SIZE,self.MAXSIZE)) \
+     -- * TIME__choose(self.SIZE) = O($SET(T)::TIME__choose(self.SIZE)) \
+     -- * REFERENCES:
+
+     i:INT;
+     if empty then #EXCEPTION__MULTISET.raise; end;
+     loop
+       i := 0.upto!(tab_size-1);
+       if not tab[i].empty then res := tab[i].choose; return; end;
+     end;
+   end;
+
+   stream elts:T is
+      -- * METHOD: stream elts:T
+      -- * DESCRIPTION: iterator iterating over all elements of a set
+      -- * PRE: true
+      -- * POST: elts.terminated IFF i=size AND \
+      -- *       res[i]=self.diff({res[1],...,res[i-1]}).choose AND\
+      -- *       self'=self
+      -- * COMPLEXITY:  \
+      -- * SIZE__elts(self.SIZE) = self.SIZE \
+      -- * SPACE_elts(self.SIZE,self.MAXSIZE,k) = O(self.MAXSIZE) \
+      -- * TIME_elts(self.SIZE,self.MAXSIZE,k) = O($SET(T)::TIME__elts(self.SIZE,self.MAXSIZE,k))
+      -- * REFERENCES:
+
+      i:INT;
+      loop
+        i:=0.upto!(tab_size-1);
+        loop
+          res := tab[i].elts!;
+          resume;
+        end;
+      end;
+   end;
+
+   copy_set:SAME is
+      -- * METHOD: copy_set:SAME
+      -- * DESCRIPTION: method copying a set
+      -- * PRE: true
+      -- * POST: FORALL x:T:res.member(x) IFF member(x) AND self'==self
+      -- * COMPLEXITY:  \
+      -- * SIZE__copy_set(self.SIZE) = self.SIZE \
+      -- * MAXSIZE__copy_set(self.MAXSIZE) = self.MAXSIZE \
+      -- * SPACE__copy_set(self.SIZE,self.MAXSIZE) = O(\
+      -- * |   max(self.SIZE, \
+      -- * |       SPACE__insert(self.SIZE,self.MAXSIZE), \
+      -- * |       SPACE__elts(self.SIZE,self.MAXSIZE,self.SIZE))) \
+      -- * TIME__copy_set(self.SIZE,self.MAXSIZE) = O(\
+      -- * |       self.SIZE*TIME__insert(self.SIZE,self.MAXSIZE)+ \
+      -- * |       TIME__elts(self.SIZE,self.MAXSIZE,self.SIZE)) \
+      -- * REFERENCES:
+
+      res := #SAME.init_default(tab_size);
+      loop
+	res.insert(elts!);
+      end;
+   end;
+        
+
+
+
+   str : STR is
+     first_found:BOOL := false;
+     i:INT;
+     x : T;
+     res := "{";
+     loop
+       i := 0.upto!(tab_size-1);
+       loop
+	 x := tab[i].elts!;
+	 if first_found then res := res.s(","); end;
+         res := res.s(x.str);
+	 first_found := true;
+       end;
+     end; -- loop
+     res := res.s("}");
+   end; -- str
+       
+   max_number_collisions:INT is
+     i:INT;
+     res := 0;
+     loop
+       i := 0.upto!(tab_size-1);
+       if tab[i].size > res then res := tab[i].size; end;
+     end;
+   end;
+
+end; -- HASH_TAB
+
+class TEST__SET__HASH_CHAIN is
+
+  performancetest(n:INT) is
+    s:SET__HASH_CHAIN(INT,INT_HASH__MINIMAL_STANDARD) := #SET__HASH_CHAIN(INT,INT_HASH__MINIMAL_STANDARD).init_default(n);
+    i:INT;
+    r:$RANDOM_GENERATOR_32 := #RANDOM_GENERATOR_32__MINIMAL_STANDARD.init(0,2147483640);
+    a:ARR[*](INT) := #ARR[n](INT);
+    l:INT;
+    loop
+      i:=0.upto!(n-1);
+      a[i] := r.random;
+    end;
+    timer:TIMER := #TIMER;
+    timer.reset;
+    timer.go;
+    loop
+      i := 0.upto!(n-1);
+      s := s.insert(a[i]);
+    end;
+    timer.stop;
+    OUT::s(n.str).s(" times insert cost time ").s(timer.mean.str).nl.nl;
+    l := s.max_number_collisions;
+    OUT::s("length of longest collision chain = ").i(l).nl.nl;
+    timer.reset;
+    timer.go;
+    loop
+      i:=0.upto!(n-1);
+      if not(s.member(a[i])) then break; end;
+    end;
+    timer.stop;
+    OUT::s(n.str).s(" times member cost time ").s(timer.mean.str).nl.nl;
+    if i<n-1 then OUT::s("membership test not succeeded for i=").s(i.str).nl.nl;
+    else OUT::s("membership test succeeded").nl.nl;
+    end;
+    timer.reset;
+    timer.go;
+    loop
+      i:= 0.upto!(n-1);
+      s := s.delete(a[i]);
+    end;
+    timer.stop;
+    OUT::s(n.str).s(" times delete cost time ").s(timer.mean.str).nl.nl;
+    if s.empty then OUT::s("deletion succeeded").nl.nl;
+    else OUT::s("deletion not succeeded: s=").s(s.str).nl.nl;
+    end;
+  end; -- performancetest
+
+
+  performancetest_str(m:INT) is
+    s:SET__HASH_CHAIN(STR,STR_HASH_SIMPLE) := #SET__HASH_CHAIN(STR,STR_HASH_SIMPLE).init_default(m);
+    i:INT;
+    r:$RANDOM_GENERATOR_32 := #RANDOM_GENERATOR_32__MINIMAL_STANDARD.init(0,2147483640);
+    n:INT := 10*m;
+    a:ARR[*](STR) := #ARR[n](STR);
+    l:INT;
+    loop
+      i:=0.upto!(n-1);
+      a[i] := r.random.str;
+    end;
+    timer:TIMER := #TIMER;
+    timer.reset;
+    timer.go;
+    loop
+      i := 0.upto!(n-1);
+      s := s.insert(a[i]);
+    end;
+    timer.stop;
+    OUT::s(n.str).s(" times insert cost time ").s(timer.mean.str).nl.nl;
+    l := s.max_number_collisions;
+    OUT::s("length of longest collision chain = ").i(l).nl.nl;
+    timer.reset;
+    timer.go;
+    loop
+      i:=0.upto!(n-1);
+      if not(s.member(a[i])) then break; end;
+    end;
+    timer.stop;
+    OUT::s(n.str).s(" times member cost time ").s(timer.mean.str).nl.nl;
+    if i<n-1 then OUT::s("membership test not succeeded for i=").s(i.str).nl.nl;
+    else OUT::s("membership test succeeded").nl.nl;
+    end;
+    timer.reset;
+    timer.go;
+    loop
+      i:= 0.upto!(n-1);
+      s := s.delete(a[i]);
+    end;
+    timer.stop;
+    OUT::s(n.str).s(" times delete cost time ").s(timer.mean.str).nl.nl;
+    if s.empty then OUT::s("deletion succeeded").nl.nl;
+    else OUT::s("deletion not succeeded: s=").s(s.str).nl.nl;
+    end;
+  end;
+
+  main is
+    s:$SET(INT) := #SET__HASH_CHAIN(INT,SIMPLE_HASH(INT)).init;
+    x:INT;
+    OUT::s("s is created: empty set").nl;
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.empty? ").s(s.empty.str).nl.nl;
+    begin
+      x := s.choose;
+    except excptset
+      when EXCEPTION__MULTISET 
+         then ERR::s(excptset.str).nl;
+	      OUT::s("exception test successfull").nl;
+      else OUT::s("exception test not successfull").nl;
+    end;
+    OUT::s("s := s.delete(5)").nl;
+    s := s.delete(5);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.member(5)? ");
+    OUT::s(s.member(5).str).nl.nl;
+    OUT::s("s.insert(5)").nl;
+    s := s.insert(5);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.empty? ").s(s.empty.str).nl.nl;
+    OUT::s("s.insert(5)").nl;
+    s := s.insert(5);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.insert(10)").nl;
+    s := s.insert(10);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.member(5)? ");
+    OUT::s(s.member(5).str).nl.nl;
+    OUT::s("s.member(6)? ");
+    OUT::s(s.member(6).str).nl;
+    OUT::s("s.choose = ").s(s.choose.str).nl.nl;
+    OUT::s("s := s.delete(5)").nl;
+    s := s.delete(5);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.choose = ").s(s.choose.str).nl.nl;
+    OUT::s("s := s.delete(10)").nl;
+    s := s.delete(10);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.empty? ").s(s.empty.str).nl.nl;
+    begin
+      x := s.choose;
+    except excptset
+      when EXCEPTION__MULTISET 
+         then ERR::s(excptset.str).nl;
+	      OUT::s("exception test successfull").nl;
+      else OUT::s("exception test not successfull").nl;
+    end;
+    OUT::s("s.insert(10)").nl;
+    s := s.insert(10);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.empty? ").s(s.empty.str).nl.nl;
+    OUT::s("s.insert(5)").nl;
+    s := s.insert(5);
+    OUT::s("s = ").s(s.str).nl.nl;
+    s := #SET__LIST(INT).init;
+    OUT::s("s is created: empty set").nl;
+    OUT::s("s = ").s(s.str).nl.nl;
+    -- performancetest(1000);
+    -- performancetest(2000);
+    -- performancetest(3000);
+    -- performancetest(4000);
+    -- performancetest(5000);
+    -- performancetest(6000);
+    -- performancetest(7000);
+    -- performancetest(8000);
+    -- performancetest(9000);
+    --performancetest(10000);
+    --performancetest(20000);
+    --performancetest(30000);
+    --performancetest(40000);
+    --performancetest(50000);
+    --performancetest(60000);
+    --performancetest(70000);
+    --performancetest(80000);
+    --performancetest(90000);
+    --performancetest(100000);
+    -- performancetest(1000);
+
+    --performancetest_str(101);
+    --performancetest_str(211);
+    --performancetest_str(307);
+    --performancetest_str(401);
+    --performancetest_str(503);
+    --performancetest_str(601);
+    --performancetest_str(701);
+    --performancetest_str(809);
+    --performancetest_str(907);
+    --performancetest_str(1009);
+    --performancetest_str(2003);
+    --performancetest_str(3001);
+    --performancetest_str(4001);
+    --performancetest_str(5003);
+    --performancetest_str(6007);
+    --performancetest_str(7001);
+    --performancetest_str(8009);
+    --performancetest_str(9001);
+    --performancetest_str(10007);
+  end; -- main
+
+end; -- TEST__SET__LIST
+
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+

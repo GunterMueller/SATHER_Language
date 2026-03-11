@@ -1,0 +1,14 @@
+Fri Mar 12 13:21:01 1993  Reiner Mauch  (mauch@pythagoras)
+
+	* added base/exception.sa
+	* changed initialization of error codes in base/unix.sa
+	* base/random.sa: Changed set routine for gen (set_gen) in RANDOM
+	* base/str_form.sa: replaced (w-2) against (w-1) in set_width.
+	* base/str_form.sa: Changed set routines of width and precision of
+			    STR_FORMATTER.
+			    
+Sun Jan 24 16:53:54 1993  Martin Trapp  (trapp@olympia)
+
+	* data_structure/list.sa:LIST_CURSOR{T}: l is now $LIST{T}
+	
+

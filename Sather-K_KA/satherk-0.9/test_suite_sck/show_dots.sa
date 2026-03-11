@@ -1,0 +1,52 @@
+-- -*- Mode: Sather;  -*-
+-- File: test.sa
+-- Author: Martin Trapp (trapp@ira.uka.de)
+-- Copyright (C) Reiner Mauch & Martin Trapp
+-- Copyright (C) Universitaet Karlsruhe, Germany, 1994
+--*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FUNCTION:
+--*
+--* CLASSES:
+--* 
+--* REQUIRED FILES:
+--*
+--* RELATED FILES:
+--*
+--* RCS: $Id$
+--*
+--* HISTORY:
+--* Last edited: Mar 11 11:35 1994 (trapp)
+--* Created: Fri Mar 11 11:07:18 1994 (trapp)
+--*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+class SHOW_DOTS is
+   --
+   main is
+      home:STR:=UNIX::getenv("HOME");
+      if UNIX::unix_error = 0 then
+	 OUT::s("home is: ").s(home).nl;
+      end;
+      cwd:STR := UNIX::getcwd;
+      if UNIX::unix_error = 0 then
+	 OUT::s("cwd is: ").s(cwd).nl;
+      end;
+      if home /= void then
+	 OUT::s("going home").nl;
+	 UNIX::chdir(home);
+	 if UNIX::unix_error /= 0 then
+	    OUT::s("can't go home").nl;
+	 end;
+      end;
+      UNIX::system("ls -d .??* > /tmp/xxx");
+      ls:FILE:=FILE::create;
+      ls.open_for_read("/tmp/xxx");
+      if ls.error = FILE::open_error then
+	 ERR::s("can't open file for read").nl;
+      else
+	 until ls.check_eof loop
+	    OUT::s(ls.get_s);
+	 end;
+      end;
+   end;
+end; -- class
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

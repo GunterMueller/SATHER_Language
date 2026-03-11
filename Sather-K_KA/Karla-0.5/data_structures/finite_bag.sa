@@ -1,0 +1,89 @@
+-- File: finite_bag.sa
+-- Author: Arne Frick (frick@ira.uka.de)
+-- Copyright (C) Universitaet Karlsruhe, 1994
+--
+-- COPYRIGHT NOTICE: This code is provided "AS IS" WITHOUT ANY WARRANTY
+-- and is subject to the terms of the KARLA LIBRARY GENERAL PUBLIC
+-- LICENSE contained in the file: "doc/license.txt" of the 
+-- distribution. 
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FILE: finite_bag.sa
+--*
+--* CLASSES: FINITE_MULTISET(T1,T<FINITE(T1))  
+--* 
+--* IMPLEMENTATION OF: 
+--*
+--* CONFORMS TO: MULTISET(T)
+--*
+--* IS A: MULTISET(T)
+--*
+--* REQUIRED CLASSES: MULTISET(T) FINITE(T) FINITE_INT
+--*
+--* EXCEPTIONS: EXCEPTION__MULTISET
+--*
+--* TEST CLASS: TEST__FINITE_MULTISET
+--*
+--* FOREIGN FILES:
+--*
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--
+-- RCS: $Id$
+-- HISTORY: $Log$
+--
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+abstract class FINITE_MULTISET(T1,T < FINITE(T1)) is
+   -- * CLASS: FINITE_MULTISET(T<FINITE(T))
+   -- * DESCRIPTION: abstract class defining sets over finite domains
+   -- * SUBCLASS OF: MULTISET(T)
+   -- * SPECIALIZATION OF: MULTISET(T)
+   -- * IMPLEMENTATION OF: 
+   -- * EXCEPTIONS: EXCEPTION__MULTISET
+   -- * INVARIANT: MULTISET::Inv 
+   -- * REPRESENTATION:
+   -- * COMPLEXITY:
+   -- * REFERENCES: [Aho, Hopcroft, Ullman: "The Design and Analysis \
+   -- *               of Computer Algorithms", Addison-Wesley, 1974]
+   -- * ATTRIBUTES: size : INT
+
+   subtype of MULTISET(T);
+
+
+   complement:SAME is
+     -- * METHOD: complement:SAME
+     -- * DESCRIPTION: computes univers minus self
+     -- * PRE: true
+     -- * POST: FORALL x:T: (res.multiplicity(x)=1 IFF NOT member(x)) AND \
+     -- * (res.multiplicity(x)=0 IFF member(x))
+     -- * COMPLEXITY: \
+     -- * SIZE_complement(self.SIZE) = T::n - self.SIZE \
+     -- * MAXSIZE_complement(self.SIZE) = max(x.SIZE; x:T) \
+     -- * SPACE_complement(self.SIZE,self.MAXSIZE) = O( \
+     -- * |  max(res.SIZE,self.SIZE,SPACE_member(self.SIZE,max(x.SIZE;x:T)),
+     -- * |      SPACE_insert(self.SIZE,max(x.SIZE;x:T)))) \
+     -- * additive TIME_complement(self.SIZE) = O( \
+     -- * | TIME_init(self.SIZE) + \
+     -- * | T::n * max(max(TIME_member(self.SIZE,max(x.SIZE;x:T),TIME_insert(self.SIZE,max(x.SIZE;x:T))))))
+     -- * REFERENCES:
+
+     x : T := #T;
+     i:INT;
+     res := ##res.init;
+     loop
+       i := 0.upto!(x.n-1);
+       x.elt := i;
+       if not member(x) then res := res.insert(x); end;
+     end;
+   end;
+     
+
+end;
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+
+class TEST__FINITE_MULTISET is
+   main is
+      a:$MULTISET(FINITE_INT):=#FINITE_MULTISET(INT,FINITE_INT);
+      ERR::s("creation of abstract class succeeded.\n");
+   end;
+end;

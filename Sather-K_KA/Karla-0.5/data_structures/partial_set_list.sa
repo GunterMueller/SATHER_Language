@@ -1,0 +1,209 @@
+-- Author: Arne Frick (frick@ira.uka.de)
+-- Copyright (C) Universitaet Karlsruhe, 1994
+--
+-- COPYRIGHT NOTICE: This code is provided "AS IS" WITHOUT ANY WARRANTY
+-- and is subject to the terms of the KARLA LIBRARY GENERAL PUBLIC
+-- LICENSE contained in the file: "doc/license.txt" of the 
+-- distribution. 
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FILE: partial_set_list.sa
+--*
+--* CLASSES: PARTIAL_SET__LIST(K,T1,T<PARTIAL(K,T1))
+--* 
+--* IMPLEMENTATION OF: PARTIAL_SET(K,T1,T)
+--*
+--* CONFORMS TO: PARTIAL_SET(K,T1,T)
+--*
+--* IS A:
+--*
+--* REQUIRED CLASSES: SET(T) PARTIAL(K,T) SET__LIST(T)  PARTIAL_SET(T) TIMER  PARTIAL_INT\
+--* PARTIAL_STR EXCEPTION__MULTISET EXCEPTION__SET_ADD EXCEPTION__SET_DISJOINT_UNION \
+--* EXCEPTION__PARTIAL_MULTISET_LOOKUP
+--*
+--* EXCEPTIONS: EXCEPTION__MULTISET EXCEPTION__SET_ADD EXCEPTION__SET_DISJOINT_UNION \
+--* EXCEPTION__PARTIAL_MULTISET_LOOKUP
+--*
+--* TEST CLASS: TEST__PARTIAL_SET__LIST
+--*
+--* FOREIGN FILES:
+--*
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--
+-- RCS: $Id$
+-- HISTORY:
+--  * Last edited: May 27 14:34 1994 (algprak9)
+-- Created: Wed Mar 16 18:43:26 1994 (frick)
+--
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ class PARTIAL_SET__LIST(K,T1,T<PARTIAL(K,T1)) is
+   -- * CLASS: PARTIAL_SET__LIST(K,T1,T<PARTIAL(K,T1))
+   -- * DESCRIPTION: abstract class defining Sets with partial key access
+   -- * SUBCLASS OF: PARTIAL_SET(K,T1,T)
+   -- * SPECIALIZATION OF: 
+   -- * IMPLEMENTATION OF: PARTIAL_SET(K,T1,T)
+   -- * EXCEPTIONS: EXCEPTION_MULTISET EXCEPTION__SET_ADD EXCEPTION__SET_DISJOINT_UNION \
+   -- * EXCEPTION__PARTIAL_MULTISET_LOOKUP
+   -- * INVARIANT: PARTIAL_SET(K,T1,T)::Inv AND SET__LIST(T)::Inv
+   -- * REPRESENTATION:
+   -- * COMPLEXITY: \
+   -- *     static      SIZE = size; \
+   -- *                 ##.init.MAXSIZE = 0 AND \
+   -- *                 MAXSIZE = max(choose.SIZE,delete(choose).MAXSIZE)
+   -- * cumulative SPACE(n) = O(n) \
+   -- * additive   TIME(n) = O(n^2)
+   -- * REFERENCES: [Aho, Hopcroft, Ullman: "The Design and Analysis \
+   -- *               of Computer Algorithms", Addison-Wesley, 1974]
+   -- * ATTRIBUTES: size : INT
+
+   subtype of PARTIAL_SET(K,T1,T);
+   include SET__LIST(T);
+   
+end;    
+ 
+
+
+class TEST__PARTIAL_SET__LIST is
+
+  performancetest(n:INT) is
+    s:$SET(PARTIAL_INT) := #PARTIAL_SET__LIST(INT,INT,PARTIAL_INT).init;
+    i:INT;
+    x:PARTIAL_INT;
+    timer:TIMER := #TIMER;
+    timer.reset;
+    timer.go;
+    loop
+      i := 1.upto!(n);
+      x := #PARTIAL_INT{key := i}.init;
+      s := s.insert(x);
+    end;
+    timer.stop;
+    OUT::s(n.str).s(" times insert cost time ").s(timer.mean.str).nl.nl;
+    timer.reset;
+    timer.go;
+    loop
+      i:=1.upto!(n);
+      x := #PARTIAL_INT{key := i}.init;
+      if not(s.member(x)) then break; end;
+    end;
+    timer.stop;
+    OUT::s(n.str).s(" times member cost time ").s(timer.mean.str).nl.nl;
+    if i<n then OUT::s("membership test not succeeded for i=").s(i.str).nl.nl;
+    else OUT::s("membership test succeeded").nl.nl;
+    end;
+    timer.reset;
+    timer.go;
+    loop
+      i:= 1.upto!(n);
+      x := #PARTIAL_INT{key := i}.init;
+      s := s.delete(x);
+    end;
+    timer.stop;
+    OUT::s(n.str).s(" times delete cost time ").s(timer.mean.str).nl.nl;
+    if s.empty then OUT::s("deletion succeeded").nl.nl;
+    else OUT::s("deletion not succeeded: s=").s(s.str).nl.nl;
+    end;
+  end; -- performancetest
+
+
+  main is
+    s:$PARTIAL_SET(INT,INT,PARTIAL_INT) := #PARTIAL_SET__LIST(INT,INT,PARTIAL_INT).init;
+    x:PARTIAL_INT;
+    i:INT;
+    s1:$PARTIAL_SET(INT,STR,PARTIAL_STR) := #PARTIAL_SET__LIST(INT,STR,PARTIAL_STR).init;
+    y:PARTIAL_STR := #PARTIAL_STR;
+    OUT::s("s is created: empty set").nl;
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.empty? ").s(s.empty.str).nl.nl;
+    begin
+      x := s.choose;
+    except excptset
+      when EXCEPTION__MULTISET then 
+	 ERR::s(excptset.str).nl;
+	 OUT::s("exception test successfull").nl;
+      else OUT::s("exception test not successfull").nl;
+    end;
+    OUT::s("s := s.delete(5)").nl;
+    x := #PARTIAL_INT{key := 5}.init;
+    OUT::s("x=").s(x.str).nl;
+    s := s.delete(x);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.member(5)? ");
+    OUT::s(s.member(x).str).nl.nl;
+    OUT::s("s.insert(5)").nl;
+    s := s.insert(x);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.empty? ").s(s.empty.str).nl.nl;
+    OUT::s("s.member(5)? ");
+    OUT::s(s.member(x).str).nl.nl;
+    OUT::s("s.insert(5)").nl;
+    s := s.insert(x);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.insert(10)").nl;
+    x := #PARTIAL_INT{key := 10}.init;
+    s := s.insert(x);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.member(5)? ");
+    x := #PARTIAL_INT{key := 5}.init;
+    OUT::s(s.member(x).str).nl.nl;
+    OUT::s("s.member(6)? ");
+    x := #PARTIAL_INT{key := 6}.init;
+    OUT::s(s.member(x).str).nl;
+    OUT::s("s.choose = ").s(s.choose.str).nl.nl;
+    OUT::s("s := s.delete(5)").nl;
+    x := #PARTIAL_INT{key := 5}.init;
+    s := s.delete(x);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.choose = ").s(s.choose.str).nl.nl;
+    x := #PARTIAL_INT{key := 10}.init;
+    OUT::s("s := s.delete(10)").nl;
+    s := s.delete(x);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.empty? ").s(s.empty.str).nl.nl;
+    begin
+      x := s.choose;
+    except excptset
+      when EXCEPTION__MULTISET then 
+	 ERR::s(excptset.str).nl;
+	 OUT::s("exception test successfull").nl;
+      else OUT::s("exception test not successfull").nl;
+    end;
+    OUT::s("s.insert(10)").nl;
+    s := s.insert(x);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.empty? ").s(s.empty.str).nl.nl;
+    OUT::s("s.insert(5)").nl;
+    x := #PARTIAL_INT{key := 5}.init;
+    s := s.insert(x);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s is created: empty set").nl;
+    OUT::s("s1 = ").s(s1.str).nl.nl;
+    loop
+      i:=1.upto!(13);
+      y.key := i-1;
+      y.val := ('A'.to_i + i-1).to_c.str;
+      s1 := s1.insert(y.copy);
+    end;
+    OUT::s("s = ").s(s1.str).nl.nl;
+    OUT::s("s.partial_lookup(7) = H ?").nl;
+    OUT::s("res = ").s(s1.partial_lookup(7).str).nl.nl;
+    begin
+      y:PARTIAL_STR := s1.partial_lookup(17);
+    except excptpartial
+      when EXCEPTION__PARTIAL_MULTISET_LOOKUP then OUT::s("exception test successfull").nl.nl;
+      else OUT::s("exception test not successfull").nl.nl;
+    end;
+
+    --performancetest(100);
+    --performancetest(200);
+    --performancetest(300);
+    --performancetest(400);
+    --performancetest(500);
+    --performancetest(600);
+    --performancetest(700);
+    --performancetest(800);
+    --performancetest(900);
+    --performancetest(1000);
+    
+  end; -- main
+
+end; -- TEST__PARTIAl_SET

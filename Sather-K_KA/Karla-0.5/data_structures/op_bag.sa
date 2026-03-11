@@ -1,0 +1,276 @@
+-- Author: Wolf Zimmermann
+-- Copyright (C) Universitaet Karlsruhe, 1994
+--
+-- COPYRIGHT NOTICE: This code is provided "AS IS" WITHOUT ANY WARRANTY
+-- and is subject to the terms of the KARLA LIBRARY GENERAL PUBLIC
+-- LICENSE contained in the file: "doc/license.txt" of the 
+-- distribution. 
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FILE: op_bag.sa
+--*
+--* CLASSES: ORDERED_PARTIAL_MULTISET(K<ORDERED(K),T1,T<ORDERED_PARTIAL(K,T),ORDER<ORDER_RELATION(T)) EXCEPTION__ORDERED_PARTIAL_MULTISET_NEXT EXCEPTION__ORDERED_PARTIAL_MULTISET_PREVIOUS
+--* 
+--* IMPLEMENTATION OF: 
+--*
+--* CONFORMS TO: ORDERED_MULTISET(T,ORDER) PARTIAL_MULTISET(K,T1,T)
+--*
+--* IS A: ORDERED_MULTISET(T,ORDER) PARTIAL_MULTISET(K,T1,T)
+--*
+--* REQUIRED CLASSES: ORDERED_MULTISET(T,ORDER) ORDER_RELATION(T) \
+--*                   ORDERED_PARTIAL(K,T) ORDER_LT(T) \
+--*                   PARTIAL_MULTISET(K,T1,T) ORDERED_PARTIAL_INT
+--*
+--* EXCEPTIONS:  EXCEPTION__PARTIAL_MULTISET_LOOKUP \
+--* EXCEPTION_MULTISET EXCEPTION__ORDERED_MULTISET_MAX EXCEPTION__ORDERED_MULTISET_MIN \
+--* EXCEPTION__ORDERED_MULTISET_NEXT EXCEPTION__ORDERED_MULTISET_PREVIOUS \
+--* EXCEPTION__ORDERED_PARTIAL_MULTISET_NEXT EXCEPTION__ORDERED_PARTIAL_MULTISET_PREVIOUS
+--*
+--* TEST CLASS: TEST__ORDERED_PARTIAL_MULTISET
+--*
+--* FOREIGN FILES:
+--*
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--
+-- RCS: $Id$
+-- HISTORY: $Log$
+--
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+abstract class ORDERED_PARTIAL_MULTISET(
+   K<ORDERED(K),
+   T1,T<ORDERED_PARTIAL(K,T1),
+   ORDER<ORDER_RELATION(T))
+is
+   -- * CLASS: ORDERED_PARTIAL_MULTISET(K<ORDERED(K),T1,T<ORDERED_PARTIAL(K,T1),ORDER<ORDER_RELATION(T)) 
+   -- * DESCRIPTION: abstract class defining ordered multsets with partial key access \
+   -- *              the order is defined on the partial key
+   -- * SUBCLASS OF: ORDERED_MULTISET(T,ORDER) PARTIAL_MULTISET(K,T1,T)
+   -- * SPECIALIZATION OF: ORDERED_MULTISET(T,ORDER) PARTIAL_MULTISET(K,T1,T)
+   -- * IMPLEMENTATION OF: 
+   -- * EXCEPTIONS: EXCEPTION__PARTIAL_MULTISET_INS EXCEPTION__PARTIAL_MULTISET_INS_LOOKUP \
+   -- * EXCEPTION_MULTISET EXCEPTION__ORDERED_MULTISET_MAX EXCEPTION__ORDERED_MULTISET_MIN \
+   -- * EXCEPTION__ORDERED_MULTISET_NEXT EXCEPTION__ORDERED_MULTISET_PREVIOUS \
+   -- * EXCEPTION__ORDERED_PARTIAL_MULTISET_NEXT EXCEPTION__ORDERED_PARTIAL_MULTISET_PREVIOUS
+   -- * INVARIANT: ORDERED_MULTISET::Inv AND PARTIAL_MULTISET::Inv
+   -- * REPRESENTATION:
+   -- * COMPLEXITY:
+   -- *     static      SIZE = size; \
+   -- *                 ##.init.MAXSIZE = 0 AND \
+   -- *                 MAXSIZE = max(choose.SIZE,delete(choose).MAXSIZE)\ 
+   -- *                 ##.init.KEYSIZE = 0 AND \
+   -- *                 KEYSIZE = max(choose.key.SIZE,delete(choose).KEYSIZE)
+   -- * REFERENCES: [Aho, Hopcroft, Ullman: "The Design and Analysis \
+   -- *               of Computer Algorithms", Addison-Wesley, 1974]
+   -- * ATTRIBUTES: size:INT \
+   -- *            const order:ORDER:= #ORDER
+
+   subtype of PARTIAL_MULTISET(K,T1,T);
+   subtype of ORDERED_MULTISET(T,ORDER);
+
+   const keyorder:$ORDER_RELATION(K) := key_order_relation(order);
+
+   private key_order_relation(x:$ORDER_RELATION(T)):$ORDER_RELATION(K) is 
+       typecase x
+          when ORDER_LT(T) then res := #ORDER_LT(K);
+          when ORDER_GT(T) then res := #ORDER_GT(K);
+          when ORDER_LEQ(T) then res := #ORDER_LEQ(K);
+          when ORDER_GEQ(T) then res := #ORDER_GEQ(K);
+       end;
+   end;
+
+
+
+   partial_choose_next(a:K):T is
+      -- * METHOD: partial_choose_next(a:K):T
+      -- * DESCRIPTION: choose the smallest element whose key is larger or equal than a \
+      -- *   if a is bigger than the key of the largest element an exception is raised
+      -- * PRE: EXISTS e:T: a <= e.key
+      -- * POST: member(res) AND FORALL e:T : (e.key >= a AND partial_member(e) IMPLIES res < = e)
+      -- * COMPLEXITY: \
+      -- * SIZE__partial_choose_next(self.SIZE,a.SIZE,self.MAXSIZE) = self.MAXSIZE \
+      -- * SPACE__partial_choose_next(self.SIZE,a.SIZE,self.MAXSIZE,self.KEYSIZE) = O( \
+      -- * |        max(self.SIZE,SPACE_elts(self.SIZE,self.SIZE),
+      -- * |            ORDER(T)::SPACE__is_lt(self.MAXSIZE,self.MAXSIZE), \
+      -- * |            ORDER(K)::SPACE__is_lt(a.SIZE,self.KEYSIZE))) \
+      -- * additive TIME_partial_choose_next(self.SIZE,a.SIZE,self.MAXSIZE,self.KEYSIZE) = O( \
+      -- * |   TIME_elts(self.SIZE,self.SIZE) + \
+      -- * |   self.SIZE*ORDER(K)::TIME_is_l(a.SIZE,self.KEYSIZE) + \
+      -- * |   self.SIZE*ORDER(T)::TIME_is_lt(self.MAXSIZE,self.MAXSIZE))
+      -- * REFERENCES: 
+
+      found:BOOL := false;
+      loop
+        e: T := elts!;
+	if not found and  keyorder.is_lt(a,e.key) then res := e; found := true;
+        elsif order.is_lt(e,res) and  keyorder.is_lt(a,e.key) then res := e; end;
+      end;
+      if not found then -- precondition was not satisfied
+           #EXCEPTION__ORDERED_PARTIAL_MULTISET_NEXT.raise;
+      end;
+   end;
+
+
+   partial_choose_previous(a:K):T is
+      -- * METHOD: partial_choose_previous(a:K):T
+      -- * DESCRIPTION: choose the largest element whose key is smaller or equal than a \
+      -- *   if a is less than the key of the minimum element an exception is raised
+      -- * PRE: EXISTS e:T: e.key<a
+      -- * POST: member(res) AND FORALL e:T : (e.key < a AND partial_member(e.key) IMPLIES res.key > = e.key)
+      -- * COMPLEXITY: \
+      -- * SIZE__partial_choose_previous(self.SIZE,a.SIZE,self.MAXSIZE) = self.MAXSIZE \
+      -- * SPACE__partial_choose_previous(self.SIZE,a.SIZE,self.MAXSIZE,self.KEYSIZE) = O( \
+      -- * |        max(self.SIZE,SPACE_elts(self.SIZE,self.SIZE),
+      -- * |            ORDER(T)::SPACE__is_lt(self.MAXSIZE,self.MAXSIZE), \
+      -- * |            ORDER(K)::SPACE__is_lt(self.KEYSIZE,a.SIZE))) \
+      -- * additive TIME_partial_choose_previous(self.SIZE,a.SIZE,self.MAXSIZE,self.KEYSIZE) = O( \
+      -- * |   TIME_elts(self.SIZE,self.SIZE) + \
+      -- * |   self.SIZE*ORDER(K)::TIME_is_l(self.KEYSIZE,a.SIZE) + \
+      -- * |   self.SIZE*ORDER(T)::TIME_is_lt(self.MAXSIZE,self.MAXSIZE))
+      -- * REFERENCES: 
+
+      found:BOOL := false;
+      loop
+        e: T := elts!;
+        if not found and keyorder.is_lt(e.key,a) then res := e; found := true; end;
+        if order.is_lt(res,e) and keyorder.is_lt(e.key,a) then res := e; end;
+      end;
+      if not found then -- precondition was not satisfied
+           #EXCEPTION__ORDERED_PARTIAL_MULTISET_PREVIOUS.raise;
+      end;
+   end;
+
+
+   
+  stream partial_from_to(const lower:K; const upper:K):T is
+     -- * METHOD: stream partial_from_to(const lower:K, const upper:K):T
+     -- * DESCRIPTION: stream yielding the elements whose key is between lower \
+     -- * and upper in order
+     -- * PRE: true
+     -- * POST: (partial_from_to.terminated IFF  res[i]=max OR choose_next(res[i]).key>upper) AND\
+     -- * (partial_member(lower) IMPLIES  \
+     -- * |   res[1].key=lower AND member(res[1]) AND \
+     -- * |   FORALL x:T:member(x) AND x.key=lower IMPLIES res[1]<=lower) AND \
+     -- * (NOT partial_member(lower) IMPLIES res[1]=min) AND\ 
+     -- * res[i] = self.diff({res[j]: 1<=j<i}.choose_next(res[i-1]);
+     -- * COMPLEXITY: \
+     -- * SIZE__partial_from_to(self.SIZE,lower.SIZE,upper.SIZE) = self.SIZE \
+     -- * SPACE__partial_from_to(self.SIZE,lower.SIZE,upper.SIZE,self.MAXSIZE,self.KEYSIZE;k) = O(\
+     -- * |    max(self.SIZE, \
+     -- * |        SPACE_elts_order(self.SIZE,self.MAXSIZE,self.SIZE),
+     -- * |        ORDER(K)::is_lt(self.KEYSIZE,lower.SIZE),
+     -- * |        ORDER(K)::is_lt(upper.SIZE,self.KEYSIZE))) \
+     -- * TIME__partial_from_to(self.SIZE,lower.SIZE,upper.SIZE,self.MAXSIZE,self.KEYSIZE;k) = O(\
+     -- * |    TIME__elts_order(self.SIZE,self.MAXSIZE,self.SIZE) + \
+     -- * |    self.SIZE*ORDER(K)::TIME__is_leq(lower.SIZE,self.KEYSIZE) \
+     -- * |    self.SIZE*ORDER(K)::TIME__is_leq(self.MAXSIZE,upper.SIZE))
+     -- * REFERENCES:
+     x:T;
+     loop
+       x := elts_order!;
+       if not keyorder.is_lt(x.key,lower) and not keyorder.is_lt(upper,x.key) then res :=x;resume; end;
+     end;
+  end;
+
+
+
+
+  stream partial_from_downto(const upper:K; const lower:K):T is
+     -- * METHOD: stream partial_from_downto(const upper:K, const lower:K):T
+     -- * DESCRIPTION: stream yielding the elements whose key is between lower \
+     -- * and upper in reverse order
+     -- * PRE: true
+     -- * POST: (partial_from_to.terminated IFF  res[i]=min OR choose_previous(res[i]).key<lower) AND\
+     -- * (partial_member(upper) IMPLIES  \
+     -- * |   res[1].key=upper AND member(res[1]) AND \
+     -- * |   FORALL x:T:member(x) AND x.key=upper IMPLIES res[1]>=upper) AND \
+     -- * (NOT partial_member(upper) IMPLIES res[1]=max) AND\ 
+     -- * res[i] = self.diff({res[j]: 1<=j<i}).choose_previous(res[i-1])
+     -- * COMPLEXITY: \
+     -- * SIZE__partial_from_downto(self.SIZE,upper.SIZE,lower.SIZE) = self.SIZE \
+     -- * SPACE__partial_from_downto(self.SIZE,upper.SIZE,lower.SIZE,self.MAXSIZE,self.KEYSIZE;k) = O(\
+     -- * |    max(self.SIZE, \
+     -- * |        SPACE_elts_reverse_order(self.SIZE,self.MAXSIZE,self.SIZE),
+     -- * |        ORDER(K)::is_lt(self.KEYSIZE,lower.SIZE),
+     -- * |        ORDER(K)::is_lt(upper.SIZE,self.KEYSIZE))) \
+     -- * TIME__partial_from_downto(self.SIZE,upper.SIZE,lower.SIZE,self.MAXSIZE,self.KEYSIZE;k) = O(\
+     -- * |    TIME__elts_reverse_order(self.SIZE,self.MAXSIZE,self.SIZE) + \
+     -- * |    self.SIZE*ORDER(K)::TIME__is_leq(self.KEYSIZE,lower.SIZE) \
+     -- * |    self.SIZE*ORDER(K)::TIME__is_leq(upper.SIZE,self.MAXSIZE))
+     -- * REFERENCES:
+     x:T;
+     loop
+       x := elts_reverse_order!;
+       if not keyorder.is_lt(x.key,lower) and not keyorder.is_lt(upper,x.key) then res:=x; resume; end;
+     end;
+  end;
+
+
+
+end;
+
+
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+class EXCEPTION__ORDERED_PARTIAL_MULTISET_NEXT is
+  -- * CLASS: EXCEPTION__ORDERED_PARTIAL_MULTISET_NEXT
+  -- * DESCRIPTION: exceptions of ORDERED_PARTIAL_MULTISET: \
+  -- * - partial_choose_next(a) iff a is upper bound on keys in set 
+  -- * SUBCLASS OF:
+  -- * SPECIALIZATION OF:
+  -- * IMPLEMENTATION OF:
+  -- * EXCEPTIONS:
+  -- * INVARIANT:
+  -- * REPRESENTATION:
+  -- * COMPLEXITY:
+  -- * REFERENCES:
+  -- * ATTRIBUTES: name:STR -- error message
+
+  subtype of EXCEPTION_USER;
+
+  const name:STR := "ORDERED_PARTIAL_MULTISET::partial_choose_next(a): a is an upper bound for keys in set";
+end;
+
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+class EXCEPTION__ORDERED_PARTIAL_MULTISET_PREVIOUS is
+  -- * CLASS: EXCEPTION__ORDERED_PARTIAL_MULTISET_PREVIOUS
+  -- * DESCRIPTION: exceptions of ORDERED_PARTIAL_MULTISET: \
+  -- * - partial_choose_previous(a) iff a is lower bound on keys in set
+  -- * SUBCLASS OF:
+  -- * SPECIALIZATION OF:
+  -- * IMPLEMENTATION OF:
+  -- * EXCEPTIONS:
+  -- * INVARIANT:
+  -- * REPRESENTATION:
+  -- * COMPLEXITY:
+  -- * REFERENCES:
+  -- * ATTRIBUTES: name:STR -- error message
+
+  subtype of EXCEPTION_USER;
+
+  const name:STR := "ORDERED_PARTIAL_MULTISET::partial_choose_previous(a): a is a lower bound for keys in set";
+end;
+
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+class TEST__ORDERED_PARTIAL_MULTISET is
+-- * CLASS: TEST__ORDERED_PARTIAL_MULTISET
+-- * DESCRIPTION: 
+-- * SUBCLASS OF: 
+-- * SPECIALIZATION OF: 
+-- * IMPLEMENTATION OF: 
+-- * EXCEPTIONS: 
+-- * INVARIANT: 
+-- * COMPLEXITY: 
+-- * REFERENCES: 
+
+
+   main is
+      a:$MULTISET(ORDERED_PARTIAL_INT):=
+         #ORDERED_PARTIAL_MULTISET(INT,INT,ORDERED_PARTIAL_INT,ORDER_LT(ORDERED_PARTIAL_INT)).init;
+      ERR::s("creation of abstract class succeeded.\n");
+   end;
+
+end; -- class TEST__ORDERED_PARTIAL_MULTISET
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

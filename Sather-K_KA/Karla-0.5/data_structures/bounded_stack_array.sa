@@ -1,0 +1,214 @@
+-- AUTHOR : Juergen Ruf, Frank Schmiedle, Frank Abegg  
+-- DATE : MAY 3, 1994
+--
+-- Copyright (C) Universitaet Karlsruhe, 1992
+--
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FILE: bounded_stack_array.sa
+--*
+--* CLASSES: BOUNDED_STACK__ARRAY(T)
+--*
+--* IMPLEMENTATION OF: BOUNDED_STACK(T)
+--*
+--* CONFORMS TO:
+--*
+--* IS A:
+--* 
+--* REQUIRED CLASSES: STACK__ARRAY(T) BOUNDED_STACK(T)
+--* 
+--* EXCEPTIONS: EXCEPTION__STACK__EMPTY EXCEPTION__BOUNDED_STACK__OVERFLOW
+--*
+--* TEST CLASS: TEST__BOUNDED_STACK__ARRAY
+--* 
+--* FOREIGN FILES:
+--*
+-- RCS : $Id$
+-- HISTORY : $log$
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+class BOUNDED_STACK__ARRAY(T) is 
+-- * CLASS: BOUNDED_STACK__ARRAY(T)
+-- * DESCRIPTION: Implementation of abstract type BOUNDED_STACK(T) via arrays
+-- * SUBCLASS OF:
+-- * SPECIALIZATION OF:
+-- * IMPLEMENTATION OF: BOUNDED_STACK(T)
+-- * EXCEPTIONS: EXCEPTION__BOUNDED_STACK__OVERFLOW
+-- * INVARIANT: act_size < max_size AND \
+-- *            NOT self = void AND \
+-- *            self.push(a).pop = self AND \
+-- *            self.push(a).top = a AND \
+-- *            self.push(a).empty = false AND \
+-- *            #SAME.init(n).empty = true AND \
+-- *            (self.empty IMPLIES self.pop = error) AND \
+-- *            (self.empty IMPLIES self.top = error) AND \
+-- *            act_size >= 0
+-- * REPRESENTATION: rho: BOUNDED_STACK__ARRAY(T) -> BOUNDED__STACK(T) \
+-- *    rho(self) = \
+-- *       #BOUNDED__STACK(T).init IF ssize=0 \
+-- *       #BOUNDED__STACK(T).push(arr[0])...push(arr[ssize-1])  IF ssize>0
+-- * COMPLEXITY: O(n) \
+-- *   potential function: PHI(self) = min(2*ssize - arr.asize,0)
+-- * REFERENCES: 
+-- * ATTRIBUTES: readonly max_size:INT      -- maximal size of the stack
+-- *             readonly act_size:INT      -- size of the stack
+-- *             private stack:$STACK__ARRAY(T) -- representation of a stack by an array
+   
+   subtype of BOUNDED_STACK[*](T);
+   private stack : $STACK__ARRAY(T);
+   
+   init(theSize:INT):SAME is
+   -- * METHOD: init (theSize : INT):SAME   
+   -- * DESCRIPTION: inits an empty bounded stack
+   -- * PRE: NOT self = void 
+   -- * POST: NOT res = void AND \
+   -- *       res.max_size = size AND \
+   -- *       res.act_size = 0
+   -- * COMPLEXITY: O(1)
+   -- * REFERENCES: 
+
+      res := self;
+      res.stack := #STACK__ARRAY(T).init;
+      res.max_size := theSize;
+      res.act_size := 0;
+
+   end;-- init
+
+   push (a : T):SAME  is
+   -- * METHOD: push (a : T):SAME   
+   -- * DESCRIPTION: inserts an element onto stack 
+   -- * PRE: NOT self = void AND \
+   -- *      act_size < max_size
+   -- * POST: res.stack.top = a AND \
+   -- *       res.act_size = self.act_size + 1 
+   -- * COMPLEXITY: O(act_size)
+   -- * REFERENCES: 
+
+      res:=self;
+      if act_size = max_size 
+      then #EXCEPTION__BOUNDED_STACK__OVERFLOW.raise;
+      end;
+      res.stack := stack.push(a);
+      res.act_size := act_size + 1;
+
+   end;-- push
+
+
+   empty:BOOL is
+   -- * METHOD: empty:BOOL
+   -- * DESCRIPTION: checks whether the stack is empty (act_size = 0)
+   -- * PRE: NOT self = void
+   -- * POST: res = (self.act_size==0)
+   -- * COMPLEXITY: O(1)
+   -- * REFERENCES:
+
+
+      res := stack.empty;
+
+
+   end;-- empty
+
+
+   pop:SAME  is
+   -- * METHOD: pop:SAME   
+   -- * DESCRIPTION: removes last inserted element (act_size decremented by 1)
+   -- * PRE: not self.empty
+   -- * POST: res = stack.pop AND \
+   -- *       res.act_size = self.act_size - 1
+   -- * COMPLEXITY: O(1)
+   -- * REFERENCES: 
+
+      res := self;
+      res.stack := stack.pop;
+      res.act_size := act_size - 1;
+
+   end;-- Pop      
+
+
+   top : T is
+   -- * METHOD: top:T 
+   -- * DESCRIPTION: returns the last inserted element
+   -- * PRE: not self.empty
+   -- * POST: res = self.top
+   -- * COMPLEXITY: O(1)
+   -- * REFERENCES:
+
+      res := stack.top;
+
+   end;--top
+        
+  str:STR is
+
+      res := stack.str;
+
+  end; -- str
+
+end;--class BOUNDED_STACK__ARRAY(T)
+	
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+class TEST__BOUNDED_STACK__ARRAY is
+   -- tests class BOUNDED_STACK__ARRAY(T)
+
+   main is
+      s : BOUNDED_STACK__ARRAY(INT);
+    
+      s := #BOUNDED_STACK__ARRAY(INT).init(10);
+   
+      if s.empty
+         then OUT::s("s.empty is true").nl;
+         else OUT::s("s.empty is false").nl;
+      end;--if
+      OUT::s("s = ");
+      OUT::s(s.str).nl;
+      s := s.push(1);
+      OUT::s("s.push(").i(s.top).s(")").nl;
+      OUT::s("s = ");
+      OUT::s(s.str).nl;
+      s := s.push(2);
+      OUT::s("s.push(").i(s.top).s(")").nl;
+      OUT::s("s = ");
+      OUT::s(s.str).nl;
+      s := s.push(3);
+      OUT::s("s.push(").i(s.top).s(")").nl;
+      OUT::s("s = ");
+      OUT::s(s.str).nl;
+
+      if s.empty
+        then OUT::s("s.empty is true").nl;
+        else OUT::s("s.empty is false").nl;
+      end;--if
+
+      -- skip first element
+      s := s.pop;
+      OUT::s("s.pop").nl;
+      OUT::s("s = ");
+      OUT::s(s.str).nl;
+      OUT::s("s.top = ").i(s.top).nl;
+
+      s := s.pop;
+      OUT::s("s.pop").nl;
+      OUT::s("s = ");
+      OUT::s(s.str).nl;
+      OUT::s("s.top = ").i(s.top).nl;
+
+      s := s.push(2).push(3).push(4).push(5).push(6).push(7).push(8).push(9).push(10);
+      OUT::s("s = ");
+      OUT::s(s.str).nl;
+
+      begin
+	 s := s.push(11);
+         except fullstack
+         when EXCEPTION__BOUNDED_STACK__OVERFLOW then ERR::s(fullstack.str).nl;
+      end;
+
+      begin
+	 s := s.pop.pop.pop.pop.pop.pop.pop.pop.pop.pop.pop.pop
+	 except emptystack
+	 when EXCEPTION__STACK__EMPTY then ERR::s(emptystack.str).nl;
+      end;
+	 
+   end;--main
+
+
+end; --class TEST__BOUNDED_STACK__ARRAY

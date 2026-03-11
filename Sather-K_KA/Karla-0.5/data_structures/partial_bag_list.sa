@@ -1,0 +1,306 @@
+-- Author: Wolf Zimmermann
+-- Copyright (C) Universitaet Karlsruhe, 1994
+--
+-- COPYRIGHT NOTICE: This code is provided "AS IS" WITHOUT ANY WARRANTY
+-- and is subject to the terms of the KARLA LIBRARY GENERAL PUBLIC
+-- LICENSE contained in the file: "doc/license.txt" of the 
+-- distribution. 
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FILE: partial_bag_list.sa
+--*
+--* CLASSES: PARTIAL_MULTISET__LIST(K,T1,T<PARTIAL(K,T1))
+--* 
+--* IMPLEMENTATION OF: PARTIAL_MULTISET(T)
+--*
+--* CONFORMS TO: MULTISET(T)
+--*
+--* IS A: MULTISET(T)
+--*
+--* REQUIRED CLASSES: MULTISET(T) PARTIAL(K,T) MULTISET__LIST(T)  PARTIAL_MULTISET(T) RANDOM_GENERATOR_32 TIMER RANDOM_GENERATOR_32__MINIMAL_STANDARD PARTIAL_INT PARTIAL_STR
+--*
+--* EXCEPTIONS: EXCEPTION__PARTIAL_MULTISET_LOOKUP  EXCEPTION__MULTISET
+--*
+--* TEST CLASS: TEST__PARTIAL_MULTISET__LIST
+--*
+--* FOREIGN FILES:
+--*
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--
+-- RCS: $Id$
+-- HISTORY: $Log$
+--
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ class PARTIAL_MULTISET__LIST(K,T1,T<PARTIAL(K,T1)) is
+   -- * CLASS: PARTIAL_MULTISET__LIST(K,T1,T<PARTIAL(K,T1))
+   -- * DESCRIPTION: abstract class defining Sets with partial key access
+   -- * SUBCLASS OF: MULTISET(T)
+   -- * SPECIALIZATION OF: MULTISET(T)
+   -- * IMPLEMENTATION OF: 
+   -- * EXCEPTIONS: EXCEPTION__PARTIAL_MULTISET_LOOKUP  EXCEPTION__MULTISET
+   -- * INVARIANT: INV_PARTIAL_MULTISET(K,T1,T) AND INV_PARTIAL_SET__LIST(T)
+   -- * REPRESENTATION:
+   -- * COMPLEXITY: 
+   -- * static SIZE = size \
+   -- *                 ##.init.MAXSIZE = 0 AND \
+   -- *                 MAXSIZE = max(choose.SIZE,delete(choose).MAXSIZE)\ 
+   -- *                 ##.init.KEYSIZE = 0 AND \
+   -- *                 KEYSIZE = max(choose.key.SIZE,delete(choose).KEYSIZE)\
+   -- * cumulative SPACE(n) = O(n)
+   -- * additive TIME(n) = O(n^2)
+   -- * REFERENCES: [Aho, Hopcroft, Ullman: "The Design and Analysis \
+   -- *               of Computer Algorithms", Addison-Wesley, 1974]
+   -- * ATTRIBUTES: size : INT
+
+   subtype of PARTIAL_MULTISET(K,T1,T);
+   include MULTISET__LIST(T):union->;
+   
+
+end;    
+ 
+
+
+class TEST__PARTIAL_MULTISET__LIST is
+
+  performancetest(n:INT) is
+    s:$MULTISET(PARTIAL_INT) := #PARTIAL_MULTISET__LIST(INT,INT,PARTIAL_INT).init;
+    i:INT;
+    x:PARTIAL_INT;
+    timer:TIMER := #TIMER;
+    timer.reset;
+    timer.go;
+    loop
+      i := 1.upto!(n);
+      x := #PARTIAL_INT{key := i}.init;
+      s := s.add(x);
+    end;
+    timer.stop;
+    OUT::s(n.str).s(" times add cost time ").s(timer.mean.str).nl.nl;
+    timer.reset;
+    timer.go;
+    loop
+      i:=1.upto!(n);
+      x := #PARTIAL_INT{key := i}.init;
+      if not(s.member(x)) then break; end;
+    end;
+    timer.stop;
+    OUT::s(n.str).s(" times member cost time ").s(timer.mean.str).nl.nl;
+    if i<n then OUT::s("membership test not succeeded for i=").s(i.str).nl.nl;
+    else OUT::s("membership test succeeded").nl.nl;
+    end;
+    timer.reset;
+    timer.go;
+    loop
+      i:= 1.upto!(n);
+      x := #PARTIAL_INT{key := i}.init;
+      s := s.delete(x);
+    end;
+    timer.stop;
+    OUT::s(n.str).s(" times delete cost time ").s(timer.mean.str).nl.nl;
+    if s.empty then OUT::s("deletion succeeded").nl.nl;
+    else OUT::s("deletion not succeeded: s=").s(s.str).nl.nl;
+    end;
+  end; -- performancetest
+
+
+  main is
+    s:$PARTIAL_MULTISET(INT,INT,PARTIAL_INT) := #PARTIAL_MULTISET__LIST(INT,INT,PARTIAL_INT).init;
+    x:PARTIAL_INT;
+    i:INT;
+    r:$RANDOM_GENERATOR_32:=#RANDOM_GENERATOR_32__MINIMAL_STANDARD.init(0,25);
+    s4:$PARTIAL_MULTISET(INT,STR,PARTIAL_STR) := #PARTIAL_MULTISET__LIST(INT,STR,PARTIAL_STR).init;
+    s1:$PARTIAL_MULTISET(INT,INT,PARTIAL_INT) := #PARTIAL_MULTISET__LIST(INT,INT,PARTIAL_INT).init;
+    s2:$PARTIAL_MULTISET(INT,INT,PARTIAL_INT) := #PARTIAL_MULTISET__LIST(INT,INT,PARTIAL_INT).init;
+    s3:$PARTIAL_MULTISET(INT,INT,PARTIAL_INT) := #PARTIAL_MULTISET__LIST(INT,INT,PARTIAL_INT).init;
+    y:PARTIAL_STR := #PARTIAL_STR;
+    OUT::s("s is created: empty set").nl;
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.empty? ").s(s.empty.str).nl.nl;
+    begin
+      x := s.choose;
+    except excptset
+      when EXCEPTION__MULTISET then 
+	 ERR::s(excptset.str).nl;
+	 OUT::s("exception test successfull").nl;
+      else OUT::s("exception test not successfull").nl;
+    end;
+    OUT::s("s := s.delete(5)").nl;
+    x := #PARTIAL_INT{key := 5}.init;
+    OUT::s("x=").s(x.str).nl;
+    s := s.delete(x);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.member(5)? ");
+    OUT::s(s.member(x).str).nl.nl;
+    OUT::s("s.multiplicity(5) = ").i(s.multiplicity(x)).nl;
+    OUT::s("s.add(5)").nl;
+    s := s.add(x);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.empty? ").s(s.empty.str).nl.nl;
+    OUT::s("s.member(5)? ");
+    OUT::s(s.member(x).str).nl.nl;
+    OUT::s("s.multiplicity(5) = ").i(s.multiplicity(x)).nl;
+    OUT::s("s.add(5)").nl;
+    s := s.add(x);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.multiplicity(5) = ").i(s.multiplicity(x)).nl;
+    OUT::s("s.add(10)").nl;
+    x := #PARTIAL_INT{key := 10}.init;
+    s := s.add(x);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.member(5)? ");
+    x := #PARTIAL_INT{key := 5}.init;
+    OUT::s(s.member(x).str).nl.nl;
+    OUT::s("s.member(6)? ");
+    x := #PARTIAL_INT{key := 6}.init;
+    OUT::s(s.member(x).str).nl;
+    OUT::s("s.choose = ").s(s.choose.str).nl.nl;
+    OUT::s("s := s.delete(5)").nl;
+    x := #PARTIAL_INT{key := 5}.init;
+    s := s.delete(x);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.choose = ").s(s.choose.str).nl.nl;
+    x := #PARTIAL_INT{key := 10}.init;
+    OUT::s("s := s.delete(10)").nl;
+    s := s.delete(x);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s := s.delete(5)").nl;
+    x := #PARTIAL_INT{key := 5}.init;
+    s := s.delete(x);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.empty? ").s(s.empty.str).nl.nl;
+    begin
+      x := s.choose;
+    except excptset
+      when EXCEPTION__MULTISET then 
+	 ERR::s(excptset.str).nl;
+	 OUT::s("exception test successfull").nl;
+      else OUT::s("exception test not successfull").nl;
+    end;
+    OUT::s("s.add(10)").nl;
+    x := #PARTIAL_INT{key := 10}.init;
+    s := s.add(x);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.empty? ").s(s.empty.str).nl.nl;
+    OUT::s("s.add(5)").nl;
+    x := #PARTIAL_INT{key := 5}.init;
+    s := s.add(x);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s is created: empty set").nl;
+    OUT::s("s4 = ").s(s4.str).nl.nl;
+    loop
+      i:=1.upto!(13);
+      y.key := i-1;
+      y.val := ('A'.to_i + i-1).to_c.str;
+      s4 := s4.add(y.copy);
+    end;
+    OUT::s("s = ").s(s4.str).nl.nl;
+    OUT::s("s.partial_lookup(7) = H ?").nl;
+    OUT::s("res = ").s(s4.partial_lookup(7).str).nl.nl;
+    begin
+      y:PARTIAL_STR := s4.partial_lookup(17);
+    except excptpartial
+      when EXCEPTION__PARTIAL_MULTISET_LOOKUP then OUT::s("exception test successfull").nl.nl;
+      else OUT::s("exception test not successfull").nl.nl;
+    end;
+    OUT::s("partial_delete(5) = ").s(s4.partial_delete(5).str).nl;
+    loop
+      i := 1.upto!(20);
+      x := #PARTIAL_INT{key:=i,val:=i};
+      s1 := s1.add(x);
+    end;
+    OUT::s("s1 = ").s(s1.str).nl;
+    loop
+      i := 0.upto!(20);
+      x := #PARTIAL_INT{key:=i,val:=i};
+      OUT::s("s1.multiplicity(").i(i).s(") = ").i(s1.multiplicity(x)).nl;
+      OUT::s("s1.partial_multiplicity(").i(i).s(") = ").i(s1.partial_multiplicity(i)).nl;
+      OUT::s("s1.partial_member(").i(i).s(") = ").s(s1.partial_member(i).str).nl;
+    end;
+    OUT::s("Testing stream elts").nl;
+    loop
+      OUT::s(s1.elts!.str).s(" ");
+    end;
+    OUT::nl;
+    OUT::s("s1 = ").s(s1.str).nl;
+    OUT::s("s2 = ").s(s2.str).nl;
+    OUT::s("s1.disjoint_union(s2) = ").s(s1.disjoint_union(s2).str).nl;
+    OUT::s("s1.union(s2) = ").s(s1.union(s2).str).nl;
+    OUT::s("s1.intersect(s2) = ").s(s1.intersect(s2).str).nl;
+    OUT::s("s1.diff(s2) = ").s(s1.diff(s2).str).nl;
+    OUT::s("s1.subset(s2) = ").s(s1.subset(s2).str).nl;
+    OUT::s("s2.subset(s1) = ").s(s2.subset(s1).str).nl;
+
+    loop
+      i := 1.upto!(20);
+      x := #PARTIAL_INT{key:=i,val:=i};
+      s2 := s2.add(x);
+      if i.mod(2)=0 then s2 := s2.add(x); end;
+      if i.mod(3)=0 then s2 := s2.add(x); end;
+      if i.mod(4)=0 then s2 := s2.add(x); end;
+    end;
+    OUT::s("s2 = ").s(s2.str).nl;
+    loop
+      i := 0.upto!(20);
+      x := #PARTIAL_INT{key:=i,val:=i};
+      OUT::s("s2.multiplicity(").i(i).s(") = ").i(s2.multiplicity(x)).nl;
+      OUT::s("s2.partial_multiplicity(").i(i).s(") = ").i(s2.partial_multiplicity(i)).nl;
+      OUT::s("s2.partial_member(").i(i).s(") = ").s(s2.partial_member(i).str).nl;
+    end;
+    OUT::s("Testing stream elts").nl;
+    loop
+      OUT::s(s2.elts!.str).s(" ");
+    end;
+    OUT::nl;
+    OUT::s("s1 = ").s(s1.str).nl;
+    OUT::s("s2 = ").s(s2.str).nl;
+    OUT::s("s1.disjoint_union(s2) = ").s(s1.disjoint_union(s2).str).nl;
+    OUT::s("s1.union(s2) = ").s(s1.union(s2).str).nl;
+    OUT::s("s1.intersect(s2) = ").s(s1.intersect(s2).str).nl;
+    OUT::s("s1.diff(s2) = ").s(s1.diff(s2).str).nl;
+    OUT::s("s1.subset(s2) = ").s(s1.subset(s2).str).nl;
+    OUT::s("s2.subset(s1) = ").s(s2.subset(s1).str).nl;
+
+    s2 := #PARTIAL_MULTISET__LIST(INT,INT,PARTIAL_INT).init;
+    loop
+      i := 1.upto!(10);
+      x := #PARTIAL_INT{key:=i,val:=i};
+      s2 := s2.add(x);
+      if i.mod(2)=0 then s2 := s2.add(x); end;
+      if i.mod(3)=0 then s2 := s2.add(x); end;
+      if i.mod(4)=0 then s2 := s2.add(x); end;
+    end;
+    OUT::s("s2 = ").s(s2.str).nl;
+    loop
+      i := 0.upto!(20);
+      x := #PARTIAL_INT{key:=i,val:=i};
+      OUT::s("s2.multiplicity(").i(i).s(") = ").i(s2.multiplicity(x)).nl;
+      OUT::s("s2.partial_multiplicity(").i(i).s(") = ").i(s2.partial_multiplicity(i)).nl;
+      OUT::s("s2.partial_member(").i(i).s(") = ").s(s2.partial_member(i).str).nl;
+    end;
+    OUT::s("Testing stream elts").nl;
+    loop
+      OUT::s(s2.elts!.str).s(" ");
+    end;
+    OUT::nl;
+    OUT::s("s1 = ").s(s1.str).nl;
+    OUT::s("s2 = ").s(s2.str).nl;
+    OUT::s("s1.disjoint_union(s2) = ").s(s1.disjoint_union(s2).str).nl;
+    OUT::s("s1.union(s2) = ").s(s1.union(s2).str).nl;
+    OUT::s("s1.intersect(s2) = ").s(s1.intersect(s2).str).nl;
+    OUT::s("s1.diff(s2) = ").s(s1.diff(s2).str).nl;
+    OUT::s("s1.subset(s2) = ").s(s1.subset(s2).str).nl;
+    OUT::s("s2.subset(s1) = ").s(s2.subset(s1).str).nl;
+
+    --performancetest(100);
+    --performancetest(200);
+    --performancetest(300);
+    --performancetest(400);
+    --performancetest(500);
+    --performancetest(600);
+    --performancetest(700);
+    --performancetest(800);
+    --performancetest(900);
+    --performancetest(1000);
+    
+  end; -- main
+
+end; -- TEST__PARTIAl_MULTISET

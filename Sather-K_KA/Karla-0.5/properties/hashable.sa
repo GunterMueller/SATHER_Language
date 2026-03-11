@@ -1,0 +1,118 @@
+-- -*- Mode: Sather; -*-
+-- Author: group:algprak0 : Speise, Nguyen, Tri
+--
+-- Copyright (C) Universitaet Karlsruhe, 1994
+--
+-- COPYRIGHT NOTICE:
+-- LICENSE
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FILE: hashable.sa
+--*
+--* CLASSES: HASHFUNCTION(T) PARTIAL_HASHFUNCTION(K,T1,T<PARTIAL(K,T1))
+--*
+--* IMPLEMENTATION OF:
+--*
+--* CONFORMS TO:
+--*
+--* IS A:
+--*
+--* REQUIRED CLASSES:
+--*
+--* EXCEPTIONS:
+--*
+--* TEST CLASS: 
+--*
+--* FOREIGN FILES:
+--*
+-- RCS: $ld$
+-- HISTORY: $Log$
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   
+abstract class HASHFUNCTION(T) is
+
+-- * CLASS: HASHFUNCTION(T) 
+-- * DESCRIPTION:abstract class defining a hashfunction
+-- * SUBCLASS OF:
+-- * SPECIALIZATION OF: 
+-- * IMPLEMENTATION OF:
+-- * EXCEPTIONS:
+-- * INVARIANT:
+-- * REPRESENTATION:
+-- * COMPLEXITY:
+-- * REFERENCES:
+-- * ATTRIBUTES: readonly  tab_size:INT; -- size of the hashtable
+   
+  readonly tab_size:INT;
+
+  init(range:INT):SAME  is
+     -- * METHOD: init(range:INT):SAME
+     -- * DESCRIPTION: initialize the range of the hashfunction (0..range-1)
+     -- * PRE: NOT self=void
+     -- * POST: tab_size = range AND res=self'
+     -- * COMPLEXITY: O(1)
+     -- * REFERENCES:
+     
+     res := self;
+     tab_size := range; 
+  end;
+
+  hash(x:T):INT is 
+     -- * METHOD: hash(x:T):INT
+     -- * DESCRIPTION: abstract hash function for types T
+     -- * PRE: true
+     -- * POST: 0<=res < tab_size
+     -- * COMPLEXITY:
+     -- * REFERENCES:
+
+
+      deferred 
+  end;
+end;   
+
+abstract class PARTIAL_HASHFUNCTION(K,T1,T<PARTIAL(K,T1)) is
+
+-- * CLASS: PARTIAL_HASHFUNCTION(K,T1,T<PARTIAL(K,T1))
+-- * DESCRIPTION: abstract class defining partial hash function where hashing \
+-- * is based only on keys
+-- * SUBCLASS OF: HASHFUNCTION(T)
+-- * SPECIALIZATION OF:
+-- * IMPLEMENTATION OF:
+-- * EXCEPTIONS:
+-- * INVARIANT:
+-- * REPRESENTATION: 
+-- * COMPLEXITY:
+-- * ATTRIBUTES: readonly  tab_size:INT; -- size of the hashtable
+-- * REFERENCES:
+
+subtype of HASHFUNCTION(T);
+
+     -- * METHOD: init(range:INT):SAME
+     -- * DESCRIPTION: initialize the range of the hashfunction (0..range-1)
+     -- * PRE: NOT self=void
+     -- * POST: tab_size = range AND res=self'
+     -- * COMPLEXITY: O(1)
+     -- * REFERENCES:
+hash(x:T):INT is
+
+-- * METHOD: hash(x:T):INT inherited of partial_key(k:K):INT
+-- * DESCRIPTION: returns the key-value of x
+-- * PRE: true
+-- * POST: res=partial_key(x.key)
+-- * COMPLEXITY: O(TIME_partial_key)
+-- * REFERENCES:
+
+  res := hash_key(x.key);
+end;
+
+hash_key(k:K):INT is
+     -- * METHOD: hash_key(k:K):INT
+     -- * DESCRIPTION: hash function for key type
+     -- * PRE: true
+     -- * POST: 0<=res< tab_size
+     -- * COMPLEXITY:
+     -- * REFERENCES:
+
+  deferred;
+end;
+end;--  PARTIAL_HASHFUNCTION(K,T)
+

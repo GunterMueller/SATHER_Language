@@ -1,0 +1,764 @@
+-- File: sather/lib/base/str.sa
+-- Author: Stephen M. Omohundro and Chu-Cheow Lim
+-- Copyright (C) International Computer Science Institute, 1991
+--
+-- COPYRIGHT NOTICE: This code is provided "AS IS" WITHOUT ANY WARRANTY
+-- and is subject to the terms of the SATHER LIBRARY GENERAL PUBLIC
+-- LICENSE contained in the file: "sather/doc/license.txt" of the Sather
+-- distribution. The license is also available from ICSI, 1947 Center
+-- St., Suite 600, Berkeley CA 94704, USA.
+--*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FUNCTION: Strings.
+--*
+--* CLASSES: STRING, STRING_CURSOR, STRING_TEST
+--* 
+--* RELATED PACKAGES:
+--*
+--* HISTORY:
+--*  Aug 10 15:53 1994 (frick): temporarily added methods for
+--*                             syntactic sugar support (is_lt, is_gt, ..)
+--* Last edited: Apr 25 16:13 1994 (trapp)
+--*  Feb 21 18:48 1992 (hws): Added Nobuyuki Hikichi's patch to sccanfd
+--*  May 26 15:20 1991 (hws): adapt STRING_CURSOR to standard cursor
+--*       protocol.
+--*  Apr 25 14:26 1991 (om): Added Richard Durbin's code to STRING_CURSOR.
+--* Created: Thu Apr 18 17:23:00 1991 (om)
+--*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+class STRING[*] is
+   
+   subtype of ARRAY [*] (CHAR);
+   shared precision: INT := 6;	-- Digits of precision in printing `FLT''s.
+      -- If `precision=0', then print `FLT''s as `INT''s.
+   
+   create: SAME is
+      -- An empty string.
+      res := #STRING[4];
+   end; -- create
+   
+   create_sized(n: INT): SAME is
+      -- An empty string with room for `n' characters (including the end
+      -- terminator).
+      res := #STRING[n];
+   end; -- create
+   
+   b(bo: BOOL): STRING is
+      -- A string with 'T' or 'F' appended according to the value of `bo'.
+      l: INT := length;
+      if (l + 2 > asize0) then res := extend(asize0 * 2); else res := self end;
+      if bo then res[l] := 'T' else res[l] := 'F' end;
+	 -- the next character is automatically = '\0'
+   end; -- b
+   
+   c(ch: CHAR): STRING is
+      -- A string with character `ch' appended.
+      l: INT := length;
+      if (l + 2 > asize0) then res := extend(asize0 * 2); else res := self end;
+      res[l] := ch; 
+      	 -- the next character is automatically = '\0'
+   end; -- c
+
+   extend (n: INT): STRING is
+      i: INT:= 0;
+      res:= #STRING[n];
+      while i<asize0 loop
+	 res[i]:= self[i];
+         i:= i+1;
+      end;
+   end;
+
+   append(s:STRING):STRING is
+      res := s(s);
+   end;
+
+
+   s(st: STRING): STRING is
+      -- A string with `st' appended.
+      l1: INT := length; l2: INT := st.length; 
+      lt: INT := l1 + l2 + 1;
+      if (lt > asize0) then
+	 ns: INT := asize0 * 2;
+	 until ns >= lt loop ns := ns * 2 end; -- find first doubling bigger
+	 res := extend(ns); 
+      else res := self end;
+      C::strcat(C::string_ptr_(res),C::string_ptr_(st));
+   end; -- s
+
+   str:STR is
+	i:INT:=0;
+	res := #STR[length+1];
+	while i < length loop
+	    res[i] := self[i];
+            i:= i+1;
+	end;
+   end;
+
+   i(in: INT): STRING is
+      -- A string with integer `in' appended.
+      l: INT := length; lt: INT := l + 12; -- max `INT' is less than 11 `CHAR''s
+      if (lt > asize0) then
+	 ns: INT := asize0 * 2;
+	 until ns >= lt loop ns := ns * 2 end; -- find first doubling bigger
+	 res := extend(ns); 
+      else res := self end;
+      C::sprintfi(C::string_ptr_(res), in, l)
+   end; -- i
+   
+   r(re: FLT): STRING is
+      -- A string with the `FLT' `re' appended.
+      l: INT := length; lt: INT := l + 12; -- max `FLT' is less than 11 `CHAR''s
+      if (lt > asize0) then
+	 ns: INT := asize0 * 2;
+	 until ns >= lt loop ns := ns * 2 end; -- find first doubling bigger
+	 res := extend(ns); 
+      else res := self end;
+      C::sprintfd(C::string_ptr_(res), re, precision,l)
+   end; -- r
+   
+   d(do: FLTD): STRING is
+      -- A string with the `FLTD' `do' appended.
+      l: INT := length; lt: INT := l + 12; -- max `FLTD' is less than 11 `CHAR''s
+      if (lt > asize0) then
+	 ns: INT := asize0 * 2;
+	 until ns >= lt loop ns := ns * 2 end; -- find first doubling bigger
+	 res := extend(ns); 
+      else res := self end;
+      C::sprintfd(C::string_ptr_(res), do, precision,l)
+   end; -- d
+   
+   nl: STRING is
+      -- A string with a newline character appended to `self'.
+      res := self.c('\n');
+   end; -- nl
+   
+   is_equal(st: STRING): BOOL is
+      -- True if `self' is the same string as `st'.
+      res := (0 = C::strcmp(C::string_ptr_(self),C::string_ptr_(st)));
+   end; -- is_equal
+   
+   is_less_than(st: STRING): BOOL is
+      -- True if `self' is lexicographically before `st'.
+      res := (0 > C::strcmp(C::string_ptr_(self),C::string_ptr_(st)));
+   end; -- is_less_than
+   
+   to_upper_case: STRING is
+      -- Converts all characters in `self' to upper case.
+      i: INT := 0; l: INT := length;
+      until i = l loop
+	  self[i] :=  self[i].to_upper_case; i := i + 1
+      end;
+      res := self;
+   end; -- to_upper_case
+   
+   to_lower_case: STRING is
+      -- Converts all characters in `self' to lower case.
+      i: INT := 0; l: INT := length;
+      until i = l loop
+	  self[i] :=  self[i].to_lower_case; i := i + 1
+      end;
+      res := self;
+   end; -- to_lower_case
+   
+   capitalize: STRING is
+      -- Capitalize all the words in `self'.
+      i: INT := 0; l: INT := length;
+      until i = l loop
+	 if i = 0 then 
+	     self[i] :=  self[i].to_upper_case; 
+	 elsif self[i - 1].is_space or self[i - 1].is_punctuation then
+	     self[i] :=  self[i].to_upper_case; 
+	 end; -- if
+	 i := i + 1;
+      end; -- loop
+      res := self;
+   end; -- capitalize
+   
+   is_upper_case: BOOL is
+      -- True if all alphabetic characters in `self' are capitalized.
+      i: INT := 0; l: INT := length;
+      until i = l loop
+	 if (self[i].is_alphabetic) then
+	    if self[i].is_lower_case then return end;
+	 end; -- if
+	 i := i + 1;
+      end; -- loop
+      res := true;
+   end; -- is_upper_case
+   
+   head(n: INT): STRING is
+      -- A new string consisting of the first `n' letters of `self'.
+      assert (pre) n >= 0 end;
+      nc: INT := length.min(n);
+      res := #STRING[nc + 1];
+      i: INT := 0; until i = nc loop
+	 res[i] :=  self[i]; i := i + 1
+      end; -- loop
+	 -- already terminated with '\0'
+   end; -- head
+   
+   tail(n: INT): STRING is
+      -- A new string consisting of the last `n' letters of `self'.
+      assert (pre) n >= 0 end;
+      l: INT := length; nc: INT := l.min(n); st: INT := l - nc;
+      res := #STRING[nc + 1];
+      i: INT := 0; until i = nc loop
+	 res[i] :=  self[st + i]; i := i + 1
+      end; -- loop
+	 -- already terminated with '\0'
+   end; -- tail
+   
+   length: INT is
+      -- The current length of `self' (not including trailing '\0').
+      	 res := C::strlen(C::string_ptr_(self));
+   end; -- length
+   
+   substring(n,m: INT): STRING is
+      -- The substring between characters `n' and `m' inclusive. (`n<=m').
+      assert (pre) n >= 0 and m >= 0 and n <= m end;
+      l: INT := length; 
+      if l <= n then res := create; return end; -- empty string
+      nc: INT := (l).min(m + 1) - n; 
+      res := #STRING[nc + 1];
+      i: INT := 0; until i = nc loop
+	 res[i] :=  self[n + i]; i := i + 1
+      end; -- loop
+	 -- already terminated with '\0'
+   end; -- substring
+   
+   index_of_char(ch: CHAR): INT is
+      -- The index of the first appearance of `ch' in `self' or `-1' if
+      -- absent.
+      l: INT := length; res := - 1;
+      i: INT := 0; until i = l loop
+	 if self[i] = ch then res := i; break end;
+	 i := i + 1
+      end;
+   end; -- index_of_char
+   
+   is_empty: BOOL is
+      -- True if `self' has no characters.
+      res := (self[0] = '\0')
+   end; -- is_empty
+   
+   to_i: INT is
+      -- The `INT' of which `self' is a representation.
+      res := C::sscanfi(C::string_ptr_(self),0);
+   end; -- to_i
+   
+   to_r: FLT is 
+      -- The `FLT' of which `self' is a representation.
+      res := C::sscanfd(C::string_ptr_(self),0);
+   end; -- to_r
+   
+   to_d: FLTD is
+      -- The `FLTD' of which `self' is a representation.
+      res := C::sscanfd(C::string_ptr_(self),0);
+   end; -- to_d
+   
+   to_b: BOOL is
+      -- The `BOOL' of which `self' is a representation.
+      -- (ie. has value `true' if `"T"' and `false' if `"F"').
+      if self[0] = 'T' then res := true end;
+   end; -- to_b
+   
+   to_c: CHAR is
+      -- The `CHAR' of which `self' is a representation.
+      res :=  self[0];
+   end; -- to_c
+   
+   from_c_str(st: F_OB): STRING is
+      -- Returns a Sather string corresponding to the C string whose 
+      -- pointer is `st'. Used internally.
+      if (st /= void) then
+	 res := C::makestring_(st);
+      end; -- if
+   end; -- from_c_str
+   
+   hash: INT is
+      -- An inexpensive to compute hash function of `self'.
+      i: INT;
+      if length = 0 then return; end;
+      res := self[0] * self[length-1] * self[length / 2];
+   end; -- hash
+   
+   --
+   -- the following functions are provided temporarily until the 
+   -- syntactic sugar for '=' and '<' works
+   -- 
+   
+   is_lt(a:STRING):BOOL is
+      res:=self.is_less_than(a);
+   end;
+
+   is_leq(a:STRING):BOOL is
+      res:=self.is_equal(a) or self.is_lt(a);
+   end;
+
+   is_gt(a:STRING):BOOL is
+      res:=not self.is_leq(a);
+   end;
+   
+   is_geq(a:STRING):BOOL is
+      res:=not self.is_lt(a);
+   end;
+
+end; -- class STRING
+   
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   
+class C is
+   -- The C routines needed for `STRING'.
+   
+   string_ptr_(s: STRING): F_OB is end;
+	-- A C pointer to the C string part of `s'.
+   makestring_(st: F_OB): STRING is end;
+	-- Create a Sather string from a C string.
+   strlen(s: F_OB): INT is end; -- Length given a pointer to C string.
+   strcat(s1,s2: F_OB): F_OB is end; -- Catenate C string s2 onto C string s1
+   strcmp(s1,s2: F_OB): INT is end; -- Compare C strings, <0 if s1<s2, 0 =, >0>
+   sprintfi(s: F_OB; i,l: INT) is end; -- Insert `i' into `s' at `CHAR' `l'.
+   sprintfd(s: F_OB; d: FLTD; p,l: INT) is end; -- Insert `d' into `s' at
+      -- `CHAR' `l' with precision `p'.
+   sscanfi(p: F_OB; l: INT): INT is end; -- `INT' in string at offset `l'.
+   sscanfd(p: F_OB; l: INT): FLTD is end; -- `FLTD' in string at offset `l'.
+end; -- class C
+   
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   
+
+value class STR[*] is
+
+    subtype of ARR[*](CHAR);
+
+
+   shared precision: INT := 6;	-- Digits of precision in printing `FLT''s.
+      -- If `precision=0', then print `FLT''s as `INT''s.
+   
+
+
+    str : STR is
+	-- return the STR representation of self.
+	  res := self;
+    end;
+
+    ref:STRING is
+	-- return a STRING object, that contains
+	-- the same character sequence as self
+	i:INT:=0;
+	res := #STRING[length+1];
+	while i < length loop
+	    res[i] := self[i];
+	    i := i + 1;
+	end;
+    end;
+
+    append(s:STR):STR is
+	-- append characters from s to self.
+	res:= s(s);
+    end;
+
+   create: SAME is
+      -- An empty string.
+      res := #STR[4];
+   end; -- create
+   
+   create_sized(n: INT): SAME is
+      -- An empty string with room for `n' characters (including the end
+      -- terminator).
+      res := #STR[n];
+   end; -- create
+   
+   b(bo: BOOL): STR is
+      -- A string with 'T' or 'F' appended according to the value of `bo'.
+      l: INT := length;
+      if (l + 2 > asize) then res := extend(asize * 2); else res := self end;
+      if bo then res[l] := 'T' else res[l] := 'F' end;
+	 -- the next character is automatically = '\0'
+   end; -- b
+   
+   c(ch: CHAR): STR is
+      -- A string with character `ch' appended.
+      l: INT := length;
+      if (l + 2 > asize) then res := extend(asize * 2); else res := self end;
+      res[l] := ch; 
+      	 -- the next character is automatically = '\0'
+   end; -- c
+
+   extend (n: INT): STR is
+      i: INT:= 0;
+      res:= #STR[n];
+      while i<asize loop
+	 res[i]:= self[i];
+         i:= i+1;
+      end;
+   end;
+
+   s(st: STR): STR is
+      -- A string with `st' appended.
+      l1: INT := length; l2: INT := st.length; 
+      lt: INT := l1 + l2 + 1;
+      if (lt > asize) then
+	 ns: INT := asize * 2;
+	 while ns < lt loop ns := ns * 2 end; -- find first doubling bigger
+	 res := extend(ns); 
+      else res := self end;
+      i: INT:= 0;
+      while i<l2 loop
+	 res[l1]:= st[i];
+         i:= i+1; l1:= l1+1;
+      end;
+   end; -- s
+
+   str:STR is
+	i:INT:=0;
+	res := #STR[length+1];
+	while i < length loop
+	    res[i] := self[i];
+            i:= i+1;
+	end;
+   end;
+
+   i(in: INT): STR is
+      -- A string with integer `in' appended.
+      res:= s(#STRING[12].i(in).str);
+   end; -- i
+   
+   r(re: FLT): STR is
+      -- A string with the `FLT' `re' appended.
+      res:= s(#STRING[12].r(re).str);
+   end; -- r
+   
+   d(do: FLTD): STR is
+      -- A string with the `FLTD' `do' appended.
+      res:= s(#STRING[12].d(do).str);
+   end; -- d
+   
+   nl: STR is
+      -- A string with a newline character appended to `self'.
+      res := self.c('\n');
+   end; -- nl
+   
+   is_equal(st: STR): BOOL is
+      -- True if `self' is the same string as `st'.
+      res := (0 = C::strcmp(C::str_ptr_(self),C::str_ptr_(st)));
+   end; -- is_equal
+   
+   is_less_than(st: STR): BOOL is
+      -- True if `self' is lexicographically before `st'.
+      res := (0 > C::strcmp(C::str_ptr_(self),C::str_ptr_(st)));
+   end; -- is_less_than
+   
+   to_upper_case: STR is
+      -- Converts all characters in `self' to upper case.
+      i: INT := 0; l: INT := length;
+      until i = l loop
+	  self[i] :=  self[i].to_upper_case; i := i + 1
+      end;
+      res := self;
+   end; -- to_upper_case
+   
+   to_lower_case: STR is
+      -- Converts all characters in `self' to lower case.
+      i: INT := 0; l: INT := length;
+      until i = l loop
+	  self[i] :=  self[i].to_lower_case; i := i + 1
+      end;
+      res := self;
+   end; -- to_lower_case
+   
+   capitalize: STR is
+      -- Capitalize all the words in `self'.
+      i: INT := 0; l: INT := length;
+      until i = l loop
+	 if i = 0 then 
+	     self[i] :=  self[i].to_upper_case; 
+	 elsif self[i - 1].is_space or self[i - 1].is_punctuation then
+	     self[i] :=  self[i].to_upper_case; 
+	 end; -- if
+	 i := i + 1;
+      end; -- loop
+      res := self;
+   end; -- capitalize
+   
+   is_upper_case: BOOL is
+      -- True if all alphabetic characters in `self' are capitalized.
+      i: INT := 0; l: INT := length;
+      until i = l loop
+	 if (self[i].is_alphabetic) then
+	    if self[i].is_lower_case then return end;
+	 end; -- if
+	 i := i + 1;
+      end; -- loop
+      res := true;
+   end; -- is_upper_case
+   
+   head(n: INT): STR is
+      -- A new string consisting of the first `n' letters of `self'.
+      assert (pre) n >= 0 end;
+      nc: INT := length.min(n);
+      res := #STR[nc + 1];
+      i: INT := 0; until i = nc loop
+	 res[i] :=  self[i]; i := i + 1
+      end; -- loop
+	 -- already terminated with '\0'
+   end; -- head
+   
+   tail(n: INT): STR is
+      -- A new string consisting of the last `n' letters of `self'.
+      assert (pre) n >= 0 end;
+      l: INT := length; nc: INT := l.min(n); st: INT := l - nc;
+      res := #STR[nc + 1];
+      i: INT := 0; until i = nc loop
+	 res[i] :=  self[st + i]; i := i + 1
+      end; -- loop
+	 -- already terminated with '\0'
+   end; -- tail
+   
+   length: INT is
+      -- The current length of `self' (not including trailing '\0').
+      	 res := C::strlen(C::str_ptr_(self));
+   end; -- length
+   
+   substring(n,m: INT): STR is
+      -- The substring between characters `n' and `m' inclusive. (`n<=m').
+      assert (pre) n >= 0 and m >= 0 and n <= m end;
+      l: INT := length; 
+      if l <= n then res := create; return end; -- empty string
+      nc: INT := (l).min(m + 1) - n; 
+      res := #STR[nc + 1];
+      i: INT := 0; until i = nc loop
+	 res[i] :=  self[n + i]; i := i + 1
+      end; -- loop
+	 -- already terminated with '\0'
+   end; -- substring
+   
+   index_of_char(ch: CHAR): INT is
+      -- The index of the first appearance of `ch' in `self' or `-1' if
+      -- absent.
+      l: INT := length; res := - 1;
+      i: INT := 0; until i = l loop
+	 if self[i] = ch then res := i; break end;
+	 i := i + 1
+      end;
+   end; -- index_of_char
+   
+   is_empty: BOOL is
+      -- True if `self' has no characters.
+      res := (self[0] = '\0')
+   end; -- is_empty
+   
+   to_i: INT is
+      -- The `INT' of which `self' is a representation.
+      res := C::sscanfi(C::str_ptr_(self),0);
+   end; -- to_i
+   
+   to_r: FLT is 
+      -- The `FLT' of which `self' is a representation.
+      res := C::sscanfd(C::str_ptr_(self),0);
+   end; -- to_r
+   
+   to_d: FLTD is
+      -- The `FLTD' of which `self' is a representation.
+      res := C::sscanfd(C::str_ptr_(self),0);
+   end; -- to_d
+   
+   to_b: BOOL is
+      -- The `BOOL' of which `self' is a representation.
+      -- (ie. has value `true' if `"T"' and `false' if `"F"').
+      if self[0] = 'T' then res := true end;
+   end; -- to_b
+   
+   to_c: CHAR is
+      -- The `CHAR' of which `self' is a representation.
+      res :=  self[0];
+   end; -- to_c
+   
+   from_c_str(st: F_OB): STR is
+      -- Returns a Sather string corresponding to the C string whose 
+      -- pointer is `st'. Used internally.
+      if (st /= void) then
+	 res := C::makestr_(st);
+      end; -- if
+   end; -- from_c_str
+   
+   hash: INT is
+      -- An inexpensive to compute hash function of `self'.
+      i: INT;
+      if length = 0 then return; end;
+      res := self[0] * self[length-1] * self[length / 2];
+   end; -- hash
+   
+   reverse: STR is
+      -- Reverse the order of the characters in `self'. Return `self'.
+      l: INT := length; sm: INT := l - 1;
+      t: CHAR;
+      res:= self;
+      i: INT; until i = l.rshift(1) loop
+         t := res[i]; res[i] := res[sm - i]; res[sm - i] := t;
+         i := i + 1;
+      end; -- loop
+      res := self;
+   end; -- reverse
+
+   --
+   -- the following functions are provided temporarily until the 
+   -- syntactic sugar for '=' and '<' works
+   -- 
+   
+   is_lt(a:STR):BOOL is
+      res:=self.is_less_than(a);
+   end;
+
+   is_leq(a:STR):BOOL is
+      res:=self.is_equal(a) or self.is_lt(a);
+   end;
+
+   is_gt(a:STR):BOOL is
+      res:=not self.is_leq(a);
+   end;
+   
+   is_geq(a:STR):BOOL is
+      res:=not self.is_lt(a);
+   end;
+
+   
+end;
+
+class C is
+   -- The C routines needed for `STR'.
+   
+   str_ptr_(s: STR): F_OB is end;
+	-- A C pointer to the C string part of `s'.
+   makestr_(st: F_OB): STR is end;
+	-- Create a Sather string from a C string.
+   strlen(s: F_OB): INT is end; -- Length given a pointer to C string.
+   strcat(s1,s2: F_OB): F_OB is end; -- Catenate C string s2 onto C string s1
+   strcmp(s1,s2: F_OB): INT is end; -- Compare C strings, <0 if s1<s2, 0 =, >0>
+   sprintfi(s: F_OB; i,l: INT) is end; -- Insert `i' into `s' at `CHAR' `l'.
+   sprintfd(s: F_OB; d: FLTD; p,l: INT) is end; -- Insert `d' into `s' at
+      -- `CHAR' `l' with precision `p'.
+   sscanfi(p: F_OB; l: INT): INT is end; -- `INT' in string at offset `l'.
+   sscanfd(p: F_OB; l: INT): FLTD is end; -- `FLTD' in string at offset `l'.
+end;
+
+class STR_TEST is
+   -- Test the classes `STR' and `STRING'.
+   subtype of EST;
+
+   main is
+      -- Test the classes `STR' and `STRING'.
+      str_test;
+--      string_test;
+   end; -- main
+
+   str_test is
+      a: STR;
+      b: STR;
+      a:= "hallo";
+      b:= a.append(" du da!");
+      OUT::s(a);
+      OUT::s(b);
+      OUT::nl;
+   end;
+
+   _str_test is
+      -- Test `STR'.
+      class_name("STR");
+      s: STR := "test=".b(true).b(false);
+      test("BOOL append",s,"test=TF");
+      s := "test=".c('x').c('2');
+      test("CHAR append",s,"test=x2");
+      s := "test=".s("one string ").s("and another");
+      test("STR append",s,"test=one string and another");
+      s := "test=".i(15).s(" ").i(4 + 9); 
+      test("INT append",s,"test=15 13");
+      s := "test=".r(4.2).s(" ").r( -1.0e-1);
+      test("FLT append",s,"test=4.200000 -0.100000");
+      s := "test=".d(4.2).s(" ").d( -1.0e-1);
+      test("FLTD append",s,"test=4.200000 -0.100000");
+      STR::precision := 2; 
+      s := "test=".r(4.2).s(" ").r( -1.0e-1);
+      test("FLT append, precision=2",s,"test=4.20 -0.10");
+      STR::precision := 0;
+      s := "test=".r(4.2).s(" ").r( -1.0e-1);
+      test("FLT append, precision=0",s,"test=4 0");
+      STR::precision := 6;
+      s := "test=".r(4.2).s(" ").r( -1.0e-1);
+      test("FLT append, precision=6",s,"test=4.200000 -0.100000");
+      s := "test=".nl.s("next line");
+      test("New line append",s,"test=\nnext line");
+      s := "test string".copy;
+      test("is_equal 1",s.is_equal("test string").str,"T");
+      s2: STR := "test string 2";
+      test("is_equal 2",s.is_equal(s2).str,"F");
+      test("is_less_than",s.is_less_than(s2).str,"T");
+      test("to_upper_case",s.to_upper_case,"TEST STRING");
+      test("to_lower_case",s.to_lower_case,"test string");
+      test("capitalize",s.capitalize,"Test String");
+      test("is_upper_case 1",s.is_upper_case.str,"F");
+      test("is_upper_case 2",s.copy.to_upper_case.is_upper_case.str,"T");
+      test("head",s.head(6),"Test S");
+      test("tail",s.tail(6),"String");
+      test("length",s.length.str,"11");
+      test("substring",s.substring(2,7),"st Str");
+      test("index_of_char",s.index_of_char('i').str,"8");
+      test("reverse","reverse".reverse,"esrever");
+      test("is_empty 1",s.is_empty.str,"F");
+      test("is_empty 2","".is_empty.str,"T");
+      test("to_i","-173".to_i.str,"-173");
+      test("to_r","173.0".to_r.str,"173.000000");
+      test("to_d","-173.87".to_d.str,"-173.870000");
+      test("to_b 1","T".to_b.str,"T");
+      test("to_b 2","F".to_b.str,"F");
+      test("hash","A test string".hash.str,"265929");
+      finish;
+   end; -- str_test
+   
+   str_cursor_test is
+      -- Test `STR_CURSOR'.
+      class_name("STR_CURSOR");
+      c: STR_CURSOR := STR_CURSOR::create("A test string\n with two lines.");
+      test("get_s", c.get_s, "A test string".nl);
+      test("b_size 1", "T and F".cursor.b_size.str, "1");
+      test("b_size 2", "S and F".cursor.b_size.str, "0");
+      test("get_b 1", "T and F".cursor.get_b.str, "T");
+      test("get_b 2", "F and F".cursor.get_b.str, "F");
+      test("get_b 3", "S and F".cursor.get_b.str, "F");
+      test("get_c", "S and F".cursor.get_c.str, "S");
+      test("digits_size", "123443 and others".cursor.digits_size(2).str,"4");
+      test("i_size 1", "-342 a number".cursor.i_size.str, "4");
+      test("i_size 2", "a number".cursor.i_size.str, "0");
+      test("get_i 1", "-342 a number".cursor.get_i.str, "-342");
+      test("get_i 2", "a number".cursor.get_i.str, "0");
+      test("r_size", "-342.4e-9 a number".cursor.r_size.str, "9");
+      test("get_r 1", "34.2e1 a number".cursor.get_r.str
+	    , "342.000000");
+      test("get_r 2", "a number".cursor.get_r.str, "0.000000");
+      test("get_d 1", "-342.4e-1 a number".cursor.get_d.str
+	    , "-34.240000");
+      test("get_d 2", "a number".cursor.get_d.str, "0.000000");
+      c.first;
+      test("first", c.get_s, "A test string".nl);
+      test("space_size", "A \n  a string".cursor.space_size(1).str, "4");
+      test("skip_space", " \n  A string".cursor.skip_space.get_s,"A string");
+      c.get_s;
+      test("is_done 1", c.is_done.str, "T");
+      test("is_done 2", "A string".cursor.is_done.str, "F");
+      test("reassign", c.reassign("foo").get_s, "foo");
+      test("c_equals", "A string".cursor.c_equals('A').str, "T");
+      c := "X   string".cursor;
+      test("c_accept 1", c.c_accept('X').str, "T");
+      test("c_accept 2", c.get_s, "string");
+      test("get_s_cut", "a test string".cursor.get_s_cut("srix"),"a tes");
+      c := "this is a string".cursor;
+      test("get_word 1", c.get_word, "this");
+      test("get_word 2", c.get_s, "is a string");
+      test("update_i", "123 is a number".cursor.update_i(34).str, "123");
+      test("update_r", "123 is a number".cursor.update_r(34.).str
+	    , "123.000000");
+      finish;
+   end; -- str_cursor_test
+   
+end; -- class STR_TEST
+   
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

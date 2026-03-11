@@ -1,0 +1,517 @@
+-- Author: group:algprak0 : Speise, Nguyen, Tri
+--
+-- Copyright (C) Universitaet Karlsruhe, 1994
+--
+-- COPYRIGHT NOTICE:
+-- LICENSE
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FILE: bounded_set_hashopen.sa
+--*
+--* CLASSES: BOUNDED_SET__HASH_OPEN 
+--*
+--* IMPLEMENTATION OF: BOUNDED_SET(T)
+--*
+--* CONFORMS TO:
+--*
+--* IS A:
+--*
+--* REQUIRED CLASSES: BOUNDED_SET(T) PAIR(T,CHAR) TIMER\
+--* COLLISION EXCEPTION__COLLISION LINEAR_PROBING QUADRATIC_PROBING \
+--* HASHFUNCTION(T) SIMPLE_HASH HASH__MINIMAL_STANDARD(T) \
+--* INT_HASH__MINIMAL_STANDARD EXCEPTION__BOUNDED_MULTISET_INS \
+--* EXCEPTION__BOUNDED_MULTISET_UNION EXCEPTION__MULTISET EXCEPTION__SET_ADD \
+--* EXCEPTION__SET_DISJOINT_UNION
+--*
+--* EXCEPTIONS:  EXCEPTION__COLLISION EXCEPTION__BOUNDED_MULTISET_UNION \
+--* EXCEPTION__MULTISET EXCEPTION__SET_ADD EXCEPTION__SET_DISJOINT_UNION
+--*
+--* TEST CLASS: TEST__BOUNDED_SET__HASH_OPEN
+--*
+--* FOREIGN FILES:
+--*
+-- RCS: $ld$
+-- HISTORY: $Log$
+--  * Last edited: May 20 13:55 1994 (algprak0)
+-- Last edited: May  6 14:22 1994 (algprak0)
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   
+
+class BOUNDED_SET__HASH_OPEN(T, COLL<COLLISION(T), FUNC<HASHFUNCTION(T)) is
+ 
+-- * CLASS: BOUNDED_SET__HASH_OPEN(T, COLL<COLLISION(T), FUNC<HASHFUNCTION(T))
+-- * DESCRIPTION: Implementation of abstract type BOUNDED_SET(T) via open hash \
+-- * parameter COLL is used for the collision resolution technique \
+-- * parameter FUNC is used for the definition of the hash function
+-- * SUBCLASS OF: BOUNDED_SET(T)
+-- * SPECIALIZATION OF:
+-- * IMPLEMENTATION OF: BOUNDED_SET(T)
+-- * EXCEPTIONS:  EXCEPTION__COLLISION EXCEPTION__BOUNDED_MULTISET_UNION \
+-- * EXCEPTION__MULTISET EXCEPTION__SET_ADD EXCEPTION__SET_DISJOINT_UNION
+-- * INVARIANT: BOUNDED_SET(T)::Inv AND \
+-- * (FORALL i:INT: i>=0 IMPLIES (tab[i].snd='O' IFF member(tab[i].fst)))
+-- * REPRESENTATION:
+-- * COMPLEXITY: \
+-- * static SIZE = sum(tab[i].SIZE,i=0..tab_size-1) \
+-- * static MAXSIZE = max(tab[i].MAXSIZE,i=0..tab_size-1) \
+-- * cumulative SPACE(n) = O(n) \
+-- * additive TIME(n) = O(n^2) \
+-- * |        E[TIME(n)] = O(n) (uniform distribution)
+-- * REFERENCES:
+-- * ATTRIBUTES: c:COLL \
+-- *             f:FUNC \
+-- *             tab: ARR[*](PAIR(T,CHAR)) \
+-- *             tab_size:INT \
+-- *             size: INT \
+-- *             max_size:INT 
+
+subtype of BOUNDED_SET(T); 
+
+c:COLL;
+f:FUNC;
+tab : ARR[*](PAIR(T,CHAR));
+tab_size : INT;
+
+   
+init(n:INT):SAME is
+-- * METHOD: init(size:INT):SAME
+-- * DESCRIPTION: initializes hash-table such that it can store size elements
+-- * PRE: NOT self=void
+-- * POST: c' = #COLL.init(max_size) AND tab_size'=c'.tab_size AND \
+-- * (FORALL i: 0<=i<tab_size IMPLIES tab'[i].fst = void AND tab'[i].snd='F') AND \
+-- * tab'.asize = tab_size' AND f' = #FUNC.init(tab_size) AND res=self' 
+-- * COMPLEXITY: \
+-- * SIZE__init(n) = n \
+-- * MAXSIZE__init(n) = 0 \
+-- * SPACE__init(n) = O( \
+-- * |    max(COLL::SPACE__init(n), \
+-- * |        FUNC::SPACE__init(COLL::SIZE__init(n))) \
+-- * TIME__init(n) = O( \
+-- * |   COLL::TIME__init(n) + \
+-- * |   FUNC::TIME__init(COLL::SIZE__init(n)) + \
+-- * |   COLL::SIZE__init(n))
+-- * REFERENCES:
+
+   i: INT := 0;
+   res := self;
+   max_size := n;
+   c := #COLL.init(max_size);
+   tab_size := c.tab_size;
+   f := #FUNC.init(tab_size);
+   tab := #ARR[tab_size](PAIR(T,CHAR));
+   until i >= tab_size loop
+      tab[i] := #PAIR(T,CHAR){fst:=void,snd:='F'};
+      i := i + 1;
+   end;
+   size := 0;
+   res := self;
+end;
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+insert(x:T) : SAME is
+
+-- * METHOD: insert(x:T):SAME
+-- * DESCRIPTION: method inserting x into self.If self.size=max_item an exception is raised.
+-- * PRE: size <  max_size OR member(x)
+-- * POST: res.member(x) AND (NOT member(x) IMPLIES res.size=self.size+1) AND \
+-- * (member(x) IMPLIES res.size = size) AND self'=res AND \
+-- * (EXISTS j:INT:FORALL k:INT: j>=0 AND \
+-- * |    tab'[(f.hash(x)+c.h(j,x)).mod(tab_size)].fst=x AND \
+-- * |    tab'[(f.hash(x)+c.h(j,x)).mod(tab_size)].snd='O' AND \
+-- * |    (FORALL k:INT: 0<=k<j IMPLIES tab'[(f.hash(x)+c.h(k,x)).mod(tab_size)].snd='O') AND \
+-- * |    (FORALL i:INT: 0<=i<tab_size AND NOT i=(f.hash(x)+c.h(j,x)).mod(tab_size) IMPLIES tab'[i]=tab[i]))
+-- * COMPLEXITY: \
+-- * SIZE__insert(self.SIZE,x.SIZE) = self.SIZE + 1 \
+-- * MAXSIZE__insert(self.MAXSIZE,x.SIZE) = max(self.MAXSIZE,a.SIZE) \
+-- * SPACE__insert(self.SIZE,x.SIZE,self.MAXSIZE) = O(max(FUNC::SPACE__h(f.SIZE,x.SIZE),COLL::SPACE__h(c.SIZE,j,x.SIZE))) \
+-- * TIME__insert(self.SIZE,x.SIZE,self.MAXSIZE) = O(FUNC::TIME__h(f.SIZE,x.SIZE)+f.SIZE*COLL::TIME__h(c.SIZE,j,x.SIZE)) 
+-- * REFERENCES: Alg.& Datenstr.-T.Ottmann/P.Widmayer
+ 
+   i, j, k: INT;
+   if member(x) then res := self;
+   elsif size < max_size then
+     j := 0;
+     k := f.hash(x);
+     until j=tab_size loop
+        i := (k + c.h(j,x)).mod (tab_size);
+        j := j + 1;
+        if (tab[i].snd /= 'O') or (tab[i].fst = x) then
+           break;
+        end;   
+     end;
+     if j=tab_size then #EXCEPTION__COLLISION.raise; end;
+     if (tab[i].snd /= 'O') then 
+       tab[i].fst := x;
+       tab[i].snd := 'O';
+       size := size + 1;
+     end;	
+     res := self;
+   else
+     #EXCEPTION__BOUNDED_MULTISET_INS.raise;
+   end;      
+end;--* insert  
+        
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~   
+delete(x:T):SAME is
+
+-- * METHOD: delete(x:T):SAME
+-- * DESCRIPTION:  method deleting x from self
+-- * PRE: true
+-- * POST: NOT res.member(x) AND (member(x) IMPLIES res.size = size) AND \
+-- * (NOT member(x) IMPLIES res.size = size - 1) AND self'=res AND \
+-- * (FORALL i:INT: tab[i].fst=x IMPLIES tab'[i].snd='D') AND \
+-- * (FORALL i:INT: NOT tab[i].fst=x IMPLIES tab'[i]=tab[i])
+-- * COMPLEXITY: \
+-- * SIZE__delete(self.SIZE,x.SIZE) = self.SIZE  \
+-- * MAXSIZE__delete(self.MAXSIZE,x.SIZE) = max(self.MAXSIZE,a.SIZE) \
+-- * SPACE__delete(self.SIZE,x.SIZE,self.MAXSIZE) = O(max(FUNC::SPACE__h(f.SIZE,x.SIZE),COLL::SPACE__h(c.SIZE,j,x.SIZE))) \
+-- * TIME__delete(self.SIZE,x.SIZE,self.MAXSIZE) = O(FUNC::TIME__h(f.SIZE,x.SIZE)+f.SIZE*COLL::TIME__h(c.SIZE,j,x.SIZE)) 
+-- * REFERENCES:
+
+   i, j, k: INT;
+   res := self;
+   if size > 0 then
+     j := 0;
+     k := f.hash(x);
+     until j=max_size loop
+        i := (k + c.h(j,x)).mod (tab_size);
+        if (tab[i].fst = x) or (tab[i].snd = 'F') then
+	   break
+	end;-- * if
+        j := j + 1;
+     end;-- * loop
+     if j<max_size and (tab[i].snd = 'O') then
+        tab[i].snd := 'D';
+        size := size - 1;
+     end;-- * if
+   end;-- * if   
+end;--* delete
+
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   
+
+      
+member(x:T):BOOL is
+   
+-- * METHOD: member(x:T):BOOL
+-- * DESCRIPTION: method check wether x is in self
+-- * PRE: NOT self = void
+-- * POST: res=true IFF EXISTS 0<=i<tab_size: ( tab[i].fst = x) AND ( tab[i].snd = 'O')
+-- * COMPLEXITY: \
+-- * SIZE__member(self.SIZE,x.SIZE) = 1  \
+-- * SPACE__member(self.SIZE,x.SIZE,self.MAXSIZE) = O(max(FUNC::SPACE__h(f.SIZE,x.SIZE),COLL::SPACE__h(c.SIZE,j,x.SIZE))) \
+-- * TIME__member(self.SIZE,x.SIZE,self.MAXSIZE) = O(FUNC::TIME__h(f.SIZE,x.SIZE)+f.SIZE*COLL::TIME__h(c.SIZE,j,x.SIZE)) 
+-- * REFERENCES:
+-- * REFERENCES:
+   
+   i, j, k: INT;
+   if size > 0 then
+     j := 0;
+     k := f.hash(x);
+     until j=max_size loop
+        i := (k + c.h(j,x)).mod (tab_size);
+        j := j + 1;
+        if (tab[i].fst = x) and (tab[i].snd = 'O') then
+	   break
+        end;-- * if
+     end;-- * until
+     res := (j<max_size);
+   else res := false;
+   end;-- * if   
+end;--* member   
+	
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~	
+
+choose:T is
+   -- * METHOD: choose:T
+   -- * DESCRIPTION: method for non-deterministic choice of an element in self
+   -- * PRE: NOT empty
+   -- * POST: self.member(res)=true AND self'=self
+   -- * COMPLEXITY: \
+   -- * SIZE__choose(self.SIZE,self.MAXSIZE) = self.MAXSIZE \
+   -- * SPACE__choose(self.SIZE) = O(self.MAXSIZE) \
+   -- * TIME__choose(self.SIZE) = O(f.SIZE) \
+   -- * REFERENCES:
+
+   if empty then #EXCEPTION__MULTISET.raise end;
+   i:INT := 0;
+   until i=tab_size loop
+     if tab[i].snd = 'O' then res := tab[i].fst; break; end;
+     i := i+1;
+   end;
+end;
+
+stream elts: T is
+   -- * METHOD: stream elts:T
+   -- * DESCRIPTION: abstract iterator iterating over all elements of a set
+   -- * PRE: true
+   -- * POST: elts.terminated IFF i=size AND \
+   -- *       res[i]=self.diff({res[1],...,res[i-1]}).choose AND self[i]=self AND \
+   -- * self[i]=self
+   -- * COMPLEXITY: \
+   -- * SIZE__elts(self.SIZE) = self.SIZE \
+   -- * SPACE_elts(self.SIZE,self.MAXSIZE,k) = O(self.MAXSIZE) \
+   -- * TIME_elts(self.SIZE,self.MAXSIZE,k) = O(f.SIZE)
+   -- * REFERENCES:
+   
+   i:INT;
+   loop
+      i := 0.upto!(tab_size - 1);
+      if tab[i].snd = 'O'
+      then res := tab[i].fst;
+           resume;
+      end;
+   end;
+end;
+
+
+str: STR is
+   
+  i: INT; 
+  first_found:BOOL := false;
+  res:="{";
+  loop
+     i := 0.upto!(tab_size-1);
+     if tab[i].snd = 'O' and not first_found then
+         res := res.s(tab[i].fst.str);
+	 first_found := true;
+     elsif tab[i].snd = 'O' and first_found
+     then res := res.s(",").s(tab[i].fst.str);
+     end;
+  end; 
+  res := res.s("}");
+end; -- * str
+end; -- * BOUNDED_SET__HASH_OPEN(...) 
+   
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+class TEST__BOUNDED_SET__HASH_OPEN is
+
+  performancetest(m:INT) is
+    s:$BOUNDED_SET(INT) := 
+      #BOUNDED_SET__HASH_OPEN(INT,LINEAR_PROBING(INT),INT_HASH__MINIMAL_STANDARD).init(m);
+    i:INT;
+    n:INT := m/2;
+    timer:TIMER := #TIMER;
+    timer.reset;
+    timer.go;
+    loop
+      i := 1.upto!(n);
+      s := s.insert(i);
+    end;
+    timer.stop;
+    OUT::s(n.str).s(" times insert cost time ").s(timer.mean.str).nl.nl;
+    timer.reset;
+    timer.go;
+    loop
+      i:=1.upto!(n);
+      if not(s.member(i)) then break; end;
+    end;
+    timer.stop;
+    OUT::s(n.str).s(" times member cost time ").s(timer.mean.str).nl.nl;
+    if i<n then OUT::s("membership test not succeeded for i=").s(i.str).nl.nl;
+    else OUT::s("membership test succeeded").nl.nl;
+    end;
+    timer.reset;
+    timer.go;
+    loop
+      i:= 1.upto!(n);
+      s := s.delete(i);
+    end;
+    timer.stop;
+    OUT::s(n.str).s(" times delete cost time ").s(timer.mean.str).nl.nl;
+    if s.empty then OUT::s("deletion succeeded").nl.nl;
+    else OUT::s("deletion not succeeded: s=").s(s.str).nl.nl;
+    end;
+  end; -- performancetest
+
+
+
+  performancetest1(m:INT) is
+    s:$BOUNDED_SET(INT) := 
+      #BOUNDED_SET__HASH_OPEN(INT,QUADRATIC_PROBING(INT),HASH__MINIMAL_STANDARD(INT)).init(m);
+    i:INT;
+    n:INT := m/2;
+    timer:TIMER := #TIMER;
+    timer.reset;
+    timer.go;
+    loop
+      i := 1.upto!(n);
+      s := s.insert(i);
+    end;
+    timer.stop;
+    OUT::s(n.str).s(" times insert cost time ").s(timer.mean.str).nl.nl;
+    timer.reset;
+    timer.go;
+    loop
+      i:=1.upto!(n);
+      if not(s.member(i)) then break; end;
+    end;
+    timer.stop;
+    OUT::s(n.str).s(" times member cost time ").s(timer.mean.str).nl.nl;
+    if i<n then OUT::s("membership test not succeeded for i=").s(i.str).nl.nl;
+    else OUT::s("membership test succeeded").nl.nl;
+    end;
+    timer.reset;
+    timer.go;
+    loop
+      i:= 1.upto!(n);
+      s := s.delete(i);
+    end;
+    timer.stop;
+    OUT::s(n.str).s(" times delete cost time ").s(timer.mean.str).nl.nl;
+    if s.empty then OUT::s("deletion succeeded").nl.nl;
+    else OUT::s("deletion not succeeded: s=").s(s.str).nl.nl;
+    end;
+  end; -- performancetest1
+
+
+  main is
+    s:$BOUNDED_SET(INT) 
+      := #BOUNDED_SET__HASH_OPEN(INT,LINEAR_PROBING(INT),SIMPLE_HASH(INT)).init(100);
+    i:INT;
+    x:INT;
+    s1 : $BOUNDED_SET(INT) 
+	:= #BOUNDED_SET__HASH_OPEN(INT,LINEAR_PROBING(INT),SIMPLE_HASH(INT)).init(0);
+    OUT::s("s is created: empty set").nl;
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.empty? ").s(s.empty.str).nl.nl;
+    begin
+      x := s.choose;
+    except excptset
+      when EXCEPTION__MULTISET then 
+	   ERR::s(excptset.str).nl;
+	   OUT::s("exception test successfull").nl;
+      else OUT::s("exception test not successfull").nl;
+    end;
+    OUT::s("s := s.delete(5)").nl;
+    s := s.delete(5);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.member(5)? ");
+    OUT::s(s.member(5).str).nl.nl;
+    OUT::s("s.insert(5)").nl;
+    s := s.insert(5);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.empty? ").s(s.empty.str).nl.nl;
+    OUT::s("s.insert(5)").nl;
+    s := s.insert(5);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.insert(10)").nl;
+    s := s.insert(10);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.member(5)? ");
+    OUT::s(s.member(5).str).nl.nl;
+    OUT::s("s.member(6)? ");
+    OUT::s(s.member(6).str).nl;
+    OUT::s("s.choose = ").s(s.choose.str).nl.nl;
+    OUT::s("s := s.delete(5)").nl;
+    s := s.delete(5);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.choose = ").s(s.choose.str).nl.nl;
+    OUT::s("s := s.delete(10)").nl;
+    s := s.delete(10);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.empty? ").s(s.empty.str).nl.nl;
+    begin
+      x := s.choose;
+    except excptset
+      when EXCEPTION__MULTISET then OUT::s("exception test successfull").nl;
+      else OUT::s("exception test not successfull").nl;
+    end;
+    OUT::s("s.insert(10)").nl;
+    s := s.insert(10);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.empty? ").s(s.empty.str).nl.nl;
+    OUT::s("s.insert(5)").nl;
+    s := s.insert(5);
+    OUT::s("s = ").s(s.str).nl.nl;
+    s := #BOUNDED_SET__HASH_OPEN(INT,LINEAR_PROBING(INT),SIMPLE_HASH(INT)).init(20);
+    OUT::s("s is created: empty set").nl;
+    OUT::s("s = ").s(s.str).nl.nl;
+    loop
+      i:=1.upto!(20);
+      s := s.insert(21-i);
+    end;
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("Testing Overflow Exception").nl;
+    begin
+      loop
+	 i := 1.upto!(101);
+         if not(s.member(i)) then
+	    s := s.insert(i); break;
+         end;
+      end;
+    except excptboundedset
+      when EXCEPTION__BOUNDED_MULTISET_INS then 
+	 ERR::s(excptboundedset.str).nl;
+	 OUT::s("EXCEPTION__BOUNDED_MULTISET_INS test successfull").nl.nl;
+      else OUT::s("EXCEPTION__BOUNDED_MULTISET_INS test not successfull").nl.nl;
+    end;
+
+    begin
+      s1 := s1.insert(1000);
+    except excptboundedset
+      when EXCEPTION__BOUNDED_MULTISET_INS then 
+	 ERR::s(excptboundedset.str).nl;
+	 OUT::s("EXCEPTION__BOUNDED_MULTISET_INS test successfull").nl.nl;
+      else OUT::s("EXCEPTION__BOUNDED_MULTISET_INS test not successfull").nl.nl;
+    end;
+    
+    --OUT::s("Typical Performance test with tabsizes as prime numbers").nl;
+    --performancetest(211);
+    --performancetest(401);
+    --performancetest(601);
+    --performancetest(809);
+    --performancetest(1009);
+    --performancetest(1201);
+    --performancetest(1409);
+    --performancetest(1601);
+    --performancetest(1801);
+    --performancetest(2003);
+    
+    --performancetest(200);
+    --performancetest(400);
+    --performancetest(600);
+    --performancetest(800);
+    --performancetest(1000);
+    --performancetest(1200);
+    --performancetest(1400);
+    --performancetest(1600);
+    --performancetest(1800);
+    --performancetest(2000);
+    --performancetest(3000);
+    --performancetest(4000);
+    --performancetest(5000);
+    --performancetest(6000);
+    --performancetest(7000);
+    --performancetest(8000);
+    --performancetest(9000);
+    --performancetest(10000);
+    --performancetest(20000);
+    --performancetest(30000);
+    --performancetest(40000);
+    --performancetest(50000);
+    --performancetest(100000);
+    --performancetest(150000);
+    --performancetest(200000);
+    --performancetest(250000);
+    --performancetest(300000);
+    --performancetest(350000);
+    --performancetest(400000);
+
+    --OUT::s("quadratic probing").nl;
+    --performancetest1(211);
+    --performancetest1(401);
+    --performancetest1(601);
+    --performancetest1(809);
+    --performancetest1(1009);
+    --performancetest1(1201);
+    --performancetest1(1409);
+    --performancetest1(1601);
+    --performancetest1(1801);
+    --performancetest1(2003);
+  end; -- main
+
+end; -- TEST__BOUNDED_SET__HASH_OPEN

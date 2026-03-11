@@ -1,0 +1,180 @@
+-- -*- Mode: SatherK;  -*-
+-- File: timer.sa
+-- Author: Arne Frick (frick@ira.uka.de)
+-- Copyright (C) Universitaet Karlsruhe, 1994
+--
+-- COPYRIGHT NOTICE: This code is provided "AS IS" WITHOUT ANY WARRANTY
+-- and is subject to the terms of the KARLA LIBRARY GENERAL PUBLIC
+-- LICENSE contained in the file: "doc/license.txt" of the 
+-- distribution. 
+--*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FILE: timer.sa
+--*
+--* CLASSES: TIMER
+--* 
+--* IMPLEMENTATION OF:
+--*
+--* CONFORMS TO:
+--*
+--* IS A:
+--*
+--* REQUIRED CLASSES: TIME
+--*
+--* EXCEPTIONS: 
+--*
+--* TEST CLASS: TEST__TIMER
+--*
+--* FOREIGN FILES:
+--* 
+--  RCS: $Id$
+--  HISTORY: $Log$
+--  * Last edited: May 18 13:33 1994 (frick)
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+class TIMER is
+   -- * CLASS: TIMER
+   -- * DESCRIPTION: timer function (stop-watch like) with stop, go \
+   -- *              and the possibility to compute the mean b/w several \
+   -- *              measurements
+   -- * SUBCLASS OF:
+   -- * SPECIALIZATION OF:
+   -- * IMPLEMENTATION OF:
+   -- * EXCEPTIONS: 
+   -- * INVARIANT: 
+   -- * REPRESENTATION:
+   -- * COMPLEXITY:
+   -- * REFERENCES:
+   -- * ATTRIBUTES: private m:FLTD   sum over all measurements \
+   -- *             private v:FLTD   sum over th squares of the measurements \
+   -- *             private t:FLTD   contains absolute value of last timer result \
+   -- *             private c:INT    number of measurements \
+   
+   private m,v,t:FLTD;
+   private c:INT;
+  
+   reset is		
+      -- * METHOD: reset
+      -- * DESCRIPTION: reset internal counter
+      -- * PRE: self/=void
+      -- * POST: mean=0.0 AND variance=0.0 AND m=0.0 AND v=0.0 AND c=0
+      -- * COMPLEXITY: O(1)
+      -- * REFERENCES:
+     m:=0.0; v:=0.0; c:=0; 
+   end;
+
+   go is	
+      -- * METHOD: go
+      -- * DESCRIPTION: start system timer
+      -- * PRE: true
+      -- * POST: true
+      -- * COMPLEXITY: O(1)
+      -- * REFERENCES:
+      TIME::start_clock;
+   end;
+
+   stop is	
+      -- * METHOD: stop
+      -- * DESCRIPTION: stop system timer
+      -- * PRE: true
+      -- * POST: mean>0.0 AND m=m_{old}+t AND v=v_{old}+t^2 AND c=c_{old}+1
+      -- * COMPLEXITY: O(1)
+      -- * REFERENCES:
+     t:FLTD:=TIME::get_clock;
+     m:=m+t;
+     v:=v+t*t;
+     c:=c+1;
+   end;
+
+   total:FLTD is
+      -- * METHOD: total:FLTD
+      -- * DESCRIPTION: gives the overall time taken by all go/stop pairs
+      -- * PRE:  true
+      -- * POST: res=m
+      -- * COMPLEXITY: O(1)
+      -- * REFERENCES:
+      res:=m;
+   end;
+
+   mean:FLTD is
+      -- * METHOD: mean
+      -- * DESCRIPTION: calculate mean as E(X)=SUM_t/c
+      -- * PRE: true
+      -- * POST: c>0 IMPLIES res=m/c
+      -- * COMPLEXITY: O(1)
+      -- * REFERENCES: 
+      
+     if c>0 then
+       res:=m/c;
+     else
+       res:=-1;
+     end;   
+   end;
+
+   variance:FLTD is
+      -- * METHOD: variance
+      -- * DESCRIPTION: calculate variance by V(X)=E(X^2)-(EX)^2
+      -- * PRE: true
+      -- * POST: c>0 IMPLIES res=v/c-(m/c)^2
+      -- * COMPLEXITY: O(2*t_{mult}+2*t_{div})
+      -- * REFERENCES: 
+      
+      if c>0 then
+        res:=(v/c)-(m*m)/(c*c);
+      else
+	res:=-1;
+      end;
+   end;
+      
+end;
+
+   
+class TEST__TIMER is
+   shared empty_no:INT:=100000;
+   shared div_no:INT:=10000;
+   shared test_no:INT:=10;
+
+   main is
+      t:TIMER:=#TIMER; t2:TIMER:=#TIMER;
+      i,j:INT;
+      r:FLTD; r2:FLT;
+      
+      OUT::s("Timer test").nl.nl;
+      j:=0; 
+      until j>test_no loop
+	 t2.go;
+	 OUT::i(empty_no).s(" empty loopings take "); 
+	    i:=0; t.go;
+	 until i>empty_no loop
+	    i:=i+1;
+	       -- i:=1.upto!(empty_no);
+	 end;
+	 t.stop;
+	 OUT::d(t.mean).s("ms.").nl;
+	 
+	 OUT::i(div_no).s(" double divisions r:=2.0/1.0  take "); 
+	 i:=0; t.go;
+	 until i>div_no loop
+	    r:=2.0/1.0;
+	    i:=i+1;
+	 end;
+	 t.stop;
+	 OUT::d(t.mean).s("ms.").nl;
+
+	 OUT::i(div_no).s(" float divisions r:=2.0/1.0  take "); 
+	 i:=0; t.go;
+	 until i>div_no loop
+	    r2:=2.0/1.0;
+	    i:=i+1;
+	 end;
+	    t.stop;
+	    OUT::d(t.mean).s("ms.").nl;
+	    t2.stop; j:=j+1;
+	 end;
+	 OUT::s("The average test iteration in ").i(test_no).s(" trials lasted ").d(t2.mean).s(" ms.").nl;
+	 OUT::s("Variance:  ").d(t2.variance).s(" ms.").nl;
+   end;
+end; -- class TEST__TIMER
+
+-------------------------------------------------------------------
+   

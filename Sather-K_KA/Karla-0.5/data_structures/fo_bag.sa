@@ -1,0 +1,67 @@
+-- File: fo_bag.sa
+-- Author: Wolf Zimmermann 
+-- Copyright (C) Universitaet Karlsruhe, 1994
+--
+-- COPYRIGHT NOTICE: This code is provided "AS IS" WITHOUT ANY WARRANTY
+-- and is subject to the terms of the KARLA LIBRARY GENERAL PUBLIC
+-- LICENSE contained in the file: "doc/license.txt" of the 
+-- distribution. 
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FILE: fo_bag.sa
+--*
+--* CLASSES: FINITE_ORDERED_MULTISET(T<FINITE_ORDERED(T),ORDER<ORDER_RELATION(T)) 
+--* 
+--* IMPLEMENTATION OF: 
+--*
+--* CONFORMS TO: FINITE_MULTISET(T) ORDERED_MULTISET(T)
+--*
+--* IS A: FINITE_MULTISET(T) ORDERED_MULTISET(T)
+--*
+--* REQUIRED CLASSES: FINITE_MULTISET(T) ORDERED_MULTISET(T) FINITE_ORDERED(T) ORDER_RELATION(T)\
+--* FINITE_INT
+--*
+--* EXCEPTIONS: EXCEPTION__MULTISET EXCEPTION__ORDERED_MULTISET_MIN EXCEPTION__ORDERED_MULTISET_MAX EXCEPTION__ORDERED_MULTISET_PREVIOUS EXCEPTION__ORDERED_MULTISET_NEXT
+--*
+--* TEST CLASS: TEST__FINITE_ORDERED_MULTISET
+--*
+--* FOREIGN FILES:
+--*
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--
+-- RCS: $Id$
+-- HISTORY:$Log$
+--  * Last edited: Apr 13 14:29 1994 (frick)
+-- Created: Wed Mar 16 18:43:26 1994 (frick)
+--
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+abstract class FINITE_ORDERED_MULTISET(T1,T<FINITE_ORDERED(T1),ORDER<ORDER_RELATION(T)) is
+   -- * CLASS: FINITE_ORDERED_MULTISET(T<FINITE_ORDERED(T),ORDER<ORDER_RELATION(T))
+   -- * DESCRIPTION: abstract class defining ordered multisets over finite domains
+   -- * SUBCLASS OF: FINITE_MULTISET(T) ORDERED_MULTISET(T)
+   -- * SPECIALIZATION OF: FINITE_MULTISET(T) ORDERED_MULTISET(T)
+   -- * IMPLEMENTATION OF: 
+   -- * EXCEPTIONS: EXCEPTION__MULTISET EXCEPTION__ORDERED_MULTISET_MIN EXCEPTION__ORDERED_MULTISET_MAX\
+   -- * EXCEPTION__ORDERED_MULTISET_PREVIOUS EXCEPTION__ORDERED_MULTISET_NEXT
+   -- * INVARIANT: FINITE_MULTISET:Inv AND ORDERED_MULTISET::Inv
+   -- * REPRESENTATION:
+   -- * COMPLEXITY:
+   -- * REFERENCES: [Aho, Hopcroft, Ullman: "The Design and Analysis \
+   -- *               of Computer Algorithms", Addison-Wesley, 1974]
+   -- * ATTRIBUTES: size : INT \
+   -- *             order : ORDER \
+   -- *             s : $SORT(T)
+
+
+   subtype of FINITE_MULTISET(T1,T);
+   subtype of ORDERED_MULTISET(T,ORDER);
+
+end;
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+class TEST__FINITE_ORDERED_MULTISET is
+   main is
+      a:$MULTISET(FINITE_INT):=# FINITE_ORDERED_MULTISET(INT,FINITE_INT,ORDER_LT(FINITE_INT));
+      ERR::s("creation of abstract class succeeded.\n");
+   end;
+end;

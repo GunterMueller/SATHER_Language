@@ -1,0 +1,75 @@
+--* Last edited: Feb  2 23:06 1994 (holzw)
+--
+-- test conformance in unused features
+
+class A is
+  i: INT;
+end;
+
+class B is
+  subtype of A;
+end;
+
+class D is
+  subtype of B;
+  i: $A;		-- error: not under INT
+end;
+
+class X is
+  i: SAME;
+end;
+
+class Y is
+  subtype of A;
+end;
+
+class Z is
+  subtype of B;
+  include X:nowhere->;  -- error feature doesn't exist in X
+  i: $A;		-- error: not under INT
+end;
+
+class SUPER is
+  a: INT;
+  b: SUPER;
+  c: A;
+  id: INT;
+
+  foo(a:INT;b:$SUPER;c:$A): SUPER is
+    res:=b;
+    res.a:=5;
+    res.c.i:=res.a;
+  end;
+end;
+
+class SUB is
+--  subtype of SUPER : foo -> old_foo,c->a;
+  subtype of SUPER : foo -> old_foo;
+  c: X;
+  const id:INT:=1;
+
+  foo(a:INT;b:$SUPER;c:A): SUPER is	-- parameter c doesn't conform
+    res:=b.old_foo(a,b,c);
+    res.a:=res.a+1;
+    res.c.i:=res.a+2;
+  end;
+end;
+
+class REUSER is
+  include SUPER::foo->foo;
+  a: FLT;
+  b: $SUPER;
+  c: $A;
+end;
+
+class SBINC_E3 is
+  main is
+    a:A;
+    b:B;
+    c:D;
+
+    a.i:=1;
+    b.i:=1;
+    c.i:=c.i.copy;
+  end;
+end;

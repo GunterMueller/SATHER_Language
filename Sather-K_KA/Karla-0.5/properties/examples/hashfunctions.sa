@@ -1,0 +1,194 @@
+-- -*- Mode: Sather; -*-
+-- Author: group:algprak0 : Speise, Nguyen, Tri
+--
+-- Copyright (C) Universitaet Karlsruhe, 1994
+--
+-- COPYRIGHT NOTICE:
+-- LICENSE
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FILE: hashfunctions.sa
+--*
+--* CLASSES: SIMPLE_HASH HASH__MINIMAL_STANDARD(T) INT_HASH__MINIMAL_STANDARD STR_HASH_SIMPLE
+--*
+--* IMPLEMENTATION OF: HASHFUNCTION(T)
+--*
+--* CONFORMS TO:
+--*
+--* IS A:
+--*
+--* REQUIRED CLASSES: 
+--*
+--* EXCEPTIONS:
+--*
+--* TEST CLASS:
+--*
+--* FOREIGN FILES:
+--*
+-- RCS: $ld$
+-- HISTORY: $Log$
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   
+
+
+class SIMPLE_HASH(T) is
+
+-- * CLASS: SIMPLE_HASH(T)
+-- * DESCRIPTION: define a hashing method via simple-hash
+-- * SUBCLASS OF: 
+-- * SPECIALIZATION OF: 
+-- * IMPLEMENTATION OF: HASHFUNCTION(T)
+-- * EXCEPTIONS:
+-- * INVARIANT:
+-- * REPRESENTATION:
+-- * COMPLEXITY: O(1)
+-- * REFERENCE:
+-- * ATTRIBUTES:
+   
+subtype of HASHFUNCTION(T);
+   
+  hash(x:T):INT is
+
+-- * METHOD: hash(x:T):INT
+-- * DESCRIPTION:define a hash-adress for x
+-- * PRE:true
+-- * POST:true
+-- * COMPLEXITY: O(1)
+-- * REFERENCES:
+
+    txt:STR := x.str;
+    if txt.length=1 then res := txt[0].to_i.mod(tab_size)
+    else res := (txt[0].to_i + 11*txt[txt.length-1].to_i + 26 * txt.length).mod(tab_size);
+    end;
+  end;-- hash
+
+
+end;-- SIMPLE_HASH(T)   
+
+
+class HASH__MINIMAL_STANDARD(T) is
+
+-- * CLASS: HASH_MINIMAL_STANDARD(T)
+-- * DESCRIPTION: define a hashing method via the same method as used \
+-- * for generating random numbers via RANDOM_GENERATOR_32__MINIMAL_STANDARD
+-- * SUBCLASS OF: 
+-- * SPECIALIZATION OF: 
+-- * IMPLEMENTATION OF: HASHFUNCTION(T)
+-- * EXCEPTIONS:
+-- * INVARIANT:
+-- * REPRESENTATION:
+-- * COMPLEXITY: O(1)
+-- * REFERENCE:
+-- * ATTRIBUTES:
+   
+subtype of HASHFUNCTION(T);
+private const modulus:INT := 2147483647;
+private const a:INT := 16807;
+private const moddiva : INT := 127773; -- floor(modulus/a);
+private const modmoda : INT := 2836;   -- modulus mod a
+   
+  hash(x:T):INT is
+
+-- * METHOD: hash(x:T):INT
+-- * DESCRIPTION:define a hash-adress for x
+-- * PRE:true
+-- * POST: FORALLx:T:0<=hash(x)<tab_size
+-- * COMPLEXITY: O(1)
+-- * REFERENCES:
+
+    txt:STR := x.str;
+    val:INT;
+    q:INT;
+    r:INT;
+    if txt.length=1 then val := txt[0].to_i
+    else val := txt[0].to_i + 1601*txt[txt.length-1].to_i + 10007 * txt.length;
+    end;
+    if val<0 then val := val + modulus; end;
+    q := val/moddiva;
+    r := val.mod(moddiva);
+    val := val*r - modmoda * q;
+    if val<0 then val := val + modulus; end;
+    res := val.mod(tab_size);
+  end;
+
+
+end;-- HASH__MINIMAL_STANDARD(T)   
+
+
+class INT_HASH__MINIMAL_STANDARD is
+
+-- * CLASS: INT_HASH_MINIMAL_STANDARD
+-- * DESCRIPTION: define a hashing method on INT via the same method as used \
+-- * for generating random numbers via RANDOM_GENERATOR_32__MINIMAL_STANDARD
+-- * SUBCLASS OF: 
+-- * SPECIALIZATION OF: 
+-- * IMPLEMENTATION OF: HASHFUNCTION(INT)
+-- * EXCEPTIONS:
+-- * INVARIANT:
+-- * REPRESENTATION:
+-- * COMPLEXITY: O(1)
+-- * REFERENCE:
+-- * ATTRIBUTES:
+   
+subtype of HASHFUNCTION(INT);
+private const modulus:INT := 2147483647;
+private const a:INT := 16807;
+private const moddiva : INT := 127773; -- floor(modulus/a);
+private const modmoda : INT := 2836;   -- modulus mod a
+   
+  hash(x:INT):INT is
+
+-- * METHOD: hash(x:T):INT
+-- * DESCRIPTION:define a hash-adress for x
+-- * PRE:true
+-- * POST: FORALLx:T:0<=hash(x)<tab_size
+-- * COMPLEXITY: O(1)
+-- * REFERENCES:
+
+    val:INT := x;
+    q:INT;
+    r:INT;
+    if val<0 then val := val + modulus; end;
+    q := val/moddiva;
+    r := val.mod(moddiva);
+    val := val*r - modmoda * q;
+    if val<0 then val := val + modulus; end;
+    res := val.mod(tab_size);
+  end;
+
+
+end;-- INT_HASH__MINIMAL_STANDARD   
+
+class STR_HASH_SIMPLE is
+
+-- * CLASS: STR_HASH_SIMPLE
+-- * DESCRIPTION: define a simple hashing method for strings STR
+-- * SUBCLASS OF: 
+-- * SPECIALIZATION OF: 
+-- * IMPLEMENTATION OF: HASHFUNCTION(STR)
+-- * EXCEPTIONS:
+-- * INVARIANT:
+-- * REPRESENTATION:
+-- * COMPLEXITY: O(1)
+-- * REFERENCE:
+-- * ATTRIBUTES:
+   
+subtype of HASHFUNCTION(STR);
+   
+  hash(x:STR):INT is
+
+-- * METHOD: hash(x:STR):INT
+-- * DESCRIPTION:define a hash-adress for x
+-- * PRE:true
+-- * POST:true
+-- * COMPLEXITY: O(1)
+-- * REFERENCES:
+
+    if x.length=1 then res := x[0].to_i.mod(tab_size)
+    else res := (x[0].to_i + 11*x[x.length-1].to_i + 26 * x.length).mod(tab_size);
+    end;
+  end;-- hash
+
+
+end;-- STR_HASH_SIMPLE
+
+

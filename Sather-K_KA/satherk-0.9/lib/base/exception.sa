@@ -1,0 +1,379 @@
+-- -*- Mode: Sather;  -*-
+-- File: exception.sa
+-- Author: Reiner Mauch (mauch@ira.uka.de)
+-- Copyright (C) Reiner Mauch & Martin Trapp
+-- Copyright (C) Universitaet Karlsruhe, Germany, 1992
+--*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FUNCTION: classes for exception handling,
+--*           class SAINT as root class of all programs.
+--*
+--* CLASSES: EXCEPTION as parent class for all exceptions,
+--*          EXCEPTION_SYSTEM for system exception,
+--*          EXCEPTION_SATHER for software (compiler) exceptions,
+--*          EXCEPTION_USER for user defined exceptions.
+--*
+--*          All exception classes should define the routines:
+--*          new, init, deinit, str and raise.
+--*
+--* REQUIRED FILES:
+--*
+--* RELATED FILES:
+--*
+--* HISTORY:
+--* Last edited: Oct 22 00:25 1993 (trapp)
+--* Created: Sat Dec 12 14:18:21 1992 (mauch)
+--*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+class EXCEPTION is
+   -- unspecified exception and parent of all exceptions
+
+   const name:STR :="unspecified EXCEPTION";
+
+   shared counter:INT;
+
+
+   file_name:    STR;
+   line_number:  INT;
+   
+   const ret_number:INT:=-1; -- return number
+
+
+   str:STR is
+      res:= header;
+      res:= res.s(description);
+   end; -- str
+
+   description :STR is
+      res := name;
+   end; -- description
+   
+   header:STR is
+      if (file_name /= void) then
+	 res := file_name.s(": line ").s(line_number.str).s(": ");
+      else
+	 res := "*** ";
+      end;
+   end; -- header
+
+   raise is
+      -- raises an exception; calls next exception handler
+      -- *the compiler depends on this signature*
+      
+      --      debug(exceptions)
+      --	 if file_name /= void then
+      --	    ERR::s(name).s(" raised! filename: ")
+      --		  .s(file_name).nl;
+      --	    ERR::s("linenumber: ").i(line_number).nl;
+      --	 elsif SAINT::exception_filename /= void then
+      --	    ERR::s(name).s(" raised! filename: ")
+      --		  .s(SAINT::exception_filename).nl;
+      --	    ERR::s("linenumber: ").i(SAINT::exception_linenumber).nl;
+      --	 else
+      --	    ERR::s(name).s(" raised! *unknown filename, looks like a  hardware exception*").nl;
+      --	 end; -- if
+      --      end; -- debug 
+      if self /= void  then
+	 if file_name = void then
+	    line_number := SAINT::exception_linenumber;
+	    file_name   := SAINT::exception_filename;
+	 end;
+	 if counter = 0 then
+	    OUT::s(str).nl;
+	    C::abort;
+	 end; -- if
+	 C::saint_exception_raise(self);
+      else
+	 ERR::s("$EXCEPTION::raise: illegal class call").nl;
+	 C::abort;
+      end;
+   end;
+
+   init is
+      --
+      if counter > 0 then
+	 counter := counter+1;
+      elsif counter = 0 then
+	 counter:=1; 
+      else
+	 ERR::s("internal error in $EXCEPTION::init").nl;
+	 C::abort;
+      end;
+   end; -- init
+
+   deinit is
+      -- should be used only by system  
+      -- ERR::i(counter).nl;
+      if counter > 1 then
+	 counter:=counter-1;
+      elsif counter = 1 then
+	 counter:=0;
+      else
+	 ERR::s("internal error in $EXCEPTION::deinit").nl;
+	 C::abort;
+      end;
+   end;
+   
+end; -- class EXCEPTION
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-- hardware (signal) exceptions
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+class EXCEPTION_SYSTEM is
+   -- abstract class
+   subtype of EXCEPTION;
+   
+   const name:  STR :="unspecified system";
+   const number:INT:=0; -- signal number
+
+   create: SAME is
+      res := new;
+   end; --create
+
+
+   init is
+      -- should be used only by system  
+      if counter > 0 then
+	 counter:=counter+1;
+      elsif counter = 0 then
+	 C::saint_exception_init_handler(number);
+	 counter:=1;
+      else
+	 ERR::s("internal error in $EXCEPTION_SYSTEM::init").nl;
+	 C::abort;
+      end;
+   end;
+
+   deinit is
+      -- should be used only by system  
+      if counter > 1 then
+	 counter:=counter-1;
+      elsif counter = 1 then
+	 C::saint_exception_deinit_handler(number);
+	 counter:=0;
+      else
+	 ERR::s("internal error in $EXCEPTION_SYSTEM::deinit").nl;
+	 C::abort;
+      end;
+   end; -- deinit
+
+end; -- class EXCEPTION_HUP
+----~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+class EXCEPTION_INT is
+   -- 
+   subtype of EXCEPTION_SYSTEM;
+   
+   const name:STR :="interrupt";
+   const number:INT := 2;
+end; -- class EXCEPTION_INT
+----~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+class EXCEPTION_FPE is
+   -- 
+   subtype of EXCEPTION_SYSTEM;
+
+   const name:STR :="arithmetic exception";
+   const number:INT := 8;
+   code:INT;
+   code_name:STR;
+
+   create_fpe(code: INT; name:STR): SAME is
+      res:=new;
+      res.code      := code;
+      res.code_name := name;
+   end;
+   
+   description:STR is
+      res := name;
+      if code /= 0 and code_name /= void then
+	 res := res.s(", code:").i(code).s(" = ").s(code_name);
+      else
+	 res := res.s(" of unknown type.");
+      end;
+   end;
+end; -- class EXCEPTION_FPE
+----~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+class EXCEPTION_SEGV is
+   -- 
+   subtype of EXCEPTION_SYSTEM;
+
+   const name:STR :="segmentation violation";
+   const number:INT := 11;
+
+   code_name:STR;
+
+   create_segv(name:STR): SAME is
+      res:=new;
+      res.code_name := name;
+   end;
+   
+   description:STR is
+      res := name;
+      if code_name /= void then
+	 res := res.s(": ").s(code_name);
+      end;
+   end; -- description
+   
+end; -- class EXCEPTION_SEGV
+----~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-- sather exceptions:
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+class EXCEPTION_SATHER is
+   -- parent of all sather sofware exceptions
+   subtype of EXCEPTION;
+   
+   const name:  STR  := "unspecified sather exception";
+   shared abort:   BOOL := false;
+
+end; -- class EXCEPTION_SATHER
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+class EXCEPTION_FAILURE is
+   -- exception, if argument of raise is void
+   subtype of EXCEPTION_SATHER;
+   
+   const name:STR :="call to raise in void object";
+end; -- class EXCEPTION_FAILURE
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+class EXCEPTION_ARRAY_BOUND is
+   -- exception, if array bound check fails
+   subtype of EXCEPTION_SATHER;
+   
+   const name:STR :="array bound check";
+   index1:       INT;
+   upper_bound1: INT;
+
+   create_array_bound(index1,upper_bound1:INT):SAME is
+      -- 
+      res:=new;
+      res.index1       := index1;
+      res.upper_bound1 := upper_bound1;
+   end; -- create
+   description:STR is
+      --
+      res := "array index ".i(index1).s(" out of bounds [0..")
+	    .i(upper_bound1).s("]");
+   end; -- description
+end; -- class EXCEPTION_ARRAY_BOUND
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+class EXCEPTION_VOID is
+   -- exception, if void object was used
+   subtype of EXCEPTION_SATHER;
+   
+   const name:STR :="access of void object";
+end; -- class EXCEPTION_VOID
+
+
+----~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-- user exceptions:
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+class EXCEPTION_USER is
+   -- parent of all user exceptions
+   subtype of EXCEPTION;
+   
+   const name:  STR  := "unspecified user exception";
+   shared abort:   BOOL := false;
+
+end; -- class EXCEPTION_SATHER
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-- SAINT class
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+class SAINT is
+   -- we inherit INT, 'cause:
+   -- 1) we must not have instance attributes.
+   -- 2) we have self:SAME as INT, which is the number of arguments :-)
+   subtype of INT;
+   
+   
+   -- this is the interface class between the compiler and your program.
+   -- *do not edit*, because your whole program depends on.
+   -- (saint means SAther INTernals).
+   
+   -- unix arguments
+   shared saint_argc: INT;
+   shared saint_argv: F_OB;
+
+   -- set by the compiler every `raise' statement and
+   -- every `begin' ... <setting> `except' ... `end'
+   -- *the compiler depends on this signatures*
+   shared exception_linenumber:INT;
+   shared exception_filename  :STR;
+   shared exception_base      :F_OB; -- base pointer (see exception.c -- rts)
+
+   main(argv:F_OB): INT is
+      -- *do not edit*
+      -- your whole program depends on
+
+      
+      argc:INT := self;         -- eliminate hack
+
+      -- initialize run time system
+      C::saint_init_rts;
+      -- initialize shareds and consts
+      C::saint_init_classes;
+      -- mark argc/argv
+      saint_argc:=argc;
+      saint_argv:=argv;
+
+      C::saint_exception_init;
+      
+      -- building sather arguments
+      sather_argv:ARR[*](STR);
+      sather_argv := C::saint_charptrptr_to_arrayofstr(argc,argv);
+      -- call ROOTCLASS::main	 
+      res := C::saint_rootclass_main(sather_argv);
+
+      C::saint_exception_deinit;
+   end;
+   
+end; -- class SAINT
+  
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-- C (compiler)
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+class C is
+   -- *do not edit*
+   -- these routines are generated by the compiler
+   saint_init_classes                          is end;
+   saint_rootclass_main(argv:ARR[*](STR)):INT   is end;
+   saint_charptrptr_to_arrayofstr(argc:INT; argv: F_OB):ARR[*](STR) is
+   end;
+   -- run time system:
+   saint_init_rts                              is end;
+end; -- class C
+   
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-- C (run time system)
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+class C is
+   -- exception routines.
+   -- implemented by the run time system.
+   
+   saint_exception_init                                    is end;
+   saint_exception_deinit                                  is end;
+
+   saint_exception_push                       :F_OB        is end;
+   saint_exception_raise(exception:$EXCEPTION)             is end;
+   saint_exception_pop                                     is end;
+   setjmp               (buf:F_OB)            :$EXCEPTION  is end;
+   abort                                                   is end;
+   saint_exception_init_handler(code:INT)                  is end;
+   saint_exception_deinit_handler(code:INT)                is end;
+
+--   saint_f_ob_to_int(val: F_OB):INT is end;
+end; -- class C
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

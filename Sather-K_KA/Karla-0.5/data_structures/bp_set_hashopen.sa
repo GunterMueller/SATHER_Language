@@ -1,0 +1,456 @@
+-- Author: group:algprak0 : Speiser, Nguyen, Tri
+--
+-- Copyright (C) Universitaet Karlsruhe, 1994
+--
+-- This file is part of Karla, the Karlsruhe Library of Algorithms.
+-- COPYRIGHT NOTICE: This code is provided "AS IS" WITHOUT ANY WARRANTY
+-- and is subject to the terms of the KARLA LIBRARY GENERAL PUBLIC
+-- LICENSE contained in the file: "doc/license.txt" of the distribution.
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FILE: bp_set_hashopen.sa
+--*
+--* CLASSES: BOUNDED_PARTIAL_SET__HASH_OPEN(K,T1,T<PARTIAL(K,T1),COLL<PARTIAL_COLLISION(K,T1),FUNC<PARTIAL_HASHFUNCTION(K,T1))
+--*
+--* IMPLEMENTATION OF: BOUNDED_PARTIAL_SET(T)
+--*
+--* CONFORMS TO:
+--*
+--* IS A:
+--*
+--* REQUIRED CLASSES: BOUNDED_PARTIAL_SET(K,T1,T) \
+--* BOUNDED_SET__HASH_OPEN(T,COLL,FUNC) PARTIAL(K,T) PARTIAL_SET(K,T1,T)\
+--* PARTIAL_HASHFUNCTION(K,T1) PARTIAL_COLLISION(T) PARTIAL_LINEAR_PROBING(T) \
+--* PARTIAL_SIMPLE_HASH(K,T1,T) PARTIAL_HASH__MINIMAL_STANDARD(K,T1,T) \
+--* INT_PARTIAL_HASH__MINIMAL_STANDARD(T1,T) TIMER\
+--* EXCEPTION__BOUNDED_MULTISET_INS EXCEPTION__BOUNDED_MULTISET_UNION \
+--* EXCEPTION__MULTISET EXCEPTION__SET_ADD EXCEPTION__SET_DISJOINT_UNION \
+--* EXCEPTION__PARTIAL_MULTISET_LOOKUP EXCEPTION__COLLISION
+--*
+--* EXCEPTIONS: EXCEPTION__BOUNDED_MULTISET_INS EXCEPTION__BOUNDED_MULTISET_UNION\
+--* EXCEPTION__MULTISET EXCEPTION__SET_ADD EXCEPTION__SET_DISJOINT_UNION \
+--* EXCEPTION__PARTIAL_MULTISET_LOOKUP EXCEPTION__COLLISION
+--*
+--* TEST CLASS: TEST__BOUNDED_PARTIAL_SET__HASH_OPEN
+--*
+--* FOREIGN FILES:
+--*
+-- RCS: $ld$
+-- HISTORY: $Log$
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   
+
+class BOUNDED_PARTIAL_SET__HASH_OPEN(
+     K,T1,T<PARTIAL(K,T1),
+     COLL<PARTIAL_COLLISION(K,T1),
+     FUNC<PARTIAL_HASHFUNCTION(K,T1)) is
+ 
+-- * CLASS: BOUNDED_PARTIAL_SET__HASH_OPEN(K,T1,T<PARTIAL(K,T),COLL<PARTIAL_COLLISION(K,T1), FUNC<PARTIAL_HASHFUNCTION(K,T1))
+-- * DESCRIPTION: Implementation of abstract type BOUNDED_PARTIAL_SET(K,T<PARTIAL(K,T)) via open hashing \
+-- * parameter COLL is used for the collision resolution technique based on K \
+-- * parameter FUNC is used for the definition of the hash function based on K
+-- * SUBCLASS OF: BOUNDED_PARTIAL_SET(K,T1,T)
+-- * SPECIALIZATION OF: 
+-- * IMPLEMENTATION OF: BOUNDED_PARTIAL_SET(K,T1,T)  
+-- * EXCEPTIONS: EXCEPTION__BOUNDED_MULTISET_INS EXCEPTION__BOUNDED_MULTISET_UNION\
+-- * EXCEPTION__MULTISET EXCEPTION__SET_ADD EXCEPTION__SET_DISJOINT_UNION \
+-- * EXCEPTION__PARTIAL_MULTISET_LOOKUP EXCEPTION__COLLISION
+-- * INVARIANT: BOUNDED_PARTIAL_SET(K,T1,T)::Inv AND \
+-- *BOUNDED_SET__HASH_OPEN(T,COLL,FUNC)::Inv
+-- * REPRESENTATION:
+-- * COMPLEXITY: \
+-- * static SIZE = sum(tab[i].SIZE,i=0..tab_size-1) \
+-- * static MAXSIZE = max(tab[i].MAXSIZE,i=0..tab_size-1) \
+-- * cumulative SPACE(n) = O(n) \
+-- * additive TIME(n) = O(n^2) \
+-- * |        E[TIME(n)] = O(n) (uniform distribution)
+-- * REFERENCES: [Aho, Hopcroft, Ullman: "The Design and Analysis \
+-- *               of Computer Algorithms", Addison-Wesley, 1974]
+-- * ATTRIBUTES: f:FUNC; -- hash function \
+-- * 		 c:COLL; -- collision resolution \
+-- *             size: INT -- actual size of bounded set \
+-- *             max_size:INT -- maximal size of bounded set \
+-- *             tab_size:INT -- size of hash table \
+-- *             tab:ARR[*](PAIR(T,CHAR)) -- hash table
+
+subtype of BOUNDED_PARTIAL_SET(K,T1,T);
+include BOUNDED_SET__HASH_OPEN(T,COLL,FUNC):insert -> , union-> ;
+
+
+-- * METHOD: init(size:INT):SAME
+-- * DESCRIPTION: initializes hash-table such that it can store size elements
+-- * PRE: NOT self=void
+-- * POST: c = #COLL.init(max_size) AND tab_size=c.tab_size AND \
+-- * tab := #ARR[tab_size](PAIR(T,CHAR)) AND f := #FUNC.init(tab_size) AND \
+-- * FORALL 0<=i<tab_size: tab[i] = #PAIR(T,CHAR){fst:=void,snd:='F'}
+-- * COMPLEXITY: O(n)
+-- * REFERENCES:
+
+partial_lookup(k:K):T is
+ 
+-- * METHOD: partial_lookup(k:K):T
+-- * DESCRIPTION: finds an element with k as key
+-- * PRE: partial_member(k)
+-- * POST: ((res=tab[i].fst) AND (tab[i].fst.key = k) AND (tab[i].snd = 'O'))
+-- * COMPLEXITY: \
+-- * SIZE__partial_lookup(self.SIZE,k.SIZE,self.MAXSIZE) = self.MAXSIZE  \
+-- * SPACE__partial_lookup(self.SIZE,k.SIZE,self.MAXSIZE) = O(\
+-- * |    max(FUNC::SPACE__hash_key(f.SIZE,k.SIZE), \
+-- * |        COLL::SPACE__h_key(c.SIZE,j,k.SIZE))) \
+-- * TIME__partial_lookup(self.SIZE,k.SIZE,self.MAXSIZE) = O(\
+-- * |   FUNC::TIME__hash_key(f.SIZE,k.SIZE) + \
+-- *     f.SIZE*COLL::TIME__h_key(c.SIZE,j,k.SIZE))
+-- * REFERENCES:
+   i, j, h: INT;
+   if size > 0 then
+     j := 0;
+     h := f.hash_key(k);
+     until j=max_size loop
+        i := (h + c.h_key(j,k)).mod (tab_size);
+        j := j + 1;
+        if (tab[i].snd = 'O') and (tab[i].fst.key = k) then
+           break
+        end;-- * if
+     end;-- * until
+     if j=max_size then #EXCEPTION__PARTIAL_MULTISET_LOOKUP.raise;
+     else res := tab[i].fst;
+     end;
+   else #EXCEPTION__PARTIAL_MULTISET_LOOKUP.raise;
+   end;-- * if   
+end;--  partial_lookup
+
+
+
+partial_member(k:K):BOOL is
+
+-- * METHOD: partial_member(k:K):BOOL
+-- * DESCRIPTION: determine wether there exists an entry for key k
+-- * PRE: true
+-- * POST: res=true IFF EXISTS 0<=i<tab_size: tab[i].fst.key=k AND tab[i].snd='O'
+-- * COMPLEXITY: \
+-- * SIZE__partial_member(self.SIZE,k.SIZE) = 1  \
+-- * SPACE__partial_member(self.SIZE,k.SIZE) = O(\
+-- * |    max(FUNC::SPACE__hash_key(f.SIZE,k.SIZE), \
+-- * |        COLL::SPACE__h_key(c.SIZE,j,k.SIZE))) \
+-- * TIME__partial_member(self.SIZE,k.SIZE) = O(\
+-- * |   FUNC::TIME__hash_key(f.SIZE,k.SIZE) + \
+-- *     f.SIZE*COLL::TIME__h_key(c.SIZE,j,k.SIZE))
+-- * REFERENCES:
+
+   i, j, h: INT;
+   if size > 0 then
+     j := 0;
+     h := f.hash_key(k);
+     until j=max_size loop
+        i := (h + c.h_key(j,k)).mod (tab_size);
+        j := j + 1;
+        if (tab[i].snd = 'O') and (tab[i].fst.key = k)  then
+           break
+        end;-- * if
+     end;-- * until
+     res := (j < max_size);
+   else res := false;
+   end;-- * if   
+
+end; -- partial_member
+
+end; -- *class
+
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+   
+
+   
+class TEST__BOUNDED_PARTIAL_SET__HASH_OPEN is
+   
+  performancetest(m:INT) is
+    s:$BOUNDED_PARTIAL_SET(INT,INT,PARTIAL_INT) := 
+      #BOUNDED_PARTIAL_SET__HASH_OPEN(
+	   INT,INT,PARTIAL_INT,
+           PARTIAL_LINEAR_PROBING(INT,INT,PARTIAL_INT),
+           INT_PARTIAL_HASH__MINIMAL_STANDARD(INT,PARTIAL_INT)).init(m);
+    i:INT;
+    n:INT := m/2;
+    x:PARTIAL_INT;
+    timer:TIMER := #TIMER;
+    timer.reset;
+    timer.go;
+    loop
+      i := 1.upto!(n);
+      x := #PARTIAL_INT{key:=i}.init;
+      s := s.insert(x);
+    end;
+    timer.stop;
+    OUT::s(n.str).s(" times insert cost time ").s(timer.mean.str).nl.nl;
+    timer.reset;
+    timer.go;
+    loop
+      i:=1.upto!(n);
+      x := #PARTIAL_INT{key:=i}.init;
+      if not(s.member(x)) then break; end;
+    end;
+    timer.stop;
+    OUT::s(n.str).s(" times member cost time ").s(timer.mean.str).nl.nl;
+    if i<n then OUT::s("membership test not succeeded for i=").s(i.str).nl.nl;
+    else OUT::s("membership test succeeded").nl.nl;
+    end;
+    timer.reset;
+    timer.go;
+    loop
+      i:= 1.upto!(n);
+      x := #PARTIAL_INT{key:=i}.init;
+      s := s.delete(x);
+    end;
+    timer.stop;
+    OUT::s(n.str).s(" times delete cost time ").s(timer.mean.str).nl.nl;
+    if s.empty then OUT::s("deletion succeeded").nl.nl;
+    else OUT::s("deletion not succeeded: s=").s(s.str).nl.nl;
+    end;
+  end; -- performancetest
+
+
+
+  performancetest1(m:INT) is
+    s:$BOUNDED_PARTIAL_SET(INT,INT,PARTIAL_INT) := 
+      #BOUNDED_PARTIAL_SET__HASH_OPEN(
+	   INT,INT,PARTIAL_INT,
+           PARTIAL_QUADRATIC_PROBING(INT,INT,PARTIAL_INT),
+           INT_PARTIAL_HASH__MINIMAL_STANDARD(INT,PARTIAL_INT)).init(m);
+    i:INT;
+    n:INT := m/2;
+    x:PARTIAL_INT;
+    timer:TIMER := #TIMER;
+    timer.reset;
+    timer.go;
+    loop
+      i := 1.upto!(n);
+      x := #PARTIAL_INT{key:=i}.init;
+      s := s.insert(x);
+    end;
+    timer.stop;
+    OUT::s(n.str).s(" times insert cost time ").s(timer.mean.str).nl.nl;
+    timer.reset;
+    timer.go;
+    loop
+      i:=1.upto!(n);
+      x := #PARTIAL_INT{key:=i}.init;
+      if not(s.member(x)) then break; end;
+    end;
+    timer.stop;
+    OUT::s(n.str).s(" times member cost time ").s(timer.mean.str).nl.nl;
+    if i<n then OUT::s("membership test not succeeded for i=").s(i.str).nl.nl;
+    else OUT::s("membership test succeeded").nl.nl;
+    end;
+    timer.reset;
+    timer.go;
+    loop
+      i:= 1.upto!(n);
+      x := #PARTIAL_INT{key:=i}.init;
+      s := s.delete(x);
+    end;
+    timer.stop;
+    OUT::s(n.str).s(" times delete cost time ").s(timer.mean.str).nl.nl;
+    if s.empty then OUT::s("deletion succeeded").nl.nl;
+    else OUT::s("deletion not succeeded: s=").s(s.str).nl.nl;
+    end;
+  end; -- performancetest1
+
+
+  main is
+    s:$BOUNDED_PARTIAL_SET(INT,INT,PARTIAL_INT) := 
+      #BOUNDED_PARTIAL_SET__HASH_OPEN(
+	   INT,INT,PARTIAL_INT,
+           PARTIAL_LINEAR_PROBING(INT,INT,PARTIAL_INT),
+           PARTIAL_SIMPLE_HASH(INT,INT,PARTIAL_INT)).init(100);
+    i:INT;
+    x:PARTIAL_INT;
+    s1:$BOUNDED_PARTIAL_SET(INT,STR,PARTIAL_STR) := 
+      #BOUNDED_PARTIAL_SET__HASH_OPEN(
+	   INT,STR,PARTIAL_STR,
+           PARTIAL_LINEAR_PROBING(INT,STR,PARTIAL_STR),
+           PARTIAL_SIMPLE_HASH(INT,STR,PARTIAL_STR)).init(100);
+    y:PARTIAL_STR;
+    OUT::s("s is created: empty set").nl;
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.empty? ").s(s.empty.str).nl.nl;
+    begin
+      x := s.choose;
+    except excptset
+      when EXCEPTION__MULTISET then 
+	   ERR::s(excptset.str).nl;
+	   OUT::s("exception test successfull").nl;
+      else OUT::s("exception test not successfull").nl;
+    end;
+    x := #PARTIAL_INT{key := 5}.init;
+    OUT::s("x = ").s(x.str);
+    OUT::s("s := s.delete(5)").nl;
+    s := s.delete(x);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.member(5)? ");
+    OUT::s(s.member(x).str).nl.nl;
+    OUT::s("s.insert(5)").nl;
+    s := s.insert(x);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.empty? ").s(s.empty.str).nl.nl;
+    OUT::s("s.insert(5)").nl;
+    s := s.insert(x);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.insert(10)").nl;
+    x := #PARTIAL_INT{key := 10}.init;
+    s := s.insert(x);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.member(5)? ");
+    x := #PARTIAL_INT{key := 5}.init;
+    OUT::s(s.member(x).str).nl.nl;
+    OUT::s("s.member(6)? ");
+    x := #PARTIAL_INT{key := 6}.init;
+    OUT::s(s.member(x).str).nl;
+    OUT::s("s.choose = ").s(s.choose.str).nl.nl;
+    OUT::s("s := s.delete(5)").nl;
+    x := #PARTIAL_INT{key := 5}.init;
+    s := s.delete(x);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.choose = ").s(s.choose.str).nl.nl;
+    OUT::s("s := s.delete(10)").nl;
+    x := #PARTIAL_INT{key := 10}.init;
+    s := s.delete(x);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.empty? ").s(s.empty.str).nl.nl;
+    begin
+      x := s.choose;
+    except excptset
+      when EXCEPTION__MULTISET then
+	 ERR::s(excptset.str).nl;
+	 OUT::s("exception test successfull").nl;
+      else OUT::s("exception test not successfull").nl;
+    end;
+    OUT::s("s.insert(10)").nl;
+    x := #PARTIAL_INT{key := 10}.init;
+    s := s.insert(x);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.empty? ").s(s.empty.str).nl.nl;
+    OUT::s("s.insert(5)").nl;
+    x := #PARTIAL_INT{key := 5}.init;
+    s := s.insert(x);
+    OUT::s("s = ").s(s.str).nl.nl;
+    s := #BOUNDED_PARTIAL_SET__HASH_OPEN(
+	   INT,INT,PARTIAL_INT,
+           PARTIAL_LINEAR_PROBING(INT,INT,PARTIAL_INT),
+           PARTIAL_SIMPLE_HASH(INT,INT,PARTIAL_INT)).init(20);
+    OUT::s("s is created: empty set").nl;
+    OUT::s("s = ").s(s.str).nl.nl;
+    loop
+      i:=1.upto!(20);
+      x := #PARTIAL_INT{key := i}.init;
+      s := s.insert(x);
+    end;
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("Testing Overflow Exception").nl;
+    begin
+      loop
+	 i := 1.upto!(101);
+	 x := #PARTIAL_INT{key := i}.init;
+         if not(s.member(x)) then
+	    s := s.insert(x); break;
+         end;
+      end;
+    except excptboundedset
+      when EXCEPTION__BOUNDED_MULTISET_INS then 
+	 ERR::s(excptboundedset.str).nl;
+	 OUT::s("EXCEPTION__BOUNDED_MULTISET_INS test successfull").nl.nl;
+      else OUT::s("EXCEPTION__BOUNDED_MULTISET_INS test not successfull").nl.nl;
+    end;
+    s := #BOUNDED_PARTIAL_SET__HASH_OPEN(
+	   INT,INT,PARTIAL_INT,
+           PARTIAL_LINEAR_PROBING(INT,INT,PARTIAL_INT),
+           PARTIAL_SIMPLE_HASH(INT,INT,PARTIAL_INT)).init(0);
+    x := #PARTIAL_INT{key:=2}.init;
+    s := s.insert(x);
+
+    OUT::s("s is created: empty set").nl;
+    OUT::s("s1 = ").s(s1.str).nl.nl;
+    loop
+      i:=1.upto!(13);
+      y := #PARTIAL_STR{key := i-1,val := ('A'.to_i + i-1).to_c.str};
+      s1 := s1.insert(y);
+    end;
+    y := #PARTIAL_STR{key := 7, val := "H"};
+    s1 := s1.insert(y);
+    OUT::s("s = ").s(s1.str).nl.nl;
+    OUT::s("s.partial_lookup(7) = H ?").nl;
+    OUT::s("res = ").s(s1.partial_lookup(7).str).nl.nl;
+    begin
+      y := s1.partial_lookup(17);
+    except excptpartial
+      when EXCEPTION__PARTIAL_MULTISET_LOOKUP then
+	 ERR::s(excptpartial.str).nl;
+	 OUT::s("exception test successfull").nl.nl;
+      else OUT::s("exception test not successfull").nl.nl;
+    end;
+    OUT::s("Testing ambigous keys").nl;
+    y := #PARTIAL_STR{key := 7, val := "X"};
+    s1 := s1.insert(y);
+    OUT::s("s = ").s(s1.str).nl.nl;
+    OUT::s("s.partial_lookup(7) = H ?").nl;
+    OUT::s("res = ").s(s1.partial_lookup(7).str).nl.nl;
+
+
+
+    --OUT::s("Typical Performance test with tabsizes as prime numbers").nl;
+    --performancetest(211);
+    --performancetest(401);
+    --performancetest(601);
+    --performancetest(809);
+    --performancetest(1009);
+    --performancetest(1201);
+    --performancetest(1409);
+    --performancetest(1601);
+    --performancetest(1801);
+    --performancetest(2003);
+   
+    --performancetest(200);
+    --performancetest(400);
+    --performancetest(600);
+    --performancetest(800);
+    --performancetest(1000);
+    --performancetest(1200);
+    --performancetest(1400);
+    --performancetest(1600);
+    --performancetest(1800);
+    --performancetest(2000);
+    --performancetest(3000);
+    --performancetest(4000);
+    --performancetest(5000);
+    --performancetest(6000);
+    --performancetest(7000);
+    --performancetest(8000);
+    --performancetest(9000);
+    --performancetest(10000);
+    --performancetest(20000);
+    --performancetest(30000);
+    --performancetest(40000);
+    --performancetest(50000);
+    --performancetest(100000);
+    --performancetest(150000);
+    --performancetest(200000);
+    --performancetest(250000);
+    --performancetest(300000);
+    --performancetest(350000);
+    --performancetest(400000);
+
+    --OUT::s("quadratic probing").nl;
+    --performancetest1(211);
+    --performancetest1(401);
+    --performancetest1(601);
+    --performancetest1(809);
+    --performancetest1(1009);
+    --performancetest1(1201);
+    --performancetest1(1409);
+    --performancetest1(1601);
+    --performancetest1(1801);
+    --performancetest1(2003);
+  end; -- main
+
+end; -- TEST__BOUNDED_SET__HASH_OPEN

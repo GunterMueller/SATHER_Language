@@ -1,0 +1,44 @@
+-- -*- Mode: Sather;  -*-
+-- File: poly3.sa
+-- Author: Martin Trapp (trapp@ira.uka.de)
+-- Copyright (C) Reiner Mauch & Martin Trapp
+-- Copyright (C) Universitaet Karlsruhe, Germany, 1992
+--*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FUNCTION:
+--*
+--* CLASSES:
+--* 
+--* REQUIRED FILES:
+--*
+--* RELATED FILES:
+--*
+--* HISTORY:
+--* Last edited: Dec  7 18:04 1993 (holzw)
+--* Created: Tue Sep 15 12:43:05 1992 (trapp)
+--*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+class POLY3 is
+
+   main is
+      list:LIST[*]($LIVING);
+      human_list:LIST[*](HUMAN):=#LIST[2](HUMAN);
+      cat:LIVING:=LIVING::new;
+      human:HUMAN;
+      
+      --list:=human_list;
+      list:=list.new(5).push(cat);
+      human := list.pop;
+      human.x;
+   end;
+   
+end; -- class POLY3
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+class LIVING is
+end;
+class HUMAN  is
+   subtype of LIVING;
+   y:INT;
+   x is
+      y:=5;
+   end;
+end;

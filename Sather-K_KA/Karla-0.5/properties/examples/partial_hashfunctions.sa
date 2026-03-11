@@ -1,0 +1,212 @@
+-- -*- Mode: Sather; -*-
+-- Author: group:algprak0 : Speise, Nguyen, Tri
+--         Wolf Zimmermann (zimmer@ira.uka.de)
+--
+-- Copyright (C) Universitaet Karlsruhe, 1994
+--
+-- COPYRIGHT NOTICE:
+-- LICENSE
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FILE: partial_hashfunctions.sa
+--*
+--* CLASSES: PARTIAL_SIMPLE_HASH PARTIAL_HASH__MINIMAL_STANDARD(K,T1,T<PARTIAL(K,T1)) INT_PARTIAL_HASH__MINIMAL_STANDARD(T1,T<PARTIAL(INT,T1))
+--*
+--* IMPLEMENTATION OF: PARTIAL_HASHFUNCTION(K,T1,T)
+--*
+--* CONFORMS TO:
+--*
+--* IS A:
+--*
+--* REQUIRED CLASSES: PARTIAL_HASHFUNCTION(K,T1,T) HASHFUNCTION(T)
+--*
+--* EXCEPTIONS:
+--*
+--* TEST CLASS:
+--*
+--* FOREIGN FILES:
+--*
+-- RCS: $ld$
+-- HISTORY: $Log$
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   
+
+
+class PARTIAL_SIMPLE_HASH(K,T1,T<PARTIAL(K,T1,T)) is
+
+-- * CLASS: PARTIAL_SIMPLE_HASH(K,T1,T<PARTIAL(K,T1,T))
+-- * DESCRIPTION: defines a simple hashing method based on keys
+-- * SUBCLASS OF: 
+-- * SPECIALIZATION OF: 
+-- * IMPLEMENTATION OF: PARTIAL_HASHFUNCTION(K,T1,T)
+-- * EXCEPTIONS:
+-- * INVARIANT:
+-- * REPRESENTATION:
+-- * COMPLEXITY: O(1)
+-- * REFERENCE:
+-- * ATTRIBUTES: readonly  tab_size:INT; -- size of the hashtable
+   
+subtype of PARTIAL_HASHFUNCTION(K,T1,T);
+
+
+     -- * METHOD: init(range:INT):SAME
+     -- * DESCRIPTION: initialize the range of the hashfunction (0..range-1)
+     -- * PRE: NOT self=void
+     -- * POST: tab_size = range AND res=self'
+     -- * COMPLEXITY: O(1)
+     -- * REFERENCES:
+
+
+     -- * METHOD: hash(x:T):INT inherited of partial_key(k:K):INT
+     -- * DESCRIPTION: returns the key-value of x
+     -- * PRE: true
+     -- * POST: res=partial_key(x.key)
+     -- * COMPLEXITY: O(1)
+     -- * REFERENCES:
+
+   
+  hash_key(x:K):INT is
+
+-- * METHOD: partial_key(x:K):INT
+-- * DESCRIPTION:defines hash-adress for key x
+-- * PRE:true
+-- * POST:true
+-- * COMPLEXITY: O(1)
+-- * REFERENCES:
+
+    txt:STR := x.str;
+    if txt.length=1 then res := txt[0].to_i.mod(tab_size)
+    else res := (txt[0].to_i + 11*txt[txt.length-1].to_i + 26 * txt.length).mod(tab_size);
+    end;
+  end;-- hash_key
+
+
+end;-- PARTIAL_SIMPLE_HASH(T)   
+
+
+class PARTIAL_HASH__MINIMAL_STANDARD(K,T1,T<PARTIAL(K,T)) is
+
+-- * CLASS: PARTIAL_HASH__MINIMAL_STANDARD(K,T1,T<PARTIAL(K,T))
+-- * DESCRIPTION: define a hashing method based on K via the same method as used \
+-- * for generating random numbers via RANDOM_GENERATOR_32__MINIMAL_STANDARD
+-- * SUBCLASS OF: 
+-- * SPECIALIZATION OF: 
+-- * IMPLEMENTATION OF: HASHFUNCTION(T)
+-- * EXCEPTIONS:
+-- * INVARIANT:
+-- * REPRESENTATION:
+-- * COMPLEXITY: O(1)
+-- * REFERENCE:
+-- * ATTRIBUTES: readonly  tab_size:INT; -- size of the hashtable
+   
+subtype of PARTIAL_HASHFUNCTION(T);
+private const modulus:INT := 2147483647;
+private const a:INT := 16807;
+private const moddiva : INT := 127773; -- floor(modulus/a);
+private const modmoda : INT := 2836;   -- modulus mod a
+
+
+     -- * METHOD: init(range:INT):SAME
+     -- * DESCRIPTION: initialize the range of the hashfunction (0..range-1)
+     -- * PRE: NOT self=void
+     -- * POST: tab_size = range AND res=self'
+     -- * COMPLEXITY: O(1)
+     -- * REFERENCES:
+
+
+     -- * METHOD: hash(x:T):INT inherited of partial_key(k:K):INT
+     -- * DESCRIPTION: returns the key-value of x
+     -- * PRE: true
+     -- * POST: res=partial_key(x.key)
+     -- * COMPLEXITY: O(1)
+     -- * REFERENCES:
+
+   
+  hash_key(x:K):INT is
+
+-- * METHOD: hash_key(x:K):INT
+-- * DESCRIPTION:define a hash-adress for key x
+-- * PRE:true
+-- * POST: FORALLx:T:0<=hash(x)<tab_size
+-- * COMPLEXITY: O(1)
+-- * REFERENCES:
+
+    txt:STR := x.str;
+    val:INT;
+    q:INT;
+    r:INT;
+    if txt.length=1 then val := txt[0].to_i
+    else val := txt[0].to_i + 1601*txt[txt.length-1].to_i + 10007 * txt.length;
+    end;
+    if val<0 then val := val + modulus; end;
+    q := val/moddiva;
+    r := val.mod(moddiva);
+    val := val*r - modmoda * q;
+    if val<0 then val := val + modulus; end;
+    res := val.mod(tab_size);
+  end;
+
+
+end;-- PARTIAL_HASH__MINIMAL_STANDARD(T)   
+
+
+class INT_PARTIAL_HASH__MINIMAL_STANDARD(T1,T<PARTIAL(INT,T1)) is
+
+-- * CLASS: INT_PARTIAL_HASH_MINIMAL_STANDARD(T1,T<PARTIAL(INT,T1))
+-- * DESCRIPTION: define a hashing method for INT keys via the same method as used \
+-- * for generating random numbers via RANDOM_GENERATOR_32__MINIMAL_STANDARD
+-- * SUBCLASS OF: 
+-- * SPECIALIZATION OF: 
+-- * IMPLEMENTATION OF: PARTIAL_HASHFUNCTION(INT,T1,T)
+-- * EXCEPTIONS:
+-- * INVARIANT:
+-- * REPRESENTATION:
+-- * COMPLEXITY: O(1)
+-- * REFERENCE:
+-- * ATTRIBUTES: readonly  tab_size:INT; -- size of the hashtable
+   
+subtype of PARTIAL_HASHFUNCTION(INT,T1,T);
+private const modulus:INT := 2147483647;
+private const a:INT := 16807;
+private const moddiva : INT := 127773; -- floor(modulus/a);
+private const modmoda : INT := 2836;   -- modulus mod a
+
+
+     -- * METHOD: init(range:INT):SAME
+     -- * DESCRIPTION: initialize the range of the hashfunction (0..range-1)
+     -- * PRE: NOT self=void
+     -- * POST: tab_size = range AND res=self'
+     -- * COMPLEXITY: O(1)
+     -- * REFERENCES:
+
+
+     -- * METHOD: hash(x:T):INT inherited of partial_key(k:K):INT
+     -- * DESCRIPTION: returns the key-value of x
+     -- * PRE: true
+     -- * POST: res=partial_key(x.key)
+     -- * COMPLEXITY: O(1)
+     -- * REFERENCES:
+
+   
+  hash_key(x:INT):INT is
+
+-- * METHOD: hash_key(x:T):INT
+-- * DESCRIPTION:define a hash-adress for key x
+-- * PRE:true
+-- * POST: FORALLx:T:0<=hash_key(x)<tab_size
+-- * COMPLEXITY: O(1)
+-- * REFERENCES:
+
+    val:INT := x;
+    q:INT;
+    r:INT;
+    if val<0 then val := val + modulus; end;
+    q := val/moddiva;
+    r := val.mod(moddiva);
+    val := val*r - modmoda * q;
+    if val<0 then val := val + modulus; end;
+    res := val.mod(tab_size);
+  end;
+
+
+end;-- INT_PARTIAL_HASH__MINIMAL_STANDARD   
+

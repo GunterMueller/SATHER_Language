@@ -1,0 +1,791 @@
+-- Author: Wolf Zimmermann
+-- Copyright (C) Universitaet Karlsruhe, 1994
+--
+-- COPYRIGHT NOTICE: This code is provided "AS IS" WITHOUT ANY WARRANTY
+-- and is subject to the terms of the KARLA LIBRARY GENERAL PUBLIC
+-- LICENSE contained in the file: "doc/license.txt" of the 
+-- distribution. 
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FILE: dequeue_array.sa
+--*
+--* CLASSES: DEQUEUE__ARRAY(T)
+--* 
+--* IMPLEMENTATION OF: DEQUEUE(T)
+--*
+--* CONFORMS TO:
+--*
+--* IS A:
+--*
+--* REQUIRED CLASSES: DEQUEUE(T) EXCEPTION__DEQUEUE__EMPTY \
+--* EXCEPTION__STACK__EMPTY EXCEPTION__QUEUE_EMPTY
+--*
+--* EXCEPTIONS: EXCEPTION__DEQUEUE__EMPTY \
+--* EXCEPTION__STACK__EMPTY EXCEPTION__QUEUE_EMPTY
+--*
+--* TEST CLASS: TEST__DEQUEUE__ARRAY
+--*
+--* FOREIGN FILES:
+--*
+--  RCS: $Id$
+--  HISTORY: $Log$
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+class DEQUEUE__ARRAY(T) is  -- subtype of
+   -- * CLASS: DEQUEUE__ARRAY(T)
+   -- * DESCRIPTION: implementation of abstract data type queue via arrays
+   -- * SUBCLASS OF:
+   -- * SPECIALIZATION OF:
+   -- * IMPLEMENTATION OF: DEQUEUE(T)
+   -- * EXCEPTIONS: EXCEPTION__DEQUEUE__EMPTY
+   -- * EXCEPTION__STACK__EMPTY EXCEPTION__QUEUE_EMPTY
+   -- * INVARIANT: DEQUEUE(T)::Inv AND\
+   -- *    self.dsize >= 0 AND \
+   -- *    0 <= frt < dqueue.asize AND \
+   -- *    0 <= lst < dqueue.asize AND \
+   -- *    (self.empty IMPLIES (frt - lst) MOD dqueue.asize = 1) AND \
+   -- *    (self.empty IFF dsize=0) AND \
+   -- *    (NOT empty IMPLIES 
+   -- *   |     (FORALL i:INT: i>=0 AND i<dsize IMPLIES deqr^i.front=dqueue[(frt+i) MOD dqueue.asize]
+
+   -- * REPRESENTATION:
+   -- * static SIZE=qsize \
+   -- * static MAXSIZE = max(queue[i].SIZE,frt<=i<lst) \ 
+   -- * cumulative SPACE(n) =O(n) \
+   -- * additive TIME(n) = O(n) \
+   -- *     Potential function: PHI(self) = min(2*qsize - queue.asize,0)
+   -- * REFERENCES:
+   -- * ATTRIBUTES: \
+   -- *             dqueue:ARRAY[*](T) \
+   -- *             dsize:INT            -- size of dqueue \
+   -- *             frt:INT              -- front element of dqueue \
+   -- *             lst:INT              -- last element of dqueue 
+   -- *             const initsize:INT := 5 -- initial dqueuesize
+
+
+   subtype of DEQUEUE(T);
+   dqueue:ARRAY[*](T);
+   dsize:INT; --actual size of dqueue
+   frt:INT;  -- front element of dqueue
+   lst: INT; -- last element of dqueue
+   const initsize:INT := 5; -- initial dqueuesize
+
+
+   init:SAME is
+      -- * METHOD: init:SAME
+      -- * DESCRIPTION: initialization method
+      -- * PRE: self/=void
+      -- * POST:  res.dqueue/=void AND res.dsize=0 AND res.frt=0 AND res.lst=initsize-1
+      -- * COMPLEXITY: \
+      -- * SIZE__init = 0 \
+      -- * MAXSIZE__init = 0 \
+      -- * SPACE__init = 0(1) \
+      -- * TIME__init = 0(1) 
+      -- * REFERENCES:
+
+      res:=self;
+      dsize := 0;
+      frt := 0;
+      lst := initsize-1;
+      dqueue:=#ARRAY[initsize](T)
+   end;
+   
+   enql(a:T):SAME is
+      -- * METHOD: enql(a:T):SAME
+      -- * DESCRIPTION: inserts an element a into dequeue on the left \
+      -- *   if dequeue is not full (dsize < dqueue.asize) then fst is decremented by \
+      -- *   one and a is inserted to dqueue[fst]. \
+      -- *   Otherwise dequeue is first reorganized by shifting the dqueue such that \
+      -- *   frt=1 and lst = dsize and then extended to double length
+      -- * PRE: NOT self=void
+      -- * POST: \
+      -- *  (dsize < dqueue.asize IMPLIES \
+      -- *     res.frt = frt - 1 MOD dqueue.asize AND \
+      -- *     (frt < lst IMPLIES \
+      -- *        FORALL i:frt <= i <= lst : res.dqueue[i] = dqueue[i]) AND \
+      -- *        (lst < frt IMPLIES FORALL i: 0 < = i <= lst: res.dqueue[i] = dqueue[i] AND\
+      -- *        FORALL i: frt <= i < dqueue.asize: res.dqueue[i] = dqueue[i])) AND \
+      -- *  (dsize = dqueue.asize IMPLIES \
+      -- *     res.dqueue.asize = 2 * dqueue.asize AND \   
+      -- *       (frt = 0 IMPLIES FORALL 0 <= i < dqueue.asize: res.dqueue[i+1] = dqueue[i]) AND\
+      -- *       (NOT frt = 0 IMPLIES 
+      -- *          (FORALL frt <= i < dqueue.asize: res.dqueue[i-frt+1] = dqueue[i] AND \
+      -- *           FORALL 0 <= i <= lst: res.dqueue[dqueue.asize - frt + i] = dqueue[i])) AND \
+      -- *     res.lst = dqueue.asize AND \
+      -- *     res.frt = 0) AND \
+      -- *  res.dsize = dsize + 1 AND \
+      -- *  res.dqueue[res.frt] = a AND \
+      -- * COMPLEXITY: \
+      -- * SIZE__enql(self.SIZE,a.SIZE) = self.SIZE + 1 \
+      -- * MAXSIZE__enql(self.MAXSIZE,a.SIZE) = max(self.MAXSIZE,a.SIZE)\
+      -- * SPACE__enql(self.SIZE,a.SIZE) = O(self.SIZE) \
+      -- * TIME__enql(self.SIZE,a.SIZE) = O(self.SIZE)
+      -- * REFERENCES:
+
+      i:INT;
+      asize:INT;
+      h : ARRAY[*](T);
+
+      if dsize = dqueue.asize then
+	 -- copy dqueue into an array of double length
+	 i  := frt;
+	 asize  := dqueue.asize;
+	 h  := #ARRAY[2*asize](T);
+	 if frt=0 then
+	    until i=asize loop
+	       h[i+1] := dqueue[i];
+	       i := i+1;
+	    end;  -- loop
+	 else
+	    until i=asize loop
+	       h[i-frt+1] := dqueue[i];
+	       i := i+1;
+	    end; -- loop
+	    i := 0;
+	    until i=lst+1 loop
+	       h[asize - frt + i+1] := dqueue[i];
+	       i := i+1;
+	    end; -- loop
+	 end; -- if
+	 lst := asize;
+	 frt := 1;
+	 dqueue := h;
+      end; -- if
+      if frt=0 then frt := dqueue.asize-1; else frt := frt -1; end;
+      dqueue[frt] := a;
+      dsize := dsize + 1;
+      res := self;
+
+      --assert (post) res.dqueue[frt] = a end;
+
+   end; -- enql
+
+
+
+
+
+   enqr(a:T):SAME is
+      -- * METHOD: enqr(a:T):SAME
+      -- * DESCRIPTION: inserts an element a into dequeue on the right end \
+      -- *   if dequeue is not full (dsize < dqueue.asize) then lst is incremented by \
+      -- *   one and a is inserted to dqueue[lst]. \
+      -- *   Otherwise dqueue is first reorganized by shifting the dequeue such that \
+      -- *   frt=0 and lst = dsize-1 and then extended to double length
+      -- * PRE: NOT self=void
+      -- * POST: \
+      -- *  (dsize < dqueue.asize IMPLIES \
+      -- *     res.lst = lst + 1 MOD dqueue.asize AND \
+      -- *     (frt < lst IMPLIES \
+      -- *        FORALL i:frt <= i <= lst : res.dqueue[i] = dqueue[i]) AND \
+      -- *        (lst < frt IMPLIES FORALL i: 0 < = i <= lst: res.dqueue[i] = dqueue[i] AND\
+      -- *        FORALL i: frt <= i < dqueue.asize: res.dqueue[i] = dqueue[i])) AND \
+      -- *  (dsize = dqueue.asize IMPLIES \
+      -- *     res.dqueue.asize = 2 * dqueue.asize AND \
+      -- *       (frt = 0 IMPLIES FORALL 0 <= i < dqueue.asize: res.dqueue[i] = dqueue[i]) AND\
+      -- *       (NOT frt = 0 IMPLIES
+      -- *          (FORALL frt <= i < dqueue.asize: res.dqueue[i-frt] = dqueue[i] AND \
+      -- *           FORALL 0 <= i <= lst: res.dqueue[dqueue.asize - frt + i] = dqueue[i])) AND \
+      -- *     res.lst = dqueue.asize) AND \
+      -- *  res.dsize = dsize + 1 AND \
+      -- *  res.dqueue[res.lst] = a AND \
+      -- * COMPLEXITY: \
+      -- * SIZE__enqr(self.SIZE,a.SIZE) = self.SIZE + 1 \
+      -- * MAXSIZE__enqr(self.MAXSIZE,a.SIZE) = max(self.MAXSIZE,a.SIZE)\
+      -- * SPACE__enqr(self.SIZE,a.SIZE) = O(self.SIZE) \
+      -- * TIME__enqr(self.SIZE,a.SIZE) = O(self.SIZE)
+      -- * REFERENCES:
+
+      --assert (pre) not(self = void) end;
+      
+      i :INT;
+      asize : INT;
+      h : ARRAY[*](T);
+      if dsize = dqueue.asize then
+	 -- copy dqueue into an array of double length
+	 i := frt;
+	 asize := dqueue.asize;
+	 h  := #ARRAY[2*asize](T);
+	 if frt=0 then
+	    until i=asize loop
+	       h[i] := dqueue[i];
+	       i := i+1;
+	    end;  -- loop
+	 else
+	    until i=asize loop
+	       h[i-frt] := dqueue[i];
+	       i := i+1;
+	    end; -- loop
+	    i := 0;
+	    until i=lst+1 loop
+	       h[asize - frt + i] := dqueue[i];
+	       i := i+1;
+	    end; -- loop
+	 end; -- if
+	 lst := asize-1;
+	 frt := 0;
+	 dqueue := h;
+      end; -- if
+      if lst=dqueue.asize-1 then lst := 0; else lst := lst + 1; end;
+      dqueue[lst] := a;
+      dsize := dsize + 1;
+      res := self;
+
+      --assert (post) res.dqueue[lst] = a end;
+
+   end; -- enql
+
+
+
+
+
+
+   frontl: T is
+      -- * METHOD: frontl:T
+      -- * DESCRIPTION: returns the left element in dequeue
+      -- * PRE: NOT self=void AND NOT self.empty
+      -- * POST: res = dqueue[frt]
+      -- * COMPLEXITY: \
+      -- * SIZE__frontl(self.SIZE,self.MAXSIZE) = self.MAXSIZE \
+      -- * SPACE__frontl(self.SIZE) = O(1) \
+      -- * TIME__frontl(self.SIZE) = O(1)
+      -- * REFERENCES:
+
+      --assert (pre) not(self=void) and not(self.empty) end;
+      
+      if self.empty 
+      then #EXCEPTION__DEQUEUE__EMPTY.raise;
+      else res := dqueue[frt];
+      end;
+
+      --assert (post) res=dqueue[frt] end;
+
+   end; -- front
+
+
+
+
+
+   frontr: T is
+      -- * METHOD: frontl:T
+      -- * DESCRIPTION: returns the right in dequeue
+      -- * PRE: NOT self=void AND NOT self.empty
+      -- * POST: res = dqueue[lst]
+      -- * COMPLEXITY: \
+      -- * SIZE__frontr(self.SIZE,self.MAXSIZE) = self.MAXSIZE \
+      -- * SPACE__frontr(self.SIZE) = O(1) \
+      -- * TIME__frontr(self.SIZE) = O(1)
+      -- * REFERENCES:
+
+      --assert (pre) not(self=void) and not(self.empty) end;
+      
+      if self.empty 
+      then #EXCEPTION__DEQUEUE__EMPTY.raise;
+      else res := dqueue[lst];
+      end;
+
+      --assert (post) res=dqueue[lst] end;
+
+   end; -- front
+
+
+
+
+
+   deql: SAME is
+      -- * METHOD: deql:SAME
+      -- * DESCRIPTION: deletes the left element in dequeue
+      -- * PRE: NOT self=void AND NOT self.empty
+      -- * POST: \
+      -- *   (frt < dqueue.asize - 1 IMPLIES \
+      -- *       res.frt = frt + 1 MOD dqueue.asize AND \
+      -- *       (frt <= lst IMPLIES FORALL frt < i <= lst: res.dqueue[i] = dqueue[i]) AND \
+      -- *       (lst < frt IMPLIES \
+      -- *           FORALL frt < i < dqueue.asize: res.dqueue[i] = dqueue[i] AND \
+      -- *           FORALL 0 <= i <= lst: res.dqueue[i] = dqueue[i])) AND \
+      -- *   (frt = dqueue.asize - 1 IMPLIES \
+      -- *       res.frt = 0 AND \
+      -- *       FORALL 0 <= i <= lst: res.dqueue[i] = dqueue[i])
+      -- * COMPLEXITY: \
+      -- * SIZE__deql(self.SIZE) = self.SIZE - 1 \
+      -- * SPACE__deql(self.SIZE) = O(self.SIZE) \
+      -- * TIME__deql(self.SIZE) = O(1)
+      -- * REFERENCES:
+
+      --assert (pre) not(self=void) and not(self.empty) end;
+
+      if self.empty 
+      then #EXCEPTION__DEQUEUE__EMPTY.raise;
+      else
+	 if frt=dqueue.asize-1 then frt := 0; else frt := frt + 1; end;
+	 dsize := dsize - 1;
+	 res := self;
+      end;
+
+   end; -- deql
+
+
+
+
+
+   deqr: SAME is
+      -- * METHOD: deqr:SAME
+      -- * DESCRIPTION: deletes the right element in dequeue
+      -- * PRE: NOT self=void AND NOT self.empty
+      -- * POST: \
+      -- *   (lst > 0 IMPLIES \
+      -- *       res.lst = lst - 1 MOD dqueue.asize AND \
+      -- *       (frt <= lst IMPLIES FORALL frt <= i < lst: res.dqueue[i] = dqueue[i]) AND \
+      -- *       (lst < frt IMPLIES \
+      -- *           FORALL frt <= i < dqueue.asize: res.dqueue[i] = dqueue[i] AND \
+      -- *           FORALL 0 <= i < lst: res.dqueue[i] = dqueue[i])) AND \
+      -- *   (lst = 0 IMPLIES \
+      -- *       res.lst = dqueue.asize-1 AND \
+      -- *       FORALL frt <= i <= dqueue.asize-1: res.dqueue[i] = dqueue[i])
+      -- * COMPLEXITY: \
+      -- * SIZE__deqr(self.SIZE) = self.SIZE - 1 \
+      -- * SPACE__deqr(self.SIZE) = O(self.SIZE) \
+      -- * TIME__deqr(self.SIZE) = O(1)
+      -- * REFERENCES:
+
+      --assert (pre) not(self=void) and not(self.empty) end;
+
+      if self.empty 
+      then #EXCEPTION__DEQUEUE__EMPTY.raise;
+      else
+	 if lst=0 then lst := dqueue.asize-1; else lst := lst - 1; end;
+	 dsize := dsize - 1;
+	 res := self;
+      end;
+
+   end; -- deqr
+
+
+   empty:BOOL is
+      -- * METHOD: empty:BOOL
+      -- * DESCRIPTION: checks whether self is empty
+      -- * PRE: NOT self=void
+      -- * POST: res = (dsize = 0)
+      -- * COMPLEXITY: \
+      -- * SIZE__empty(self.SIZE) = 1 \
+      -- * SPACE_empty(self.SIZE) = O(1) \
+      -- * TIME_empty(self.SIZE) = O(1)
+      -- * REFERENCES:
+
+      --assert (pre) not(self=void) end;
+
+      res := (dsize = 0);
+
+      --assert (post) res = (dsize = 0) end;
+
+   end; -- empty
+
+
+      enqueue(a:T):SAME is
+      -- * METHOD: enqueue(a:T):SAME
+      -- * DESCRIPTION: inserts an element into dequeue \
+      -- * where self is viewed as a queue
+      -- * PRE: NOT self=void
+      -- * POST: res=enql(a) AND self'=res
+      -- * COMPLEXITY: \
+      -- * SIZE__enqueue(self.SIZE,a.SIZE) = SIZE__enql(self.SIZE,a.SIZE) \
+      -- * MAXSIZE__enqueue(self.MAXSIZE,a.SIZE) = MAXSIZE__enql(self.MAXSIZE,a.SIZE) \
+      -- * SPACE__enqueue(self.MAXSIZE,a.SIZE) = O(SPACE__enql(self.MAXSIZE,a.SIZE)) \
+      -- * TIME__enqueue(self.MAXSIZE,a.SIZE) = O(TIME__enql(self.MAXSIZE,a.SIZE)) 
+      -- * REFERENCES:
+
+           res := enql(a);
+      end;
+
+      dequeue:SAME is
+      -- * METHOD: dequeue:SAME
+      -- * DESCRIPTION: removes an element into dequeue \
+      -- * where self is viewed as a queue
+      -- * PRE: NOT self=void
+      -- * POST: res=deqr AND self'=res
+      -- * COMPLEXITY: \
+      -- * SIZE__dequeue(self.SIZE) = SIZE__deqr(self.SIZE) \
+      -- * MAXSIZE__dequeue(self.MAXSIZE) = MAXSIZE__deqr(self.MAXSIZE) \
+      -- * SPACE__dequeue(self.MAXSIZE) = O(SPACE__deqr(self.MAXSIZE)) \
+      -- * TIME__dequeue(self.MAXSIZE) = O(TIME__deqr(self.MAXSIZE)) 
+      -- * REFERENCES:
+
+           res := deqr;
+      end;
+
+
+      front:T is
+      -- * METHOD: front:T
+      -- * DESCRIPTION: yields the front element of a dequeue \
+      -- * where self is viewed as a queue
+      -- * PRE: NOT self=void
+      -- * POST: res=frontr
+      -- * COMPLEXITY: \
+      -- * SIZE__front(self.SIZE,self.MAXSIZE) = SIZE__frontr(self.SIZE,self.MAXSIZE) \
+      -- * SPACE__front(self.MAXSIZE) = O(SPACE__frontr(self.MAXSIZE)) \
+      -- * TIME__front(self.MAXSIZE) = O(TIME__frontr(self.MAXSIZE)) 
+      -- * REFERENCES:
+
+           res := frontr;
+      end;
+
+
+
+      push(a:T):SAME is
+      -- * METHOD: push(a:T):SAME
+      -- * DESCRIPTION: inserts an element into dequeue \
+      -- * where self is viewed as a stack
+      -- * PRE: NOT self=void
+      -- * POST: res=enql(a) AND self'=res
+      -- * COMPLEXITY: \
+      -- * SIZE__push(self.SIZE,a.SIZE) = SIZE__enql(self.SIZE,a.SIZE) \
+      -- * MAXSIZE__push(self.MAXSIZE,a.SIZE) = MAXSIZE__enql(self.MAXSIZE,a.SIZE) \
+      -- * SPACE__push(self.MAXSIZE,a.SIZE) = O(SPACE__enql(self.MAXSIZE,a.SIZE)) \
+      -- * TIME__push(self.MAXSIZE,a.SIZE) = O(TIME__enql(self.MAXSIZE,a.SIZE)) 
+      -- * REFERENCES:
+
+           res := enql(a);
+      end;
+
+      pop:SAME is
+      -- * METHOD: pop:SAME
+      -- * DESCRIPTION: removes an element from dequeue \
+      -- * where self is viewed as a stack
+      -- * PRE: NOT self=void
+      -- * POST: res=deql AND self'=res
+      -- * COMPLEXITY: \
+      -- * SIZE__pop(self.SIZE) = SIZE__deql(self.SIZE) \
+      -- * MAXSIZE__pop(self.MAXSIZE) = MAXSIZE__deql(self.MAXSIZE) \
+      -- * SPACE__pop(self.MAXSIZE) = O(SPACE__deql(self.MAXSIZE)) \
+      -- * TIME__pop(self.MAXSIZE) = O(TIME__deql(self.MAXSIZE)) 
+      -- * REFERENCES:
+
+           res := deql;
+      end;
+
+
+      top:T is
+      -- * METHOD: top:T
+      -- * DESCRIPTION: yields the top element of a dequeue \
+      -- * where self is viewed as a stack
+      -- * PRE: NOT self=void
+      -- * POST: res=frontl
+      -- * COMPLEXITY: \
+      -- * SIZE__top(self.SIZE,self.MAXSIZE) = SIZE__frontl(self.SIZE,self.MAXSIZE) \
+      -- * SPACE__top(self.MAXSIZE) = O(SPACE__frontl(self.MAXSIZE)) \
+      -- * TIME__top(self.MAXSIZE) = O(TIME__frontl(self.MAXSIZE)) 
+      -- * REFERENCES:
+
+           res := frontl;
+      end;
+
+   str:STR is
+      -- converting a queue into a string
+      i:INT;
+      if dsize=void or dsize=0 then  res := "[]"; -- if 1
+      else
+	 i := frt;
+	 res := "dequeue = [";
+	 if frt <= lst -- if 2
+	 then
+	    until i=lst+1 loop
+	       res := res.s(dqueue[i].str);
+	       if i<lst -- if 3
+	       then res := res.s(",");
+	       else res := res.s("]");
+	       end; --if 3
+	       i := i+1;
+	    end; -- loop
+	 else
+	    until i=dqueue.asize loop
+	       res := res.s(dqueue[i].str);
+	       res := res.s(",");
+	       i := i+1;
+	    end; -- loop
+	    i := 0;
+	    until i=lst+1 loop
+	       res := res.s(dqueue[i].str);
+	       if i=lst -- if 4
+	       then res := res.s("]");
+	       else res := res.s(",");
+	       end; --if 4
+	       i := i+1;
+	    end; -- loop
+	 end; -- if 2
+      end; -- if 1
+
+   end; -- str
+
+end; -- DEQUEUE__ARRAY
+
+
+
+class TEST__DEQUEUE__ARRAY is
+   main is
+      q1 : $DEQUEUE(INT) := #DEQUEUE__ARRAY(INT).init;
+      i : INT := 0;
+      x : INT;
+	 -- test without cyclic shift
+      OUT::s("empty dequeue").nl;
+      OUT::s(q1.str).nl;
+      OUT::s("Testing empty").nl;
+      if q1.empty 
+      then OUT::s("dequeue is empty").nl; 
+      else OUT::s("dequeue is not empty").nl;
+      end; -- if
+      OUT::s("dequeue as a stack based on the left end").nl;
+   until i= 10 loop
+      i := i + 1;
+      OUT::s("enql (").i(i).s(")").nl;
+      q1 := q1.enql(i);
+      OUT::s(q1.str).nl;
+   end; -- loop
+   OUT::s("Testing empty").nl;
+   if q1.empty 
+   then OUT::s("dequeue is empty").nl; 
+   else OUT::s("dequeue is not empty").nl;
+   end; -- if
+      -- dequeueing the loop
+   until q1.empty loop
+      OUT::s("left front element: ");
+      OUT::i(q1.frontl).nl;
+      OUT::s("deql").nl;
+      q1 := q1.deql;
+      OUT::s(q1.str).nl;
+   end;
+
+   OUT::s("Testing empty").nl;
+   if q1.empty 
+   then OUT::s("dequeue is empty").nl; 
+   else OUT::s("dequeue is not empty").nl;
+   end; -- if
+   
+   OUT::s("Testing Exceptions: deql").nl;
+   begin
+      q1 := q1.deql;
+   except emptydeql
+   when EXCEPTION__DEQUEUE__EMPTY then 
+      ERR::s(emptydeql.str).nl;
+      OUT::s("exception test EXCEPTION__DEQUEUE__EMPTY on deql successfull").nl;
+   else OUT::s("exception test EXCEPTION__DEQUEUE__EMPTY on deql not successfull").nl;
+   end;
+
+   OUT::s("Testing Exceptions: deqr").nl;
+   begin
+      q1 := q1.deqr;
+   except emptydeqr
+   when EXCEPTION__DEQUEUE__EMPTY then 
+      ERR::s(emptydeqr.str).nl;
+      OUT::s("exception test EXCEPTION__DEQUEUE__EMPTY on deqr successfull").nl;
+   else OUT::s("exception test EXCEPTION__DEQUEUE__EMPTY on deqr not successfull").nl;
+   end;
+
+   OUT::s("Testing Exceptions: frontl").nl;
+   begin
+      x := q1.frontl;
+   except emptyfrontl
+   when EXCEPTION__DEQUEUE__EMPTY then 
+      ERR::s(emptyfrontl.str).nl;
+      OUT::s("exception test EXCEPTION__DEQUEUE__EMPTY on frontl successfull").nl;
+   else OUT::s("exception test EXCEPTION__DEQUEUE__EMPTY on frontl not successfull").nl;
+   end;
+
+   OUT::s("Testing Exceptions: frontr").nl;
+   begin
+      x:INT := q1.frontr;
+   except emptyfrontr
+   when EXCEPTION__DEQUEUE__EMPTY then 
+      ERR::s(emptyfrontr.str).nl;
+      OUT::s("exception test EXCEPTION__DEQUEUE__EMPTY on frontr successfull").nl;
+   else OUT::s("exception test EXCEPTION__DEQUEUE__EMPTY on frontr not successfull").nl;
+   end;
+
+   OUT::s("dequeue as a stack based on the right end").nl;
+   q1 := #DEQUEUE__ARRAY(INT).init;
+   i := 0;
+   until i= 10 loop
+      i := i + 1;
+      OUT::s("enqr (").i(i).s(")").nl;
+      q1 := q1.enqr(i);
+      OUT::s(q1.str).nl;
+   end; -- loop
+   OUT::s("Testing empty").nl;
+   if q1.empty 
+   then OUT::s("dequeue is empty").nl; 
+   else OUT::s("dequeue is not empty").nl;
+   end; -- if
+      -- dequeueing the loop
+   until q1.empty loop
+      OUT::s("right front element: ");
+      OUT::i(q1.frontr).nl;
+      OUT::s("deqr").nl;
+      q1 := q1.deqr;
+      OUT::s(q1.str).nl;
+   end;
+
+   OUT::s("Testing empty").nl;
+   if q1.empty 
+   then OUT::s("dequeue is empty").nl; 
+   else OUT::s("dequeue is not empty").nl;
+   end; -- if
+
+   OUT::s("dequeue as a queue whose front is the left end").nl;
+   q1 := #DEQUEUE__ARRAY(INT).init;
+   i := 0;
+   until i= 10 loop
+      i := i + 1;
+      OUT::s("enqr (").i(i).s(")").nl;
+      q1 := q1.enqr(i);
+      OUT::s(q1.str).nl;
+   end; -- loop
+   OUT::s("Testing empty").nl;
+   if q1.empty 
+   then OUT::s("dequeue is empty").nl; 
+   else OUT::s("dequeue is not empty").nl;
+   end; -- if
+      -- dequeueing the loop
+   until q1.empty loop
+      OUT::s("left front element: ");
+      OUT::i(q1.frontl).nl;
+      OUT::s("deql").nl;
+      q1 := q1.deql;
+      OUT::s(q1.str).nl;
+   end;
+
+   OUT::s("Testing empty").nl;
+   if q1.empty 
+   then OUT::s("dequeue is empty").nl; 
+   else OUT::s("dequeue is not empty").nl;
+   end; -- if
+
+   OUT::s("  -->Testing Cyclic Behaviour").nl;
+   q1 := #DEQUEUE__ARRAY(INT).init;
+   i := 0;
+   until i= 10 loop
+      i := i + 1;
+      OUT::s("enqr (").i(i).s(")").nl;
+      q1 := q1.enqr(i);
+      OUT::s(q1.str).nl;
+   end; -- loop
+   until i=20 loop
+      OUT::s("left front element: ");
+      OUT::i(q1.frontl).nl;
+      OUT::s("deql").nl;
+      q1 := q1.deql;
+      OUT::s(q1.str).nl;
+      i := i + 1;
+      OUT::s("enqr (").i(i).s(")").nl;
+      q1 := q1.enqr(i);
+      OUT::s(q1.str).nl;
+   end; -- loop
+
+   OUT::s("dequeue as a queue whose front is the right end").nl;
+   q1 := #DEQUEUE__ARRAY(INT).init;
+   i := 0;
+   until i= 10 loop
+      i := i + 1;
+      OUT::s("enql (").i(i).s(")").nl;
+      q1 := q1.enql(i);
+      OUT::s(q1.str).nl;
+   end; -- loop
+   OUT::s("Testing empty").nl;
+   if q1.empty 
+   then OUT::s("dequeue is empty").nl; 
+   else OUT::s("dequeue is not empty").nl;
+   end; -- if
+      -- dequeueing the loop
+   until q1.empty loop
+      OUT::s("right front element: ");
+      OUT::i(q1.frontr).nl;
+      OUT::s("deqr").nl;
+      q1 := q1.deqr;
+      OUT::s(q1.str).nl;
+   end;
+
+   OUT::s("Testing empty").nl;
+   if q1.empty 
+   then OUT::s("dequeue is empty").nl; 
+   else OUT::s("dequeue is not empty").nl;
+   end; -- if
+
+   OUT::s("  -->Testing Cyclic Behaviour").nl;
+   q1 := #DEQUEUE__ARRAY(INT).init;
+   i := 0;
+   until i= 10 loop
+      i := i + 1;
+      OUT::s("enql (").i(i).s(")").nl;
+      q1 := q1.enql(i);
+      OUT::s(q1.str).nl;
+   end; -- loop
+   until i=20 loop
+      OUT::s("right front element: ");
+      OUT::i(q1.frontr).nl;
+      OUT::s("deqr").nl;
+      q1 := q1.deqr;
+      OUT::s(q1.str).nl;
+      i := i + 1;
+      OUT::s("enql (").i(i).s(")").nl;
+      q1 := q1.enql(i);
+      OUT::s(q1.str).nl;
+   end; -- loop
+
+   OUT::s("Testing Left and Right Operations in Common").nl;
+   q1 := #DEQUEUE__ARRAY(INT).init;
+   i := 0;
+   until i= 10 loop
+      i := i + 1;
+      OUT::s("enql (").i(i).s(")").nl;
+      q1 := q1.enql(i);
+      OUT::s(q1.str).nl;
+      OUT::s("enqr (").i(i).s(")").nl;
+      q1 := q1.enqr(i);
+      OUT::s(q1.str).nl;
+   end; -- loop
+      -- dequeueing the loop
+   until q1.empty loop
+      OUT::s("right front element: ");
+      OUT::i(q1.frontr).nl;
+      OUT::s("left front element: ");
+      OUT::i(q1.frontl).nl;
+      OUT::s("deqr").nl;
+      q1 := q1.deqr;
+      OUT::s(q1.str).nl;
+      OUT::s("deql").nl;
+      q1 := q1.deql;
+      OUT::s(q1.str).nl;
+   end; -- loop
+
+   OUT::s("  -->Testing Cyclic Behaviour").nl;
+   i := 0;
+   until i= 10 loop
+      i := i + 1;
+      OUT::s("enql (").i(i).s(")").nl;
+      q1 := q1.enql(i);
+      OUT::s(q1.str).nl;
+      OUT::s("enqr (").i(i).s(")").nl;
+      q1 := q1.enqr(i);
+      OUT::s(q1.str).nl;
+   end; -- loop
+   until i=40 loop
+      OUT::s("right front element: ");
+      OUT::i(q1.frontr).nl;
+      OUT::s("deqr").nl;
+      q1 := q1.deqr;
+      OUT::s(q1.str).nl;
+      i := i + 1;
+      OUT::s("enql (").i(i).s(")").nl;
+      q1 := q1.enql(i);
+      OUT::s(q1.str).nl;
+   end; -- loop
+   until i=70 loop
+      OUT::s("left front element: ");
+      OUT::i(q1.frontl).nl;
+      OUT::s("deql").nl;
+      q1 := q1.deql;
+      OUT::s(q1.str).nl;
+      i := i + 1;
+      OUT::s("enqr (").i(i).s(")").nl;
+      q1 := q1.enqr(i);
+      OUT::s(q1.str).nl;
+   end; -- loop
+end; -- main    
+
+end; --TEST__DEQUEUE__ARRAY

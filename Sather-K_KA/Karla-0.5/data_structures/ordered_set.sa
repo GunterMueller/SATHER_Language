@@ -1,0 +1,139 @@
+-- File: ordered_set.sa
+-- Author: Arne Frick (frick@ira.uka.de)
+-- Copyright (C) Universitaet Karlsruhe, 1994
+--
+-- COPYRIGHT NOTICE: This code is provided "AS IS" WITHOUT ANY WARRANTY
+-- and is subject to the terms of the KARLA LIBRARY GENERAL PUBLIC
+-- LICENSE contained in the file: "doc/license.txt" of the 
+-- distribution. 
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FILE: ordered_set.sa
+--*
+--* CLASSES: ORDERED_SET(T<ORDERED(T),ORDER<ORDER_RELATION(T)) 
+--* 
+--* IMPLEMENTATION OF: 
+--*
+--* CONFORMS TO: SET(T)
+--*
+--* IS A: ORDERED_MULTISET(T)
+--*
+--* REQUIRED CLASSES: ORDERED_MULTISET(T,ORDER) SET(T) ORDER_RELATION(T) ORDER_LT(T) \
+--* ORDERED(T) LIST__LINKED(T) EXCEPTION__MULTISET EXCEPTION__SET_ADD \
+--* EXCEPTION__SET_DISJOINT_UNION EXCEPTION__ORDERED_MULTISET_MIN \
+--* EXCEPTION__ORDERED_MULTISET_NEXT EXCEPTION__ORDERED_MULTISET_PREVIOUS \
+--* EXCEPTION__ORDERED__MULTISET_MAX
+--*
+--* EXCEPTIONS: EXCEPTION__MULTISET EXCEPTION__SET_ADD EXCEPTION__SET_DISJOINT_UNION \
+--* EXCEPTION__ORDERED_MULTISET_MIN EXCEPTION__ORDERED__MULTISET__MAX \
+--* EXCEPTION__ORDERED_MULTISET_NEXT EXCEPTION__ORDERED_MULTISET_PREVIOUS 
+--*
+--* TEST CLASS: TEST__ORDERED_SET
+--*
+--* FOREIGN FILES:
+--*
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--
+--
+-- RCS: $Id$
+-- HISTORY:
+--  * Last edited: Aug 10 12:51 1994 (frick)
+--  *  Aug 10 12:51 1994 (frick): changed method 'sort' to use a linked list; this works
+--
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+abstract class ORDERED_SET(T<ORDERED(T),ORDER<ORDER_RELATION(T)) is
+   -- * CLASS: ORDERED_SET(T,ORDER<ORDER_RELATION(T))
+   -- * DESCRIPTION: abstract class defining ordered sets 
+   -- * SUBCLASS OF: SET(T)
+   -- * SPECIALIZATION OF: ORDERED_MULTISET(T)
+   -- * IMPLEMENTATION OF: 
+   -- * EXCEPTIONS: EXCEPTION__MULTISET EXCEPTION__SET_ADD EXCEPTION__SET_DISJOINT_UNION \
+   -- * EXCEPTION__ORDERED_MULTISET_MIN EXCEPTION__ORDERED__MULTISET__MAX \
+   -- * EXCEPTION__ORDERED_MULTISET_NEXT EXCEPTION__ORDERED_MULTISET_PREVIOUS 
+   -- * INVARIANT: SET(T)::Inv AND ORDERED_MULTISET(T)::Inv
+   -- * REPRESENTATION:
+   -- * COMPLEXITY: \
+   -- *     static      SIZE = size; \
+   -- *                 ##.init.MAXSIZE = 0 AND \
+   -- *                 MAXSIZE = max(choose.SIZE,delete(choose).MAXSIZE)
+   -- * REFERENCES: [Aho, Hopcroft, Ullman: "The Design and Analysis \
+   -- *               of Computer Algorithms", Addison-Wesley, 1974]
+   -- * ATTRIBUTES: size : INT \
+   -- *             order : ORDER \
+   -- *             s : $SORT(T)
+
+   include ORDERED_MULTISET(T,ORDER);
+   subtype of SET(T);
+
+  stream elts_order:T is 
+     -- * METHOD: stream elts_order:T
+     -- * DESCRIPTION: stream yielding the elements in order
+     -- * PRE: true
+     -- * POST: elts_order.terminated IFF i=size AND \
+     -- * res[1]=min AND (EXISTS s[1]:$ORDERED_MULTISET(T,ORDER): s[1]=self) AND \
+     -- * FORALL i:INT: 1<i<=size: EXISTS s[i]:$ORDERED_MULTISET(T,ORDER): \
+     -- * |       s[i]=s[i-1].delete_min AND res[i]=s[i].min
+     -- * COMPLEXITY: \
+     -- * SIZE__elts_order(self.SIZE) = self.SIZE \
+     -- * SPACE__elts_order(self.SIZE,self.MAXSIZE,k) = O( \
+     -- * |    max(self.SIZE,SPACE__empty(self.SIZE), \
+     -- * |        SPACE__min(self.SIZE,self.MAXSIZE), \
+     -- * |        SPACE__delete_min(self.SIZE,self.MAXSIZE),
+     -- * |        SPACE_copy_set(self.SIZE))
+     -- * TIME__elts_order(self.SIZE,self.MAXSIZE,k) = O( \
+     -- * |    k*TIME_empty(self.SIZE) + \
+     -- * |    k*TIME_min(self.SIZE,self.MAXSIZE) + \
+     -- * |    k*TIME_delete_min(self.SIZE,self.MAXSIZE))
+     -- * REFERENCES:
+
+     s:$ORDERED_SET(T,ORDER) := copy_set;
+     while not s.empty loop
+         res := s.min;
+         resume;
+         s := s.delete_min;
+     end;
+  end;
+
+
+  stream elts_reverse_order:T is 
+     -- * METHOD: stream elts_reverse_order:T
+     -- * DESCRIPTION: stream yielding the elements in reverse order
+     -- * PRE: true
+     -- * POST: elts_reverse_order.terminated IFF i=size AND \
+     -- * res[1]=max AND EXISTS s[1]:$ORDERED_MULTISET(T,ORDER): s[1]=self) AND \
+     -- * FORALL i:INT: 1<i<=size: EXISTS s[i]:$ORDERED_MULTISET(T,ORDER): \
+     -- * |       s[i]=s[i-1].delete_max AND res[i]=s[i].max
+     -- * COMPLEXITY: \
+     -- * SIZE__elts_reverse_order(self.SIZE) = self.SIZE \
+     -- * SPACE__elts_reverse_order(self.SIZE,self.MAXSIZE,k) = O( \
+     -- * |    max(self.SIZE,SPACE__empty(self.SIZE), \
+     -- * |        SPACE__max(self.SIZE,self.MAXSIZE), \
+     -- * |        SPACE__delete_max(self.SIZE,self.MAXSIZE),
+     -- * |        SPACE_copy_set(self.SIZE))
+     -- * TIME__elts_reverse_order(self.SIZE,self.MAXSIZE,k) = O( \
+     -- * |    k*TIME_empty(self.SIZE) + \
+     -- * |    k*TIME_max(self.SIZE,self.MAXSIZE) + \
+     -- * |    k*TIME_delete_max(self.SIZE,self.MAXSIZE))
+     -- * REFERENCES:
+
+     s:$ORDERED_SET(T,ORDER):=copy_set;
+     while not s.empty loop
+       res := s.max;
+       resume;
+       s := s.delete_max;
+     end;
+  end;
+
+
+
+end;
+
+
+class TEST__ORDERED_SET is
+   main is
+      a:$SET(INT):=# ORDERED_SET(INT,ORDER_LT(INT));
+      ERR::s("creation of abstract class succeeded.\n");
+   end;
+end;
+
+

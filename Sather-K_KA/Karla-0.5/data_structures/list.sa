@@ -1,0 +1,552 @@
+-- Author: Wolf Zimmermann
+-- Copyright (C) Universitaet Karlsruhe, 1994
+--
+-- COPYRIGHT NOTICE: This code is provided "AS IS" WITHOUT ANY WARRANTY
+-- and is subject to the terms of the KARLA LIBRARY GENERAL PUBLIC
+-- LICENSE contained in the file: "doc/license.txt" of the 
+-- distribution. 
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FILE: list.sa
+--*
+--* CLASSES: LIST(T) EXCEPTION__LIST_EMPTY EXCEPTION__LIST_INDEX
+--* 
+--* IMPLEMENTATION OF:
+--*
+--* CONFORMS TO:  DEQUEUE(T)
+--*
+--* IS A:
+--*
+--* REQUIRED CLASSES: DEQUEUE(T) EXCEPTION__LIST_EMPTY EXCEPTION__LIST_INDEX \
+--* EXCEPTION__DEQUEUE__EMPTY EXCEPTION__QUEUE_EMPTY EXCEPTION__STACK__EMPTY
+--*
+--* EXCEPTIONS: EXCEPTION__LIST_EMPTY EXCEPTION__LIST_INDEX \
+--* EXCEPTION__DEQUEUE__EMPTY EXCEPTION__QUEUE_EMPTY EXCEPTION__STACK__EMPTY
+--*
+--* TEST CLASS: TEST__LIST
+--*
+--* FOREIGN FILES:
+--*
+--  RCS: $Id$
+--  HISTORY: $Log$
+--  Last edited: Mar 8 1994 (Wolf Zimmermann)
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+abstract class LIST(T) is
+-- * CLASS: LIST(T)
+-- * DESCRIPTION: standard abstract data type list: \
+-- *     insertion and deletion on both ends and on any position in the  list \
+-- *     advancing positions in both direction \
+-- *     streams for the elements in both orders
+-- * SUBCLASS OF: DEQUEUE(T)
+-- * SPECIALIZATION OF:
+-- * IMPLEMENTATION OF:
+-- * EXCEPTIONS: EXCEPTION__LIST_EMPTY EXCEPTION__LIST_INDEX \
+-- * EXCEPTION__DEQUEUE__EMPTY EXCEPTION__QUEUE_EMPTY EXCEPTION__STACK__EMPTY
+-- * INVARIANT: DEQUEUE(T)::Inv AND \
+-- *   FORALL a,b:T \
+-- *   ##.init.ins_frt(a)=##.init.pos(a) AND \
+-- *   ins_frt(a).insert(b) = insert(b).ins_frt(a) AND \
+-- *   pos(b).insert(a) = ins_frt(b).pos(a) AND \
+-- *   pos(a).ins_end(b) = ins_end(b).pos(a) AND \
+-- *   pos(a).delete = self AND \
+-- *   ins_frt(b).pos(a).del_frt = pos(b) AND \
+-- *   pos(a).element = a AND \
+-- *   pos(a).first = a AND \
+-- *   ##.init.pos(a).last = a AND \
+-- *   ##.init.next = error AND \
+-- *   ins_frt(a).next = next.ins_frt(a) AND \
+-- *   ins_frt(a).pos(b).next = pos(a).ins_frt(b) AND \
+-- *   EXISTS l' : self==l'.pos(a) IMPLIES l.previous = error AND \
+-- *   pos(b).ins_frt(a).previous = ins_frt(b).pos(a) AND \
+-- *   ins_frt(a).ins_frt(b).previous = ins_frt(a).previous.ins_frt(b) AND \
+-- *   ##.init.at_begin=error AND ##.init.at_end = error AND \
+-- *   pos(a).at_begin=true AND \
+-- *   ins_frt(a).at_begin=false AND \
+-- *   ##.init.pos(a).at_end = true AND \
+-- *   ins_frt(a).pos(b).at_end = false AND \
+-- *   pos(a).del_pos = ins_frt(a) AND \
+-- *   ins_frt(a).del_pos = del_pos.ins_frt(a) AND \
+-- *   ##.init.pos_begin=error AND \
+-- *   ins_frt(a).pos_begin = del_pos.pos(a) AND \
+-- *   ##.init.pos_end = error AND \
+-- *   ##.init.ins_frt(a).pos_end = ##.init.pos(a) AND \
+-- *   NOT empty IMPLIES ins_frt(a).pos_end = los_end.ins_frt(a) AND \
+-- *   ins_frt(a).pos(b).pos_end = ins_frt(a).pos_end.ins_frt(b) 
+-- * REPRESENTATION:
+-- * COMPLEXITY: \
+-- *  static  ##.init.SIZE = 0 \
+-- *  |       ins_frt(a).SIZE = 1 + self.SIZE AND \
+-- *  |       pos(a).SIZE = 1 + self.SIZE AND \
+-- *  |       ##.init.MAXSIZE = 0 \
+-- *  |       ins_frt(a).MAXSIZE = max(a.SIZE,self.MAXSIZE) AND \
+-- *  |       pos(a).MAXSIZE = max(a.SIZE,self.MAXSIZE) AND \
+-- * REFERENCES: 
+-- * ATTRIBUTES: readonly size:INT;
+
+   subtype of DEQUEUE(T);
+
+   readonly size:INT;
+
+   insert(a:T):SAME is
+   -- * METHOD: insert(a:T):SAME
+   -- * DESCRIPTION: abstract constructor method inserting a into the list at the actual \
+   -- *              position. The new actual position is the inserted element
+   -- * PRE: true
+   -- * POST: EXISTS l,l': self==l.append(l'.pos(b)) IMPLIES \
+   -- *       res == l.append(l'.ins_frt(b).pos(a))
+   -- * COMPLEXITY:  \
+   -- *   SIZE__insert(self.SIZE,a.SIZE) = self.SIZE + 1 \
+   -- *   MAXSIZE__insert(self.MAXSIZE,a.SIZE) = max(a.SIZE,self.MAXSIZE)
+   -- * REFERENCES:
+
+     deferred;
+   end;
+
+   ins_frt(a:T):SAME is
+   -- * METHOD: ins_frt(a:T):SAME
+   -- * DESCRIPTION: abstract constructor method inserting a at the begin of a list
+   -- * PRE: true
+   -- * POST:   res = enql(a) \
+   -- * COMPLEXITY: \
+   -- *   SIZE__ins_frt(self.SIZE,a.SIZE) = SIZE__enql(self.SIZE,a.SIZE) \
+   -- *   MAXSIZE__ins_frt(self.MAXSIZE,a.SIZE) = max(a.SIZE,self.MAXSIZE) \
+   -- *   SPACE__ins_frt(self.SIZE,a.SIZE) = O(SPACE__enql(self.SIZE,a.SIZE)) \
+   -- *   TIME__ins_frt(self.SIZE,a.SIZE) = O(TIME__enql(self.SIZE,a.SIZE))
+   -- * REFERENCES:
+
+     res := enql(a);
+   end;
+
+   ins_end(a:T):SAME is
+   -- * METHOD: ins_end(a:T):SAME
+   -- * DESCRIPTION: abstract constructor method inserting a at the end of a list
+   -- * PRE: true
+   -- * POST: res = enqr(a)
+   -- * COMPLEXITY: \
+   -- *   SIZE__ins_end(self.SIZE,a.SIZE) = SIZE__enqr(self.SIZE,a.SIZE) \
+   -- *   MAXSIZE__ins_end(self.MAXSIZE,a.SIZE) = max(a.SIZE,self.MAXSIZE) \
+   -- *   SPACE__ins_end(self.SIZE,a.SIZE) = O(SPACE__enqr(self.SIZE,a.SIZE)) \
+   -- *   TIME__ins_end(self.SIZE,a.SIZE) = O(TIME__enqr(self.SIZE,a.SIZE))
+   -- * REFERENCES:
+
+     res := enqr(a);
+   end;
+
+   delete:SAME is
+   -- * METHOD: delete:SAME
+   -- * DESCRIPTION: abstract method deleting the element at the actual position
+   -- * PRE: NOT self.empty
+   -- * POST: (EXISTS l,l'$LIST(T),a,b:T:self==l.append(l'.ins_frt(b).pos(a)) IMPLIES \
+   -- *      res==l.append(l'.pos(b))) AND \
+   -- *      EXISTS a:T: self==##.init.pos(a) IMPLIES res.empty
+   -- * COMPLEXITY: \
+   -- *   SIZE__delete(self.SIZE) = self.SIZE - 1 \
+   -- *   MAXSIZE__delete(self.MAXSIZE) = self.MAXSIZE
+   -- * REFERENCES:
+
+     deferred;
+   end;
+
+   del_frt:SAME is
+   -- * METHOD: del_frt:SAME
+   -- * DESCRIPTION: abstract method deleting the front element
+   -- * PRE: NOT self.empty
+   -- * POST: (EXISTS l:$LIST(T),a,b:T: self==l.ins_frt(b).pos(a) IMPLIES \
+   -- * |       res==l.pos(b)) AND \
+   -- * | (EXISTS l:$LIST(T),a:T: self==l.ins_frt(a) IMPLIES res==l) AND
+   -- * | (self==##.init.pos(a) IMPLIES res.empty)
+   -- * COMPLEXITY:  \
+   -- *   SIZE__del_frt(self.SIZE) = SIZE__deql(self.SIZE) \
+   -- *   MAXSIZE__del_frt(self.MAXSIZE) = self.MAXSIZE \
+   -- *   SPACE__del_frt(self.SIZE) = O(SPACE__deql(self.SIZE)) \
+   -- *   TIME__del_frt(self.SIZE) = O(TIME__deql(self.SIZE)) 
+   -- * REFERENCES:
+
+     res := deql;
+   end;
+
+   del_end:SAME is
+   -- * METHOD: del_end:SAME
+   -- * DESCRIPTION: abstract method deleting the last element
+   -- * PRE: NOT self.empty
+   -- * POST: (EXISTS l:$LIST(T),a,b:T: self==l.ins_frt(b).append(##.init.pos(a)) IMPLIES \
+   -- * |       res==l.pos(b)) AND \
+   -- * | (EXISTS l:$LIST(T),a:T: self==l.append(##.init.ins_frt(a)) IMPLIES res==l) AND
+   -- * | (self==##.init.pos(a) IMPLIES res.empty)
+   -- * COMPLEXITY: \
+   -- *   SIZE__del_end(self.SIZE) = SIZE__deqr(self.SIZE) \
+   -- *   MAXSIZE__del_frt(self.MAXSIZE) = self.MAXSIZE \
+   -- *   SPACE__del_end(self.SIZE) = O(SPACE__deqr(self.SIZE)) \
+   -- *   TIME__del_end(self.SIZE) = O(TIME__deqr(self.SIZE)) 
+   -- * REFERENCES:
+
+     res := deqr;
+   end;
+
+   element:T is
+   -- * METHOD: element:T
+   -- * DESCRIPTION: abstract method returning the element at the actual position
+   -- * PRE: NOT self.empty
+   -- * POST: EXISTS l,l':$LIST(T),a:T: self==l.append(l'.pos(a)) IMPLIES res=a
+   -- * COMPLEXITY: \
+   -- *   SIZE__element(self.SIZE,self.MAXSIZE) = self.MAXSIZE
+   -- * REFERENCES:
+
+     deferred;
+   end;
+
+   first:T is
+   -- * METHOD: first:T
+   -- * DESCRIPTION: abstract method returning the first element in list
+   -- * PRE: NOT self.empty
+   -- * POST: res=frontl
+   -- * COMPLEXITY: \
+   -- *   SIZE__first(self.SIZE) = SIZE__frontl(self.SIZE) \
+   -- *   SPACE__first(self.SIZE) = O(SPACE__frontl(self.SIZE)) \
+   -- *   TIME__first(self.SIZE) = O(TIME__frontl(self.SIZE))
+   -- * REFERENCES:
+
+     res := frontl;
+   end;
+
+   last:T is
+   -- * METHOD: last:T
+   -- * DESCRIPTION: abstract method returning the last element in list
+   -- * PRE: NOT self.empty
+   -- * POST: res=frontr
+   -- * COMPLEXITY: \
+   -- *   SIZE__last(self.SIZE) = SIZE__frontr(self.SIZE) \
+   -- *   SPACE__last(self.SIZE) = O(SPACE__frontr(self.SIZE)) \
+   -- *   TIME__last(self.SIZE) = O(TIME__frontr(self.SIZE))
+   -- * REFERENCES:
+
+     res := frontr;
+   end;
+
+
+   next:SAME is
+   -- * METHOD: next:SAME
+   -- * DESCRIPTION: abstract method advancing the actual position to the next element
+   -- * PRE: NOT self.empty AND NOT self.at_end
+   -- * POST: EXISTS l,l':$LIST(T),a,b:T: self==l.append(l'.ins_frt(a).pos(b)) IMPLIES \
+   -- * |     res==l.append(l'.pos(a).ins_frt(b))
+   -- * COMPLEXITY: \
+   -- *   SIZE__next(self.SIZE) = self.SIZE \
+   -- *   MAXSIZE__next(self.MAXSIZE) = self.MAXSIZE 
+   -- * REFERENCES:
+
+     deferred;
+   end;
+
+   previous:SAME is
+   -- * METHOD: previous:SAME
+   -- * DESCRIPTION: abstract method advancing the actual position to the previous element
+   -- * PRE: NOT self.empty AND NOT self.at_begin
+   -- * POST: EXISTS l,l':$LIST(T),a,b:T: self==l.append(l'.pos(a).ins_frt(b)) IMPLIES \
+   -- * |    res==l.append(l'.ins_frt(a).pos(b)).
+   -- * COMPLEXITY: \
+   -- *   SIZE__previous(self.SIZE) = self.SIZE \
+   -- *   MAXSIZE__previous(self.MAXSIZE) = self.MAXSIZE 
+   -- * REFERENCES:
+
+     deferred;
+   end;
+
+   pos_begin:SAME is
+   -- * METHOD: pos_begin:SAME
+   -- * DESCRIPTION: abstract method setting the actual position to the begin of the list
+   -- * PRE: NOT self.empty 
+   -- * POST: (EXISTS l:$LIST(T),a:T: self==l.pos(a) IMPLIES res=self) AND\
+   -- * (EXISTS l,l':$LIST(T),a,b:T: self==l.ins_frt(a).append(l'.pos(b)) IMPLIES \
+   -- * |        res==l.pos(a).append(l'.ins_frt(a)))
+   -- * COMPLEXITY: \
+   -- *   SIZE__pos_begin(self.SIZE) = self.SIZE \
+   -- *   MAXSIZE__pos_begin(self.MAXSIZE) = self.MAXSIZE 
+   -- * REFERENCES:
+
+     deferred;
+   end;
+
+   pos_end:SAME is
+   -- * METHOD: pos_end:SAME
+   -- * DESCRIPTION: abstract method setting the actual position to the end of the list
+   -- * PRE: NOT self.empty 
+   -- * POST: (EXISTS l:$LIST(T),a:T: self==l.append(##.init.pos(a)) IMPLIES res=self) AND\
+   -- * (EXISTS l,l':$LIST(T),a,b:T: self==l.append(l'.pos(a)).append(##.init.ins_frt(b)) IMPLIES\
+   -- * |            res==l.append(l'.ins_frt(a)).append(##.init.pos(b)))
+   -- * COMPLEXITY: \
+   -- *   SIZE__pos_end(self.SIZE) = self.SIZE \
+   -- *   MAXSIZE__pos_end(self.MAXSIZE) = self.MAXSIZE 
+   -- * REFERENCES:
+
+     deferred;
+   end;
+
+   at_begin:BOOL is
+   -- * METHOD: at_begin:BOOL
+   -- * DESCRIPTION: abstract method checking whether the actual position is at the begin\
+   -- *              of the list
+   -- * PRE: NOT self.empty 
+   -- * POST: res = (EXISTS l:$LIST(T),a:T:self==l.pos(a)))
+   -- * COMPLEXITY: \
+   -- *  SIZE__at_begin(self.SIZE) = 1 
+   -- * REFERENCES:
+
+     deferred;
+   end;
+
+   at_end:BOOL is
+   -- * METHOD: at_end:BOOL
+   -- * DESCRIPTION: abstract method checking whether the actual position is at the end \
+   -- *              of the list
+   -- * PRE: NOT self.empty 
+   -- * POST: res = (EXISTS l:$LIST(T),a:T:self==l.append(##.init.pos(a)))
+   -- * COMPLEXITY: \
+   -- *  SIZE__at_end(self.SIZE) = 1 
+   -- * REFERENCES:
+
+     deferred;
+   end;
+
+   append(l:$LIST(T)):SAME is
+   -- * METHOD: append(l:$LIST(T)):BOOL
+   -- * DESCRIPTION: abstract method appending l to a list. 
+   -- * PRE: true
+   -- * POST: (l.empty IMPLIES res=self) AND \
+   -- *  (NOT l.empty IMPLIES res=ins_end(l.first).append(l.del_frt)
+   -- * COMPLEXITY: \
+   -- *   SIZE__append(self.SIZE,l.SIZE) = self.SIZE+l.SIZE \
+   -- *   MAXSIZE__append(self.MAXSIZE,l.MAXSIZE) = max(self.MAXSIZE,l.MAXSIZE) \
+   -- *   SPACE__append(self.SIZE,l.SIZE,l.MAXSIZE) = O(\
+   -- * |           max(self.SIZE+l.SIZE,\
+   -- * |               SPACE__elts(l.SIZE,SIZE__elts(l.SIZE)),\
+   -- * |               SPACE__copy_list(self.SIZE),
+   -- * |               SPACE__ins_end(self.SIZE,l.MAXSIZE))) \
+   -- *   TIME__append(self.SIZE,l.SIZE) = O(\
+   -- * |           SIZE__elts(self.SIZE)*TIME_ins_end(self.SIZE+l.SIZE,l.MAXSIZE) + \
+   -- * |           TIME__elts(l.SIZE) + \
+   -- * |           TIME__copy_list(self.SIZE))
+   -- * REFERENCES:
+
+     if empty then res := l;
+     else 
+	res := copy_list;
+        loop
+	  res := res.ins_end(l.elts!);
+        end;
+     end;
+   end;
+
+   copy_list:SAME is  
+   -- * METHOD: copy_list:SAME is
+   -- * DESCRIPTION: abstract method copying a list
+   -- * PRE: true
+   -- * POST: res==self
+   -- * COMPLEXITY: \
+   -- *    SIZE__copy_list(self.SIZE) = self.SIZE \
+   -- *    MAXSIZE__copy_list(self.MAXSIZE) = self.MAXSIZE \
+   -- *    SPACE__copy_list(self.SIZE,self.MAXSIZE) = O( \ 
+   -- * |       max(self.SIZE, SPACE__init,\
+   -- * |           SPACE__elts(self.SIZE,SIZE__elts(self.SIZE)), \
+   -- * |           SPACE__ins_end(self.SIZE,self.MAXSIZE))) \
+   -- *    TIME__copy_list(self.SIZE,self.MAXSIZE) = O( \
+   -- * |       TIME__init + TIME__elts(self.SIZE,SIZE__elts(self.SIZE)) +\
+   -- * |       SIZE__elts(self.SIZE)*TIME__ins_end(self.SIZE,self.MAXSIZE))
+   -- * REFERENCES:
+
+     res := #SAME.init;
+     loop
+       res := res.ins_end(elts!);
+     end;
+   end;
+
+   stream to_end(const x:T):T is
+   -- * METHOD: stream to_end(const x:T):T
+   -- * DESCRIPTION: abstract get stream yielding all elements from the actual position \
+   -- *              up to x. If x does not exits it yields all elements to the end
+   -- * PRE: NOT self.empty 
+   -- * POST: (to_end.terminated IFF next^{i-1}.element=x OR next^{i-1}.at_end) AND \
+   -- *        res[i]=next^{i-1}.element
+   -- * COMPLEXITY:  \
+   -- *   SIZE__to_end(self.SIZE,x.SIZE) = self.SIZE \
+   -- *   SPACE__to_end(self.SIZE,x.SIZE,self.MAXSIZE,k) = O( \
+   -- * |      max(SPACE__empty(self.SIZE), \
+   -- * |          SPACE__element(self.SIZE), \
+   -- * |          SPACE__at_end(self.SIZE), \
+   -- * |          T::SPACE_is_equal(self.MAXSIZE,x.SIZE), \
+   -- * |          SPACE__next(self.SIZE))) \
+   -- *   TIME__to_end(self.SIZE,x.SIZE,self.MAXSIZE,k) = O( \
+   -- * |      TIME__empty(self.SIZE) + \
+   -- * |      k*TIME__at_end(self.SIZE) + \
+   -- * |      k*T::TIME__is_equal(self.MAXSIZE,x.SIZE) + \
+   -- * |      2*k*TIME__element(self.SIZE) + \
+   -- * |      (k-1) * TIME__next(self.SIZE))
+   -- * REFERENCES:
+     
+     l:SAME := copy;
+     if empty then #EXCEPTION__LIST_EMPTY.raise; end;
+     until at_end or element=x loop
+	res:=element;
+	resume;
+        l := l.next;
+     end;
+     res := element;
+     resume;
+   end;
+
+   stream to_begin(const x:T):T is
+   -- * METHOD: stream to_begin(const x:T):T
+   -- * DESCRIPTION: abstract get stream yielding all elements from the actual position \
+   -- *              downto x. If x does not exits it yields all elements to the end
+   -- * PRE: NOT self.empty 
+   -- * POST: (to_begin.terminated IFF previous^{i-1}.element=x OR previous^{i-1}.at_begin) AND \
+   -- *       res[i]=previous^{i-1}.element
+   -- * COMPLEXITY: \
+   -- *   SIZE__to_begin(self.SIZE,x.SIZE) = self.SIZE \
+   -- *   SPACE__to_begin(self.SIZE,x.SIZE,self.MAXSIZE,k) = O( \
+   -- * |      max(SPACE__empty(self.SIZE), \
+   -- * |          SPACE__element(self.SIZE), \
+   -- * |          SPACE__at_begin(self.SIZE), \
+   -- * |          T::SPACE_is_equal(self.MAXSIZE,x.SIZE), \
+   -- * |          SPACE__previous(self.SIZE))) \
+   -- *   TIME__to_begin(self.SIZE,x.SIZE,self.MAXSIZE,k) = O( \
+   -- * |      TIME__empty(self.SIZE) + \
+   -- * |      k*TIME__at_begin(self.SIZE) + \
+   -- * |      k*T::TIME__is_equal(self.MAXSIZE,x.SIZE) + \
+   -- * |      2*k*TIME__element(self.SIZE) + \
+   -- * |      (k-1) * TIME__previous(self.SIZE))
+   -- * REFERENCES:
+     
+     l:SAME := copy;
+     if empty then #EXCEPTION__LIST_EMPTY.raise; end;
+     until at_begin or element=x loop
+	res:=element;
+	resume;
+        l := l.previous;
+     end;
+     res := element;
+     resume;
+   end;
+
+   stream elts:T is
+   -- * METHOD: stream elts:T
+   -- * DESCRIPTION: abstract get stream yielding all elements of the list in order 
+   -- * PRE: true
+   -- * POST: elts.terminated IFF i=size AND res[i] = pos_begin.next^{i-1}.element
+   -- * COMPLEXITY: \
+   -- *   SIZE__elts(self.SIZE,x.SIZE) = self.SIZE \
+   -- *   SPACE__elts(self.SIZE,x.SIZE,k) = O( \
+   -- * |      max(SPACE__empty(self.SIZE), \
+   -- * |          SPACE__element(self.SIZE), \
+   -- * |          SPACE__pos_begin(self.SIZE), \
+   -- * |          SPACE__at_end(self.SIZE), \
+   -- * |          SPACE__next(self.SIZE))) \
+   -- *   TIME__elts(self.SIZE,x.SIZE,k) = O( \
+   -- * |      TIME__empty(self.SIZE) + \
+   -- * |      TIME__pos_begin(self.SIZE) + \
+   -- * |      k*TIME__at_end(self.SIZE) + \
+   -- * |      k*TIME__element(self.SIZE) + \
+   -- * |      (k-1) * TIME__next(self.SIZE))
+   -- * REFERENCES:
+      
+      l : SAME;
+      if empty then return; end;
+      l:= copy.pos_begin;
+      until l.at_end loop
+	res := l.element;
+	resume;
+	l := l.next;
+      end;
+      res := l.element;
+      resume;
+   end;
+
+   stream elts_reverse:T is
+   -- * METHOD: stream elts_reverse:T
+   -- * DESCRIPTION: abstract get stream yielding all elements of the list in reverse order 
+   -- * PRE: NOT self.empty 
+   -- * POST: elts_reverse.terminated IFF i=size AND res[i]=pos_end.previous^{i-1}.element
+   -- * COMPLEXITY: \
+   -- *   SIZE__elts_reverse(self.SIZE,x.SIZE) = self.SIZE \
+   -- *   SPACE__elts_reverse(self.SIZE,x.SIZE,k) = O( \
+   -- * |      max(SPACE__empty(self.SIZE), \
+   -- * |          SPACE__element(self.SIZE), \
+   -- * |          SPACE__pos_end(self.SIZE), \
+   -- * |          SPACE__at_begin(self.SIZE), \
+   -- * |          SPACE__previous(self.SIZE))) \
+   -- *   TIME__elts_reverse(self.SIZE,x.SIZE,self.MAXSIZE,k) = O( \
+   -- * |      TIME__empty(self.SIZE) + \
+   -- * |      TIME__pos_end(self.SIZE) + \
+   -- * |      k*TIME__at_begin(self.SIZE) + \
+   -- * |      k*TIME__element(self.SIZE) + \
+   -- * |      (k-1) * TIME__previous(self.SIZE))
+   -- * REFERENCES:
+      
+      l:SAME;
+      if empty then return; end;
+      l := copy.pos_end;
+      until l.at_begin loop
+	res := l.element;
+	resume;
+	l := l.previous;
+      end;
+      res := l.element;
+      resume;
+   end;
+
+   str:STR is
+     deferred;
+   end;
+   
+end; -- class LIST
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+class EXCEPTION__LIST_EMPTY is 
+  -- * CLASS: EXCEPTION__LIST_EMPTY
+  -- * DESCRIPTION: this exeception will be raised under the following conditions \
+  -- * - delete, del_frt, element on empty list \
+  -- * - first, last, next, previous on empty list \
+  -- * - pos_begin,pos_end,at_begin,at_end on empty list \
+  -- * - to_begin!, to_end! on empty list
+  -- * SUBCLASS OF:
+  -- * SPECIALIZATION OF:
+  -- * IMPLEMENTATION OF:
+  -- * EXCEPTIONS:
+  -- * INVARIANT:
+  -- * REPRESENTATION:
+  -- * COMPLEXITY:
+  -- * REFERENCES:
+  -- * ATTRIBUTES: name:STR -- error message
+
+   subtype of EXCEPTION_USER;
+   const name :STR:="ERROR: illegal attempt to access empty list ";
+end;
+
+class EXCEPTION__LIST_INDEX is 
+  -- * CLASS: EXCEPTION__LIST_INDEX
+  -- * DESCRIPTION: this exeception will be raised under the following conditions \
+  -- * - next when position at end of list \
+  -- * - previous when position at begin of list
+  -- * SUBCLASS OF:
+  -- * SPECIALIZATION OF:
+  -- * IMPLEMENTATION OF:
+  -- * EXCEPTIONS:
+  -- * INVARIANT:
+  -- * REPRESENTATION:
+  -- * COMPLEXITY:
+  -- * REFERENCES:
+  -- * ATTRIBUTES: const name:STR -- error message
+
+   subtype of EXCEPTION_USER;
+   const name :STR:="ERROR: illegal attempt to access before front or after end of list ";
+end;
+
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+class TEST__LIST is
+  main is
+    q:$LIST(INT) := #LIST(INT).init;
+    ERR::s("creation of abstract class succeeded").nl;
+  end;
+end;

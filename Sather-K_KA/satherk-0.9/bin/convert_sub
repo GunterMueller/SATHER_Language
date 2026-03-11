@@ -1,0 +1,15 @@
+#!/bin/sh
+#
+# Script to convert syntactical changes
+# from Sather V0.2 to Sather-K
+#
+# (C) 1993 Peter Holzwarth
+#
+
+if [ ${TMPDIR} = "" ] ; then
+  TMPDIR = "."
+fi
+selfpath=`pathname $0`
+
+sed -f $selfpath/convert.sed < $1  > ${TMPDIR}/convert.$$
+mv ${TMPDIR}/convert.$$ $2

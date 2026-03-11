@@ -1,0 +1,91 @@
+-- File: bp_bag.sa
+-- Author: Wolf Zimmermann
+-- Copyright (C) Universitaet Karlsruhe, 1994
+--
+-- COPYRIGHT NOTICE: This code is provided "AS IS" WITHOUT ANY WARRANTY
+-- and is subject to the terms of the KARLA LIBRARY GENERAL PUBLIC
+-- LICENSE contained in the file: "doc/license.txt" of the 
+-- distribution. 
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FILE: bp_bag.sa
+--*
+--* CLASSES: BOUNDED_PARTIAL_MULTISET(K,T1,T) 
+--* 
+--* IMPLEMENTATION OF: 
+--*
+--* CONFORMS TO: BOUNDED_MULTISET(T)
+--*
+--* IS A: PARTIAL_MULTISET(K,T)
+--*
+--* REQUIRED CLASSES: BOUNDED_MULTISET(T) PARTIAL_MULTISET(K,T1,T) EXCEPTION__BOUNDED_MULTISET_INS\
+--* EXCEPTION__BOUNDED_MULTISET_UNION EXCEPTION__MULTISET EXCEPTION__PARTIAL_MULTISET_LOOKUP \
+--* PARTIAL_INT
+--*
+--* EXCEPTIONS: EXCEPTION__BOUNDED_MULTISET_INS EXCEPTION__BOUNDED_MULTISET_UNION \
+--* EXCEPTION__MULTISET EXCEPTION__PARTIAL_MULTISET_LOOKUP
+--*
+--* TEST CLASS: TEST__BOUNDED_PARTIAL_MULTISET
+--*
+--* FOREIGN FILES:
+--*
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--
+-- RCS: $Id$
+-- HISTORY: $Log$
+--
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+abstract class BOUNDED_PARTIAL_MULTISET(K,T1,T<PARTIAL(K,T1)) is
+   -- * CLASS: BOUNDED_PARTIAL_MULTISET(T)
+   -- * DESCRIPTION: abstract class defining Sets with limited number of elements \
+   -- *              partial key access
+   -- * SUBCLASS OF: BOUNDED_MULTISET(T)
+   -- * SPECIALIZATION OF: PARTIAL_MULTISET(K,T)
+   -- * IMPLEMENTATION OF: 
+   -- * EXCEPTIONS: EXCEPTION__BOUNDED_MULTISET_INS EXCEPTION__BOUNDED_MULTISET_INS_UNION \
+   -- * EXCEPTION__MULTISET EXCEPTION__PARTIAL_MULTISET_LOOKUP 
+   -- * INVARIANT: BOUNDED_MULTISET::Inv AND PARTIAL_MULTISET::Inv
+   -- * REPRESENTATION:
+   -- * COMPLEXITY: \
+   -- *     static      SIZE = size; \
+   -- *                 ##.init.MAXSIZE = 0 AND \
+   -- *                 MAXSIZE = max(choose.SIZE,delete(choose).MAXSIZE)
+   -- *                 ##.init.KEYSIZE = 0 AND \
+   -- *                 KEYSIZE = max(choose.key.SIZE,delete(choose).KEYSIZE)
+   -- * REFERENCES: [Aho, Hopcroft, Ullman: "The Design and Analysis \
+   -- *               of Computer Algorithms", Addison-Wesley, 1974]
+   -- * ATTRIBUTES: size:INT \
+   -- *     max_size:INT 
+
+   include PARTIAL_MULTISET(K,T1,T):init->,union->,diff->,disjoint_union,intersect->,subset->;
+   subtype of BOUNDED_MULTISET(T);
+
+
+end;
+
+
+
+
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+
+class TEST__BOUNDED_PARTIAL_MULTISET is
+-- * CLASS: TEST__BOUNDED_MULTISET
+-- * DESCRIPTION: 
+-- * SUBCLASS OF: 
+-- * SPECIALIZATION OF: 
+-- * IMPLEMENTATION OF: 
+-- * EXCEPTIONS: 
+-- * INVARIANT: 
+-- * COMPLEXITY: 
+-- * REFERENCES: 
+
+
+   main is
+      a:$BOUNDED_MULTISET(PARTIAL_INT):=# BOUNDED_PARTIAL_MULTISET(INT,INT,PARTIAL_INT); -- {max_size:=10};
+      ERR::s("creation of abstract class succeeded.\n");
+   end;
+
+end; -- class TEST__BOUNDED_MULTISET
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

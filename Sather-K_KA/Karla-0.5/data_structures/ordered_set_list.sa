@@ -1,0 +1,328 @@
+-- File: ordered_set_list.sa
+-- Author: Wolf Zimmermann
+-- Copyright (C) Universitaet Karlsruhe, 1994
+--
+-- COPYRIGHT NOTICE: This code is provided "AS IS" WITHOUT ANY WARRANTY
+-- and is subject to the terms of the KARLA LIBRARY GENERAL PUBLIC
+-- LICENSE contained in the file: "doc/license.txt" of the 
+-- distribution. 
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FILE: ordered_set_list.sa
+--*
+--* CLASSES: ORDERED_SET__LIST(T) ORDERED_SET(T,ORDER)
+--* 
+--* IMPLEMENTATION OF: ORDERED_SET(T,ORDER)
+--*
+--* CONFORMS TO: 
+--*
+--* IS A:
+--*
+--* REQUIRED CLASSES: ORDERED_SET(T,ORDER) ORDERED(T) ORDER_LT(T) SET__LIST(T)\
+--* EXCEPTION__MULTISET EXCEPTION__ORDERED_MULTISET_MIN EXCEPTION__ORDERED_MULTISET_NEXT\
+--* EXCEPTION__ORDERED_MULTISET_PREVIOUS EXCEPTION__ORDERED_MULTISET_MAX\
+--* EXCEPTION__SET_ADD EXCEPTION__SET_DISJOINT_UNION
+--*
+--* EXCEPTIONS: EXCEPTION__MULTISET  EXCEPTION__ORDERED_MULTISET_MIN \
+--* EXCEPTION__ORDERED_MULTISET_NEXT EXCEPTION__ORDERED_MULTISET_PREVIOUS \
+--* EXCEPTION__ORDERED_MULTISET__MAX EXCEPTION__SET_ADD EXCEPTION__SET_DISJOINT_UNION
+--*
+--* TEST CLASS: TEST__ORDERED_SET__LIST
+--*
+--* FOREIGN FILES:
+--*
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+class ORDERED_SET__LIST(T<ORDERED(T),ORDER<ORDER_RELATION(T)) is
+   -- * CLASS: ORDERED_SET__LIST(T<ORDERED(T),ORDER<ORDER_RELATION(T))
+   -- * DESCRIPTION: class defining ordered sets based on lists 
+   -- * SUBCLASS OF: 
+   -- * SPECIALIZATION OF: 
+   -- * IMPLEMENTATION OF: ORDERED_MULTISET(T)
+   -- * EXCEPTIONS: EXCEPTION__MULTISET  EXCEPTION__ORDERED_MULTISET_MIN \
+   -- * EXCEPTION__ORDERED_MULTISET_NEXT EXCEPTION__ORDERED_MULTISET_PREVIOUS \
+   -- * EXCEPTION__ORDERED__MULTISET__MAX EXCEPTION__SET_ADD EXCEPTION__SET_DISJOINT_UNION
+   -- * INVARIANT: ORDERED_SET(T)::Inv AND SET__LIST(T)::Inv
+   -- * REPRESENTATION:
+   -- * COMPLEXITY: \
+   -- * static SIZE = size1 \
+   -- * cumulative SPACE(n) = O(n) \ 
+   -- * insertitive TIME(h) = O(n^2) 
+   -- * REFERENCES: [Aho, Hopcroft, Ullman: "The Design and Analysis \
+   -- *               of Computer Algorithms", Addison-Wesley, 1974]
+   -- * ATTRIBUTES: size:INT \
+   -- *             private l:$LIST(T)
+
+subtype of ORDERED_SET(T,ORDER);
+include SET__LIST(T);
+
+end;
+   
+class TEST__ORDERED_SET__LIST is
+-- * CLASS: TEST__ORDERED_SET__LIST
+-- * DESCRIPTION: 
+-- * SUBCLASS OF: 
+-- * SPECIALIZATION OF: 
+-- * IMPLEMENTATION OF: 
+-- * EXCEPTIONS: 
+-- * INVARIANT: 
+-- * COMPLEXITY: 
+-- * REFERENCES: 
+
+
+  performancetest(n:INT) is
+    s:$ORDERED_SET(INT) := #ORDERED_SET__LIST(INT,ORDER_LT(INT)).init;
+    i:INT;
+    timer:TIMER := #TIMER;
+    timer.reset;
+    timer.go;
+    loop
+      i := 1.upto!(n);
+      s := s.insert(i);
+    end;
+    timer.stop;
+    OUT::s(n.str).s(" times insert cost time ").s(timer.mean.str).nl.nl;
+    timer.reset;
+    timer.go;
+    loop
+      i:=1.upto!(n);
+      if not(s.member(i)) then break; end;
+    end;
+    timer.stop;
+    OUT::s(n.str).s(" times member cost time ").s(timer.mean.str).nl.nl;
+    if i<n then OUT::s("membership test not succeeded for i=").s(i.str).nl.nl;
+    else OUT::s("membership test succeeded").nl.nl;
+    end;
+    timer.reset;
+    timer.go;
+    loop
+      i:= 1.upto!(n);
+      s := s.delete(i);
+    end;
+    timer.stop;
+    OUT::s(n.str).s(" times delete cost time ").s(timer.mean.str).nl.nl;
+    if s.empty then OUT::s("deletion succeeded").nl.nl;
+    else OUT::s("deletion not succeeded: s=").s(s.str).nl.nl;
+    end;
+  end; -- performancetest
+
+
+  main is
+    s:$ORDERED_SET(INT,ORDER_LT(INT)) := #ORDERED_SET__LIST(INT,ORDER_LT(INT)).init;
+    s1:$ORDERED_SET(INT,ORDER_LT(INT)) := #ORDERED_SET__LIST(INT,ORDER_LT(INT)).init;
+    s2:$ORDERED_SET(INT,ORDER_LT(INT)) := #ORDERED_SET__LIST(INT,ORDER_LT(INT)).init;
+    i,x:INT;
+    OUT::s("s is created: empty set").nl;
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.empty? ").s(s.empty.str).nl.nl;
+    begin
+      x := s.choose;
+    except excptset
+      when EXCEPTION__MULTISET 
+         then ERR::s(excptset.str).nl;
+	      OUT::s("exception test successfull").nl;
+      else OUT::s("exception test not successfull").nl;
+    end;
+    OUT::s("s := s.delete(5)").nl;
+    s := s.delete(5);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.member(5)? ");
+    OUT::s(s.member(5).str).nl.nl;
+    OUT::s("s.multiplicity(5) = ").i(s.multiplicity(5)).nl;
+    OUT::s("s.insert(5)").nl;
+    s := s.insert(5);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.empty? ").s(s.empty.str).nl.nl;
+    OUT::s("s.insert(5)").nl;
+    OUT::s("s.multiplicity(5) = ").i(s.multiplicity(5)).nl;
+    s := s.insert(5);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.multiplicity(5) = ").i(s.multiplicity(5)).nl;
+    OUT::s("s.insert(10)").nl;
+    s := s.insert(10);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.member(5)? ");
+    OUT::s(s.member(5).str).nl.nl;
+    OUT::s("s.member(6)? ");
+    OUT::s(s.member(6).str).nl;
+    OUT::s("s.choose = ").s(s.choose.str).nl.nl;
+    OUT::s("s := s.delete(5)").nl;
+    s := s.delete(5);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.choose = ").s(s.choose.str).nl.nl;
+    OUT::s("s := s.delete(10)").nl;
+    s := s.delete(10);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s := s.delete(5)").nl;
+    s := s.delete(5);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.empty? ").s(s.empty.str).nl.nl;
+    begin
+      x := s.choose;
+    except excptset
+      when EXCEPTION__MULTISET 
+         then ERR::s(excptset.str).nl;
+	      OUT::s("exception test successfull").nl;
+      else OUT::s("exception test not successfull").nl;
+    end;
+    OUT::s("s.insert(10)").nl;
+    s := s.insert(10);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.empty? ").s(s.empty.str).nl.nl;
+    OUT::s("s.insert(5)").nl;
+    s := s.insert(5);
+    OUT::s("s = ").s(s.str).nl.nl;
+    s := #ORDERED_SET__LIST(INT,ORDER_LT(INT)).init;
+    OUT::s("s is created: empty set").nl;
+    OUT::s("s = ").s(s.str).nl.nl;
+    loop
+      i := 1.upto!(20);
+      s1 := s1.insert(i);
+    end;
+    OUT::s("s1 = ").s(s1.str).nl;
+    loop
+      i := 0.upto!(20);
+      OUT::s("s1.multiplicity(").i(i).s(") = ").i(s1.multiplicity(i)).nl;
+    end;
+    OUT::s("s1.min =").s(s1.min.str).nl;
+    OUT::s("s1.max =").s(s1.max.str).nl;
+    OUT::s("s1.choose_next(5) =").s(s1.choose_next(5).str).nl;
+    OUT::s("s1.choose_previous(5) =").s(s1.choose_previous(5).str).nl;
+    OUT::s("Testing exception EXCEPTION__ORDERED_MULTISET_NEXT").nl;
+    begin
+      i := s1.choose_next(21);
+    except excptset
+      when EXCEPTION__ORDERED_MULTISET_NEXT then
+         ERR::s(excptset.str).nl;
+         OUT::s("exception test EXCEPTION__ORDERED_MULTISET_NEXT successfull").nl;
+      else OUT::s("exception test EXCEPTION__ORDERED_MULTISET_NEXT not successfull").nl;
+    end;
+    begin
+      i := s1.choose_previous(0);
+    except excptset
+      when EXCEPTION__ORDERED_MULTISET_NEXT then
+         ERR::s(excptset.str).nl;
+         OUT::s("exception test EXCEPTION__ORDERED_MULTISET_NEXT successfull").nl;
+      else OUT::s("exception test EXCEPTION__ORDERED_MULTISET_NEXT not successfull").nl;
+    end;
+    OUT::s("s1.sort = ").s(s1.sort.str).nl;
+    OUT::s("Testing stream elts").nl;
+    loop
+      OUT::s(s1.elts!.str).s(" ");
+    end;
+    OUT::nl;
+    OUT::s("Testing stream elts_order").nl;
+    loop
+      OUT::s(s1.elts_order!.str).s(" ");
+    end;
+    OUT::nl;
+    OUT::s("Testing stream elts_reverse_order").nl;
+    loop
+      OUT::s(s1.elts_reverse_order!.str).s(" ");
+    end;
+    OUT::nl;
+    OUT::s("Testing stream from_to(5,12)").nl;
+    loop
+      OUT::s(s1.from_to!(5,12).str).s(" ");
+    end;
+    OUT::nl;
+    OUT::s("Testing stream from_downto(12,5)").nl;
+    loop
+      OUT::s(s1.from_downto!(12,5).str).s(" ");
+    end;
+    OUT::nl;
+    OUT::s("Testing stream from_to(-1,22)").nl;
+    loop
+      OUT::s(s1.from_to!(-1,22).str).s(" ");
+    end;
+    OUT::nl;
+    OUT::s("Testing stream from_downto(22,-1)").nl;
+    loop
+      OUT::s(s1.from_downto!(22,-1).str).s(" ");
+    end;
+    OUT::nl;
+    OUT::s("s1 = ").s(s1.str).nl;
+    OUT::s("s2 = ").s(s2.str).nl;
+    OUT::s("s1.disjoint_union(s2) = ").s(s1.disjoint_union(s2).str).nl;
+    OUT::s("s1.union(s2) = ").s(s1.union(s2).str).nl;
+    OUT::s("s1.intersect(s2) = ").s(s1.intersect(s2).str).nl;
+    OUT::s("s1.diff(s2) = ").s(s1.diff(s2).str).nl;
+    OUT::s("s1.subset(s2) = ").s(s1.subset(s2).str).nl;
+    OUT::s("s2.subset(s1) = ").s(s2.subset(s1).str).nl;
+
+    loop
+      i := 1.upto!(20);
+      s2 := s2.insert(i);
+      if i.mod(2)=0 then s2 := s2.insert(i); end;
+      if i.mod(3)=0 then s2 := s2.insert(i); end;
+      if i.mod(4)=0 then s2 := s2.insert(i); end;
+    end;
+    OUT::s("s2 = ").s(s2.str).nl;
+    OUT::s("s2.min =").s(s2.min.str).nl;
+    OUT::s("s2.max =").s(s2.max.str).nl;
+    OUT::s("s2.choose_next(5) =").s(s2.choose_next(5).str).nl;
+    OUT::s("s2.choose_previous(5) =").s(s2.choose_previous(5).str).nl;
+    OUT::s("s2.sort = ").s(s2.sort.str).nl;
+    loop
+      i := 0.upto!(20);
+      OUT::s("s2.multiplicity(").i(i).s(") = ").i(s2.multiplicity(i)).nl;
+    end;
+    OUT::s("Testing stream elts").nl;
+    loop
+      OUT::s(s2.elts!.str).s(" ");
+    end;
+    OUT::nl;
+    OUT::s("Testing stream elts_order").nl;
+    loop
+      OUT::s(s2.elts_order!.str).s(" ");
+    end;
+    OUT::nl;
+    OUT::s("Testing stream elts_reverse_order").nl;
+    loop
+      OUT::s(s2.elts_reverse_order!.str).s(" ");
+    end;
+    OUT::nl;
+    OUT::s("Testing stream from_to(5,12)").nl;
+    loop
+      OUT::s(s2.from_to!(5,12).str).s(" ");
+    end;
+    OUT::nl;
+    OUT::s("Testing stream from_downto(12,5)").nl;
+    loop
+      OUT::s(s2.from_downto!(12,5).str).s(" ");
+    end;
+    OUT::nl;
+    OUT::s("Testing stream from_to(-1,22)").nl;
+    loop
+      OUT::s(s2.from_to!(-1,22).str).s(" ");
+    end;
+    OUT::nl;
+    OUT::s("Testing stream from_downto(22,-1)").nl;
+    loop
+      OUT::s(s2.from_downto!(22,-1).str).s(" ");
+    end;
+    OUT::nl;
+    OUT::s("s1 = ").s(s1.str).nl;
+    OUT::s("s2 = ").s(s2.str).nl;
+    begin
+       OUT::s("s1.disjoint_union(s2) = ").s(s1.disjoint_union(s2).str).nl;
+    except msg
+       when EXCEPTION__SET_DISJOINT_UNION then
+         OUT::s("Testing EXCEPTION__SET_DISJOINT_UNION successfull").nl;
+	 ERR::s(msg.str).nl;
+       else OUT::s("Testing EXCEPTION__SET_DISJOINT_UNION not successfull").nl;
+    end;
+    OUT::s("s1.union(s2) = ").s(s1.union(s2).str).nl;
+    OUT::s("s1.intersect(s2) = ").s(s1.intersect(s2).str).nl;
+    OUT::s("s1.diff(s2) = ").s(s1.diff(s2).str).nl;
+    OUT::s("s1.subset(s2) = ").s(s1.subset(s2).str).nl;
+    OUT::s("s2.subset(s1) = ").s(s2.subset(s1).str).nl;
+
+
+  end; -- main
+
+end; -- TEST__ORDERED_SET__LIST
+
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+

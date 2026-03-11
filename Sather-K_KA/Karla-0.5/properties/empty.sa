@@ -1,0 +1,48 @@
+-- -*- Mode: Sather;  -*-
+-- File: empty.sa
+-- Author: Wolf Zimmermann(zimmer@ira.uka.de)
+-- Copyright (C) Universitaet Karlsruhe, 1994
+--
+-- COPYRIGHT NOTICE: This code is provided "AS IS" WITHOUT ANY WARRANTY
+-- and is subject to the terms of the KARLA LIBRARY GENERAL PUBLIC
+-- LICENSE contained in the file: "doc/license.txt" of the 
+-- distribution. 
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FILE: empty.sa
+--*
+--* CLASSES: EMPTYTYPE
+--* 
+--* IMPLEMENTATION OF: 
+--*
+--* CONFORMS TO:
+--*
+--* IS A: 
+--*
+--* REQUIRED CLASSES:
+--*
+--* EXCEPTIONS: 
+--*
+--* TEST CLASS: 
+--*
+--* FOREIGN FILES:
+--*
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--
+-- RCS: $Id$
+-- HISTORY: $Log$
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+abstract class EMPTYTYPE is
+  -- * CLASS:  EMPTYTYPE
+  -- * DESCRIPTION: property class for empty type
+  -- * SUBCLASS OF: 
+  -- * SPECIALIZATION OF:
+  -- * IMPLEMENTATION OF:
+  -- * EXCEPTIONS:
+  -- * INVARIANT:
+  -- * REPRESENTATION:
+  -- * COMPLEXITY:
+  -- * REFERENCES:
+  -- * ATTRIBUTES:
+
+end;

@@ -1,0 +1,1489 @@
+-- -*- Mode: Sather;  -*-
+-- Author: Denis Assanbaev, Dietmar Helios
+-- Copyright (C) Universitaet Karlsruhe, 1994
+--
+-- COPYRIGHT NOTICE: This code is provided "AS IS" WITHOUT ANY WARRANTY
+-- and is subject to the terms of the KARLA LIBRARY GENERAL PUBLIC
+-- LICENSE contained in the file: "doc/license.txt" of the 
+-- distribution. 
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FILE: bintree_linked.sa
+--*
+--* CLASSES: BINARY_TREE__LINKED(T)
+--* 
+--* IMPLEMENTATION OF: BINARY_TREE(T)
+--*
+--* CONFORMS TO:  
+--*
+--* IS A:
+--*
+--* REQUIRED CLASSES: CELL(T), TRIPLE(T1, T2, T3)
+--*
+--* EXCEPTIONS: EXCEPTION__BINARY_TREE
+--*
+--* TEST CLASS: TEST__BINARY_TREE_LINKED
+--*
+--* FOREIGN FILES:
+--*
+--  RCS: $Id$
+--  HISTORY: $Log$
+--  Last edited: May 13 1994 (Dietmar Helios)
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+class BINARY_TREE__LINKED(T) is
+-- * CLASS: BINARY_TREE_LINKED(T)
+-- * DESCRIPTION: class defining rooted binary trees. \
+-- *   Contains operations to build trees and to navigate in trees. \
+-- *   Contains get streams for pre-, post-, and inorder traversal of trees \
+-- *   and subtrees.
+-- * SUBCLASS OF: BINARY_TREE(T)
+-- * SPECIALIZATION OF:
+-- * IMPLEMENTATION OF: BINARY_TREE(T)
+-- * EXCEPTIONS: EXCEPTION__BINARY_TREE
+-- * INVARIANT: size >= 0
+-- * REPRESENTATION: nodes with three links
+-- * COMPLEXITY: k calls of node_left, node_right, content, father, left,\
+-- *     right, root, delete_left_tree, delete_right_tree, at_root, empty,\
+-- *     empty_left, empty_right, at_leaf, preorder, postorder, inorder,\
+-- *     preorder_structured, postorder_structured, inorder structured\
+-- *     cost O(k).\
+-- *   k calls of node, ins_left_tree, ins_right_tree, insert_left,\
+-- *   insert_right, delete_left, delete_right cost O(k*x.size)
+-- * REFERENCES:
+-- * ATTRIBUTES: size:INT -- size of the tree
+
+   subtype of BINARY_TREE(T);
+
+   private shared LEFT   : INT := 0;
+   private shared RIGHT  : INT := 1;
+   private shared FATHER : INT := 2;
+   -- used for better readability
+
+   private shared cell_node : CELL(T) := CELL(T)::create(3); 
+
+   private shared guardian : $CELL(T) := #CELL(T);
+   -- used to avoid many if-then-else clauses
+   -- the values of the contents of the guardian element must not be used
+   
+   private tree_root : $CELL(T);
+   private act_pos  : $CELL(T);
+
+   readonly size : INT;
+
+   create : SAME is
+   -- * METHOD:   create : SAME
+   -- * DESCRIPTION: creates a new empty object of type BINARY_TREE__LINKED.\
+   -- *  call makes only sense as BINARY_TREE__LINKED(T)::create
+
+   -- * PRE: true
+   -- * POST: res.empty
+   -- * COMPLEXITY: k calls cost O(k)
+   -- * REFERENCES:
+     res := #SAME;
+     res.tree_root := guardian;
+     res.act_pos := res.tree_root;
+     res.size := 0;
+   end;
+
+
+
+   private preorder_insert(t : SAME; n : $CELL(T); d : BOOL):SAME is
+   -- * METHOD:  preorder_insert(t:SAME, n:$CELL(T), d:BOOL):SAME is
+   -- * DESCRIPTION: if d is true, the tree t is inserted at the position n as\
+   -- *   left subtree, else as right subtree. The particular subtree must be\
+   -- *   be empty.
+   -- * PRE: empty OR d AND n.empty_left OR NOT d AND n.empty_right
+   -- * POST: FORALL i<=res.size: d AND (i<=t.size IMPLIES\
+   -- *     res.inorder_structured[i].equal(t.inorder_structured[i]) AND\
+   -- *     i>t.size IMPLIES\
+   -- *     res.inorder_structured[i].equal(self.inorder_structured[i-t.size])\
+   -- *     ) AND (NOT d AND (i<=res.size-t.size IMPILES\
+   -- *     res.inorder_structured[i].equal(self.inorder_structured[i]) AND\
+   -- *     i>res.size-t.size IMPLIES\
+   -- *     res.inorder_structured[i].equal(t.inorder_structured[i-self.size]))
+   -- * COMPLEXITY: k calls cost O(k*t.size)
+   -- * REFERENCES:
+
+      triple   : TRIPLE(T,BOOL,BOOL);
+      new_node : $CELL(T);
+      temp_act_pos : $CELL(T);
+
+      temp_act_pos := act_pos;
+      loop
+	triple       := t.preorder_structured!;
+	new_node     := #CELL(T);
+	new_node.val := triple.fst;
+
+	new_node.links[LEFT]   := guardian;
+	new_node.links[RIGHT]  := guardian;
+	new_node.links[FATHER] := n;
+
+	if empty then
+	  tree_root := new_node;
+	else
+	  if d then
+	    n.links[LEFT] := new_node;
+	  else
+	    n.links[RIGHT] := new_node;
+	  end; -- if
+	end; -- if
+
+	n := new_node; -- go down on ...
+	 
+	if triple.snd then
+	  if triple.trd then
+	    n.links[RIGHT] := void;
+	    -- notice the next position for insertion on the way up
+	  end; -- if
+	  d := triple.snd; -- ... the left way
+	elsif triple.trd then
+	  d := not triple.trd -- ... the right way
+	else
+	  -- if we are here, there exists a position for insertion on the way up
+	  while n.links[RIGHT] /= void 
+            loop
+	    n := n.links[FATHER]; -- take the way up until the next crossroad ...
+	    d := false; -- ... and then turn right.
+	  end; -- while
+	end; -- if
+      end; -- loop
+
+      size := size+t.size;
+      res := self;
+      act_pos := temp_act_pos;
+
+   end; -- preorder_insert
+
+
+
+   node(x:T;r:SAME):SAME is
+   -- * METHOD: node(x:T,r:SAME):SAME
+   -- * DESCRIPTION: creates a new root with left subtree self, right subtree\
+   -- * r and content x
+   -- * PRE: true
+   -- * POST: res.root.content = x AND res.root.left=self AND res.root.right=r\
+   -- *       res.size = self.size+1
+   -- * COMPLEXITY: k calls cost O(k*x.size)
+   -- * REFERENCES:
+      
+      new_node : $CELL(T) := cell_node;
+
+      new_node.links[LEFT]   := tree_root;
+      new_node.links[LEFT]   := tree_root;
+      new_node.links[RIGHT]  := guardian; -- important, if r is empty
+      new_node.links[FATHER] := guardian;
+
+      tree_root := new_node;
+      new_node.links[LEFT].links[FATHER]  := new_node;
+      new_node.links[RIGHT].links[FATHER] := new_node;
+
+      size := size+1;
+
+      if act_pos = guardian then
+	-- the tree was empty
+	
+        act_pos := new_node;
+      end; -- if
+
+      res := self.preorder_insert(r, new_node, false)
+      -- a copy of r becomes the right subtree of new_node
+      
+   end; -- node
+
+
+
+   node_left(x:T):SAME is
+   -- * METHOD: node_left(x:T):SAME
+   -- * DESCRIPTION: inserts a new node. The left subtree is the subtree rooted\
+   -- *  at the actual position, the father is the root at the actual position,\
+   -- *  the right subtree is empty, and the actual position is the new node
+   -- * PRE: true
+   -- * POST: res.content = x AND res.left.content = self.content AND\
+   -- *       res.right.empty AND res.left.left = self.left AND\
+   -- *       res.left.right = self.right AND res.father = self.father AND\
+   -- *       res.size = self.size+1
+   -- * COMPLEXITY: k calls cost O(k)
+   -- * REFERENCES:
+
+      new_node : $CELL(T) := cell_node;
+      new_node : $CELL(T) := cell_node;
+
+      new_node.links[LEFT]   := act_pos;
+      new_node.links[LEFT]   := act_pos;
+      new_node.links[RIGHT]  := guardian;
+
+      if act_pos /= guardian and act_pos.links[FATHER] /= guardian then
+      if act_pos /= guardian and act_pos.links[FATHER] /= guardian then
+	-- the node at the actual position is not the root of the tree
+	new_node.links[FATHER] := act_pos.links[FATHER];
+	new_node.links[FATHER] := act_pos.links[FATHER];
+	if new_node.links[FATHER].links[LEFT] = act_pos then
+	if new_node.links[FATHER].links[LEFT] = act_pos then
+	  -- the node at the actual position is the left son of his father
+	  new_node.links[FATHER].links[LEFT] := new_node;
+	else
+	  -- the node at the actual position must be the right son of his father
+	  new_node.links[FATHER].links[RIGHT] := new_node;
+	end; -- if
+      else
+	-- the node at the actual position is the root of the tree
+	tree_root := new_node;
+      end; -- if
+
+      new_node.links[LEFT].links[FATHER] := new_node;
+      act_pos := new_node;
+      size    := size+1;
+
+      res := self;
+   end; -- node_left
+
+
+
+   node_right(x:T):SAME is
+   -- * METHOD: node_right(x:T):SAME
+   -- * DESCRIPTION: inserts a new node. The right subtree is the subtree\
+   -- *  rooted at the actual position, the father is the root at the actual\
+   -- *  position, the left subtree is empty, and the actual position is the\
+   -- *  new node
+   -- * PRE: true
+   -- * POST: res.content = x AND res.right.content = self.content AND\
+   -- *       res.left.empty AND res.right.left = self.left AND\
+   -- *       res.right.right = self.right AND res.father = self.father AND\
+   -- *       res.size = self.size+1;
+   -- * COMPLEXITY: k calls cost O(k)
+   -- * REFERENCES:
+
+      new_node : $CELL(T) := cell_node;
+      new_node : $CELL(T) := cell_node;
+
+      new_node.links[LEFT]   := guardian;
+      new_node.links[RIGHT]  := act_pos;
+      new_node.links[RIGHT]  := act_pos;
+
+      if act_pos /= guardian and act_pos.links[FATHER] /= guardian then
+      if act_pos /= guardian and act_pos.links[FATHER] /= guardian then
+	-- the node at the actual position is not the root of the tree
+	new_node.links[FATHER] := act_pos.links[FATHER];
+	new_node.links[FATHER] := act_pos.links[FATHER];
+	if new_node.links[FATHER].links[LEFT] = act_pos then
+	if new_node.links[FATHER].links[LEFT] = act_pos then
+	  -- the node at the actual position is the left son of his father
+	  new_node.links[FATHER].links[LEFT] := new_node;
+	else
+	  -- the node at the actual position must be the right son of his father
+	  new_node.links[FATHER].links[RIGHT] := new_node;
+	end; -- if
+      else
+	-- the node at the actual position is the root of the tree
+	tree_root:=new_node;
+	tree_root:=new_node;
+      end; -- if
+
+      new_node.links[RIGHT].links[FATHER] := new_node;
+      act_pos:=new_node;
+      act_pos:=new_node;
+      size    := size+1;
+
+      res := self;
+   end; -- node_right
+
+
+
+   ins_left_leaf(x:T):SAME is
+   -- * METHOD: ins_left_leaf(x:T):SAME
+   -- * DESCRIPTION: if the left subtree is empty, the node x is inserted at\
+   -- *  the actual position as the left leaf
+   -- * PRE: empty_left
+   -- * POST: res.left.content = x
+   -- * COMPLEXITY: k calls cost O(k)
+   -- * REFERENCES:
+
+      new_node : $CELL(T);
+
+      if not empty_left then
+	#EXCEPTION__BINARY_TREE{name := "BINARY_TREE__LINKED::ins_left_leaf if non-empty left subtree"}.raise;
+      else
+	new_node := cell_node;
+	new_node := cell_node;
+	new_node.links[FATHER]  := act_pos;
+	new_node.links[FATHER]  := act_pos;
+	new_node.links[LEFT]    := guardian;
+	new_node.links[RIGHT]   := guardian;
+	act_pos.links[LEFT] := new_node;
+	act_pos.links[LEFT] := new_node;
+	res := self;
+      end; -- if
+
+   end; -- ins_left_leaf
+
+
+
+   ins_right_leaf(x:T):SAME is
+   -- * METHOD: ins_right_leaf(x:T):SAME
+   -- * DESCRIPTION: if the rightt subtree is empty, the node x is inserted at\
+   -- *  the actual position as the right leaf
+   -- * PRE: empty_left
+   -- * POST: res.right.content = x
+   -- * COMPLEXITY: k calls cost O(k)
+   -- * REFERENCES:
+
+      new_node : $CELL(T);
+
+      if not empty_right then
+	#EXCEPTION__BINARY_TREE{name := "BINARY_TREE__LINKED::ins_right_leaf if non-empty right subtree"}.raise;
+      else
+	new_node := cell_node;
+	new_node := cell_node;
+	new_node.links[FATHER] := act_pos;
+	new_node.links[FATHER] := act_pos;
+	new_node.links[LEFT]   := guardian;
+	new_node.links[RIGHT]  := guardian;
+	act_pos.links[RIGHT]   := new_node;
+	act_pos.links[RIGHT]   := new_node;
+	res := self;
+      end; -- if
+
+   end; -- ins_right_leaf
+
+
+
+   ins_left_tree(l:SAME):SAME is
+   -- * METHOD: ins_left_tree(l:BINARY_TREE(T)):SAME
+   -- * DESCRIPTION: if the left subtree is empty, the tree l is inserted at\
+   -- *  the actual position as the left subtree
+   -- * PRE: empty_left
+   -- * POST: res.left=l
+   -- * COMPLEXITY: k calls cost O(k*l.size)
+   -- * REFERENCES:
+
+      if not empty_left then
+	#EXCEPTION__BINARY_TREE{name := "BINARY_TREE__LINKED::ins_left_tree if non-empty left subtree"}.raise;
+      else
+	res := self.preorder_insert(l, act_pos, true);
+	res := self.preorder_insert(l, act_pos, true);
+      end; -- if
+
+   end; -- ins_left_tree
+
+
+
+   ins_right_tree(r:SAME):SAME is
+   -- * METHOD: ins_right_tree(l:BINARY_TREE(T)):SAME
+   -- * DESCRIPTION: if the right subtree is empty, the tree r is inserted at
+   -- *  the actual position as the right subtree
+   -- * PRE: empty_right
+   -- * POST: res.right=r
+   -- * COMPLEXITY: k calls cost O(k*r.size)
+   -- * REFERENCES:
+
+      if not empty_right then
+	#EXCEPTION__BINARY_TREE{name := "BINARY_TREE__LINKED::ins_right_tree if non-empty right subtree"}.raise;
+      else
+	res := self.preorder_insert(r, act_pos, false);
+	res := self.preorder_insert(r, act_pos, false);
+      end; -- if
+
+   end; -- ins_right_tree
+
+
+
+   -- * METHOD: insert_left(l:BINARY_TREE(T)):SAME
+   -- * DESCRIPTION: inserts a new node at the actual position with content x,\
+   -- *  left subtree l and the subtree rooted at the actual position as the\
+   -- *  right subtree
+   -- * PRE: true
+   -- * POST: res.content = x AND res.right.content = self.content AND\
+   -- *       res.left=l AND res.right.left = self.left AND\
+   -- *       res.right.right = self.right AND res.father = self.father
+   -- * COMPLEXITY: k calls cost O(k*l.size)
+   -- * REFERENCES:
+
+
+
+   -- * METHOD: insert_right(r:BINARY_TREE(T)):SAME
+   -- * DESCRIPTION: inserts a new node at the actual position with content x,\
+   -- *  right subtree r and the subtree rooted at the actual position as the\
+   -- *  left subtree
+   -- * PRE: true
+   -- * POST: res.content = x AND res.left.content = self.content AND\
+   -- *       res.right=l AND res.left.left = self.left AND\
+   -- *       res.left.right = self.right AND res.father = self.father
+   -- * COMPLEXITY: k calls cost O(k*r.size)
+   -- * REFERENCES:
+
+
+
+   content:T is
+   -- * METHOD: content:T
+   -- * DESCRIPTION: yields the content of the node at the actual position
+   -- * PRE: NOT self.empty
+   -- * POST: self == node(...Pos(node(y,...,...,))...) IMPLIES res=y
+   -- * COMPLEXITY: k calls cost O(k)
+   -- * REFERENCES:
+
+      if empty then
+	#EXCEPTION__BINARY_TREE{name := "BINARY_TREE__LINKED::content on empty tree"}.raise;
+      else
+	res := act_pos.val;
+	res := act_pos.val;
+      end; -- if
+
+   end; -- content
+
+
+
+  father:SAME is
+   -- * METHOD: father:SAME
+   -- * DESCRIPTION: moves the actual position to the father
+   -- * PRE: NOT self.at_root
+   -- * POST: self==node(...,node(x,Pos(node(y,...)),node(z,...)...) OR\
+   -- *       self==node(...,node(x,node(y,...),Pos(node(z,...))...)IMPLIES \
+   -- *       res==node(...,Pos(node(x,node(y,...),node(z,...))
+   -- * COMPLEXITY: k calls cost O(k)
+   -- * REFERENCES:
+
+      if at_root then
+	#EXCEPTION__BINARY_TREE{name := "BINARY_TREE__LINKED::father on root"}.raise;
+      else
+	act_pos:=act_pos.links[FATHER];
+	act_pos:=act_pos.links[FATHER];
+	act_pos:=act_pos.links[FATHER];
+	act_pos:=act_pos.links[FATHER];
+      end; -- if
+
+      res := self;
+   end; -- father
+
+
+
+  left:SAME is
+   -- * METHOD: left:SAME
+   -- * DESCRIPTION: moves the actual position to the root of the left subtree
+   -- * PRE: NOT empty_left
+   -- * POST: self==node(...,Pos(node(x,node(y,...),node(z,...)...)) IMPLIES \
+   -- *       res==node(...,node(x,Pos(node(y,...)),node(z,...))...)
+   -- * COMPLEXITY: k calls cost O(k)
+   -- * REFERENCES:
+
+      if empty_left then
+	#EXCEPTION__BINARY_TREE{name := "BINARY_TREE__LINKED::left if left subtree empty"}.raise;
+      else
+	act_pos:=act_pos.links[LEFT];
+	act_pos:=act_pos.links[LEFT];
+	act_pos:=act_pos.links[LEFT];
+	act_pos:=act_pos.links[LEFT];
+      end; -- if
+
+      res := self;
+
+   end; -- left
+
+
+
+  right:SAME is
+   -- * METHOD: right:SAME
+   -- * DESCRIPTION: moves the actual position to the root of the right subtree
+   -- * PRE: NOT empty_right
+   -- * POST: self==node(...,Pos(node(x,node(y,...),node(z,...)...)) IMPLIES \
+   -- *       res==node(...,node(x,node(y,...),Pos(node(z,...)))...)
+   -- * COMPLEXITY: k calls cost O(k)
+   -- * REFERENCES:
+
+      if empty_right then
+	#EXCEPTION__BINARY_TREE{name := "BINARY_TREE__LINKED::right if right subtree empty"}.raise;
+      else
+	act_pos:=act_pos.links[RIGHT];
+	act_pos:=act_pos.links[RIGHT];
+	act_pos:=act_pos.links[RIGHT];
+	act_pos:=act_pos.links[RIGHT];
+      end; -- if
+
+      res := self;
+
+   end; -- right
+
+
+
+  root:SAME is
+   -- * METHOD: root:SAME
+   -- * DESCRIPTION: moves the actual position to the root of the tree
+   -- * PRE: NOT empty
+   -- * POST: EXISTS x:T,l,r:BINARY_TREE(t) self==l.node(x,r) IMPLIES \
+   -- *       res==l.node(x,r).pos
+   -- * COMPLEXITY: k calls cost O(k)
+   -- * REFERENCES:
+
+      if empty then
+	#EXCEPTION__BINARY_TREE{name := "BINARY_TREE__LINKED::root on empty tree"}.raise;
+      else
+	act_pos:=tree_root;
+	act_pos:=tree_root;
+	act_pos:=tree_root;
+	act_pos:=tree_root;
+      end; -- if
+
+      res := self;
+
+   end; -- root
+
+
+
+  delete_left(l:SAME):SAME is
+   -- * METHOD: delete_left(l:SAME):SAME
+   -- * DESCRIPTION: deletes the actual position, the corresponding subtree of\
+   -- *   the father is the right subtree of the actual position, l is the\
+   -- *   left subtree of the actual position. If right subtree is empty then\
+   -- *   the actual position is father. Otherwise it is the root of the right\
+   -- *   subtree.
+
+
+
+
+   -- * PRE: NOT empty
+   -- * POST: (father.left.content=content AND father.left.left = left AND \
+   -- *        father.left.right = right IMPLIES res.father.left = right AND\
+   -- *        l=left) AND \
+   -- * (father.right.content=content AND father.right.left = left AND \
+   -- *        father.right.right = right IMPLIES res.father.right = right AND\
+   -- *        l=left)
+   -- * COMPLEXITY: k calls cost O(k*l.size)
+   -- * REFERENCES:
+
+      temp_tree_root : $CELL(T) := tree_root;
+      temp_act_pos   : $CELL(T) := act_pos;
+      -- used to restore the tree
+
+      l := #SAME;
+
+      if empty then
+	#EXCEPTION__BINARY_TREE{name := "BINARY_TREE__LINKED::delete_left on empty tree"}.raise;
+      else
+
+	if not empty_left then
+
+	  tree_root:=act_pos.links[LEFT];
+	  tree_root:=act_pos.links[LEFT];
+	  tree_root:=act_pos.links[LEFT];
+	  tree_root:=act_pos.links[LEFT];
+	  act_pos:=tree_root;
+	  act_pos:=tree_root;
+	  act_pos:=tree_root;
+	  act_pos:=tree_root;
+	  l := self.copy;
+	  -- inserts left subtree in l
+	  tree_root:=temp_tree_root;
+	  tree_root:=temp_tree_root;
+	  act_pos:=temp_act_pos;
+	  act_pos:=temp_act_pos;
+	  -- restore the tree self
+
+	end; -- if
+
+	if act_pos = tree_root then
+	if act_pos = tree_root then
+	if act_pos = tree_root then
+	if act_pos = tree_root then
+	  -- delete the root
+	  tree_root:=act_pos.links[RIGHT];
+	  tree_root:=act_pos.links[RIGHT];
+	  tree_root:=act_pos.links[RIGHT];
+	  tree_root:=act_pos.links[RIGHT];
+	  tree_root.links[FATHER] := guardian;
+	  tree_root.links[FATHER] := guardian;
+	  act_pos:=tree_root;
+	  act_pos:=tree_root;
+	  act_pos:=tree_root;
+	  act_pos:=tree_root;
+
+	else
+
+	  if act_pos.links[FATHER].links[LEFT] = act_pos then
+	  if act_pos.links[FATHER].links[LEFT] = act_pos then
+	    -- the node at the actual position is the left son of his father
+	    act_pos.links[FATHER].links[LEFT] := act_pos.links[RIGHT];
+	    act_pos.links[FATHER].links[LEFT] := act_pos.links[RIGHT];
+	  else
+	    -- the node at the actual position must be the right son of his
+	    -- father
+	    act_pos.links[FATHER].links[RIGHT] := act_pos.links[RIGHT];
+	    act_pos.links[FATHER].links[RIGHT] := act_pos.links[RIGHT];
+	  end; -- if
+	  -- sets the corresponding subtree of the father
+
+	  act_pos.links[RIGHT].links[FATHER] := act_pos.links[FATHER];
+	  act_pos.links[RIGHT].links[FATHER] := act_pos.links[FATHER];
+
+	  if empty_right then
+	    act_pos:=act_pos.links[FATHER];
+	    act_pos:=act_pos.links[FATHER];
+	    act_pos:=act_pos.links[FATHER];
+	    act_pos:=act_pos.links[FATHER];
+	  else
+	    act_pos:=act_pos.links[RIGHT];
+	    act_pos:=act_pos.links[RIGHT];
+	    act_pos:=act_pos.links[RIGHT];
+	    act_pos:=act_pos.links[RIGHT];
+	  end; -- if
+
+	end; -- if
+
+	res := self;
+      end -- if
+
+   end; -- delete_left
+
+
+
+  delete_right(r:SAME):SAME is
+   -- * METHOD: delete_right(r:SAME):SAME
+   -- * DESCRIPTION: deletes the actual position, the corresponding subtree of\
+   -- *  the father is the left subtree of the actual position, r is the right\
+   -- *  subtree of the actual position. If left subtree is empty then\
+   -- *  the actual position is father. Otherwise it is the root of the left\
+   -- *  subtree.
+   -- * PRE: NOT empty AND NOT empty_left
+   -- * POST: (father.left.content=content AND father.left.left = left AND \
+   -- *        father.left.right = right IMPLIES res.father.left = left AND\
+   -- *        r=right) AND \
+   -- * (father.right.content=content AND father.right.left = left AND \
+   -- *        father.right.right = right IMPLIES res.father.right = left AND\
+   -- *        r=right)
+   -- * COMPLEXITY: k calls cost O(k*r.size)
+   -- * REFERENCES:
+
+      temp_tree_root : $CELL(T) := tree_root; -- used to restore the tree
+      temp_tree_root : $CELL(T) := tree_root; -- used to restore the tree
+
+      r := #SAME;
+
+      if empty then
+	#EXCEPTION__BINARY_TREE{name :=\
+	"BINARY_TREE__LINKED::delete_right on empty tree"}.raise;
+      else
+
+	if not empty_right then
+	  tree_root:=guardian;
+	  tree_root:=guardian;
+	  r.node(act_pos.links[RIGHT].val, self);
+	  r.node(act_pos.links[RIGHT].val, self);
+	  tree_root:=act_pos.links[RIGHT].links[LEFT];
+	  tree_root:=act_pos.links[RIGHT].links[LEFT];
+	  tree_root:=act_pos.links[RIGHT].links[LEFT];
+	  tree_root:=act_pos.links[RIGHT].links[LEFT];
+	  r.ins_left_tree(self);
+	  tree_root:=act_pos.links[RIGHT].links[RIGHT];
+	  tree_root:=act_pos.links[RIGHT].links[RIGHT];
+	  tree_root:=act_pos.links[RIGHT].links[RIGHT];
+	  tree_root:=act_pos.links[RIGHT].links[RIGHT];
+	  r.ins_right_tree(self);
+	  -- inserts left subtree in l
+
+	  tree_root:=temp_tree_root;
+	  tree_root:=temp_tree_root;
+	  -- restore the tree self
+	end; -- if
+
+	if act_pos = tree_root then
+	if act_pos = tree_root then
+	if act_pos = tree_root then
+	if act_pos = tree_root then
+	  -- delete the root
+	  tree_root:=act_pos.links[LEFT];
+	  tree_root:=act_pos.links[LEFT];
+	  tree_root:=act_pos.links[LEFT];
+	  tree_root:=act_pos.links[LEFT];
+	  tree_root.links[FATHER] := guardian;
+	  tree_root.links[FATHER] := guardian;
+	  act_pos := tree_root;
+	  act_pos := tree_root;
+	else
+
+	  if act_pos.links[FATHER].links[LEFT] = act_pos then
+	  if act_pos.links[FATHER].links[LEFT] = act_pos then
+	    -- the node at the actual position is the left son of his father
+	    act_pos.links[FATHER].links[LEFT] := act_pos.links[LEFT];
+	    act_pos.links[FATHER].links[LEFT] := act_pos.links[LEFT];
+	  else
+	    -- the node at the actual position must be the right son of his
+	    -- father
+	    act_pos.links[FATHER].links[RIGHT] := act_pos.links[LEFT];
+	    act_pos.links[FATHER].links[RIGHT] := act_pos.links[LEFT];
+	  end; -- if
+	  -- sets the corresponding subtree of the father
+
+	  act_pos.links[LEFT].links[FATHER] := act_pos.links[FATHER];
+	  act_pos.links[LEFT].links[FATHER] := act_pos.links[FATHER];
+
+	  if empty_left then
+	    act_pos:=act_pos.links[FATHER];
+	    act_pos:=act_pos.links[FATHER];
+	    act_pos:=act_pos.links[FATHER];
+	    act_pos:=act_pos.links[FATHER];
+	  else
+	    act_pos:=act_pos.links[LEFT];
+	    act_pos:=act_pos.links[LEFT];
+	    act_pos:=act_pos.links[LEFT];
+	    act_pos:=act_pos.links[LEFT];
+	  end; -- if
+
+	end; -- if
+
+	res := self;
+      end -- if
+
+   end; -- delete_right
+
+
+
+  delete_left_tree:SAME is
+   -- * METHOD: delete_left_tree:SAME
+   -- * DESCRIPTION: deletes the left subtree of the  actual position
+   -- * PRE: NOT empty
+   -- * POST: res.empty_left
+   -- * COMPLEXITY: k calls cost O(k)
+   -- * REFERENCES:
+
+      if empty then
+	#EXCEPTION__BINARY_TREE{name :=\
+	"BINARY_TREE__LINKED::delete_left_tree on empty tree"}.raise;
+      end; -- if
+
+      act_pos.links[LEFT] := guardian;
+      act_pos.links[LEFT] := guardian;
+      res := self;
+
+   end; -- delete_left_tree
+
+
+
+  delete_right_tree:SAME is
+   -- * METHOD: delete_right_tree:SAME
+   -- * DESCRIPTION: deletes the right subtree of the actual position
+   -- * PRE: NOT empty
+   -- * POST: res.empty_right
+   -- * COMPLEXITY: k calls cost O(k)
+   -- * REFERENCES:
+
+      if empty then
+	#EXCEPTION__BINARY_TREE{name :=\
+	"BINARY_TREE__LINKED::delete_right_tree on empty tree"}.raise;
+      end; -- if
+
+      act_pos.links[RIGHT] := guardian;
+      act_pos.links[RIGHT] := guardian;
+      res := self;
+
+   end; -- delete_right_tree
+
+
+
+   at_root:BOOL is
+   -- * METHOD: at_root:BOOL
+   -- * DESCRIPTION: true IFF actual position is at the root
+   -- * PRE: NOT empty
+   -- * POST: res==EXISTS: l,r:BINARY_TREE(T),x:T: self==l.node(x,r).pos
+   -- * COMPLEXITY: k calls cost O(k)
+   -- * REFERENCES:
+
+      if empty then
+	#EXCEPTION__BINARY_TREE{name :=\
+	"BINARY_TREE__LINKED::at_root on empty tree"}.raise;
+      end; -- if
+
+      res := (act_pos = tree_root);
+      res := (act_pos = tree_root);
+      res := (act_pos = tree_root);
+      res := (act_pos = tree_root);
+   end; -- at_root
+
+
+
+   empty:BOOL is
+   -- * METHOD: empty:BOOL
+   -- * DESCRIPTION: true IFF tree is empty
+   -- * PRE: true
+   -- * POST: res= (self==#BINARY_TREE(T))
+   -- * COMPLEXITY: k calls cost O(k)
+   -- * REFERENCES:
+
+      res := (tree_root = guardian);
+      res := (tree_root = guardian);
+   end;  -- empty
+
+
+
+   empty_left:BOOL is
+   -- * METHOD: empty_left:BOOL
+   -- * DESCRIPTION: true IFF left subtree of the actual position is empty
+   -- * PRE: NOT empty
+   -- * POST: res= (self==node(....pos(node(x,nil,...)....))
+   -- * COMPLEXITY: k calls cost O(k)
+   -- * REFERENCES:
+
+      if empty then
+	#EXCEPTION__BINARY_TREE{name :=\
+	"BINARY_TREE__LINKED::empty_left on empty tree"}.raise;
+      end; -- if
+
+     res := (act_pos.links[LEFT] = guardian)
+     res := (act_pos.links[LEFT] = guardian)
+   end;  -- empty_left
+
+
+
+   empty_right:BOOL is
+   -- * METHOD: empty_right:BOOL
+   -- * DESCRIPTION: true IFF right subtree of the actual position is empty
+   -- * PRE: NOT empty
+   -- * POST: res= (self==node(....pos(node(x,...,nil)....))
+   -- * COMPLEXITY: k calls cost O(k)
+   -- * REFERENCES:
+
+      if empty then
+	#EXCEPTION__BINARY_TREE{name :=\
+	"BINARY_TREE__LINKED::empty_right on empty tree"}.raise;
+      end; -- if
+
+     res := (act_pos.links[RIGHT] = guardian)
+     res := (act_pos.links[RIGHT] = guardian)
+   end;  -- empty_right
+
+
+   at_leaf:BOOL is
+   -- * METHOD: at_leaf:BOOL
+   -- * DESCRIPTION: true IFF the actual position is a leaf
+   -- * PRE: NOT empty
+   -- * POST: res= empty_left AND empty_right
+   -- * COMPLEXITY: k calls cost O(k)
+   -- * REFERENCES:
+
+      if empty then
+	#EXCEPTION__BINARY_TREE{name :=\
+	"BINARY_TREE__LINKED::at_leaf on empty tree"}.raise;
+      end; -- if
+
+     res := (act_pos.links[LEFT]=guardian) and (act_pos.links[RIGHT]=guardian);
+     res := (act_pos.links[LEFT]=guardian) and (act_pos.links[RIGHT]=guardian);
+   end;  -- at_leaf
+
+
+
+   copy_structure:SAME is
+   -- * METHOD: copy_structure:SAME
+   -- * DESCRIPTION: copies the tree
+   -- * PRE: true
+   -- * POST: res==self
+   -- * COMPLEXITY:
+   -- * REFERENCES:
+
+     res := res.preorder_insert(self, tree_root, true);
+     res := res.preorder_insert(self, tree_root, true);
+   end; -- copy_structure
+
+
+
+   str:STR is
+   -- * METHOD: str:STR
+   -- * DESCRIPTION: Returns a string with the contents of the binary tree in\
+   -- *  preorder structured form.
+   -- * PRE: true
+   -- * POST: true
+   -- * COMPLEXITY: k calls cost O(k*self.size) 
+   -- * REFERENCES:
+
+      if empty then
+	res := "The binary tree is empty ! \n";
+      else
+	res := output(0, tree_root);
+	res := output(0, tree_root);
+      end; -- if
+
+   end;  -- end str
+
+
+
+   private output(depth: INT; node: $CELL(T)):STR is
+   -- * METHOD: output(depth: INT, node: $CELL(T)) is
+   -- * DESCRIPTION: Recursive support method for str.
+   -- * PRE: true
+   -- * POST: true
+   -- * COMPLEXITY: O(output(depth+1, left)+output(depth+1, right))
+   -- * REFERENCES:
+
+      depth_t :INT := depth;
+
+      res := "";
+      while depth_t /=0 loop
+	res := res.s(" ");
+	depth_t := depth_t-1;
+      end; -- loop
+
+      res := res.s(node.val.str);
+      if act_pos = node then
+         res :=res.s("    <<<actual ");
+      end;
+      res :=res.s("\n");
+
+      if node.links[LEFT] = guardian then
+	depth_t :=depth+1;
+	while depth_t /=0 loop
+	  res :=res.s(" ");
+	end; -- loop
+	res := res.s(" empty ");
+      else
+	res := output(depth+1, node.links[LEFT]);
+      end; -- if
+
+      if node.links[RIGHT] = guardian then
+	depth_t := depth+1;
+	while depth_t /=0 loop
+	  res :=res.s(" ");
+	end; -- loop
+	res := res.s(" empty ");
+      else
+	res :=output(depth+1,node.links[RIGHT]);
+      end -- if;
+   end; -- output
+
+
+
+   -- * METHOD: stream preorder:T
+   -- * DESCRIPTION: stream yielding the contents of nodes in preorder
+   -- * PRE: true
+   -- * POST: preorder.terminated IFF i=size res[1]=root.content AND \
+   -- *   (NOT t[i].empty_left IMPLIES res[i+1]=t[i].left.content) AND \
+   -- *   (t[i].empty_left AND NOT t[i].empty_right IMPLIES\
+   -- *   res[i+1]=t[i].right.content) AND (t[i].at_leaf AND i<size IMPLIES \
+   -- *    n=min{j<i: EXISTS k<i:FORALL m<=i: NOT t[m]=t[i].father^j.right} AND\
+   -- *   res[i+1]=t[i].father^n.right.content AND t[i+1]=father^n.right)
+   -- * COMPLEXITY: k calls cost O(k), maximal stream size : size
+   -- * REFERENCES:
+
+
+
+   -- * METHOD: stream postorder:T
+   -- * DESCRIPTION: stream yielding the contents of nodes in postorder
+   -- * PRE: true
+   -- * POST: postorder.terminated IFF i=size AND \ 
+   -- *   t[1] = t.root.min{x : x IN {left,right}^* AND t.root.w.at_leaf} AND \
+   -- *   (t[i].father.right=t[i] OR t[i].father.empty_right IMPLIES \
+   -- *    t[i+1]=t[i].father AND res[i+1]=t[i+1].content) AND \
+   -- *    (t[i].father.left=t[i] OR t[i].father.empty_left IMPLIES \
+   -- *     t[i+1]=t[i].min{x : x IN {left,right}^* AND t[i].w.at_leaf} AND \
+   -- *     res[i+1]=t[i+1].content)
+   -- * COMPLEXITY: k calls cost O(k), maximal stream size : size
+   -- * REFERENCES:
+
+
+
+   -- * METHOD: stream inorder:T
+   -- * DESCRIPTION: stream yielding the contents of nodes in inorder
+   -- * PRE: true
+   -- * POST: inorder.terminated IFF i=size AND \
+   -- *   t[1] = t.root.left^min{k : t.root.left^k.empty_left} AND\
+   -- *   res[1]=t[1].content AND (NOT t[i].empty_right IMPLIES \
+   -- *    t[i+1]=t[i].right.left^min{k: t[i].right.left^k.empty_left} AND\
+   -- *   res[i+1]=t[i+1].content) AND (t[i].empty_right IMPLIES \
+   -- *    t[i+1] = t[i].father^min{k>0:\
+   -- *     NOT t[i].father^k.left = t[i].father^(k-1)} \
+   -- *    AND  res[i+1]=t[i+1].content)
+   -- * COMPLEXITY: k calls cost O(k), maximal stream size : size
+   -- * REFERENCES:
+
+
+-- stream preorder_structured:TRIPLE(T,BOOL,BOOL) is
+   -- * METHOD: stream preorder_structured:TRIPLE(T,BOOL,BOOL)
+   -- * DESCRIPTION: stream yielding the contents of nodes in preorder \
+   -- *   including information whether the left and right subtrees are\
+   -- *   empty.
+   -- * PRE: true
+   -- * POST: (preorder_structured.terminated IFF i=size) AND \
+   -- *    res[1].fst=root.content AND \
+   -- *   (NOT t[i].empty_left IMPLIES res[i+1]=(t[i].left.content,true,NOT t[i].empty_right)) AND \
+   -- *   (t[i].empty_left AND NOT t[i].empty_right IMPLIES res[i+1]=(t[i].right.content,false,true) AND \
+   -- *   (t[i].at_leaf AND i<size \
+   -- *IMPLIES \
+   -- *    n=min{j<i: EXISTS k<i:FORALL m<=i: NOT t[m]=t[i].father^j.right} AND \
+   -- *    res[i+1]=t([i].father^n.right.content,false,false) AND t[i+1]=father^n.right)
+   -- * COMPLEXITY: k calls cost O(k*(TIME__content(size)+TIME__left(size)+TIME__right(size))) \
+   -- *             maximal stream size : size
+   -- * REFERENCES:
+--    stack    : CELL(BOOL);
+--    new_node : CELL(BOOL);
+--
+--    t:SAME := self.copy;
+--    if not empty then
+--	loop
+--	  res := #TRIPLE(T,BOOL,BOOL){fst:=t.content,
+--				      snd:=not(t.empty_left),
+--				      trd:=not(t.empty_right)};
+--	  if res.snd then
+--	    new_node := CELL(BOOL)::create(1);
+--	    if res.trd then
+--	      new_node.val := true;
+--	    else
+--	      new_node.val := false;
+--	    end;
+--	    new_node.links[0] := stack;
+--	    stack := new_node;
+--	    t.feft;
+--	  elsif res.trd then
+--	    new_node := CELL(BOOL)::create(1);
+--	    new_node.val := false;
+--	    new_node := stack.links[0];
+--	    stack := new_node;
+--	    t.right;
+--	  else
+--	    while stack /= void and stack.val /= true loop
+--	      stack := stack.links[0];
+--	      t.father;
+--	    end;
+--	    if stack /= void then
+--	      stack.val := false;
+--	      t.right;
+--	    end;
+--	  end;
+--	  resume;
+--	  if stack = void then break;
+--	end;
+--    end;
+--   end;
+--   end;
+
+
+   -- * METHOD: stream postorder_structured:TRIPLE(T,BOOL,BOOL)
+   -- * DESCRIPTION: stream yielding the contents of nodes in postorder\
+   -- *   including information whether the left and right subtrees are\
+   -- *   empty.
+   -- * PRE: true
+   -- * POST: postorder_structured.terminated IFF i=size AND \
+   -- *  t[1] = t.root.min{x : x IN {left,right}^* AND t.root.w.at_leaf} AND \
+   -- *  (t[i].father.right=t[i] OR t[i].father.empty_right IMPLIES \
+   -- *  t[i+1]=t[i].father AND\
+   -- *  res[i+1]=(t[i+1].content,NOT t[i+1].empty_left,\
+   -- *   NOT t[i+1].empty_right)) AND \
+   -- *  (t[i].father.left=t[i] OR t[i].father.empty_left IMPLIES \
+   -- *  t[i+1]=t[i].min{x : x IN {left,right}^* AND t[i].w.at_leaf} AND \
+   -- *  res[i+1]=(t[i+1].content,NOT t[i+1].empty_left,NOT t[i+1].empty_right))
+   -- * COMPLEXITY: k calls cost O(k), maximal stream size : size
+   -- * REFERENCES:
+
+
+
+
+   -- * METHOD: stream inorder_structured:TRIPLE(T,BOOL,BOOL)
+   -- * DESCRIPTION: stream yielding the contents of nodes in inorder\
+   -- *   including information whether the left and right subtrees are\
+   -- *   empty.
+   -- * PRE: true
+   -- * POST: inorder.terminated IFF i=size AND \
+   -- *  t[1] = t.root.left^min{k : t.root.left^k.empty_left} AND\
+   -- *  res[1]=t[1].content AND (NOT t[i].empty_right IMPLIES \
+   -- *  t[i+1]=t[i].right.left^min{k: t[i].right.left^k.empty_left} AND\
+   -- *  res[i+1]=(t[i+1].content,NOT t[i+1].empty_left,\
+   -- *  NOT t[i+1].empty_right)) AND (t[i].empty_right IMPLIES \
+   -- *  t[i+1] = t[i].father^min{k>0:\
+   -- *  NOT t[i].father^k.left = t[i].father^(k-1)} AND\
+   -- *  res[i+1]=(t[i+1].content,NOT t[i+1].empty_left,NOT t[i+1].empty_right))
+   -- * COMPLEXITY: k calls cost O(k), maximal stream size : size
+   -- * REFERENCES:
+
+end; -- BINARY_TREE__LINKED
+
+
+
+class TEST__BINARY_TREE__LINKED is
+
+  main is
+
+    a: INT;
+    b: BOOL;
+    q:BINARY_TREE__LINKED(INT);
+    r:BINARY_TREE__LINKED(INT);
+    s:BINARY_TREE__LINKED(INT);
+
+    -- testing copy_structure and preorder_insert
+    q := BINARY_TREE__LINKED(INT)::create;
+    r := BINARY_TREE__LINKED(INT)::create;
+    r := r.node(1, q).ins_left_leaf(2).left.ins_left_leaf(4).root.\
+	   ins_right_leaf(3).right.ins_right_leaf(5);
+    OUT::s("Testing copy_structure and preorder_insert:").nl.nl;
+    OUT::s("q:").nl;
+    OUT::s(q.str).nl.nl;
+    OUT::s("r:").nl;
+    OUT::s(r.str).nl.nl;
+    OUT::s("Now r will be copied to s by copy_structure.").nl;
+    OUT::s("copy_structure uses preorder_insert to do his job.").nl.nl;
+    q := r.copy_structure;
+    OUT::s("q:").nl;
+    OUT::s(q.str).nl.nl;
+    OUT::s("r:").nl;
+    OUT::s(r.str).nl.nl.nl;
+
+    -- testing node
+    q := BINARY_TREE__LINKED(INT)::create;
+    r := BINARY_TREE__LINKED(INT)::create;
+    q := q.node(1, r).ins_left_leaf(2).ins_left_leaf(3);
+    OUT::s("Testing node:").nl.nl;
+    OUT::s("q:").nl;
+    OUT::s(q.str).nl.nl;
+    OUT::s("Now a new root will be inserted in q").nl.nl;
+    q := q.node(5, r);
+    OUT::s("q:").nl;
+    OUT::s(q.str).nl.nl.nl;
+
+    -- testing node_left and node_right
+    q := BINARY_TREE__LINKED(INT)::create;
+    r := BINARY_TREE__LINKED(INT)::create;
+    OUT::s("Testing node_left and node_right:").nl.nl;
+    OUT::s("q:").nl;
+    OUT::s(q.str).nl.nl;
+    OUT::s("r:").nl;
+    OUT::s(r.str).nl.nl;
+    OUT::s("Now a new node will be inserted in empty trees").nl;
+    OUT::s("in q by.node_left and in r by node right.").nl.nl;
+    q := q.node_left(1);
+    r := r.node_right(2);
+    OUT::s("q:").nl;
+    OUT::s(q.str).nl.nl;
+    OUT::s("r:").nl;
+    OUT::s(r.str).nl.nl;
+    OUT::s("Now a new node will be inserted at root by node_left.").nl.nl;
+    q := q.node_left(3);
+    OUT::s("q:").nl;
+    OUT::s(q.str).nl.nl;
+    OUT::s("Now a new node will be inserted at root by node_right.").nl.nl;
+    q := q.root.node_right(4);
+    OUT::s("q:").nl;
+    OUT::s(q.str).nl.nl;
+    OUT::s("Now a new node will be inserted as left son of the").nl;
+    OUT::s("root by node_left.").nl.nl;
+    q := q.root.left.node_left(6);
+    OUT::s("q:").nl;
+    OUT::s(q.str).nl.nl;
+    OUT::s("Now a new node will be inserted as right son of the").nl;
+    OUT::s("root by node_left.").nl.nl;
+    q := q.root.right.node_left(7);
+    OUT::s("q:").nl;
+    OUT::s(q.str).nl.nl;
+    OUT::s("Now a new node will be inserted as left son of the").nl;
+    OUT::s("root by node_right.").nl.nl;
+    q := q.root.left.node_right(8);
+    OUT::s("q:").nl;
+    OUT::s(q.str).nl.nl;
+    OUT::s("Now a new node will be inserted as right son of the").nl;
+    OUT::s("root by node_right.").nl.nl;
+    q := q.root.right.node_right(9);
+    OUT::s("q:").nl;
+    OUT::s(q.str).nl.nl.nl;
+
+    -- testing ins_left_leaf and ins_right_leaf
+    q := BINARY_TREE__LINKED(INT)::create;
+    r := BINARY_TREE__LINKED(INT)::create;
+    q := q.node(1, r);
+    OUT::s("Testing ins_left_leaf and ins_right_leaf:").nl.nl;
+    OUT::s("q:").nl;
+    OUT::s(q.str).nl.nl;
+    q := q.ins_left_leaf(2);
+    OUT::s("Now ins_left_leaf and ins_right_leaf on root where").nl;
+    OUT::s("the corresponding subtree is empty.").nl.nl;
+    q := q.ins_left_leaf(2);
+    OUT::s("q:").nl;
+    OUT::s(q.str).nl.nl;
+    q := q.ins_right_leaf(3);
+    OUT::s("q:").nl;
+    OUT::s(q.str).nl.nl;
+    OUT::s("Now ins_left_leaf and ins_right_leaf on root where").nl;
+    OUT::s("the corresponding subtree is not empty.").nl.nl;
+    begin
+      q := q.ins_left_leaf(4);
+      except not_empty_left
+      when EXCEPTION__BINARY_TREE then OUT::s(not_empty_left.str).nl;
+    end;
+    OUT::s("q:").nl;
+    OUT::s(q.str).nl.nl;
+    begin
+      q := q.ins_right_leaf(3);
+      except not_empty_right
+      when EXCEPTION__BINARY_TREE then OUT::s(not_empty_right.str).nl;
+    OUT::s("q:").nl;
+    OUT::s(q.str).nl.nl;
+
+    -- testing ins_left_tree and ins_right_tree
+    q := BINARY_TREE__LINKED(INT)::create;
+    r := BINARY_TREE__LINKED(INT)::create;
+    s := BINARY_TREE__LINKED(INT)::create;
+    q := q.node(1, s);
+    r := r.node(2, s);
+    OUT::s("Testing ins_left_tree and ins_right_tree:").nl.nl;
+    OUT::s("q:").nl;
+    OUT::s(q.str).nl.nl;
+    OUT::s("r:").nl;
+    OUT::s(r.str).nl.nl;
+    q := q.ins_left_leaf(2);
+    OUT::s("Now r will be inserted with ins_left_tree in q").nl.nl;
+    q := q.ins_left_tree(r);
+    OUT::s("q:").nl;
+    OUT::s(q.str).nl.nl;
+    OUT::s("Now a new r will be inserted with ins_right_tree in q").nl.nl;
+    r := BINARY_TREE__LINKED(INT)::create.node(3, s);
+    q := q.ins_right_tree(r);
+    OUT::s("q:").nl;
+    OUT::s(q.str).nl.nl;
+    OUT::s("Now a new r will be inserted with ins_left_tree in q").nl;
+    OUT::s("where the left subtree is not empty").nl.nl;
+    r := BINARY_TREE__LINKED(INT)::create.node(4, s);
+    begin
+      q := q.root.ins_left_tree(r);
+      except not_empty_left
+      when EXCEPTION__BINARY_TREE then OUT::s(not_empty_left.str).nl;
+    end;
+    OUT::s("q:").nl;
+    OUT::s(q.str).nl.nl;
+    OUT::s("Now a new r will be inserted with ins_right_tree in q").nl;
+    OUT::s("where the right subtree is not empty").nl.nl;
+    r := BINARY_TREE__LINKED(INT)::create.node(5, s);
+    begin
+      q := q.root.ins_right_tree(r);
+      except not_empty_right
+      when EXCEPTION__BINARY_TREE then OUT::s(not_empty_right.str).nl;
+    end;
+    OUT::s("q:").nl;
+    OUT::s(q.str).nl.nl;
+
+-- testing delete_right not_empty, exceptions would be tested later
+q_t:$BINARY_TREE_LINKED(INT);
+removed:$BINARY_TREE_LINKED(INT);
+
+q_t:=node(1,nil).ins_left_leaf(2).left.ins_left_leaf(4).left.\
+     ins_left_leaf(6).ins_right_leaf(7).root.\
+     ins_right_leaf(3).right.ins_right_leaf(5).right.\
+     ins_left_leaf(8).ins_right_leaf(9);
+
+-- testing case act_pos is the left son of his father and
+--    at the same time his right son are empty
+   OUT::s("Tree bevor beginning delete_left :").nl;
+   OUT::s(q_t.root.left.str).nl;
+   OUT::s("Tree after delete_left,").nl;
+   OUT::s("the act_pos is moved to father as the right son was empty"); 
+   OUT::s(q_t.delete_left(removed).str).nl;
+   OUT::s("Removed part of tree are now a new object:").nl;
+   OUT::s(removed.str).nl;
+
+
+-- testing case act_pos is the right son of his father and
+--    at the same time his left son are empty
+   OUT::s("Tree bevor beginning delete_right :").nl;
+   OUT::s(q_t.root.right.str).nl;
+   OUT::s("Tree after delete_right,").nl;
+   OUT::s("the act_pos is moved to father as the left son was empty"); 
+   OUT::s(q_t.delete_right(removed).str).nl;
+   OUT::s("Removed part of tree are now a new object:").nl;
+   OUT::s(removed.str).nl;
+
+
+-- testing delete_right not_empty, exceptions would be tested later
+r_t:$BINARY_TREE_LINKED(INT);
+r_t:=node(1,nil).ins_left_leaf(2).left.ins_right_leaf(4).right.\
+     ins_left_leaf(6).ins_right_leaf(7).root.\
+     ins_right_leaf(3).right.ins_left_leaf(5).left.\
+     ins_left_leaf(8).ins_right_leaf(9);
+
+-- testing case act_pos is the left son of his father and
+--    at the same time his left son are empty
+   OUT::s("Tree bevor beginning delete_right :").nl;
+   OUT::s(q_t.root.left.str).nl;
+   OUT::s("Tree after delete_right,").nl;
+   OUT::s("the act_pos is moved to father as the left son was empty"); 
+   OUT::s(q_t.delete_right(removed).str).nl;
+   OUT::s("Removed part of tree are now a new object:").nl;
+   OUT::s(removed.str).nl;
+
+-- testing case act_pos is the right son of his father and
+--    at the same time his right son are empty
+   OUT::s("Tree bevor beginning delete_right :").nl;
+   OUT::s(q_t.root.right.str).nl;
+   OUT::s("Tree after delete_right,").nl;
+   OUT::s("the act_pos is moved to father as the right son was empty"); 
+   OUT::s(q_t.delete_right(removed).str).nl;
+   OUT::s("Removed part of tree are now a new object:").nl;
+   OUT::s(removed.str).nl;
+  end;
+
+
+  -- testing empty
+    OUT::s("The tree is empty, empty is TRUE").nl;
+    b := q.empty;
+    OUT::b(b).nl;
+      
+    q := q.node_right(1);
+    q := q.node_left(2);
+    q := q.father.node_right(3);
+    q := q.node_left(4);
+    q := q.father.node_right(5);
+    OUT::s("The tree q is now not empty, empty is FALSE").nl;
+    b := q.empty;
+    OUT::b(b).nl;
+  
+   -- testing empty_left and empty_right
+    OUT::s("The actual_position in tree q is leaf, empty_left = TRUE").nl;
+    b := q.empty_left;
+    OUT::b(b).nl;
+    OUT::s("                                       empty_right= TRUE").nl;
+    b := q.empty_right;
+    OUT::b(b).nl;
+    
+    OUT::s("The actual_position in tree q has subtrees, at_leaf = FALSE").nl;
+    b := q.father.at_leaf;
+    OUT::b(b).nl;
+
+  
+  -- testing at root
+    OUT::s("The actual_position in tree q has father, at_root = FALSE").nl;
+    b := q.at_root;
+    OUT::b(b).nl;
+  
+  -- testing content 
+    OUT::s("The content at actual position is 5").nl;
+    a := q.content;
+    OUT::i(a).nl;
+    
+  -- testing father
+    OUT::s("The content at father of actual position is 3").nl;
+    a := q.father.content;
+    OUT::i(a).nl;
+
+  -- testing left
+    OUT::s("The content in node in root in left subtree of actual position is 4").nl;
+    a := q.left.content;
+    OUT::i(a).nl;
+  
+  -- testing right
+    OUT::s("The content in node in root in right subtree of actual position is 5").nl;
+    a := q.father.right.content;
+    OUT::i(a).nl;
+
+  -- testing root
+    OUT::s("The content in node at root is 1").nl;
+    a := q.root.content;
+    OUT::i(a).nl;
+  
+  -- testing delete_right_tree
+    OUT::s("The content in node at right subtree is 5 now").nl;
+    a := q.root.right.right.content; 
+    OUT::i(a).nl;      q:= q.father;
+    OUT::s("The right subtree  is empty now (empty_right =TRUE)").nl;
+    b := q.empty_right;
+    OUT::b(b).nl;
+  
+  -- testing delete_left_tree
+    OUT::s("The content in node at left subtree is 4 now").nl;
+    a := q.root.right.left.content; 
+    OUT::i(a).nl;      q:= q.father;
+    OUT::s("The left subtree  is empty now (empty_left =TRUE)").nl;
+    b := q.empty_left;
+    OUT::b(b).nl;
+
+
+  -- testing exceptions in empty tree in empty_right, empty_left, at_leaf, 
+  --			   at_root,content,father,left,right,root
+  --			   delete_right_tree,delete_left_tree
+  --			   delete_right,delete_left
+
+    begin
+    OUT::s("The tree r is empty, empty_left raises an exception").nl;
+    b := r.empty_left;
+    except empty_left_tree
+    when EXCEPTION__BINARY_TREE then  OUT::s(empty_left_tree.str).nl;
+    end;
+   
+    begin 
+    OUT::s("The tree r is empty, empty_right raises an exception").nl;
+    b := r.empty_right;
+    except empty_right_tree
+    when EXCEPTION__BINARY_TREE then  OUT::s(empty_right_tree.str).nl;
+    end;
+ 
+    begin
+    OUT::s("The tree r is empty, at_leaf raises an exception").nl;
+    b := r.at_leaf;
+    except empty_at_leaf
+    when EXCEPTION__BINARY_TREE then  OUT::s(empty_at_leaf.str).nl;
+    end;
+    
+    begin
+    OUT::s("The tree r is empty, at_root raises an exception").nl;
+    b := r.at_root;
+    except empty_at_root
+    when EXCEPTION__BINARY_TREE then  OUT::s(empty_at_root.str).nl;
+    end;
+
+    begin
+    OUT::s("The tree r is empty, content raises an exception").nl;
+    a := r.content;
+    except empty_left_tree
+    when EXCEPTION__BINARY_TREE then  OUT::s(empty_left_tree.str).nl;
+    end;
+
+    begin
+    OUT::s("The tree r is empty, father raises an exception").nl;
+    r := r.father;
+    except empty_left_tree
+    when EXCEPTION__BINARY_TREE then  OUT::s(empty_left_tree.str).nl;
+    end;
+
+    begin
+    OUT::s("The tree r is empty, left raises an exception").nl;
+    r := r.left;
+    except empty_left_tree
+    when EXCEPTION__BINARY_TREE then  OUT::s(empty_left_tree.str).nl;
+    end;
+
+    begin
+    OUT::s("The tree r is empty, right raises an exception").nl;
+    r := r.right;
+    except empty_left_tree
+    when EXCEPTION__BINARY_TREE then  OUT::s(empty_left_tree.str).nl;
+    end;
+
+    begin
+    OUT::s("The tree r is empty, root raises an exception").nl;
+    r := r.root;
+    except empty_left_tree
+    when EXCEPTION__BINARY_TREE then  OUT::s(empty_left_tree.str).nl;
+    end;
+
+    begin
+    OUT::s("The tree r is empty, delete_right, delete_right_tree raises an exception").nl;
+    r := r.delete_right(:s);
+    r := r.delete_right_tree;
+    except empty_right_tree
+    when EXCEPTION__BINARY_TREE then  OUT::s(empty_right_tree.str).nl;
+    end;
+
+    begin
+    OUT::s("The tree r is empty, delete_left, delete_left_tree raises an exception").nl;
+    r := r.delete_left(:s);
+    r := r.delete_left_tree;
+    except empty_left_tree
+    when EXCEPTION__BINARY_TREE then  OUT::s(empty_left_tree.str).nl;
+    end;
+
+  -- testing exceptions in delete_right_tree,delete_left_tree
+  --			   delete_right,delete_left if the
+  --			   according nodes are empty
+    begin
+    OUT::s("The leaf in tree r has no subtrees, delete functions (left,right, right_tree, left_tree) raise an exception").nl;
+    q := q.root.left;
+    q := q.delete_right_tree;
+    q := q.delete_left_tree;
+    q := q.delete_right(:s);
+    q := q.delete_left(:s);
+    except empty_left_tree
+    when EXCEPTION__BINARY_TREE then  OUT::s(empty_left_tree.str).nl;
+    end;
+  end; -- main
+
+  end; -- TEST__BINARY_TREE__LINKED
+
+

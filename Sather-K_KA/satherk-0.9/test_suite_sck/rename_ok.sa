@@ -1,0 +1,29 @@
+--* Last edited: Nov 25 15:25 1993 (holzw)
+--
+-- Testklassen fuer Renaming bei Vererbungen
+--
+
+-- Was passiert bei der Zuweisung der undefinierten Variablen ?
+class T is
+   e: INT is
+      res:= 5;
+   end;
+end;
+
+class TS is
+   include T: e -> neu; -- neues Problem: Dispatch-Fkt muss wissen, ob e ex.
+--   alias neu e;
+--   undefine e;
+end;
+
+class VALUE_TEST is
+
+   main is
+      t1: $T:= T::new;
+      t2: $T:= TS::new;
+      t1:= t2;
+--      OUT::i(t2.e).nl;  -- ????
+      OUT::i(t2.neu).nl;  -- ????
+
+   end;
+end;

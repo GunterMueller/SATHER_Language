@@ -1,0 +1,438 @@
+-- File: bag_list.sa
+-- Author: Wolf Zimmermann
+-- Copyright (C) Universitaet Karlsruhe, 1994
+--
+-- COPYRIGHT NOTICE: This code is provided "AS IS" WITHOUT ANY WARRANTY
+-- and is subject to the terms of the KARLA LIBRARY GENERAL PUBLIC
+-- LICENSE contained in the file: "doc/license.txt" of the 
+-- distribution. 
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FILE: bag_list.sa
+--*
+--* CLASSES: MULTISET__LIST(T) 
+--* 
+--* IMPLEMENTATION OF: MULTISET(T)
+--*
+--* CONFORMS TO: 
+--*
+--* IS A:
+--*
+--* REQUIRED CLASSES: LIST(T) MULTISET(T) LIST__LINKED(T) 
+--*
+--* EXCEPTIONS: EXCEPTION__MULTISET  
+--*
+--* TEST CLASS: TEST__MULTISET__LIST
+--*
+--* FOREIGN FILES:
+--*
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+class MULTISET__LIST(T) is
+   -- * CLASS: MULTISET__LIST(T)
+   -- * DESCRIPTION: class defining multisets based on lists 
+   -- * SUBCLASS OF: 
+   -- * SPECIALIZATION OF: 
+   -- * IMPLEMENTATION OF: MULTISET(T)
+   -- * EXCEPTIONS: EXCEPTION__MULTISET
+   -- * INVARIANT: MULTISET(T)::Inv AND \
+   -- * (l.empty IMPLIES empty) AND \
+   -- * (EXISTS l':$LIST(T): l=l'.ins_frt(t) IMPLIES EXISTS s':$MULTISET(T): self=s'.add(t))
+   -- * REPRESENTATION:
+   -- * COMPLEXITY: \
+   -- * static SIZE = size \
+   -- *                 ##.init.MAXSIZE = 0 AND \
+   -- *                 MAXSIZE = max(choose.SIZE,delete(choose).MAXSIZE) \
+   -- * cumulative SPACE(n) = O(n) \ 
+   -- * additive TIME(n) = O(n^2) 
+   -- * REFERENCES: [Aho, Hopcroft, Ullman: "The Design and Analysis \
+   -- *               of Computer Algorithms", Addison-Wesley, 1974]
+   -- * ATTRIBUTES: size:INT \
+   -- *             l:$LIST(T)
+
+subtype of MULTISET(T);
+
+   l:$LIST(T);
+
+   init:SAME is
+     -- * METHOD: init:SAME
+     -- * DESCRIPTION: initialization
+     -- * PRE: NOT self=void
+     -- * POST: res=self' AND size'=0 AND l'=#LIST__LINKED(T).init
+     -- * COMPLEXITY: \
+     -- * SIZE__init = 0; \
+     -- * SPACE__init = O(1); \
+     -- * TIME__init = O(1);
+     -- * REFERENCES:
+
+     res := self;
+     size := 0;
+     l := #LIST__LINKED(T).init;
+   end;
+
+   add(t: T) : SAME is 
+   -- * METHOD: add(t:T):SAME
+   -- * DESCRIPTION:  method adding t non-idempotent into self
+   -- * PRE: true
+   -- * POST: self'.multiplicity(t) = multiplicity(t) + 1 AND size'=size+1 AND l'=l.ins_frt(t)\
+   -- * AND res=self'
+   -- * COMPLEXITY: \
+   -- * SIZE__add(self.SIZE,t.SIZE) = self.SIZE + 1 \
+   -- * MAXSIZE__add(self.MAXSIZE,t.SIZE) = max(self.MAXSIZE,t.SIZE)\
+   -- * SPACE__add(self.SIZE,t.SIZE) = O(self.SIZE) \
+   -- * TIME__add(self.SIZE,t.SIZE) = O(1)
+   -- * REFERENCES:
+
+      l := l.ins_frt(t);
+      size := size + 1;
+      res := self;
+      
+   end;
+
+   insert(t:T):SAME is
+   -- * METHOD: insert(t:T):SAME
+   -- * DESCRIPTION: abstract method adding t into self idempotent
+   -- * PRE: true
+   -- * POST: res.multiplicity(t) =  1 AND \
+   -- *    (member(t) IMPLIES res.size=size) AND \
+   -- *    (NOT member(t) IMPLIES res.size=size+1) AND \
+   -- * COMPLEXITY:  \
+   -- * SIZE__insert(self.SIZE,t.SIZE) = self.SIZE+1; \
+   -- * MAXSIZE__insert(self.MAXSIZE,t.SIZE) = max(self.MAXSIZE,t.SIZE)\
+   -- * SPACE__insert(self.SIZE,t.SIZE) = O(self.SIZE); \
+   -- * TIME__insert(self.SIZE,t.SIZE) = O(self.SIZE);
+   -- * REFERENCES:
+
+      if member(t) then res := self; else res := add(t); end;
+   end;
+
+   delete(t: T) : SAME is
+   -- * METHOD: delete(t:T):SAME
+   -- * DESCRIPTION:  method deleting t from self
+   -- * PRE: true
+   -- * POST: self'.multiplicity(t) = max(0,multiplicity(t)-1) AND \
+   -- * (member(t) IMPLIES size'=size-1 AND NOT l'.element=t AND l'.add(t)==l) AND \
+   -- * (NOT member(t) IMPLIES l'==l AND l'.at_end)
+   -- * COMPLEXITY: \
+   -- * SIZE__delete(self.SIZE,t.SIZE) = self.SIZE \
+   -- * MAXSIZE__delete(self.MAXSIZE,t.SIZE) = self.MAXSIZE \
+   -- * SPACE__delete(self.SIZE,t.SIZE,self.MAXSIZE) = O(\
+   -- *    max(self.SIZE,T::SPACE__is_equal(self.MAXSIZE,t.SIZE))) \
+   -- * TIME__delete(self.SIZE,t.SIZE,self.MAXSIZE) = O(\
+   -- * |            self.SIZE*T::TIME__is_equal(self.MAXSIZE,t.SIZE))
+   -- * REFERENCES:
+
+      if not self.empty then
+         l := l.pos_begin;
+	 until l.at_end or l.element=t loop
+           l := l.next;
+	 end;
+	 if (l.element = t) then
+	    l := l.delete;
+            size := size - 1;
+	 end;   
+      end; -- if
+      res := self;
+      
+   end;
+
+
+   member(t : T) : BOOL
+   is
+      -- * METHOD: member(t:T):BOOL
+      -- * DESCRIPTION:  predicate check wether t is in self
+      -- * PRE: NOT self =void
+      -- * POST:  res=(multiplicity(t)=0)
+      -- * COMPLEXITY: \
+      -- * SIZE__member(self.SIZE,t.SIZE) = 1 \
+      -- * SPACE__member(self.SIZE,t.SIZE) = O(self.SIZE) \
+      -- * TIME(self.SIZE,t.SIZE,self.MAXSIZE) = O( \
+      -- * | self.SIZE*T::TIME_is_equal(self.MAXSIZE,t.SIZE))
+      -- * REFERENCES:
+
+      res := (multiplicity(t)>0);
+   end; -- member
+   
+
+
+   choose : T
+   is
+      -- * METHOD: choose:T
+      -- * DESCRIPTION:  method for non-deterministic choice of an element in self
+      -- * PRE: NOT empty
+      -- * POST: res = l.first;
+      -- * COMPLEXITY: \
+      -- * SIZE__choose(self.SIZE,self.MAXSIZE)= self.MAXSIZE
+      -- * SPACE__choose(self.SIZE)=O(self.SIZE) \
+      -- * TIME__chooses(self.SIZE)=O(1)
+      -- * REFERENCES:
+
+
+      if self.empty then #EXCEPTION__MULTISET.raise; end;
+      res := l.first;
+
+   end; -- choose
+
+   multiplicity(x:T):INT is
+     -- * METHOD: multiplicity(x:T)
+     -- * DESCRIPTION: computes the multiplicity of x in self
+     -- * PRE: true
+     -- * POST: NOT delete^res.member(x) AND \
+     -- * FORALL k:INT : 0 <= k < res IMPLIES delete^k.member(x) AND self'=self
+     -- * COMPLEXITY: \
+     -- * SIZE__multiplicity(self.SIZE,x.SIZE) = 1; \
+     -- * SPACE__multiplicity(self.SIZE,x.SIZE,self.MAXSIZE) = O(\
+     -- * |    max(self.SIZE,T::SPACE__is_equal(self.MAXSIZE,x.SIZE)); \
+     -- * TIME__multiplicity(self.SIZE,x.SIZE,self.MAXSIZE) = O( \
+     -- * |  self.SIZE*T::TIME_is_equal(self.MAXSIZE,t.SIZE))
+     -- * REFERENCES:
+     
+     res := 0;
+     loop
+       if l.elts!=x then res :=res + 1; end;
+     end;
+   end; -- multiplicity
+
+
+   stream elts:T is
+      -- * METHOD: stream elts:T
+      -- * DESCRIPTION: iterator iterating over all elements of a set
+      -- * PRE: true
+      -- * POST: elts.terminated IFF l.elts.terminated AND  res[i]=l.elts!^i AND \
+      -- *       self'=self
+      -- * COMPLEXITY: \
+      -- * SIZE__elts(self.SIZE) = self.SIZE \
+      -- * SPACE__elts(self.SIZE;k) = O(self.SIZE) \
+      -- * TIME__elts(self.SIZE;k) = O(k)
+      -- * REFERENCES:
+
+      if empty then return; end;
+      loop
+	res := l.elts!;
+	resume;
+      end;
+   end;
+
+
+   str : STR is
+   -- converting a set into a sting
+      x : T;
+      m:$LIST(T) := l;
+      if self.empty then res := "{}";
+      else
+	 res := "{";
+	 m := m.pos_begin;
+	 until m.at_end loop
+            x := m.element;
+	    res := res.s(x.str);
+	    m := m.next;
+	    res := res.s(",");
+	 end; -- loop
+	 x := m.element;
+	 res := res.s(x.str);
+	 res := res.s("}");
+        end; -- if
+     end; -- str
+
+end;
+   
+class TEST__MULTISET__LIST is
+-- * CLASS: TEST__MULTISET__LIST
+-- * DESCRIPTION: 
+-- * SUBCLASS OF: 
+-- * SPECIALIZATION OF: 
+-- * IMPLEMENTATION OF: 
+-- * EXCEPTIONS: 
+-- * INVARIANT: 
+-- * COMPLEXITY: 
+-- * REFERENCES: 
+
+
+  performancetest(n:INT) is
+    s:$MULTISET(INT) := #MULTISET__LIST(INT).init;
+    i:INT;
+    timer:TIMER := #TIMER;
+    timer.reset;
+    timer.go;
+    loop
+      i := 1.upto!(n);
+      s := s.add(i);
+    end;
+    timer.stop;
+    OUT::s(n.str).s(" times add cost time ").s(timer.mean.str).nl.nl;
+    timer.reset;
+    timer.go;
+    loop
+      i:=1.upto!(n);
+      if not(s.member(i)) then break; end;
+    end;
+    timer.stop;
+    OUT::s(n.str).s(" times member cost time ").s(timer.mean.str).nl.nl;
+    if i<n then OUT::s("membership test not succeeded for i=").s(i.str).nl.nl;
+    else OUT::s("membership test succeeded").nl.nl;
+    end;
+    timer.reset;
+    timer.go;
+    loop
+      i:= 1.upto!(n);
+      s := s.delete(i);
+    end;
+    timer.stop;
+    OUT::s(n.str).s(" times delete cost time ").s(timer.mean.str).nl.nl;
+    if s.empty then OUT::s("deletion succeeded").nl.nl;
+    else OUT::s("deletion not succeeded: s=").s(s.str).nl.nl;
+    end;
+  end; -- performancetest
+
+
+  main is
+    s:$MULTISET(INT) := #MULTISET__LIST(INT).init;
+    s1:$MULTISET(INT) := #MULTISET__LIST(INT).init;
+    s2:$MULTISET(INT) := #MULTISET__LIST(INT).init;
+    i,x:INT;
+    OUT::s("s is created: empty set").nl;
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.empty? ").s(s.empty.str).nl.nl;
+    begin
+      x := s.choose;
+    except excptset
+      when EXCEPTION__MULTISET 
+         then ERR::s(excptset.str).nl;
+	      OUT::s("exception test successfull").nl;
+      else OUT::s("exception test not successfull").nl;
+    end;
+    OUT::s("s := s.delete(5)").nl;
+    s := s.delete(5);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.member(5)? ");
+    OUT::s(s.member(5).str).nl.nl;
+    OUT::s("s.multiplicity(5) = ").i(s.multiplicity(5)).nl;
+    OUT::s("s.add(5)").nl;
+    s := s.add(5);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.empty? ").s(s.empty.str).nl.nl;
+    OUT::s("s.add(5)").nl;
+    OUT::s("s.multiplicity(5) = ").i(s.multiplicity(5)).nl;
+    s := s.add(5);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.multiplicity(5) = ").i(s.multiplicity(5)).nl;
+    OUT::s("s.add(10)").nl;
+    s := s.add(10);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.member(5)? ");
+    OUT::s(s.member(5).str).nl.nl;
+    OUT::s("s.member(6)? ");
+    OUT::s(s.member(6).str).nl;
+    OUT::s("s.choose = ").s(s.choose.str).nl.nl;
+    OUT::s("s := s.delete(5)").nl;
+    s := s.delete(5);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.choose = ").s(s.choose.str).nl.nl;
+    OUT::s("s := s.delete(10)").nl;
+    s := s.delete(10);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s := s.delete(5)").nl;
+    s := s.delete(5);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.empty? ").s(s.empty.str).nl.nl;
+    begin
+      x := s.choose;
+    except excptset
+      when EXCEPTION__MULTISET 
+         then ERR::s(excptset.str).nl;
+	      OUT::s("exception test successfull").nl;
+      else OUT::s("exception test not successfull").nl;
+    end;
+    OUT::s("s.add(10)").nl;
+    s := s.add(10);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.empty? ").s(s.empty.str).nl.nl;
+    OUT::s("s.add(5)").nl;
+    s := s.add(5);
+    OUT::s("s = ").s(s.str).nl.nl;
+    s := #MULTISET__LIST(INT).init;
+    OUT::s("s is created: empty set").nl;
+    OUT::s("s = ").s(s.str).nl.nl;
+    loop
+      i := 1.upto!(20);
+      s1 := s1.add(i);
+    end;
+    OUT::s("s1 = ").s(s1.str).nl;
+    loop
+      i := 0.upto!(20);
+      OUT::s("s1.multiplicity(").i(i).s(") = ").i(s1.multiplicity(i)).nl;
+    end;
+    OUT::s("Testing stream elts").nl;
+    loop
+      OUT::s(s1.elts!.str).s(" ");
+    end;
+    OUT::nl;
+    OUT::s("s1 = ").s(s1.str).nl;
+    OUT::s("s2 = ").s(s2.str).nl;
+    OUT::s("s1.disjoint_union(s2) = ").s(s1.disjoint_union(s2).str).nl;
+    OUT::s("s1.union(s2) = ").s(s1.union(s2).str).nl;
+    OUT::s("s1.intersect(s2) = ").s(s1.intersect(s2).str).nl;
+    OUT::s("s1.diff(s2) = ").s(s1.diff(s2).str).nl;
+    OUT::s("s1.subset(s2) = ").s(s1.subset(s2).str).nl;
+    OUT::s("s2.subset(s1) = ").s(s2.subset(s1).str).nl;
+
+    loop
+      i := 1.upto!(20);
+      s2 := s2.add(i);
+      if i.mod(2)=0 then s2 := s2.add(i); end;
+      if i.mod(3)=0 then s2 := s2.add(i); end;
+      if i.mod(4)=0 then s2 := s2.add(i); end;
+    end;
+    OUT::s("s2 = ").s(s2.str).nl;
+    loop
+      i := 0.upto!(20);
+      OUT::s("s2.multiplicity(").i(i).s(") = ").i(s2.multiplicity(i)).nl;
+    end;
+    OUT::s("Testing stream elts").nl;
+    loop
+      OUT::s(s2.elts!.str).s(" ");
+    end;
+    OUT::nl;
+    OUT::s("s1 = ").s(s1.str).nl;
+    OUT::s("s2 = ").s(s2.str).nl;
+    OUT::s("s1.disjoint_union(s2) = ").s(s1.disjoint_union(s2).str).nl;
+    OUT::s("s1.union(s2) = ").s(s1.union(s2).str).nl;
+    OUT::s("s1.intersect(s2) = ").s(s1.intersect(s2).str).nl;
+    OUT::s("s1.diff(s2) = ").s(s1.diff(s2).str).nl;
+    OUT::s("s1.subset(s2) = ").s(s1.subset(s2).str).nl;
+    OUT::s("s2.subset(s1) = ").s(s2.subset(s1).str).nl;
+
+    s2 := #MULTISET__LIST(INT).init;
+    loop
+      i := 1.upto!(10);
+      s2 := s2.add(i);
+      if i.mod(2)=0 then s2 := s2.add(i); end;
+      if i.mod(3)=0 then s2 := s2.add(i); end;
+      if i.mod(4)=0 then s2 := s2.add(i); end;
+    end;
+    OUT::s("s2 = ").s(s2.str).nl;
+    loop
+      i := 0.upto!(20);
+      OUT::s("s2.multiplicity(").i(i).s(") = ").i(s2.multiplicity(i)).nl;
+    end;
+    OUT::s("Testing stream elts").nl;
+    loop
+      OUT::s(s2.elts!.str).s(" ");
+    end;
+    OUT::nl;
+    OUT::s("s1 = ").s(s1.str).nl;
+    OUT::s("s2 = ").s(s2.str).nl;
+    OUT::s("s1.disjoint_union(s2) = ").s(s1.disjoint_union(s2).str).nl;
+    OUT::s("s1.union(s2) = ").s(s1.union(s2).str).nl;
+    OUT::s("s1.intersect(s2) = ").s(s1.intersect(s2).str).nl;
+    OUT::s("s1.diff(s2) = ").s(s1.diff(s2).str).nl;
+    OUT::s("s1.subset(s2) = ").s(s1.subset(s2).str).nl;
+    OUT::s("s2.subset(s1) = ").s(s2.subset(s1).str).nl;
+
+  end; -- main
+
+end; -- TEST__MULTISET__LIST
+
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+

@@ -1,0 +1,123 @@
+-- -*- Mode: Sather; -*-
+-- Author: group:algprak0 : Speise, Nguyen, Tri
+--         Wolf Zimmermann (zimmer@ira.uka.de)
+--
+-- Copyright (C) Universitaet Karlsruhe, 1994
+--
+-- COPYRIGHT NOTICE:
+-- LICENSE
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FILE: pc_resolutions.sa
+--*
+--* CLASSES: PARTIAL_LINEAR_PROBING(K,T1,T<PARTIAL(K,T)) PARTIAL_QUADRATIC_PROBING(K,T1,T<PARTIAL(K,T))
+--*
+--* IMPLEMENTATION OF: PARTIAL_COLLISION(K,T1,T)
+--*
+--* CONFORMS TO:
+--*
+--* IS A:
+--*
+--* REQUIRED CLASSES: PARTIAL_COLLISION(K,T1,T) PARTIAL(K,T) LINEAR_PROBING(K)\
+--* QUADRATIC_PROBING(K)
+--*
+--* EXCEPTIONS:
+--*
+--* TEST CLASS: 
+--*
+--* FOREIGN FILES:
+--*
+-- RCS: $ld$
+-- HISTORY: $Log$
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   
+
+class PARTIAL_LINEAR_PROBING(K,T1,T<PARTIAL(K,T1)) is
+
+-- * CLASS: PARTIAL_LINEAR_PROBING(K,T)
+-- * DESCRIPTION: defines linear probing based on K for partial data structures
+-- * SUBCLASS OF: 
+-- * SPECIALIZATION OF: 
+-- * IMPLEMENTATION OF: PARTIAL_COLLISION(K,T1,T)
+-- * EXCEPTIONS:
+-- * INVARIANT:
+-- * REPRESENTATION:
+-- * COMPLEXITY: 
+-- * REFERENCES:
+-- * ATTRIBUTES: readonly tab_size:INT;
+   
+subtype of PARTIAL_COLLISION(K,T1,T);
+include LINEAR_PROBING(K)::init,h -> h_key;
+
+-- * METHOD: init(size:INT):SAME
+-- * DESCRIPTION: define number of elements for hash table \
+-- * to be used in BOUNDED_SET. For any bounded set s size must be \
+-- * instantiated with max_size
+-- * PRE:true
+-- * POST:tab_size = size
+-- * COMPLEXITY: O(size)
+-- * REFERENCES:
+
+-- * METHOD: h(i:INT; x:T):INT
+-- * DESCRIPTION: returns key to insert after collision
+-- * PRE: true
+-- * POST: res=h_key(i,x.key)
+-- * COMPLEXITY: O(1)
+-- * REFERENCES:
+
+
+-- * METHOD: h_key(i:INT; x:K): INT
+-- * DESCRIPTION: define step for moving by collision-occurs
+-- * PRE:true
+-- * POST: h(i,x) = i
+-- * COMPLEXITY: O(1)
+-- * REFERENCES:
+
+end;-- * PARTIAL_LINEAR_PROBING(K,T) 
+
+   
+   
+
+class PARTIAL_QUADRATIC_PROBING(K,T1,T<PARTIAL(K,T1)) is
+
+-- * CLASS: PARTIAL_QUADRATIC_PROBING(K,T)
+-- * DESCRIPTION: defines quadratic probing based on K for partial data structures
+-- * SUBCLASS OF: 
+-- * SPECIALIZATION OF: 
+-- * IMPLEMENTATION OF: PARTIAL_COLLISION(K,T1,T)
+-- * EXCEPTIONS:
+-- * INVARIANT:
+-- * REPRESENTATION:
+-- * COMPLEXITY: 
+-- * REFERENCES:
+-- * ATTRIBUTES: readonly tab_size:INT;
+   
+subtype of PARTIAL_COLLISION(K,T1,T);
+include QUADRATIC_PROBING(K)::init,h -> h_key;
+
+-- * METHOD: init(size:INT):SAME
+-- * DESCRIPTION: define number of elements for hash table \
+-- * to be used in BOUNDED_SET. For any bounded set s size must be \
+-- * instantiated with 2*max_size
+-- * PRE:true
+-- * POST:tab_size = 2*size
+-- * COMPLEXITY: O(size)
+-- * REFERENCES:
+
+-- * METHOD: h(i:INT; x:T):INT
+-- * DESCRIPTION: returns key to insert after collision
+-- * PRE: true
+-- * POST: res=h_key(i,x.key)
+-- * COMPLEXITY: O(1)
+-- * REFERENCES:
+
+-- * METHOD: h_key(i:INT; x:K): INT
+-- * DESCRIPTION: define step for moving by collision-occurs
+-- * PRE:true
+-- * POST: h(i,x) = i*i
+-- * COMPLEXITY: O(1)
+-- * REFERENCES:
+ 
+
+end;-- * PARTIAL_QUADRATIC_PROBING(K,T) 
+
+   

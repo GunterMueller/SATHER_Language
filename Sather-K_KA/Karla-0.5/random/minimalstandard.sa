@@ -1,0 +1,277 @@
+-- -*- Mode: Sather;  -*-
+-- FILE: minimalstandard.sa
+-- AUTHOR: Wolf Zimmermann (zimmer@ira.uka.de)
+-- DATE:
+--
+-- Copyright (C) Universitaet Karlsruhe, 1994
+--
+--*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FILE: minimalstandard.sa
+--*
+--* CLASSES: RANDOM_GENERATOR_32__MINIMAL_STANDARD EXCEPTION__RANDOM_GENERATOR_32__MINIMAL_STANDARD
+--*
+--* IMPLEMENTATION OF: RANDOM_GENERATOR_32
+--* 
+--* CONFORMS TO:
+--*
+--* IS A:
+--*
+--* REQUIRED CLASSES: RANDOM_GENERATOR_32 EXCEPTION__RANDOM_GENERATOR_32_LOWER \
+--* EXCEPTION__RANDOM_GENERATOR_32_TOO_BIG EXCEPTION__RANDOM_GENERATOR_32__MINIMAL_STANDARD TIME
+--*
+--* EXCEPTIONS: EXCEPTION__RANDOM_GENERATOR_32_LOWER \
+--* EXCEPTION__RANDOM_GENERATOR_32_TOO_BIG \
+--* EXCEPTION__RANDOM_GENERATOR_32__MINIMAL_STANDARD
+--*
+--* TEST CLASS: TEST__RANDOM_GENERATOR_32__MINIMAL_STANDARD
+--*
+--* FOREIGN FILES:
+--*
+--*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-- RCS: $Id$
+-- HISTORY: $Log$
+
+class RANDOM_GENERATOR_32__MINIMAL_STANDARD is
+   -- * CLASS: RANDOM_GENERATOR_32__MINIMAL_STANDARD
+   -- * DESCRIPTION: Implementation of a random number generator based on \
+   -- *              32-Bit integers according the minimal standard [PM88] \
+   -- *              Random numbers are in a specified range. The generator is a \
+   -- *              linear congruence generator
+   -- * SUBCLASS OF:
+   -- * SPECIALIZATION OF:
+   -- * IMPLEMENTATION OF: RANDOM_GENERATOR_32
+   -- * EXCEPTIONS: EXCEPTION__RANDOM_GENERATOR_32 \
+   -- * EXCEPTION__RANDOM_GENERATOR_32__MINIMAL_STANDARD
+   -- * EXCEPTION__RANDOM_GENERATOR_32_LOWER \
+   -- * EXCEPTION__RANDOM_GENERATOR_32_TOO_BIG
+   -- * INVARIANT: lower<=self.random<=upper AND\
+   -- *            RANDOM_GENERATOR_32::create(l,u).lower = l AND\
+   -- *            RANDOM_GENERATOR_32::create(l,u).upper = u AND\
+   -- *            -2^31 <= lower,upper <= 2^31-1 AND\
+   -- *            seed >= 0 AND upper-lower+1 < 2^31-1
+   -- * REPRESENTATION:
+   -- * COMPLEXITY: O(n)
+   -- * REFERENCES: [PM88] S. K. Park and K. W. Miller: Random Number Generators: Good Ones are\
+   -- *   Hard to Find, Communications of the ACM 31(10), pp. 1192 - 1201, 1988
+   -- * ATTRIBUTES: readonly lower,upper:INT; -- range of the random numbers \
+   -- * private seed:INT -- last value of rand
+   -- * private const modulus:INT := 2147483647 \
+   -- * private const a:INT := 16807 \
+   -- * private const moddiva : INT := 127773 -- floor(modulus/a) \
+   -- * private const modmoda : INT := 2836   -- modulus mod a
+
+   subtype of RANDOM_GENERATOR_32:init -> _init;
+
+   private seed:INT;
+   private const modulus:INT := 2147483647;
+   private const a:INT := 16807;
+   private const moddiva : INT := 127773; -- floor(modulus/a);
+   private const modmoda : INT := 2836;   -- modulus mod a
+
+   init(l,u:INT):SAME is
+    -- * METHOD: init(l,u:INT):SAME
+    -- * DESCRIPTION: initializes random number generator such that l is the \
+    -- * lowest and u is the largest number to be generated
+    -- * PRE: -2^31 <= l <= u < 2^31-1
+    -- * POST: res.lower = l AND res.upper = u  AND seed>=0 AND self'=res
+    -- * COMPLEXITY: O(1)
+    -- * REFERENCES:
+
+      res := self._init(l,u);
+      seed := rand_seed.seed;
+   end;
+
+
+   private rand:INT is 
+     -- * METHOD: private rand:INT
+     -- * DESCRIPTION: random number between 0 and 2^31-1
+     -- * PRE: true
+     -- * POST: res = (a*seed) mod modulus AND seed' = res
+     -- * COMPLEXITY: O(1)
+     -- * REFERENCES: [PM88] S. K. Park and K. W. Miller: Random Number Generators: Good\
+     -- * Ones are Hard to Find, Communications of the ACM 31(10), pp. 1192 - 1201, 1988
+
+     q:INT := seed/moddiva;
+     r:INT := seed.mod(moddiva);
+     seed := a*r - modmoda * q;
+     if seed < 0 then seed := seed + modulus; end;
+     res := seed;
+   end; -- rand
+
+
+   define_seed(val:INT):SAME is
+   -- * METHOD: define_seed(val:INT):SAME
+   -- * DESCRIPTION: sets seed to value val
+   -- * PRE: val >=0
+   -- * POST: res.seed = val
+   -- * COMPLEXITY: O(1)
+   -- * REFERENCES:
+
+     if val <= 0 
+     then #EXCEPTION__RANDOM_GENERATOR_32__MINIMAL_STANDARD.raise;
+     else
+       res := self;
+       res.seed := val;
+     end; -- if
+   end; -- define_seed;
+
+
+
+   rand_seed:SAME is
+   -- * METHOD: rand_seed:SAME
+   -- * DESCRIPTION: sets seed to random value obtained by the system time
+   -- * PRE:true;
+   -- * POST: res.seed = (TIME::time*1000).mod(1000000.).to_i
+   -- * COMPLEXITY: O(1)
+   -- * REFERENCES:
+
+
+     res := self;
+     res.seed := (TIME::time*1000).mod(1000000.).to_i;
+   end; -- rand_seed
+
+   random:INT is
+   -- * METHOD: random:INT
+   -- * DESCRIPTION: yields a random number in specified range
+   -- * PRE: true
+   -- * POST: lower<=res<=upper AND seed' = rand
+   -- * COMPLEXITY: O(1)
+   -- * REFERENCES:
+
+     seed := rand;
+     res := seed.mod(upper-lower+1)+lower;
+   end;
+
+end; --MINIMAL_STANDARD_32
+
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+class EXCEPTION__RANDOM_GENERATOR_32__MINIMAL_STANDARD is
+  -- * CLASS: EXCEPTION__RANDOM_GENERATOR_32__MINIMAL_STANDARD
+  -- * DESCRIPTION: exception of RANDOM_GENERATOR_32__MINIMAL_STANDARD: 
+  -- * define_seed(val) with val<0
+  -- *
+  -- * SUBCLASS OF:
+  -- * SPECIALIZATION OF:
+  -- * IMPLEMENTATION OF:
+  -- * EXCEPTIONS:
+  -- * INVARIANT:
+  -- * REPRESENTATION:
+  -- * COMPLEXITY:
+  -- * REFERENCES:
+  -- * ATTRIBUTES: name:STR -- error message
+  subtype of EXCEPTION_USER;
+  name:STR := "WARNING: RANDOM_GENERATOR_32__MINIMAL_STANDARD::define_seed(val):val<0";
+
+end;
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+class TEST__RANDOM_GENERATOR_32__MINIMAL_STANDARD is
+   main is
+    num:INT;
+    num1:INT;
+    die : $RANDOM_GENERATOR_32 := #RANDOM_GENERATOR_32__MINIMAL_STANDARD.init(1,6);
+    OUT::s("Time = ");
+    OUT::d(TIME::time).nl;
+    die2 : RANDOM_GENERATOR_32__MINIMAL_STANDARD := #RANDOM_GENERATOR_32__MINIMAL_STANDARD.init(1,6);
+    die2 := die2.rand_seed;
+    i : INT := 1;
+    until i=30 loop
+      num := die.random; 
+      OUT::s("i = ").s(i.str).s(" random number = ").s(num.str).nl;
+      i := i+1;
+    end; -- loop
+    OUT::s("set seed to 1:").nl;
+    die1 : RANDOM_GENERATOR_32__MINIMAL_STANDARD := #RANDOM_GENERATOR_32__MINIMAL_STANDARD.init(1,6);
+    die1 := die1.define_seed(1);
+    i := 1;
+    until i=30 loop
+      num := die1.random; 
+      OUT::s("i = ").s(i.str).s(" random number = ").s(num.str).nl;
+      i := i+1;
+    end; -- loop
+    OUT::s("two random number generators with random seeds").nl;
+    OUT::s("Time = ").d(TIME::time).nl;
+    die3 : RANDOM_GENERATOR_32__MINIMAL_STANDARD :=  #RANDOM_GENERATOR_32__MINIMAL_STANDARD.init(1,6);
+    die3 := die3.rand_seed;
+    i := 1;
+    until i=30 loop
+      num := die2.random; 
+      num1 := die3.random; 
+      OUT::s("i = ").s(i.str).s(" First Random Number = ").s(num.str).s(" Second Random Number = ").s(num1.str).nl;
+      i := i+1;
+    end; -- loop
+    OUT::s("test the exception lower > upper").nl;
+    begin 
+      die := #RANDOM_GENERATOR_32__MINIMAL_STANDARD.init(1,0);
+    except error
+    when EXCEPTION__RANDOM_GENERATOR_32_LOWER then 
+      ERR::s(error.str).nl;
+      OUT::s("exception test EXCEPTION__RANDOM_GENERATOR_32_LOWER successfull").nl;
+    else OUT::s("exception test EXCEPTION__RANDOM_GENERATOR_32_LOWER not successfull").nl;
+    end; -- begin;
+    OUT::s("test the exception range too large (lower=-1,upper=2147483647)").nl;
+    begin 
+       die := #RANDOM_GENERATOR_32__MINIMAL_STANDARD.init(-1,2147483647);
+    except error
+    when EXCEPTION__RANDOM_GENERATOR_32_TOO_BIG then 
+      ERR::s(error.str).nl;
+      OUT::s("exception test EXCEPTION__RANDOM_GENERATOR_32_TOO_BIG successfull").nl;
+    else OUT::s("exception test EXCEPTION__RANDOM_GENERATOR_32_TOO_BIG not successfull").nl;
+    end; -- begin;
+    OUT::s("test the exception range too large (lower=0,upper=2147483647)").nl;
+    begin 
+      die := #RANDOM_GENERATOR_32__MINIMAL_STANDARD.init(0,2147483647);
+    except error
+    when EXCEPTION__RANDOM_GENERATOR_32_TOO_BIG then 
+      ERR::s(error.str).nl;
+      OUT::s("exception test EXCEPTION__RANDOM_GENERATOR_32_TOO_BIG successfull").nl;
+    else OUT::s("exception test EXCEPTION__RANDOM_GENERATOR_32_TOO_BIG not successfull").nl;
+    end; -- begin;
+    OUT::s("test the exception range too large (lower=1,upper=2147483647)").nl;
+    begin 
+      die := #RANDOM_GENERATOR_32__MINIMAL_STANDARD.init(1,2147483647);
+    except error
+    when EXCEPTION__RANDOM_GENERATOR_32_TOO_BIG then 
+      ERR::s(error.str).nl;
+      OUT::s("exception test EXCEPTION__RANDOM_GENERATOR_32_TOO_BIG successfull").nl;
+    else OUT::s("exception test EXCEPTION__RANDOM_GENERATOR_32_TOO_BIG not successfull").nl;
+    end; -- begin;
+    OUT::s("test the exception range too large (lower=-2147483648,upper=2147483647)").nl;
+    begin 
+      die := #RANDOM_GENERATOR_32__MINIMAL_STANDARD.init(-2147483648,2147483647);
+    except error
+    when EXCEPTION__RANDOM_GENERATOR_32_TOO_BIG then
+      ERR::s(error.str).nl;
+      OUT::s("exception test EXCEPTION__RANDOM_GENERATOR_32_TOO_BIG successfull").nl;
+    else OUT::s("exception test EXCEPTION__RANDOM_GENERATOR_32_TOO_BIG not successfull").nl;
+    end; -- begin;
+    OUT::s("test the exception range too large (lower=-2147483647,upper=0)").nl;
+    begin 
+      die := #RANDOM_GENERATOR_32__MINIMAL_STANDARD.init(-2147483647,0);
+    except error
+    when EXCEPTION__RANDOM_GENERATOR_32_TOO_BIG then
+      ERR::s(error.str).nl;
+      OUT::s("exception test EXCEPTION__RANDOM_GENERATOR_32_TOO_BIG successfull").nl;
+    else OUT::s("exception test EXCEPTION__RANDOM_GENERATOR_32_TOO_BIG not successfull").nl;
+    end; -- begin;
+    OUT::s("test the exception range too large (lower=-2147483645,upper=0 => NO EXCEPTION)").nl;
+    begin 
+      die := #RANDOM_GENERATOR_32__MINIMAL_STANDARD.init(-2147483645,0);
+    except error
+    when EXCEPTION__RANDOM_GENERATOR_32_TOO_BIG then
+      ERR::s(error.str).nl;
+      OUT::s("exception test EXCEPTION__RANDOM_GENERATOR_32_TOO_BIG not successfull").nl;
+    else OUT::s("exception test EXCEPTION__RANDOM_GENERATOR_32_TOO_BIG  successfull").nl;
+    end; -- begin;
+    OUT::s("test the exception negative seed").nl;
+    begin 
+      die1  := die1.define_seed(-1);
+    except error
+    when EXCEPTION__RANDOM_GENERATOR_32__MINIMAL_STANDARD then 
+      ERR::s(error.str).nl;
+      OUT::s("exception test EXCEPTION__RANDOM_GENERATOR_32_MINIMAL_STANDARD successfull").nl;
+    else OUT::s("exception test EXCEPTION__RANDOM_GENERATOR_32_MINIMAL_STANDARD not successfull").nl;
+    end; -- begin;
+  end; -- main
+end; -- TEST_MINIMAL_STANDARD

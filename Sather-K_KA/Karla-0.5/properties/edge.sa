@@ -1,0 +1,51 @@
+-- -*- Mode: Sather;  -*-
+-- File: vertex.sa
+-- Author: Wolf Zimmermann(zimmer@ira.uka.de)
+-- Copyright (C) Universitaet Karlsruhe, 1994
+--
+-- COPYRIGHT NOTICE: This code is provided "AS IS" WITHOUT ANY WARRANTY
+-- and is subject to the terms of the KARLA LIBRARY GENERAL PUBLIC
+-- LICENSE contained in the file: "doc/license.txt" of the 
+-- distribution. 
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FILE: vertex.sa
+--*
+--* CLASSES: EDGETYPE(T1,VERTEX<VERTEXTYPE(T1),T2)
+--* 
+--* IMPLEMENTATION OF: 
+--*
+--* CONFORMS TO: 
+--*
+--* IS A: 
+--*
+--* REQUIRED CLASSES: VERTEXTYPE(T)
+--*
+--* EXCEPTIONS: 
+--*
+--* TEST CLASS: 
+--*
+--* FOREIGN FILES:
+--*
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--
+-- RCS: $Id$
+-- HISTORY: $Log$
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+abstract class EDGETYPE(T1,VERTEX<VERTEXTYPE(T1),T2) is
+  -- * CLASS:  EDGETYPE(T1,VERTEX<VERTEXTYPE(T1),T2)
+  -- * DESCRIPTION: property class for edges required by graphs
+  -- * SUBCLASS OF: 
+  -- * SPECIALIZATION OF:
+  -- * IMPLEMENTATION OF:
+  -- * EXCEPTIONS:
+  -- * INVARIANT:
+  -- * REPRESENTATION:
+  -- * COMPLEXITY:
+  -- * REFERENCES:
+  -- * ATTRIBUTES:
+  
+  fst:VERTEX;
+  snd:VERTEX;
+  val:T2;
+end;

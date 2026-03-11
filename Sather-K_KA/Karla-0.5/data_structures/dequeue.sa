@@ -1,0 +1,189 @@
+-- Author: Wolf Zimmermann
+-- Copyright (C) Universitaet Karlsruhe, 1994
+--
+-- COPYRIGHT NOTICE: This code is provided "AS IS" WITHOUT ANY WARRANTY
+-- and is subject to the terms of the KARLA LIBRARY GENERAL PUBLIC
+-- LICENSE contained in the file: "doc/license.txt" of the 
+-- distribution. 
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FILE: dequeue.sa
+--*
+--* CLASSES: DEQUEUE(T) EXCEPTION__DEQUEUE__EMPTY
+--* 
+--* IMPLEMENTATION OF:
+--*
+--* CONFORMS TO: STACK(T) QUEUE(T)
+--*
+--* IS A:
+--*
+--* REQUIRED CLASSES: QUEUE(T) STACK(T) EXCEPTION__QUEUE_EMPTY \
+--* EXCEPTION__STACK__EMPTY
+--*
+--* EXCEPTIONS: EXCEPTION__DEQUEUE__EMPTY EXCEPTION__QUEUE_EMPTY \
+--* EXCEPTION__STACK__EMPTY
+--*
+--* TEST CLASS: TEST__DEQUEUE
+--*
+--* FOREIGN FILES:
+--*
+--  RCS: $Id$
+--  HISTORY: $Log$
+--  Last edited: Mar 8 1994 (Wolf Zimmermann)
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+abstract class DEQUEUE(T) is
+-- * CLASS: DEQUEUE(T)
+-- * DESCRIPTION: standard abstract data type dequeue, enqueue and dequeue on both \
+-- *     ends of the structure
+-- * SUBCLASS OF: QUEUE(T) STACK(T)
+-- * SPECIALIZATION OF:
+-- * IMPLEMENTATION OF:
+-- * EXCEPTIONS: EXCEPTION__DEQUEUE__EMPTY EXCEPTION__QUEUE_EMPTY \
+-- * EXCEPTION__STACK__EMPTY
+-- * INVARIANT: STACK::Inv AND QUEUE::Inv AND FORALL a:T: \
+-- *      enqr(a).empty =false AND \
+-- *      enql(a).empty = false AND \
+-- *      (empty IMPLIES enql(a)=enqr(a)) AND \
+-- *      enql(a).enqr(b) = enqr(b).enql(a) AND \
+-- *      enql(a).frontl = a AND \
+-- *      empty IMPLIES enqr(a).frontr = a AND \
+-- *      (EXISTS q: DEQUEUE(T), a.b: T :self == q.enql(a).enql(b) IMPLIES \
+-- *                                   frontr = q.enql(a).frontr)        AND \
+-- *      (empty IMPLIES frontl = error) AND \
+-- *      (empty IMPLIES frontr = error) AND \
+-- *      enql(a).deql = self AND \
+-- *      (empty IMPLIES enqr(a).deqr == ##.init) AND \
+-- *      (EXISTS q: DEQUEUE(T), a.b: T :self == q.enql(a).enql(b) IMPLIES \
+-- *                                   deqr == q.enql(a).deqr.enql(b)) AND\
+-- *      (empty IMPLIES deql = error) AND \
+-- *      (empty IMPLIES deqr = error)
+-- * REPRESENTATION:
+-- * COMPLEXITY:\
+-- * static      SIZE = 0             IF empty \
+-- * |                = 1 + dequeue.SIZE  OTHERWISE \
+-- * static      MAXSIZE = 0                         IF empty \
+-- * |                   = max(front.SIZE,dequeue.MAXSIZE  OTHERWISE
+-- * REFERENCES: 
+-- * ATTRIBUTES: 
+
+   subtype of STACK(T); 
+   subtype of QUEUE(T);
+
+   enql(a:T):SAME is
+   -- * METHOD: enql(a:T):SAME
+   -- * DESCRIPTION: abstract constructor method inserting a into a dequeue on the left
+   -- * PRE: NOT self=void
+   -- * POST: res.deql == self AND res.frontl=a
+   -- * COMPLEXITY: \
+   -- *   SIZE__enql(self.SIZE,a.SIZE)=SIZE__enqueue(self.SIZE,a.SIZE) \
+   -- *   MAXSIZE__enql(self.MAXSIZE,a.SIZE)=MAXSIZE__enqueue(self.MAXSIZE,a.SIZE) \
+   -- *   SPACE__enql(self.SIZE,a.SIZE)=O(SPACE__enqueue(self.SIZE,a.SIZE)) \
+   -- *   TIME__enql(self.SIZE,a.SIZE)=O(TIME__enqueue(self.SIZE,a.SIZE)) 
+   -- * REFERENCES:
+
+      res := enqueue(a);
+   end;
+
+   enqr(a:T):SAME is
+   -- * METHOD: enqr(a:T):SAME
+   -- * DESCRIPTION: abstract constructor method inserting a into a dequeue on the right
+   -- * PRE: NOT self=void
+   -- * POST: res.deqr == self AND res.frontr=a
+   -- * COMPLEXITY: \
+   -- * SIZE__enql(self.SIZE,a.SIZE) = self.SIZE + 1 \
+   -- * MAXSIZE__enql(self.MAXSIZE,a.SIZE) = max(self.MAXSIZE,a.SIZE)
+   -- * REFERENCES:
+
+      deferred;
+   end;
+
+   deql:SAME  is
+   -- * METHOD: deql:SAME
+   -- * DESCRIPTION: abstract method deleting the element on the left
+   -- * PRE: NOT self = void AND NOT self.empty
+   -- * POST: self == res.enql(self.frontl)
+   -- * COMPLEXITY: \
+   -- * SIZE__deql(self.SIZE,a.SIZE) = self.SIZE-1 \
+   -- * MAXSIZE__deql(self.MAXSIZE,a.SIZE) = max(self.MAXSIZE,a.SIZE)
+   -- * REFERENCES:
+
+     deferred; 
+   end;
+
+   deqr:SAME  is
+   -- * METHOD: deqr:SAME
+   -- * DESCRIPTION: abstract method deleting the element on the right
+   -- * PRE: NOT self = void AND NOT self.empty
+   -- * POST: self == res.enqr(self.frontr)
+   -- * COMPLEXITY: \
+   -- *   SIZE__deqr(self.SIZE) = SIZE__dequeue(self.SIZE) \
+   -- *   MAXSIZE__deqr(self.MAXSIZE) = MAXSIZE__dequeue(self.MAXSIZE) \
+   -- *   SPACE__deqr(self.SIZE) = O(SPACE__dequeue(self.SIZE)) \
+   -- *   TIME__deqr(self.SIZE) = O(TIME__dequeue(self.SIZE)) 
+   -- * REFERENCES:
+
+      res := dequeue;
+   end;
+
+   frontl:T is
+   -- * METHOD: frontl:T
+   -- * DESCRIPTION: abstract method returning the first inserted element
+   -- * PRE: NOT self = void AND NOT self.empty
+   -- * POST: EXISTS d:DEQUEUE(T),a:T: self==d.enql(a) AND res=a
+   -- * COMPLEXITY: \
+   -- * SIZE__frontr(self.SIZE,self.MAXSIZE) = self.MAXSIZE
+   -- * REFERENCES:
+
+      deferred;
+   end;
+
+   frontr:T is
+   -- * METHOD: frontr:T
+   -- * DESCRIPTION: abstract method returning the first inserted element
+   -- * PRE: NOT self = void AND NOT self.empty
+   -- * POST: EXISTS d:DEQUEUE(T),a:T: self==d.enqr(a) AND res=a
+   -- * COMPLEXITY:
+   -- *   SIZE__frontr(self.SIZE) = SIZE__front(self.SIZE) \
+   -- *   MAXSIZE__frontr(self.SIZE,self.MAXSIZE) = SIZE__front(self.SIZE,self.MAXSIZE) \
+   -- *   SPACE__frontr(self.SIZE) = O(SPACE__front(self.SIZE)) \
+   -- *   TIME__frontr(self.SIZE) = O(TIME__front(self.SIZE)) 
+   -- * REFERENCES:
+
+      res := front;
+   end;
+
+   str:STR is
+      deferred;
+   end;
+
+   
+end; -- class DEQUEUE
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+class EXCEPTION__DEQUEUE__EMPTY is 
+  -- * CLASS: EXCEPTION__DEQUEUE__EMPTY
+  -- * DESCRIPTION: exceptions of DEQUEUE \
+  -- * deql, deqr, frontl, frontr on empty dequeue
+  -- * SUBCLASS OF:
+  -- * SPECIALIZATION OF:
+  -- * IMPLEMENTATION OF:
+  -- * EXCEPTIONS:
+  -- * INVARIANT:
+  -- * REPRESENTATION:
+  -- * COMPLEXITY:
+  -- * REFERENCES:
+  -- * ATTRIBUTES: name:STR -- error message
+  
+   subtype of EXCEPTION_USER;
+   const name :STR:= "ERROR: deql/deqr/frontl/frontr operation on empty dequeue";
+
+end;
+
+
+class TEST__DEQUEUE is
+   main is
+      q:$DEQUEUE(INT) := #DEQUEUE(INT).init;
+      ERR::s("creation of abstract class succeeded").nl;
+   end;
+end;

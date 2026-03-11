@@ -1,0 +1,179 @@
+#!/bin/sh
+#  File: mksmf
+#  Author: Martin Trapp (trapp@karlsruhe.gmd.de)
+#  Copyright (C) Reiner Mauch & Martin Trapp
+#  Copyright (C) Universitaet Karlsruhe, Germany, 1992
+# 
+# 
+#  COPYRIGHT NOTICE: This code is provided "AS IS" WITHOUT ANY WARRANTY
+#  and is subject to the terms of the GENERAL PUBLIC LICENSE contained in
+#  the file: "doc/license.txt" of this distribution.
+#  The license is also available from University at Karlsruhe,
+#  Vincenz-Priessnitzstr.1, W-7500 Karlsruhe 1, Germany.
+# *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# * HISTORY:
+# * Nov 12 15.25 1993 (holzw): changes for Sather K
+#*  Jan 11 16:54 1993 (mauch): changed pathes to SATHER_HOME
+# * Created: Sun Dec 13 20:06:33 1992 (trapp)
+# *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# /** Project: mksckmf (MaKe Sather C.K  MakeFile)
+#  **
+#  ** Description: mksckmf
+#  **              create Makefiles suitable for the sather compiler sck
+#  **
+#  ** SYNOPSIS
+#  **              mksckmf root_class [ sourcefiles... ]
+#  **
+#  ** ID: $Id$
+#  **
+#  **~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#  ** $Log$
+#  **~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+mkf=Makefile
+
+if [ $# -le 0 ] ; then
+  echo "usage: mksckmf <root_class> [ source_files]"
+  exit
+fi
+if [ -f $mkf ] ; then
+  echo "mksckmf: $mkf already exists, giving up."
+  exit
+fi
+
+rootclass=$1
+shift
+
+if [ -z "$*" ] ; then
+  src=${rootclass}.sa
+else
+  src="$*"
+fi
+echo "making $mkf for root class $rootclass, SRC=$src"
+sed -e "s;@PRG@;$rootclass;" -e "s;@SRC@;$src;"  > $mkf <<EOF
+# simple example of a Makefile for sather-k programms compiled with sck.
+# Reiner Mauch und Martin Trapp 27.8.92
+# Modifications for Sather-K 12.11.1993 Peter Holzwarth
+#
+############################################
+# type 'make' to compile.
+# type 'make clean' to remove intermediate
+#			files
+# type 'make clobber' to remove all intermediate
+#			file plus executables
+############################################
+# PRG is the name of the root class of the sather program (maybe lowercase)
+# add all .sa sources that are required to SRC
+# there are also macros for:
+# - C object files				(OBJS)
+# - debug and assertion keys			(KEYS)
+# - C name mapping				(C_NAMES)
+# - function pointers for sather routines	(FUNPTRS)
+
+PRG		= @PRG@
+SRC  		= @SRC@
+
+#---------------------------------------------------
+# C object files that should be linked with \${PRG}
+#e.g.: OBJS	= myc.o parser.o addr _\${PRG}_addr.o
+#---------------------------------------------------
+OBJS		=
+
+#-------------------------------
+# debug and assertion keys
+# e.g.: KEYS	= pre post print
+#-------------------------------
+KEYS		=
+
+#----------------------------------------------------------
+# C name mappings
+# e.g.: C_NAMES = foobar ::= FOO::bar barfuss ::= BAR::fuss
+#----------------------------------------------------------
+C_NAMES		=
+
+#-----------------------------------------------------------
+# sather routines for which a C function pointer is required
+# e.g.: FUNPTRS	= BUTTON::callback WINDOW::redraw
+# each entry CLASS::routine will declare a new routine
+# C::addr_CLASS_routine:F_OB which return the address of
+# the routine in the given class.
+# to use this feature you have to add _\${PRG}_addr.o to OBJS
+# and _\${PRG}_addr.sa to SRC
+#-----------------------------------------------------------
+FUNPTRS		=
+
+
+#change the following variables to your installation
+#assumes, that SATHER_K_HOME and SATHER_K_LIB are defined
+#as shell variables
+
+SC		= \${SATHER_K_HOME}/bin/sun4/sck
+SC_LIB_PATH	= \${SATHER_K_HOME}/sc_lib
+# name of  the sc library (run time system)
+SC_LIB		= -lsa
+# name of the garbage collector lib (run time system)
+GC_LIB		= -lgc
+
+#sc flags
+SCFLAGS		= -g 
+
+# math lib
+LIBS=		-lm 
+
+##########################################################################
+\${PRG}:	\${PRG}.o \${OBJS}
+		\${LD} -dc -dp -e start -o \${PRG} /usr/lib/crt0.o \${PRG}.o \\
+		\${OBJS} -L\${SC_LIB_PATH} \${SC_LIB} \${GC_LIB} \${LIBS} -lc
+
+\${PRG}.o:	\${PRG}.s
+		\${AS} -o \${PRG}.o \${PRG}.s
+
+\${PRG}.s:	\${SRC} \${PRG}.sather Makefile
+		\${SC} \${SCFLAGS} \${PRG}
+
+#some useful targets.
+clean:;		rm -f *.s *.o core \#* *~ _sather* \${PRG}.sather
+clobber:	clean
+		rm -f \${PRG} 
+
+######################################################################
+######################################################################
+######################################################################
+
+
+\${PRG}.sather:	Makefile
+		@echo ">> making \${PRG}.sather"
+		@echo "SOURCE_FILES are"	 > \$@
+		@echo -n "   "			>> \$@
+		@echo \${SRC} | sed -e 's/ /\\
+   /g'						>> \$@
+		@echo "end;" 			>> \$@
+		@echo 				>> \$@
+		@echo "KEYS are" 		>> \$@
+		@echo -n "   "			>> \$@
+		@echo \${KEYS} | sed -e 's/ /\\
+   /g'						>> \$@
+		@echo "end;"			>> \$@
+		@echo 				>> \$@		
+		@echo "C_NAMES are"		>> \$@
+		@echo -n "   "			>> \$@
+		@echo \${C_NAMES} | sed -e 's/ /\\
+   /g'						>> \$@
+		@echo \${FUNPTRS} | sed -e 's/ /\\
+   /g' | sed -e 's/\([A-Za-z_]*\)::\([A-Za-z_]*\)/\1_\2 ::= \1::\2/g'\\
+						>> \$@
+		@echo "end;"			>> \$@
+
+_\${PRG}_addr.c: Makefile
+		@echo '#include "_sather_\${PRG}.h"' >\$@
+		@echo				>> \$@
+		@echo \${FUNPTRS} | sed -e 's/ /\\
+/g' | sed -e 's/\([A-Za-z_]*\)::\([A-Za-z_]*\)/void *addr_\1_\2(void){return \1_\2;}/g'	       					>> \$@
+
+_\${PRG}_addr.sa: Makefile
+		@echo "class C is"		 > \$@
+		@echo \${FUNPTRS} | sed -e 's/ /\
+/g' | sed -e 's/\([A-Za-z_]*\)::\([A-Za-z_]*\)/  addr_\1_\2:F_OB is end;/g'\\
+						>> \$@
+		@echo "end;"			>> \$@
+EOF

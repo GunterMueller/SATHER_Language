@@ -1,0 +1,248 @@
+--* Last edited: Jan 24 15:31 1994 (holzw)
+--
+-- test classes for out parameters
+--
+
+value class COMPLEX is
+   -- Billigstausfuehrung
+   shared vgl: COMPLEX;
+
+   real, imag: FLT;
+   v: $COMPLEX;
+   plus (z:$COMPLEX):SAME is
+      -- addition komplexer Zahlen
+      res.real:= self.real+z.real;
+      res.imag:= self.imag+z.imag;
+   end;
+
+   inc: SAME is
+      -- increment real
+      res:=self;
+      res.real:= res.real+1;
+      res.imag:= res.imag+.1;
+   end;
+
+   times (z:$COMPLEX):SAME is
+      -- multiplikation komplexer Zahlen
+      res.real:= self.real*z.real + self.imag*z.imag;
+      res.imag:= self.real*z.imag - self.imag*z.real;
+   end;
+
+   pow_2: SAME is
+      -- Quadrat einer komplexen Zahl
+      res:= times(self);
+   end;
+
+   print: OUT is
+     res:= OUT::s("(").d(self.real).s(",").d(self.imag).s(")");
+   end;
+end;
+
+value class COMPLEX_TUPEL is
+   -- should be held in place
+
+   c1,c2: COMPLEX;
+
+   clear:SAME is
+     c1:= void;
+     c2:= void;
+     if c1/=c2 then
+       OUT::s("clear failed!").nl;
+     end;
+   end;
+
+   pipe_thru (c1,:c2:COMPLEX) is
+     -- a difficult form of an assignment
+     c2:=c1;
+   end;
+
+   pipe_attribs (c1,:c2:COMPLEX) is
+     c2.real:=c1.real;
+     c2.real:=c1.real;
+   end;
+
+   piipe_it(c1,:c2:COMPLEX) is
+      pipe_thru(c1,:c2);
+   end;
+end;
+
+value class U2 is
+   -- too big to be held in place
+   shared vgl: COMPLEX;		-- test, if names are different
+
+   c1,c2,c3,c4,c5,c6: COMPLEX;
+   foo is
+      c1.real:= 1;
+      c1.imag:= 2;
+      c2:=c1;
+      c3:=c1;
+      c4:=c1;
+      c5:=c1;
+      c6:=c1;
+   end;
+
+   pipe_thru (u1,:u2:U2) is
+     u2:=u1;
+   end;
+end;
+
+class OUT_OK is
+   main is
+      z1,z3: COMPLEX;
+      z2: $COMPLEX;
+      u1: U2;
+      u2: $U2;
+      o: REFERENCE_OBJECT:=o.new;;
+
+      z2:=z1;
+      z2.real:=1;
+      z2.imag:=2;
+      OUT::s("2* "); z2.print;
+      z2:= z2.plus(z2);
+      OUT::s(" = "); z2.print.nl;
+ 
+      -- don't compare floats too carefully!
+      MATH::epsilon:=MATH::epsilon*10;
+
+      u1.c1.imag:=u1.c1.real;
+
+      z1.real:=1;
+      z1.imag:=z1.real+1;
+      
+     ------------------------------------------ test return as out parameter, it
+      z2:=z1;
+      z1:= z1.pow_2;
+      z1:= z1.pow_2;
+      z1.print.s(" should be the same as ");
+      z1:=z2;
+      z1:= z1.pow_2.pow_2;
+      z1.print.nl;
+
+      OUT::s("2* "); z1.print;
+      z1:= z1.plus(z1);
+      OUT::s(" = "); z1.print.nl;
+
+     ------------------------------------------ test return as out parameter, dt
+      z2.real:=1;
+      z2.imag:=2;
+      z1:=z2;
+      z2:= z2.pow_2;
+      z2:= z2.pow_2;
+      z2.print.s(" should be the same as ");
+      z2:=z1;
+      z2:= z2.pow_2.pow_2;
+      z2.print.nl;
+
+      OUT::s("2* "); z2.print;
+assert (i) 5=5 end;
+      z2:= z2.plus(z2);
+      OUT::s(" = "); z2.print.nl;
+
+
+      u1.c1.real:=10;
+      u1.c1.imag:=2;
+     ------------------------------------------ test out parameter, it->it
+      COMPLEX_TUPEL::pipe_thru (z1,:z3);
+      if (z3.real/=1 or z3.imag/=2) then
+	 OUT::s("pipe_thru failed.").nl;
+      end;
+
+      z1:=z1.inc;
+
+      COMPLEX_TUPEL::piipe_it (z1,:z1);
+      if (not (MATH::is_epsilon_equal(z1.real,2)) or
+	  not (MATH::is_epsilon_equal(z1.imag,2.1))) then
+	 OUT::s("multi pipe_thru failed.").nl;
+	 OUT::s("z1 is "); z1.print.nl;
+      end;
+
+     ------------------------------------------ test out parameter, it->dt
+      z1:=z1.inc;
+
+      COMPLEX_TUPEL::pipe_thru (z1,:z2);
+      if (not (MATH::is_epsilon_equal(z2.real,3)) or
+	  not (MATH::is_epsilon_equal(z2.imag,2.2))) then
+	 OUT::s("pipe_thru with $object failed.").nl;
+	 OUT::s("z2 is "); z2.print.nl;
+      end;
+
+     ------------------------------------------ test out parameter, nt->nt
+      U2::pipe_thru (u1,:u1);
+      if (not (MATH::is_epsilon_equal(u1.c1.real,10)) or
+	  not (MATH::is_epsilon_equal(u1.c1.imag,2))) then
+	 OUT::s("pipe_thru failed.").nl;
+	 OUT::s("u1.c1 is "); u1.c1.print.nl;
+      end;
+
+     ------------------------------------------ test out parameter, nt->dt
+      u1.c1:=u1.c1.inc;
+
+      U2::pipe_thru (u1,:u2);
+      if (not (MATH::is_epsilon_equal(u2.c1.real,11)) or
+	  not (MATH::is_epsilon_equal(u2.c1.imag,2.1))) then
+	 OUT::s("pipe_thru with $object failed.").nl;
+	 OUT::s("u2.c1 is "); u2.c1.print.nl;
+      end;
+
+     ------------------------------------------ test out parameter, attrib
+      u1.c1:=u1.c1.inc;
+
+      COMPLEX_TUPEL::pipe_thru (u1.c1,:u1.c2);
+      if (not (MATH::is_epsilon_equal(u1.c2.real,12)) or
+	  not (MATH::is_epsilon_equal(u1.c2.imag,2.2))) then
+	 OUT::s("pipe_thru to attrib failed.").nl;
+	 OUT::s("u1.c2 is "); u1.c2.print.nl;
+      end;
+
+     ------------------------------------------ test out parameter, attrib
+      u2.c1:=u1.c1.inc;
+
+      COMPLEX_TUPEL::pipe_thru (u2.c1,:u2.c1);
+      if (not (MATH::is_epsilon_equal(u2.c1.real,13)) or
+	  not (MATH::is_epsilon_equal(u2.c1.imag,2.3))) then
+	 OUT::s("pipe_thru to attrib failed.").nl;
+	 OUT::s("u2.c1 is "); u2.c1.print.nl;
+      end;
+
+
+     ------------------------------------------ test coercions for out parameters
+     i:INT;
+     f,f2:FLT;
+     inc_int(i,:i);		-- no coercions
+     inc_flt(f,:f);		-- no coercions
+     inc_int(i,:f);		-- INT->FLT;
+     inc_ob (o,:o);		-- no coercions
+
+     f2:=f;
+     inc_int(f.to_i,:f);
+     f2:=normal_inc(f2.to_i);
+     OUT::s("Testing coercions for INT and FLT: ");
+     if f=f2 then
+       OUT::s("OK.").nl;
+     else
+       OUT::s("failed.").nl;
+     end;
+   end;
+
+   inc_int (in,:out:INT) is
+     out:=in+1;
+   end;
+
+   normal_inc(in: INT): INT is
+     res:=in+1;
+   end;
+   
+   inc_flt (in,:out:FLT) is
+     out:=in+1;
+   end;
+   
+   inc_ob (in,:out:REFERENCE_OBJECT) is
+     out:=in;
+     out.i:=out.i+1;
+   end;
+   
+end;
+
+class REFERENCE_OBJECT is
+   i: INT;
+end;

@@ -1,0 +1,87 @@
+-- Author: Arne Frick (frick@ira.uka.de)
+-- Copyright (C) Universitaet Karlsruhe, 1994
+--
+-- COPYRIGHT NOTICE: This code is provided "AS IS" WITHOUT ANY WARRANTY
+-- and is subject to the terms of the KARLA LIBRARY GENERAL PUBLIC
+-- LICENSE contained in the file: "doc/license.txt" of the 
+-- distribution. 
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FILE: partial_set.sa
+--*
+--* CLASSES: PARTIAL_SET(K,T1,T<PARTIAL(K,T1)) EXCEPTION__PARTIAL_SET_LOOKUP EXCEPTION__PARTIAL_SET_INS
+--* 
+--* IMPLEMENTATION OF: 
+--*
+--* CONFORMS TO: SET(T)
+--*
+--* IS A: PARTIAL_MULTISET(K,T1,T)
+--*
+--* REQUIRED CLASSES: SET(T) PARTIAL(K,T) PARTIAL_INT EXCEPTION__MULTISET \
+--* EXCEPTION__SET_ADD EXCEPTION__SET_DISJOINT_UNION EXCEPTION__PARTIAL_MULTISET_LOOKUP
+--*
+--* EXCEPTIONS: EXCEPTION_MULTISET EXCEPTION__SET_ADD EXCEPTION__SET_DISJOINT_UNION \
+--* EXCEPTION__PARTIAL_MULTISET_LOOKUP
+--*
+--* TEST CLASS: TEST__PARTIAL_SET
+--*
+--* FOREIGN FILES:
+--*
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--
+-- RCS: $Id$
+-- HISTORY:
+--  * Last edited: Apr 13 14:28 1994 (frick)
+-- Created: Wed Mar 16 18:43:26 1994 (frick)
+--
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+abstract class PARTIAL_SET(K,T1,T<PARTIAL(K,T1)) is
+   -- * CLASS: PARTIAL_SET(K,T1,T<PARTIAL(K,T1))
+   -- * DESCRIPTION: abstract class defining Sets with partial key access
+   -- * SUBCLASS OF: SET(T)
+   -- * SPECIALIZATION OF: PARTIAL_MULTISET(K,T,T1)
+   -- * IMPLEMENTATION OF: 
+   -- * EXCEPTIONS: EXCEPTION_MULTISET EXCEPTION__SET_ADD EXCEPTION__SET_DISJOINT_UNION\
+   -- * EXCEPTION__PARTIAL_MULTISET_LOOKUP
+   -- * INVARIANT: SET(T)::Inv AND PARTIAL_MULTISET(K,T1,T)::Inv
+   -- * REPRESENTATION:
+   -- * COMPLEXITY: \
+   -- *     static      SIZE = size; \
+   -- *                 ##.init.MAXSIZE = 0 AND \
+   -- *                 MAXSIZE = max(choose.SIZE,delete(choose).MAXSIZE)\ 
+   -- *                 ##.init.KEYSIZE = 0 AND \
+   -- *                 KEYSIZE = max(choose.key.SIZE,delete(choose).KEYSIZE)
+   -- * REFERENCES: [Aho, Hopcroft, Ullman: "The Design and Analysis \
+   -- *               of Computer Algorithms", Addison-Wesley, 1974]
+   -- * ATTRIBUTES: size : INT
+
+   include PARTIAL_MULTISET(K,T1,T);
+   subtype of SET(T);
+
+
+end;
+
+
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+class TEST__PARTIAL_SET is
+-- * CLASS: TEST__PARTIAL_SET
+-- * DESCRIPTION: 
+-- * SUBCLASS OF: 
+-- * SPECIALIZATION OF: 
+-- * IMPLEMENTATION OF: 
+-- * EXCEPTIONS: 
+-- * INVARIANT: 
+-- * COMPLEXITY: 
+-- * REFERENCES: 
+
+
+   main is
+      a:$SET(PARTIAL_INT):=#PARTIAL_SET(INT,INT,PARTIAL_INT).init;
+      ERR::s("creation of abstract class succeeded.\n");
+   end;
+
+end; -- class TEST__PARTIAL_SET
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

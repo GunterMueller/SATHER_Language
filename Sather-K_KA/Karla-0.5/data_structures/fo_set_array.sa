@@ -1,0 +1,435 @@
+-- File: fo_set_array.sa
+-- Author: Matthias Mueller, Frank Schuster, Valdimar Bragason
+-- Copyright (C) Universitaet Karlsruhe, 1994
+--
+-- COPYRIGHT NOTICE: This code is provided "AS IS" WITHOUT ANY WARRANTY
+-- and is subject to the terms of the KARLA LIBRARY GENERAL PUBLIC
+-- LICENSE contained in the file: "doc/license.txt" of the 
+-- distribution. 
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FILE: fo_set_array.sa
+--*
+--* CLASSES: FINITE_ORDERED_SET__ARRAY(T1,T<FINITE_ORDERED(T1),ORDER<ORDER_RELATION(T)) 
+--* 
+--* IMPLEMENTATION OF: FINITE_ORDERED_SET(T1,T,ORDER)
+--*
+--* CONFORMS TO: 
+--*
+--* IS A: 
+--*
+--* REQUIRED CLASSES: FINITE_ORDERED_SET(T1,T,ORDER) FINITE_SET__ARRAY(T1,T) \
+--* FINITE_INT FINITE_INT_FLEX EMPTY EXCEPTION_MULTISET EXCEPTION__MULTISET_ADD \
+--* EXCEPTION__MULTISET_DISJOINT_UNION
+--*
+--* EXCEPTIONS: EXCEPTION_MULTISET EXCEPTION__MULTISET_ADD EXCEPTION__MULTISET_DISJOINT_UNION
+--*
+--* TEST CLASS: TEST__FINITE_ORDERED_SET__ARRAY
+--*
+--* FOREIGN FILES:
+--*
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--
+-- RCS: $Id$
+-- HISTORY:
+--  * Last edited: May 18 09:26 1994 (algprak8)
+-- Created: Wed Mar 16 18:43:26 1994 (frick)
+--
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+class FINITE_ORDERED_SET__ARRAY(T1,T < FINITE_ORDERED(T1),ORDER < ORDER_RELATION(T)) is
+   -- * CLASS: FINITE_ORDERED_SET__ARRAY(T1,T < FINITE_ORDERED(T1),ORDER<ORDER_RELATION(T))
+   -- * DESCRIPTION: class defining sets over finite domains using an array of BOOL
+   -- * SUBCLASS OF: 
+   -- * SPECIALIZATION OF:
+   -- * IMPLEMENTATION OF: FINITE_ORDERED_SET(T1,T,ORDER)
+   -- * EXCEPTIONS: EXCEPTION__MULTISET EXCEPTION__ORDERED_SET_PREVIOUS\
+   -- *  EXCEPTION__ORDERED_SET_NEXT EXCEPTION__ORDERED_SET_MIN EXCEPTION__ORDERED_SET_MAX
+   -- * INVARIANT: FINITE_ORDERED_SET(T1,T,ORDER)::Inv AND FINITE_SET__ARRAY(T1,T)::Inv
+   -- * REPRESENTATION:
+   -- * COMPLEXITY: \
+   -- *     static      SIZE = size; \
+   -- *                 ##.init.MAXSIZE = 0 AND \
+   -- *                 MAXSIZE = max(choose.SIZE,delete(choose).MAXSIZE)\ 
+   -- *                 ##.init.KEYSIZE = 0 AND \
+   -- *                 KEYSIZE = max(choose.key.SIZE,delete(choose).KEYSIZE)
+   -- * REFERENCES: [Aho, Hopcroft, Ullman: "The Design and Analysis \
+   -- *               of Computer Algorithms", Addison-Wesley, 1974]
+   -- * ATTRIBUTES: size:INT \
+   -- *             max_size:INT \
+   -- *             hold:ARR[*](BOOL)
+
+
+   subtype of FINITE_ORDERED_SET(T1,T,ORDER);     
+   include FINITE_SET__ARRAY(T1,T);
+
+end; -- class
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+class TEST__FINITE_ORDERED_SET__ARRAY is
+
+  stud_test is
+      s: $FINITE_ORDERED_SET(INT,FINITE_INT,ORDER_LT(FINITE_INT)) 
+	    := #FINITE_ORDERED_SET__ARRAY(INT,FINITE_INT,ORDER_LT(FINITE_INT)).init;
+      u: $FINITE_ORDERED_SET(INT,FINITE_INT,ORDER_LT(FINITE_INT)) 
+	    := #FINITE_ORDERED_SET__ARRAY(INT,FINITE_INT,ORDER_LT(FINITE_INT)).init;
+      e: $FINITE_ORDERED_SET(INT,FINITE_INT,ORDER_LT(FINITE_INT)) 
+	    := #FINITE_ORDERED_SET__ARRAY(INT,FINITE_INT,ORDER_LT(FINITE_INT)).init;
+
+      l: $LIST(FINITE_INT) := #LIST__LINKED(FINITE_INT).init;
+      
+      t1: FINITE_INT := #FINITE_INT{elt:=1};
+      t2: FINITE_INT := #FINITE_INT{elt:=2};
+      t3: FINITE_INT := #FINITE_INT{elt:=3};
+      t4: FINITE_INT := #FINITE_INT{elt:=4};
+      t5: FINITE_INT := #FINITE_INT{elt:=5};
+      t6: FINITE_INT := #FINITE_INT{elt:=6};
+      t7: FINITE_INT := #FINITE_INT{elt:=7};
+      
+      
+-- Test fuer insert
+      OUT::s("Testing Method insert").nl;
+      s := s.insert(t1); -- Erfuellt die Bedingung size=void and map[s.elt]/=true
+      OUT::s("Expected: {1}.  Result = ");
+      OUT::s(s.str).nl;
+      s := s.insert(t1); -- Erfuellt die Bedingung size/=void and vektor[s.elt]=true
+      OUT::s("Expected: {1}.  Result = ");
+      OUT::s(s.str).nl;
+
+-- Test fuer delete
+      OUT::s("\nTesting Method delete").nl;
+      s := s.delete(t1); -- Erfuellt die Bedingung  vektor[s.elt]=true
+      OUT::s("Expected: {}.  Result = ");
+      OUT::s(s.str).nl;
+      s := s.delete(t1); -- Erfuellt die Bedingung vektor[s.elt]/=true
+      OUT::s("Expected: {}.  Result = ");
+      OUT::s(s.str).nl;
+
+-- Test fuer member
+      OUT::s("\nTesting Method member").nl;
+      s := s.insert(t2);
+      OUT::s("Expected: T.  Result = ");
+      OUT::b(s.member(t2)).nl;
+      OUT::s("Expected: F.  Result = ");
+      OUT::b(s.member(t1)).nl;
+      s.delete(t2);
+      
+--  Test fuer union
+      s.insert(t1);
+      s.insert(t3);
+      u.insert(t2);
+      u.insert(t3);
+      u.insert(t4);
+      OUT::s("\nTesting Method union").nl;
+      OUT::s("s=");
+      OUT::s(s.str);
+      OUT::s(" and u=");
+      OUT::s(u.str).nl;
+      OUT::s("\nExpected: {1,2,3,4}.  Result = ");
+      s := s.union(u);
+      OUT::s(s.str).nl;
+      OUT::s("\n\n");
+
+
+-- Test fuer intersect
+      u := u.delete(t3);
+      u := u.insert(t7);
+      s := s.insert(t6);
+      OUT::s("\nTesting Method intersect").nl;
+      OUT::s("s=");
+      OUT::s(s.str);
+      OUT::s(" and u=");
+      OUT::s(u.str).nl;
+      OUT::s("\nExpected: {2,4}.  Result = ");
+      s := s.intersect(u);
+      OUT::s(s.str).nl;
+
+-- Test fuer diff
+      s.insert(t3);
+      s.insert(t5);
+      OUT::s("\nTesting Method diff").nl;
+      OUT::s("s=");
+      OUT::s(s.str);
+      OUT::s(" and u=");
+      OUT::s(u.str).nl;
+      OUT::s("\nExpected: {3,5}.  Result = ");
+      s := s.diff(u);
+      OUT::s(s.str).nl;
+
+-- Test fuer diff
+      OUT::s("\nTesting Method empty").nl;
+      OUT::s("s=");
+      OUT::s(s.str);
+      OUT::s("\nExpected: F.  Result = ");
+      OUT::b(s.empty).nl;
+      OUT::s("\ne=");
+      OUT::s(e.str);
+      OUT::s("\nExpected: T.  Result = ");
+      OUT::b(e.empty).nl;
+
+-- Test fuer subset
+      e := e.insert(t3);
+      OUT::s("\nTesting Method subset").nl;
+      OUT::s("s=");
+      OUT::s(s.str);
+      OUT::s(" and ");
+      OUT::s("e=");
+      OUT::s(e.str).nl;
+      OUT::s("\nExpected: T.  Result = ");
+      OUT::b(s.subset(e)).nl;
+      e := e.insert(t2);
+      OUT::s("\ns=");
+      OUT::s(s.str);
+      OUT::s(" and ");
+      OUT::s("e=");
+      OUT::s(e.str).nl;
+      OUT::s("\nExpected: F.  Result = ");
+      OUT::b(s.subset(e)).nl;
+      
+-- Test fuer elts
+      OUT::s("\nTesting Method elts").nl;
+      OUT::s("u=");	 
+      OUT::s(u.str).nl;
+      loop
+	 OUT::s(u.elts!.str).nl;
+      end; -- loop
+
+-- Test fuer copy_set
+      OUT::s("\nTesting Method copy_set").nl;
+      OUT::s("\nExpected: ");
+      OUT::s(s.str);
+      OUT::s(".  Result = ");
+      u := s.copy_set;
+      OUT::s(u.str).nl;
+
+
+-- Test fuer choose
+      OUT::s("\nTesting Method choose").nl;
+      OUT::s("u=");
+      OUT::s(u.str).nl;
+      OUT::s("Expected: 3.  Result = ");
+      OUT::s(u.choose.str).nl;
+
+-- Test fuer choose_next
+      OUT::s("\nTesting Method choose_next").nl;
+      OUT::s("u=");
+      OUT::s(u.str).nl;
+      OUT::s("Search next after t4").nl;
+      OUT::s("Expected: 5.  Result = ");
+      OUT::i(u.choose_next(t4).elt).nl;
+
+-- Test fuer choose_previous
+      OUT::s("\nTesting Method choose_previous").nl;
+      OUT::s("u=");
+      OUT::s(u.str).nl;
+      OUT::s("Search previous t4").nl;
+      OUT::s("Expected: 3.  Result = ");
+      OUT::i(u.choose_previous(t4).elt).nl;
+
+-- Test fuer min
+      OUT::s("\nTesting Method min").nl;
+      OUT::s("u=");
+      OUT::s(u.str).nl;
+      OUT::s("Expected: 3.  Result = ");
+      OUT::i(u.min.elt).nl;
+
+-- Test fuer max
+      OUT::s("\nTesting Method max").nl;
+      OUT::s("u=");
+      OUT::s(u.str).nl;
+      OUT::s("Expected: 5.  Result = ");
+      OUT::i(u.max.elt).nl;
+
+-- Test fuer sort
+      OUT::s("\nTesting Method sort").nl;
+      OUT::s("u=");
+      OUT::s(u.str).nl;
+      l := u.sort;
+      OUT::s("u.sort = ").s(l.str).nl;
+
+      
+
+      
+-- Test fuer elts_order
+      u.insert(t7);
+      OUT::s("\nTesting Method elts_order").nl;
+      OUT::s("u=");
+      OUT::s(u.str).nl;
+      loop
+	 OUT::i(u.elts_order!.elt).nl;
+      end; -- loop
+
+
+-- Test fuer elts_reverse_order
+      OUT::s("\nTesting Method elts_reverse_order").nl;
+      OUT::s("u=");
+      OUT::s(u.str).nl;
+      loop
+	 OUT::i(u.elts_reverse_order!.elt).nl;
+      end; -- loop
+      
+-- Test fuer from_to
+      OUT::s("\nTesting Method from_to(1,7)").nl;
+      OUT::s("u=");
+      OUT::s(u.str).nl;
+      loop
+	 OUT::i(u.from_to!(t1,t7).elt).nl;
+      end; -- loop
+      
+
+-- Test fuer from_downto
+      OUT::s("\nTesting Method from_downto(5,1)").nl;
+      OUT::s("u=");
+      OUT::s(u.str).nl;
+      loop
+	 OUT::i(u.from_downto!(t5,t1).elt).nl;
+      end; -- loop
+      
+      
+   end; -- stud_test
+
+  performancetest(n:INT) is
+    x:FINITE_INT_FLEX := #FINITE_INT_FLEX.init(n);
+    s:$SET(FINITE_INT_FLEX) := 
+      #FINITE_ORDERED_SET__ARRAY(INT,FINITE_INT_FLEX,ORDER_LT(FINITE_INT_FLEX)).init;
+    i:INT;
+    timer:TIMER := #TIMER;
+    timer.reset;
+    timer.go;
+    loop
+      i := 0.upto!(n-1);
+      x.elt := i;
+      s := s.insert(x);
+    end;
+    timer.stop;
+    OUT::s(n.str).s(" times insert cost time ").s(timer.mean.str).nl.nl;
+    timer.reset;
+    timer.go;
+    loop
+      i:=0.upto!(n-1);
+      x.elt := i;
+      if not(s.member(x)) then break; end;
+    end;
+    timer.stop;
+    OUT::s(n.str).s(" times member cost time ").s(timer.mean.str).nl.nl;
+    if i<n-1 then OUT::s("membership test not succeeded for i=").s(i.str).nl.nl;
+    else OUT::s("membership test succeeded").nl.nl;
+    end;
+    timer.reset;
+    timer.go;
+    loop
+      i:= 0.upto!(n-1);
+      x.elt := i;
+      s := s.delete(x);
+    end;
+    timer.stop;
+    OUT::s(n.str).s(" times delete cost time ").s(timer.mean.str).nl.nl;
+    if s.empty then OUT::s("deletion succeeded").nl.nl;
+    else OUT::s("deletion not succeeded: s=").s(s.str).nl.nl;
+    end;
+  end; -- performancetest
+
+
+  main is
+    x:FINITE_INT_FLEX := #FINITE_INT_FLEX.init(100);
+    s:$ORDERED_SET(FINITE_INT_FLEX,ORDER_LT(FINITE_INT_FLEX)) 
+       := #FINITE_ORDERED_SET__ARRAY(INT,FINITE_INT_FLEX,ORDER_LT(FINITE_INT_FLEX)).init;
+    i:INT;
+    OUT::s("s is created: empty set").nl;
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.empty? ").s(s.empty.str).nl.nl;
+    begin
+      x := s.choose;
+    except excptset
+      when EXCEPTION__MULTISET then 
+	ERR::s(excptset.str).nl;
+	OUT::s("exception test successfull").nl;
+      else OUT::s("exception test not successfull").nl;
+    end;
+    OUT::s("s := s.delete(5)").nl;
+    x.elt := 5;
+    s := s.delete(x);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.member(5)? ");
+    OUT::s(s.member(x).str).nl.nl;
+    OUT::s("s.insert(5)").nl;
+    s := s.insert(x.copy);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.empty? ").s(s.empty.str).nl.nl;
+    OUT::s("s.insert(5)").nl;
+    s := s.insert(x.copy);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.insert(10)").nl;
+    x.elt := 10;
+    s := s.insert(x);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.member(5)? ");
+    x.elt := 5;
+    OUT::s(s.member(x).str).nl.nl;
+    x.elt := 6;
+    OUT::s("s.member(6)? ");
+    OUT::s(s.member(x).str).nl;
+    OUT::s("s.choose = ").s(s.choose.str).nl.nl;
+    OUT::s("s := s.delete(5)").nl;
+    x.elt := 5;
+    s := s.delete(x);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.choose = ").s(s.choose.str).nl.nl;
+    x.elt := 10;
+    OUT::s("s := s.delete(10)").nl;
+    s := s.delete(x);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.empty? ").s(s.empty.str).nl.nl;
+    begin
+      x := s.choose;
+    except excptset
+      when EXCEPTION__MULTISET then 
+	ERR::s(excptset.str).nl;
+	OUT::s("exception test successfull").nl;
+      else OUT::s("exception test not successfull").nl;
+    end;
+    OUT::s("s.insert(10)").nl;
+    s := s.insert(x);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.empty? ").s(s.empty.str).nl.nl;
+    OUT::s("s.insert(5)").nl;
+    x.elt := 5;
+    s := s.insert(x);
+    OUT::s("s = ").s(s.str).nl.nl;
+    s := #FINITE_ORDERED_SET__ARRAY(INT,FINITE_INT_FLEX,ORDER_LT(FINITE_INT_FLEX)).init;
+    OUT::s("s is created: empty set").nl;
+    OUT::s("s = ").s(s.str).nl.nl;
+    loop
+      i:=1.upto!(20);
+      x.elt := 21-i;
+      s := s.insert(x.copy);
+    end;
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.sort = ").s(s.sort.str).nl.nl;
+    s1 : $SET(EMPTY) := #FINITE_ORDERED_SET__ARRAY(INT,EMPTY,ORDER_LT(EMPTY));
+
+    --performancetest(10000);
+    --performancetest(100000);
+    --performancetest(200000);
+    --performancetest(300000);
+    --performancetest(400000);
+    --performancetest(500000);
+  
+  end; -- main
+end;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

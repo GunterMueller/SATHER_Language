@@ -1,0 +1,87 @@
+-- -*- Mode: Sather;  -*-
+-- File: sather/lib/base/array.sa
+-- Author: Peter Holzwarth (holzw@ira.uka.de)
+-- Copyright (C) Uni Karlsruhe, 1994
+--
+-- COPYRIGHT NOTICE: This code is provided "AS IS" WITHOUT ANY WARRANTY
+-- and is subject to the terms of the SATHER LIBRARY GENERAL PUBLIC
+-- LICENSE contained in the file: "sather/doc/license.txt" of the Sather
+-- distribution. The license is also available from ICSI, 1947 Center
+-- St., Suite 600, Berkeley CA 94704, USA.
+--*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FUNCTION: Basic array classes. 
+--*
+--* CLASSES: ARRAY(T), ARRAY_TEST
+--* 
+--* RELATED PACKAGES:
+--*
+--* HISTORY:
+--*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+class ARRAY_TEST is
+   -- A quick check that the array classes work. --- needs some work
+   
+   main is
+      array_test;
+   end; -- main
+      
+   array_test is
+      -- Test of one-dimensional arrays.
+      OUT::s("array_test:\n");
+      a1:ARRAY(INT):=a1.new(20);
+      OUT::s("a1.asize (20) = ").i(a1.asize).nl;
+      i:INT; until i=20 loop
+	 a1[i]:=i;
+	 i:=i+1;
+      end; -- loop
+      OUT::s("contents of a1 (0 ... 19) = ");
+      i:=0; until i=20 loop
+	 OUT::i(a1[i]).s(", ");
+	 i:=i+1;
+      end; -- loop
+      OUT::nl;
+      a1.clear;
+      OUT::s("Cleared contents of a1 (0 ... 0) = ");
+      i:=0; until i=20 loop
+	 OUT::i(a1[i]).s(", ");
+	 i:=i+1;
+      end; -- loop
+      OUT::nl.nl;
+
+      -- Test "extend" on ARRAY
+      i:INT; until i=20 loop
+	 a1[i]:=i;
+	 i:=i+1;
+      end; -- loop
+      OUT::s("a1:=a1.extend(a1.asize*2)\n");
+      a1:=a1.extend(a1.asize*2);
+      OUT::s("a1.asize (40) = ").i(a1.asize).nl;
+      OUT::s("contents of a1 (0 ... 19, 0, ...0) = ");
+      i:=0; until i=a1.asize loop
+	 OUT::i(a1[i]).s(", ");
+	 i:=i+1;
+      end; -- loop
+      OUT::nl;
+      i:INT; until i=a1.asize loop
+	 a1[i]:=i;
+	 i:=i+1;
+      end; -- loop
+      OUT::s("contents of a1 (0 ... 39) = ");
+      i:=0; until i=a1.asize loop
+	 OUT::i(a1[i]).s(", ");
+	 i:=i+1;
+      end; -- loop
+      OUT::nl;
+      a1.clear;
+      OUT::s("Cleared contents of a1 (0 ... 0) = ");
+      i:=0; until i=a1.asize loop
+	 OUT::i(a1[i]).s(", ");
+	 i:=i+1;
+      end; -- loop
+      OUT::nl.nl;
+   end; -- array_test
+   
+end; -- class ARRAY_TEST
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+

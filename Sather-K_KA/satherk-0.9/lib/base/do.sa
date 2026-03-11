@@ -1,0 +1,242 @@
+-- -*- Mode: Sather;  -*-
+-- File: do.sa
+-- Author: Heinz Schmidt (hws@ICSI.Berkeley.EDU)
+-- Copyright (C) International Computer Science Institute, 1991
+--
+-- COPYRIGHT NOTICE: This code is provided "AS IS" WITHOUT ANY WARRANTY
+-- and is subject to the terms of the SATHER LIBRARY GENERAL PUBLIC
+-- LICENSE contained in the file: "sather/doc/license.txt" of the Sather
+-- distribution. The license is also available from ICSI, 1947 Center
+-- St., Suite 600, Berkeley CA 94704, USA.
+--*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FUNCTION: provide a few common loop constructs. The code is written
+--*           in such a way that C compiler should remove the cost of the
+--*           function abstraction. Remains the cost for allocating a "loop"
+--*           object, once for a usually long iteration.
+--*           The various gains in understanding seem to outweight this cost:
+--*           1. the type of loop right at beginning.
+--*           2. no mess with loop counter, stepping is entirely transparent!
+--*           3. assertions at loop creation time validate termination.
+--*
+--* CLASSES: DO, UP, DOWN
+--* 
+--* REQUIRED FILES:
+--*
+--* RELATED FILES:
+--*
+--* HISTORY:
+--* Last edited: Aug 28 13:27 1991 (hws)
+--*  Aug 28 12:54 1991 (hws): distinguish upward and downward to speed up
+--*                           end test.
+--* Created: Mon Jul 8 21:33:45 1991 (hws)
+--*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+class DO is
+   -- loop construct supporting various forms of UPWARD iteration based
+   -- on minimal iterator abstraction: count, is_done.
+
+   count: INT;
+   private start_value: INT;
+   private end_value: INT;
+   private increment: INT;
+
+   init(from,to,incr: INT) is
+      assert(pre) incr > 0 end;
+      start_value := from;
+      end_value := to;
+      increment := incr;
+   end;
+   
+   create(from,to,incr: INT): SAME is
+      res := new;
+      res.init(from,to,incr);
+      res.first;
+   end;
+      
+   private first is
+      -- reset `count' to start value and return it.
+      assert(pre) self /= void end;
+      count := start_value - increment; -- see is_done, steps up always
+   end;
+
+   is_done: BOOL is
+      -- used like `until L.is_done loop <doit> end.
+      -- checks the loop end condition and steps the counter
+      -- if appropriate.
+      count := count + increment;
+      res := count >= end_value;
+   end;
+
+-- -  Various DO forms
+--    To be used like  c: DO := DO::times(100) until c.is_done loop foo end;
+
+   times(i: INT): SAME is
+      res := res.create(0,i,1);
+   end;
+
+   for(from,below,incr: INT): SAME is
+      assert(pre) from < below end;
+      res := res.create(from,below,incr);
+   end;
+
+   from(start: INT): SAME is
+      res := res.for(start,start,1);
+   end;
+
+   list(l: $LIST($OB)): SAME is
+      assert(pre) l /= void end;
+      res := res.times(l.size);
+   end;
+   
+   intlist(l: $LIST(INT)): SAME is
+      assert(pre) l /= void end;
+      res := res.times(l.size);
+   end;
+   
+   step(incr: INT): SAME is
+      assert(pre) self /= void and incr > 0 end;
+      increment := incr;
+      first;
+      res := self;
+   end;
+
+   below(exclusive: INT): SAME is
+      assert(pre) self /= void end;
+      end_value := exclusive;
+      first;
+      res := self;
+   end;
+
+   to(inclusive: INT): SAME is
+      res := below(inclusive+1);
+   end;
+
+-- For testing
+
+   describe is
+      assert(pre) self /= void end;
+      first; until is_done loop
+	 OUT::i(count).nl;
+      end;
+   end;
+
+end; -- class DO
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+class DOWN is
+   -- DOWNWARD version of DO.
+   subtype of DO;
+   
+   init(from,to,incr: INT) is
+      assert(pre) incr < 0 end;
+      start_value := from;
+      end_value := to;
+      increment := incr;
+   end;
+
+   is_done: BOOL is
+      -- used like `until L.is_done loop <doit> end.
+      -- checks the loop end condition and steps the counter
+      -- if appropriate.
+      count := count + increment;
+      res := count <= end_value;
+   end;
+
+   for(from,above,incr: INT): SAME is
+      assert(pre) from > above end;
+      res := res.create(from,above,incr);
+   end;
+
+   from(start: INT): SAME is
+      res := res.for(start,start,-1);
+   end;
+
+   list(l: $LIST($OB)): SAME is
+      assert(pre) l /= void end;
+      res := res.for(l.size,0,-1);
+   end;
+
+   intlist(l: $LIST(INT)): SAME is
+      assert(pre) l /= void end;
+      res := res.for(l.size,0,-1);
+   end;
+
+   step(incr: INT): SAME is
+      assert(pre) self /= void and incr < 0 end;
+      increment := incr;
+      first;
+      res := self;
+   end;
+
+   below: UNDEFINE;
+   
+   above(exclusive: INT): SAME is
+      assert(pre) self /= void end;
+      end_value := exclusive;
+      increment := -1;
+      first;
+      res := self;
+   end;
+
+   to(inclusive: INT): SAME is
+      res := above(inclusive-1);
+   end;
+   
+end; -- class DOWN
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+class UP is
+   -- up counting loop, just for naming consistency
+   subtype of DO;
+end; -- class UP
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+class DO_TEST is
+
+   main is
+      i: INT; c: DO;
+      
+      OUT::s("From 10 to 31 step 2...").nl;
+      
+      c := DO::for(10,31,2); until c.is_done loop
+	 OUT::i(c.count).nl;
+      end;
+      
+      OUT::s("Times 20...").nl;
+      
+      c := DO::times(20); until c.is_done loop
+	 OUT::i(c.count).nl;
+      end;
+
+      c1: UP := UP::times(20); until c.is_done loop
+	 OUT::i(c.count).nl;
+      end;
+ 
+	 -- all of the following could be written in the same abstraction.
+	 -- However c.describe does it, too.
+      
+      OUT::s("From 11 Below 19 ...").nl;
+      c := DO::from(11).below(19); c.describe;
+      
+      OUT::s("From 8 Upto 15 Step 2...").nl;
+      c := DO::from(8).to(15).step(2); c.describe;
+      
+      OUT::s("From 8 Upto 15...").nl;
+      c := DO::from(8).to(15); c.describe;
+      
+      OUT::s("From 10 Downto -15 Step -2...").nl;
+      dow: DOWN := DOWN::from(10).to(-15).step(-2); dow.describe;
+      
+      OUT::s("From 10 Above -15 ...").nl;
+      dow := DOWN::from(10).above(-15); dow.describe;
+
+      l: LIST(INT) := LIST(INT)::create.push(1).push(2).push(3);
+      OUT::s("List l ...").nl;
+      c := DO::intlist(l); c.describe;
+   end;
+	 
+end; -- class DO_TEST
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

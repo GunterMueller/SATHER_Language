@@ -1,0 +1,127 @@
+-- -*- Mode: Sather; -*-
+-- Author: group:algprak0 : Speise, Nguyen, Tri
+--
+-- Copyright (C) Universitaet Karlsruhe, 1994
+--
+-- COPYRIGHT NOTICE:
+-- LICENSE
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FILE: collision_resolutions.sa
+--*
+--* CLASSES: LINEAR_PROBING(T) QUADRATIC_PROBING(T)
+--*
+--* IMPLEMENTATION OF: COLLISION(T)
+--*
+--* CONFORMS TO:
+--*
+--* IS A:
+--*
+--* REQUIRED CLASSES: COLLISION(T)
+--*
+--* EXCEPTIONS:
+--*
+--* TEST CLASS: 
+--*
+--* FOREIGN FILES:
+--*
+-- RCS: $ld$
+-- HISTORY: $Log$
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   
+
+class LINEAR_PROBING(T) is
+
+-- * CLASS: LINEAR_PROBING(T)
+-- * DESCRIPTION: define a collision method via linear-probe
+-- * SUBCLASS OF: COLLISION(T)
+-- * SPECIALIZATION OF: 
+-- * IMPLEMENTATION OF: COLLISION(T)
+-- * EXCEPTIONS:
+-- * INVARIANT: FORALL s:$BOUNDED_SET: tab_size >= s.max_size
+-- * REPRESENTATION:
+-- * COMPLEXITY: n calls cost O(n)
+-- * REFERENCE:
+-- * ATTRIBUTES:
+   
+subtype of COLLISION(T);
+
+
+  init(size:INT):SAME is
+
+-- * METHOD: init(size:INT):SAME
+-- * DESCRIPTION: define number of elements for hash table \
+-- * to be used in BOUNDED_SET. For any bounded set s size must be \
+-- * instantiated with max_size
+-- * PRE:true
+-- * POST:tab_size = size
+-- * COMPLEXITY: O(size)
+-- * REFERENCES:
+     
+    res := self; 
+    tab_size := size;
+  end; -- init
+
+
+  h(i:INT; x:T):INT is
+     
+-- * METHOD: h(i:INT; x:T): INT
+-- * DESCRIPTION: define step for moving by collision-occurs
+-- * PRE:true
+-- * POST: h(i,x) = i
+-- * COMPLEXITY: O(1)
+-- * REFERENCES:
+     
+    res := i;
+  end;-- * h(i:INT, x:T)
+
+end;-- * LINEAR_PROBING(T) 
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+class QUADRATIC_PROBING(T) is
+
+-- * CLASS: QUADRATIC_PROBING(T)
+-- * DESCRIPTION: define a collision method via quadratic-probe
+-- * SUBCLASS OF: COLLISION(T)
+-- * SPECIALIZATION OF: 
+-- * IMPLEMENTATION OF: COLLISION(T)
+-- * EXCEPTIONS:
+-- * INVARIANT: FORALL s:$BOUNDED_SET: tab_size >= 2*s.max_size
+-- * REPRESENTATION:
+-- * COMPLEXITY: n calls cost O(n)
+-- * REFERENCE:
+-- * ATTRIBUTES:
+   
+subtype of COLLISION(T);
+
+
+  init(size:INT):SAME is
+
+-- * METHOD: create(size:INT):SAME
+-- * DESCRIPTION: define number of elements for hash table \
+-- * to be used in BOUNDED_SET. For any bounded set s size must be \
+-- * instantiated with max_size
+-- * PRE:true
+-- * POST:tab_size = size
+-- * COMPLEXITY: O(size)
+-- * REFERENCES:
+     
+    res := self; 
+    tab_size := 2*size;
+  end; -- init
+
+
+  h(i:INT; x:T):INT is
+     
+-- * METHOD: h(i:INT; x:T): INT
+-- * DESCRIPTION: define step for moving by collision-occurs
+-- * PRE:true
+-- * POST: h(i,x) = i
+-- * COMPLEXITY: O(1)
+-- * REFERENCES:
+     
+    res := i*i;
+  end;-- * h(i:INT, x:T)
+
+end;-- QUADRATIC_PROBING
+

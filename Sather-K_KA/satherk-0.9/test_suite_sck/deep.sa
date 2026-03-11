@@ -1,0 +1,156 @@
+--* Last edited: Feb  2 23:06 1994 (holzw)
+--
+-- test classes for deep_copy_value and deep_cmp_value
+-- comments assume that limit for holding objects in place is 20
+--
+
+
+value class A is -- size of A is 48
+   a1: INT;	 -- A cannot be held in place
+   a2: FLT;
+   a3: FLTD;
+   a4: FLTD;
+   a5: FLTD;
+   a6: FLTD;
+end;
+
+value class B is -- size of B is 16
+   b1: A;	 -- B can be held in place -> size=12
+   b2: A;
+   b3: A;
+end;
+
+value class D is -- C is reserved so far
+   c1: B;	 -- D cannot be held in place
+   c2: B;	 -- size of D is 52
+   c3: B;
+   c4: B;
+end;
+
+value class SUPER is
+
+   x: A;
+   y: B;
+   z: D;
+
+end;
+
+value class SUB_1 is subtype of SUPER; end;
+value class SUB_2 is subtype of SUPER; end;
+
+
+class DEEP is
+   
+   main is
+      ---------------------------- variable declarations
+      d1,d2: D;
+
+      ---------------------------- initialize variables
+      d1.c1.b1.a1:= 1;
+      d1.c1.b1.a2:= 2;
+      d1.c2.b2.a1:= 3;
+      d1.c3.b1.a1:= 4;
+      d1.c1.b3.a1:= 5;
+      d1.c4.b1.a1:= 6;
+      d1.c1.b3.a2:= 7;
+      d1.c3.b2.a1:= 8;
+      d1.c1.b1.a2:= 9;
+      d1.c1.b1.a3:= 1;
+      d1.c2.b1.a4:= 2;
+      d1.c1.b2.a5:= 3;
+      d1.c3.b3.a6:= 4;
+      d1.c1.b1.a4:= 5;
+      d1.c1.b2.a3:= 6;
+      d1.c2.b1.a5:= 7;
+      d1.c4.b1.a4:= 8;
+      d1.c1.b2.a3:= 9;
+
+      ---------------------------- test value semantic of assignment and comparison
+      d2:= d1;
+
+      OUT::s("d1.deep_cmp_value(deep_copy_value(d1)): ");
+      if d1=d2 then
+        OUT::s("OK.").nl;
+      else
+        OUT::s("failed!").nl;
+      end;
+
+      OUT::s("d1.c2.deep_cmp_value(deep_copy_value(d2.c2)): ");
+      if d1.c2=d2.c2 then
+        OUT::s("OK.").nl;
+      else
+        OUT::s("failed!").nl;
+      end;
+
+      d2.c3.b1.a3:=22;
+
+      OUT::s("d1.deep_cmp_value(different_d2): ");
+      if d1=d2 then
+        OUT::s("failed!").nl;
+      else
+        OUT::s("OK.").nl;
+      end;
+
+      d2.c4:=d1.c3;
+      OUT::s("d1.c3.deep_cmp_value(d2.c3): ");
+      if d1.c3=d2.c4 then
+        OUT::s("OK.").nl;
+      else
+        OUT::s("failed!").nl;
+      end;
+
+      d2.c4.b3.a1:=25;
+      OUT::s("d1.c3.deep_cmp_value(different_d2.c3): ");
+      if d1.c3=d2.c4 then
+        OUT::s("failed!").nl;
+      else
+        OUT::s("OK.").nl;
+      end;
+
+      d2.c1.b2:=d1.c3.b1;
+      OUT::s("d1.c3.b1.deep_cmp_value(d2.c1.b2): ");
+      if d1.c3.b1=d2.c1.b2 then
+        OUT::s("OK.").nl;
+      else
+        OUT::s("failed!").nl;
+      end;
+
+      d2.c1.b2.a2:=17;
+      OUT::s("d1.c3.b1.deep_cmp_value(different_d2.c1.b2): ");
+      if d1.c3.b1=d2.c1.b2 then
+        OUT::s("failed!").nl;
+      else
+        OUT::s("OK.").nl;
+      end;
+
+      ---------------------------- test comparing objects of same type
+      x1: SUB_1;
+      x1.x.a1:= 5;
+      x1.y.b2.a3:= 10;
+      x2: SUB_1:=x1;
+
+      OUT::s("comparing subtypes of same type ");
+      if x1=x2 then
+        x2.y.b1.a2:=7;
+        if not (x1=x2) then
+          OUT::s("OK.").nl;
+	else
+          OUT::s("failed.").nl;
+	end;
+      else
+        OUT::s("failed.").nl;
+      end;
+
+      ---------------------------- test comparing objects of different types
+      y: SUB_2;
+      y.x.a1:= 5;
+      y.y.b2.a3:= 10;
+
+      OUT::s("comparing subtypes of different types ");
+      if x1=y then
+        OUT::s("failed.").nl;
+      else
+        OUT::s("OK.").nl;
+      end;
+   end;
+end;

@@ -1,0 +1,416 @@
+-- Author : Wolf Zimmermann
+-- Date : August 19, 1994
+--
+-- Copyright (C) Universitaet Karlsruhe, 1994
+-- This file is part of Karla, the Karlsruhe Library of Algorithms. 
+-- COPYRIGHT NOTICE: This code is provided "AS IS" WITHOUT ANY WARRANTY
+-- and is subject to the terms of the KARLA LIBRARY GENERAL PUBLIC
+-- LICENSE contained in the file: "doc/license.txt" of the
+-- distribution.
+--
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FILE: fo_bag_array.sa
+--*
+--* CLASSES: FINITE_ORDERED_MULTISET__ARRAY(T1,T<FINITE_ORDERED(T1),ORDER<ORDER_RELATION(T))
+--*
+--* IMPLEMENTATION OF: FINITE_ORDERED_MULTISET(T)
+--*
+--* CONFORMS TO:
+--*
+--* IS A:
+--*
+--* REQUIRED CLASSES: FINITE_ORDERED_MULTISET(T1,T,ORDER) ORDER_RELATION(T) \
+--* FINITE_INT_FLEX FINITE_MULTISET__ARRAY \
+--* FINITE_ORDERED(T) EXCEPTION__MULTISET EXCEPTION__ORDERED_MULTISET_NEXT \
+--* EXCEPTION__ORDERED_MULTISET_PREVIOUS EXCEPTION__ORDERED_MULTISET_MAX \
+--* EXCEPTION__ORDERED_MULTISET_MIN
+--*
+--* EXCEPTIONS: EXCEPTION__MULTISET EXCEPTION__ORDERED_MULTISET_NEXT \
+--* EXCEPTION__ORDERED_MULTISET_PREVIOUS EXCEPTION__ORDERED_MULTISET_MAX \
+--* EXCEPTION__ORDERED_MULTISET_MIN
+--*
+--* TEST CLASS: TEST__FINITE_ORDERED_MULTISET__ARRAY
+--*
+--* FOREIGN FILES:
+--*
+-- RCS: $ld$
+-- HISTORY: $log$
+--
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+class FINITE_ORDERED_MULTISET__ARRAY(T1,T<FINITE_ORDERED(T1),ORDER<ORDER_RELATION(T)) is
+-- * CLASS: FINITE_ORDERED_MULTISET__ARRAY(T1,T<FINITE_ORDERED(T1))
+-- * DESCRIPTION: Implementation of abstract type FINITE_ORDERED_MULTISET(T) for \
+-- * finite types via arrays
+-- * SUBCLASS OF:
+-- * SPECIALIZATION OF:
+-- * IMPLEMENTATION OF: FINITE_ORDERED_MULTISET(T1,T,ORDER)
+-- * EXCEPTIONS: EXCEPTION__MULTISET EXCEPTION__ORDERED_MULTISET_NEXT \
+-- * EXCEPTION__ORDERED_MULTISET_PREVIOUS EXCEPTION__ORDERED_MULTISET_MAX \
+-- * EXCEPTION__ORDERED_MULTISET_MIN
+-- * INVARIANT: FINITE_ORDERED_MULTISET::Inv AND \
+-- * max_size=T::n AND FORALL i:INT: 0<=i<max_size: hold[i]=multiplicity[i]
+-- * REPRESENTATION: 
+-- * COMPLEXITY: \
+-- * static SIZE = size \
+-- * cumulative SPACE(n) = max_size \
+-- * additive TIME(n) = O(n)
+-- * REFERENCES:
+-- * ATTRIBUTES: size:INT; -- size of set \
+-- *             hold: ARR[*](INT);  -- vector holding the multiset
+-- *             max_size:INT; -- maximal size of set
+   
+   subtype of FINITE_ORDERED_MULTISET(T1,T,ORDER);
+   include FINITE_MULTISET__ARRAY(T1,T);
+
+
+end; -- class FINITE_ORDERED_MULTISET__ARRAY
+
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+class TEST__FINITE_ORDERED_MULTISET__ARRAY is
+
+
+  performancetest(n:INT) is
+    i:INT;
+    x:FINITE_INT_FLEX := #FINITE_INT_FLEX.init(n);
+    s:$MULTISET(FINITE_INT_FLEX) := #FINITE_ORDERED_MULTISET__ARRAY(INT,FINITE_INT_FLEX).init;
+    timer:TIMER := #TIMER;
+    timer.reset;
+    timer.go;
+    loop
+      i := 0.upto!(n-1);
+      x.elt := i;
+      s := s.add(x.copy);
+    end;
+    timer.stop;
+    OUT::s(n.str).s(" times add cost time ").s(timer.mean.str).nl.nl;
+    timer.reset;
+    timer.go;
+    loop
+      i:=0.upto!(n-1);
+      x.elt := i;
+      if not(s.member(x)) then break; end;
+    end;
+    timer.stop;
+    OUT::s(n.str).s(" times member cost time ").s(timer.mean.str).nl.nl;
+    if i<n-1 then OUT::s("membership test not succeeded for i=").s(i.str).nl.nl;
+    else OUT::s("membership test succeeded").nl.nl;
+    end;
+    timer.reset;
+    timer.go;
+    loop
+      i:= 0.upto!(n-1);
+      x.elt := i;
+      s := s.delete(x);
+    end;
+    timer.stop;
+    OUT::s(n.str).s(" times delete cost time ").s(timer.mean.str).nl.nl;
+    if s.empty then OUT::s("deletion succeeded").nl.nl;
+    else OUT::s("deletion not succeeded: s=").s(s.str).nl.nl;
+    end;
+  end; -- performancetest
+
+
+  main is
+    x,y:FINITE_INT_FLEX := #FINITE_INT_FLEX.init(100);
+    s:$FINITE_ORDERED_MULTISET(INT,FINITE_INT_FLEX,ORDER_LT(FINITE_INT_FLEX)) := 
+                 #FINITE_ORDERED_MULTISET__ARRAY(INT,FINITE_INT_FLEX,ORDER_LT(FINITE_INT_FLEX)).init;
+    s1:$FINITE_ORDERED_MULTISET(INT,FINITE_INT_FLEX,ORDER_LT(FINITE_INT_FLEX)) := 
+                 #FINITE_ORDERED_MULTISET__ARRAY(INT,FINITE_INT_FLEX,ORDER_LT(FINITE_INT_FLEX)).init;
+    s2:$FINITE_ORDERED_MULTISET(INT,FINITE_INT_FLEX,ORDER_LT(FINITE_INT_FLEX)) := 
+                 #FINITE_ORDERED_MULTISET__ARRAY(INT,FINITE_INT_FLEX,ORDER_LT(FINITE_INT_FLEX)).init;
+    i:INT;
+    s3:$FINITE_ORDERED_MULTISET(INT,FINITE_INT_FLEX,ORDER_LT(FINITE_INT_FLEX)) := 
+                 #FINITE_ORDERED_MULTISET__ARRAY(INT,FINITE_INT_FLEX,ORDER_LT(FINITE_INT_FLEX)).init;
+    s4:$FINITE_ORDERED_MULTISET(INT,FINITE_INT_FLEX,ORDER_LT(FINITE_INT_FLEX)) := 
+                 #FINITE_ORDERED_MULTISET__ARRAY(INT,FINITE_INT_FLEX,ORDER_LT(FINITE_INT_FLEX)).init;
+    OUT::s("s is created: empty set").nl;
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.empty? ").s(s.empty.str).nl.nl;
+    begin
+      x := s.choose;
+    except excptset
+      when EXCEPTION__MULTISET 
+	then ERR::s(excptset.str).nl;
+	     OUT::s("exception test successfull").nl;
+      else OUT::s("exception test not successfull").nl;
+    end;
+    OUT::s("s := s.delete(10)").nl;
+    x.elt := 5;
+    s := s.delete(x);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.member(10)? ");
+    OUT::s(s.member(x).str).nl.nl;
+    OUT::s("s.multiplicity(10) = ").i(s.multiplicity(x)).nl;
+    OUT::s("s.add(10)").nl;
+    s := s.add(x.copy);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.empty? ").s(s.empty.str).nl.nl;
+    OUT::s("s.multiplicity(10) = ").i(s.multiplicity(x)).nl;
+    OUT::s("s.add(10)").nl;
+    s := s.add(x.copy);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.multiplicity(10) = ").i(s.multiplicity(x)).nl;
+    OUT::s("s.add(20)").nl;
+    x.elt := 10;
+    s := s.add(x);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.member(10)? ");
+    x.elt := 5;
+    OUT::s(s.member(x).str).nl.nl;
+    x.elt := 6;
+    OUT::s("s.member(12)? ");
+    OUT::s(s.member(x).str).nl;
+    OUT::s("s.choose = ").s(s.choose.str).nl.nl;
+    OUT::s("s := s.delete(10)").nl;
+    x.elt := 5;
+    s := s.delete(x);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.choose = ").s(s.choose.str).nl.nl;
+    x.elt := 10;
+    OUT::s("s := s.delete(20)").nl;
+    s := s.delete(x);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s := s.delete(10)").nl;
+    x.elt := 5;
+    s := s.delete(x);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.empty? ").s(s.empty.str).nl.nl;
+    begin
+      x := s.choose;
+    except excptset
+      when EXCEPTION__MULTISET 
+	then ERR::s(excptset.str).nl;
+	     OUT::s("exception test successfull").nl;
+      else OUT::s("exception test not successfull").nl;
+    end;
+    OUT::s("s.add(20)").nl;
+    s := s.add(x);
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s.empty? ").s(s.empty.str).nl.nl;
+    OUT::s("s.add(10)").nl;
+    x.elt := 5;
+    s := s.add(x);
+    OUT::s("s = ").s(s.str).nl.nl;
+    s := #FINITE_ORDERED_MULTISET__ARRAY(INT,FINITE_INT_FLEX,ORDER_LT(FINITE_INT_FLEX)).init;
+    OUT::s("s is created: empty set").nl;
+    OUT::s("s = ").s(s.str).nl.nl;
+    loop
+      i:=1.upto!(20);
+      x.elt := i;
+      s := s.add(x.copy);
+    end;
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s := s.delete_max").nl;
+    s := s.delete_max;
+    OUT::s("s = ").s(s.str).nl.nl;
+    OUT::s("s := s.delete_min").nl;
+    s := s.delete_min;
+    OUT::s("s = ").s(s.str).nl.nl;
+    loop
+      i := 1.upto!(20);
+      x.elt := i;
+      s1 := s1.add(x.copy);
+    end;
+    OUT::s("s1 = ").s(s1.str).nl;
+    loop
+      i := 0.upto!(20);
+      x.elt := i;
+      OUT::s("s1.multiplicity(").s(x.str).s(") = ").i(s1.multiplicity(x)).nl;
+    end;
+ OUT::s("s1.min =").s(s1.min.str).nl;
+    OUT::s("s1.max =").s(s1.max.str).nl;
+    x.elt := 5;
+    OUT::s("s1.choose_next(5) =").s(s1.choose_next(x.copy).str).nl;
+    OUT::s("s1.choose_previous(5) =").s(s1.choose_previous(x.copy).str).nl;
+    OUT::s("Testing exception EXCEPTION__ORDERED_MULTISET_NEXT").nl;
+    begin
+      x.elt := 21;
+      OUT::s(s1.choose_next(x.copy).str);
+    except excptset
+      when EXCEPTION__ORDERED_MULTISET_NEXT then
+         ERR::s(excptset.str).nl;
+         OUT::s("exception test EXCEPTION__ORDERED_MULTISET_NEXT successfull").nl;
+      else OUT::s("exception test EXCEPTION__ORDERED_MULTISET_NEXT not successfull").nl;
+    end;
+    OUT::s("Testing exception EXCEPTION__ORDERED_MULTISET_PREVIOUS").nl;
+    begin
+      x.elt := 0;
+      OUT::s(s1.choose_previous(x.copy).str);
+    except excptset
+      when EXCEPTION__ORDERED_MULTISET_PREVIOUS then
+         ERR::s(excptset.str).nl;
+         OUT::s("exception test EXCEPTION__ORDERED_MULTISET_PREVIOUS successfull").nl;
+      else OUT::s("exception test EXCEPTION__ORDERED_MULTISET_PREVIOUS not successfull").nl;
+    end;
+    OUT::s("s1.sort = ").s(s1.sort.str).nl;
+    OUT::s("Testing stream elts").nl;
+    loop
+      OUT::s(s1.elts!.str).s(" ");
+    end;
+    OUT::nl;
+    OUT::s("Testing stream elts_order").nl;
+    loop
+      OUT::s(s1.elts_order!.str).s(" ");
+    end;
+    OUT::nl;
+    OUT::s("Testing stream elts_reverse_order").nl;
+    loop
+      OUT::s(s1.elts_reverse_order!.str).s(" ");
+    end;
+    OUT::nl;
+    OUT::s("Testing stream from_to(5,12)").nl;
+    x.elt := 5;
+    y.elt := 12;
+    loop
+      OUT::s(s1.from_to!(x.copy,y.copy).str).s(" ");
+    end;
+    OUT::nl;
+    OUT::s("Testing stream from_downto(12,5)").nl;
+    loop
+      OUT::s(s1.from_downto!(y.copy,x.copy).str).s(" ");
+    end;
+    OUT::nl;
+    x.elt := -1;
+    y.elt := 22;
+    OUT::s("Testing stream from_to(-1,22)").nl;
+    loop
+      OUT::s(s1.from_to!(x.copy,y.copy).str).s(" ");
+    end;
+    OUT::nl;
+    OUT::s("Testing stream from_downto(22,-1)").nl;
+    loop
+      OUT::s(s1.from_downto!(y.copy,x.copy).str).s(" ");
+    end;
+    OUT::nl;
+    OUT::s("s1 = ").s(s1.str).nl;
+    OUT::s("s2 = ").s(s2.str).nl;
+    OUT::s("s1.disjoint_union(s2) = ").s(s1.disjoint_union(s2).str).nl;
+    OUT::s("s1.union(s2) = ").s(s1.union(s2).str).nl;
+    OUT::s("s1.intersect(s2) = ").s(s1.intersect(s2).str).nl;
+    OUT::s("s1.diff(s2) = ").s(s1.diff(s2).str).nl;
+    OUT::s("s1.subset(s2) = ").s(s1.subset(s2).str).nl;
+    OUT::s("s2.subset(s1) = ").s(s2.subset(s1).str).nl;
+
+    loop
+      i := 1.upto!(20);
+      x.elt := i;
+      s2 := s2.add(x.copy);
+      if i.mod(2)=0 then s2 := s2.add(x.copy); end;
+      if i.mod(3)=0 then s2 := s2.add(x.copy); end;
+      if i.mod(4)=0 then s2 := s2.add(x.copy); end;
+    end;
+    OUT::s("s2 = ").s(s2.str).nl;
+    OUT::s("s2.min =").s(s2.min.str).nl;
+    OUT::s("s2.max =").s(s2.max.str).nl;
+    x.elt := 5;
+    OUT::s("s2.choose_next(5) =").s(s2.choose_next(x.copy).str).nl;
+    OUT::s("s2.choose_previous(5) =").s(s2.choose_previous(x.copy).str).nl;
+    OUT::s("s2.sort = ").s(s2.sort.str).nl;
+    loop
+      i := 0.upto!(20);
+      x.elt := i;
+      OUT::s("s2.multiplicity(").s(x.str).s(") = ").i(s2.multiplicity(x)).nl;
+    end;
+    OUT::s("Testing stream elts").nl;
+    loop
+      OUT::s(s2.elts!.str).s(" ");
+    end;
+    OUT::nl;
+    OUT::s("Testing stream elts_order").nl;
+    loop
+      OUT::s(s2.elts_order!.str).s(" ");
+    end;
+    OUT::nl;
+    OUT::s("Testing stream elts_reverse_order").nl;
+    loop
+      OUT::s(s2.elts_reverse_order!.str).s(" ");
+    end;
+    OUT::nl;
+    x.elt := 5;
+    y.elt := 12;
+    OUT::s("Testing stream from_to(5,12)").nl;
+    loop
+      OUT::s(s2.from_to!(x.copy,y.copy).str).s(" ");
+    end;
+    OUT::nl;
+    OUT::s("Testing stream from_downto(12,5)").nl;
+    loop
+      OUT::s(s2.from_downto!(y.copy,x.copy).str).s(" ");
+    end;
+    OUT::nl;
+    x.elt := -1;
+    y.elt := 22;
+    OUT::s("Testing stream from_to(-1,22)").nl;
+    loop
+      OUT::s(s2.from_to!(x.copy,y.copy).str).s(" ");
+    end;
+    OUT::nl;
+    OUT::s("Testing stream from_downto(22,-1)").nl;
+    loop
+      OUT::s(s2.from_downto!(y.copy,x.copy).str).s(" ");
+    end;
+    OUT::nl;
+    OUT::s("s1 = ").s(s1.str).nl;
+    OUT::s("s2 = ").s(s2.str).nl;
+    OUT::s("s1.disjoint_union(s2) = ").s(s1.disjoint_union(s2).str).nl;
+    OUT::s("s1.union(s2) = ").s(s1.union(s2).str).nl;
+    OUT::s("s1.intersect(s2) = ").s(s1.intersect(s2).str).nl;
+    OUT::s("s1.diff(s2) = ").s(s1.diff(s2).str).nl;
+    OUT::s("s1.subset(s2) = ").s(s1.subset(s2).str).nl;
+    OUT::s("s2.subset(s1) = ").s(s2.subset(s1).str).nl;
+
+    s2 := #FINITE_ORDERED_MULTISET__ARRAY(INT,FINITE_INT_FLEX,ORDER_LT(FINITE_INT_FLEX)).init;
+    loop
+      i := 1.upto!(10);
+      x.elt := i;
+      s2 := s2.add(x.copy);
+      if i.mod(2)=0 then s2 := s2.add(x.copy); end;
+      if i.mod(3)=0 then s2 := s2.add(x.copy); end;
+      if i.mod(4)=0 then s2 := s2.add(x.copy); end;
+    end;
+    OUT::s("s2 = ").s(s2.str).nl;
+    loop
+      i := 0.upto!(20);
+      x.elt := i;
+      OUT::s("s2.multiplicity(").s(x.str).s(") = ").i(s2.multiplicity(x)).nl;
+    end;
+    OUT::s("Testing stream elts").nl;
+    loop
+      OUT::s(s2.elts!.str).s(" ");
+    end;
+    OUT::nl;
+    OUT::s("s1 = ").s(s1.str).nl;
+    OUT::s("s2 = ").s(s2.str).nl;
+    OUT::s("s1.disjoint_union(s2) = ").s(s1.disjoint_union(s2).str).nl;
+    OUT::s("s1.union(s2) = ").s(s1.union(s2).str).nl;
+    OUT::s("s1.intersect(s2) = ").s(s1.intersect(s2).str).nl;
+    OUT::s("s1.diff(s2) = ").s(s1.diff(s2).str).nl;
+    OUT::s("s1.subset(s2) = ").s(s1.subset(s2).str).nl;
+    OUT::s("s2.subset(s1) = ").s(s2.subset(s1).str).nl;
+
+    loop
+      i := 1.upto!(10);
+      x.elt := i;
+      s4 := s4.add(x.copy);
+      if i.mod(2)=0 then s4 := s4.add(x.copy); end;
+      if i.mod(3)=0 then s4 := s4.add(x.copy); end;
+      if i.mod(4)=0 then s4 := s4.add(x.copy); end;
+    end;
+    OUT::s("s4 = ").s(s4.str).nl;
+    OUT::s("s4.complement = ").s(s4.complement.str).nl;
+
+
+    --performancetest(100);
+    --performancetest(1000);
+    --performancetest(10000);
+    --performancetest(100000);
+    --performancetest(200000);
+    --performancetest(300000);
+    
+  end; -- main
+
+end; -- TEST__FINITE_ORDERED_MULTISET__ARRAY

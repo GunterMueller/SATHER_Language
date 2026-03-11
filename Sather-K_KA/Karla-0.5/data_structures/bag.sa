@@ -1,0 +1,433 @@
+-- File: bag.sa
+-- Author: Wolf Zimmermann
+-- Copyright (C) Universitaet Karlsruhe, 1994
+--
+-- COPYRIGHT NOTICE: This code is provided "AS IS" WITHOUT ANY WARRANTY
+-- and is subject to the terms of the KARLA LIBRARY GENERAL PUBLIC
+-- LICENSE contained in the file: "doc/license.txt" of the 
+-- distribution. 
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FILE: bag.sa
+--*
+--* CLASSES: MULTISET(A) EXCEPTION__MULTISET
+--* 
+--* IMPLEMENTATION OF: 
+--*
+--* CONFORMS TO:
+--*
+--* IS A:
+--*
+--* REQUIRED CLASSES: 
+--*
+--* EXCEPTIONS:  EXCEPTION__MULTISET
+--*
+--* TEST CLASS: TEST__MULTISET
+--*
+--* FOREIGN FILES:
+--*
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--
+-- RCS: $Id$
+-- HISTORY: $Log$
+--
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+abstract class MULTISET(T) is
+   -- * CLASS: MULTISET(T)
+   -- * DESCRIPTION: abstract class defining multisets 
+   -- * SUBCLASS OF: 
+   -- * SPECIALIZATION OF: 
+   -- * IMPLEMENTATION OF: 
+   -- * EXCEPTIONS: 
+   -- * INVARIANT: FORALL a,b:T:\
+   -- *     ##.init.add(a).member(a)=true AND \
+   -- *     (NOT a=b IMPLIES ##.init.add(b).member(a)=false) AND \
+   -- *     add(a).member(a)=true AND \
+   -- *     (NOT a=b IMPLIES add(b).member(a)=member(a)) AND \
+   -- *     add(a).add(b)=add(b).add(a) AND \
+   -- *     (NOT member(a) IMPLIES add(a)=insert(a)) AND \
+   -- *     (member(a) IMPLIES add(a)=self) AND \
+   -- *     add(a).delete(a)=self AND \
+   -- *     (NOT a=b IMPLIES add(b).delete(a)=delete(a).add(b)) AND \
+   -- *     (NOT member(a) IMPLIES delete(a)=self) AND \
+   -- *     delete(a).delete(b) = delete(b).delete(a) AND \
+   -- *     ##.init.multiplicity(a) = 0 AND \
+   -- *     add(a).multiplicity(a) = multiplicity(a) + 1 AND \
+   -- *     (NOT a=b IMPLIES add(b).multiplicity(a) = multiplicity(a)) AND \
+   -- *     size>=0 AND \
+   -- *     add(a).size = size + 1
+   -- * REPRESENTATION:
+   -- * COMPLEXITY: \
+   -- *     static      SIZE = size; \
+   -- *                 ##.init.MAXSIZE = 0 AND \
+   -- *                 MAXSIZE = max(choose.SIZE,delete(choose).MAXSIZE)
+   -- * REFERENCES: [Aho, Hopcroft, Ullman: "The Design and Analysis \
+   -- *               of Computer Algorithms", Addison-Wesley, 1974]
+   -- * ATTRIBUTES: readonly size:INT
+
+
+   readonly size:INT;
+
+   init:SAME is
+     -- * METHOD: init:SAME
+     -- * DESCRIPTION: initizialization -- immediately to call after creation
+     -- * PRE: NOT self=void
+     -- * POST: NOT res=self' AND size'=0
+     -- * COMPLEXITY: \
+     -- *     SIZE__init = 0; \
+     -- *     MAXSIZE__init = 0;
+     -- * REFERENCES:
+
+     deferred;
+   end;
+
+   add(t: T) : SAME is 
+   -- * METHOD: add(t:T):SAME
+   -- * DESCRIPTION: abstract method adding t into self non-idempotent
+   -- * PRE: true
+   -- * POST: res.multiplicity(t) = multiplicity(t) + 1 AND res.size=size+1
+   -- * COMPLEXITY:  \
+   -- *     SIZE__add(self.SIZE,t.SIZE) = self.SIZE+1; \
+   -- *     MAXSIZE__add(self.MAXSIZE,t.SIZE) = max(self.MAXSIZE,t.SIZE); 
+   -- * REFERENCES:
+
+      deferred;
+
+   end;
+
+   insert(t: T) : SAME is 
+   -- * METHOD: insert(t:T):SAME
+   -- * DESCRIPTION: abstract method adding t into self idempotent
+   -- * PRE: true
+   -- * POST: res.multiplicity(t) =  1 AND \
+   -- *    (member(t) IMPLIES res.size=size) AND \
+   -- *    (NOT member(t) IMPLIES res.size=size+1) AND \
+   -- * COMPLEXITY:  \
+   -- *     SIZE__insert(self.SIZE,t.SIZE) = self.SIZE+1; \
+   -- *     MAXSIZE__insert(self.MAXSIZE,t.SIZE) = max(self.MAXSIZE,t.SIZE); 
+   -- * REFERENCES:
+
+      deferred;
+
+   end;
+
+   delete(t: T) : SAME is
+   -- * METHOD: delete(t:T):SAME
+   -- * DESCRIPTION: abstract method deleting t from self
+   -- * PRE: true
+   -- * POST:res.multiplicity(t) = max(0,multiplicity(t)-1) AND \
+   -- * (member(t) IMPLIES res.size=size-1) AND \
+   -- * (NOT member(t) IMPLIES res==self)
+   -- * COMPLEXITY: \
+   -- *    SIZE__delete(self.SIZE,t.SIZE) = self.SIZE \
+   -- *    MAXSIZE__delete(self.MAXSIZE,t.SIZE) = self.MAXSIZE 
+   -- * REFERENCES:
+
+      deferred;
+
+   end;
+
+
+
+   member(t : T) : BOOL
+   is
+      -- * METHOD: member(t:T):BOOL
+      -- * DESCRIPTION: abstract predicate check wether t is in self
+      -- * PRE: NOT self =void
+      -- * POST:  self'=self AND (res=true IFF EXISTS a0,\ldots,ak IN self, k IN NAT, s:SAME : \
+      -- *        self == s.add(t).add(a0).add(a1).\ldots.add(ak))
+      -- * COMPLEXITY:   \
+      -- *  SIZE__member(self.SIZE,t.SIZE) = 1; 
+      -- * REFERENCES:
+
+      deferred;
+      
+   end; -- member
+   
+
+
+   choose : T
+   is
+      -- * METHOD: choose:T
+      -- * DESCRIPTION: abstract method for non-deterministic choice of an element in self
+      -- * PRE: NOT empty
+      -- * POST: self.member(res)=true AND self'=self
+      -- * COMPLEXITY: \
+      -- *      SIZE__choose(self.SIZE,self.MAXSIZE) = self.MAXSIZE; 
+      -- * REFERENCES:
+
+      deferred;
+
+   end; -- choose
+   
+
+   multiplicity(x:T):INT 
+   is
+     -- * METHOD: multiplicity(x:T)
+     -- * DESCRIPTION: computes the multiplicity of x in self
+     -- * PRE: true
+     -- * POST: NOT delete^res.member(x) AND \
+     -- * FORALL k:INT : 0 <= k < res IMPLIES delete^k.member(x) AND self'=self
+     -- * COMPLEXITY: \
+     -- *      SIZE__multiplicity(self.SIZE,x.SIZE) = 1; 
+     -- * REFERENCES:
+      deferred;
+
+   end; -- choose
+   
+
+   disjoint_union(s : $MULTISET(T)) : SAME
+   is
+      -- * METHOD: disjoint_union(s:$MULTISET(T)):SAME
+      -- * DESCRIPTION: abstract method for disjoint union of self and s
+      -- * PRE:   true
+      -- * POST:  FORALL x:T: res.multiplicity(x)  = multiplicity(x) + s.multiplicity(x) AND \
+      -- * res.size = size+s.size
+      -- * COMPLEXITY: \
+      -- *  SIZE__disjoint_union(self.SIZE,s.SIZE) = self.SIZE + s.SIZE \
+      -- *  MAXSIZE__disjoint_union(self.MAXSIZE,s.MAXSIZE) = max(self.MAXSIZE,s.MAXSIZE) \
+      -- * cumulative SPACE(self.SIZE,s.SIZE) = \
+      -- * |     O(max(SIZE_copy_set(self.SIZE),res.SIZE,\
+      -- *        $MULTISET(T)::SPACE_elts(s.SIZE,SIZE__elts(s.SIZE)), \
+      -- *         SPACE_add(self.SIZE+s.SIZE,s.MAXSIZE))) \
+      -- * additive TIME(self.SIZE,s.SIZE) =O( \
+      -- * |  TIME_copy_set(self.SIZE) + \
+      -- * |  $MULTISET(T)::TIME_elts(s.SIZE,s.SIZE) + \
+      -- * |  SIZE__elts(s.SIZE)*TIME_add(self.SIZE+s.SIZE,s.MAXSIZE))
+      -- * REFERENCES:
+  
+      res := copy_set;
+      loop
+	 res.add(s.elts!);
+      end; -- loop
+   end; -- disjoint_union
+
+   
+   union(s : $MULTISET(T)) : SAME
+   is
+      -- * METHOD: union(s:$MULTISET(T)):SAME
+      -- * DESCRIPTION: abstract method for union of self and s
+      -- * PRE:   true
+      -- * POST:  FORALL x:T: res.multiplicity(x) = max(multiplicity(x),s.multiplicity(x)) AND \
+      -- * res.size = sum(x:T,res.multiplicity(x))
+      -- * COMPLEXITY: \
+      -- * SIZE__union(self.SIZE,s.SIZE) = self.SIZE + s.SIZE \
+      -- * MAXSIZE__union(self.MAXSIZE,s.MAXSIZE) = max(self.MAXSIZE,s.MAXSIZE) \
+      -- * SPACE__union(self.SIZE,s.SIZE,s.MAXSIZE) = O(\
+      -- * |   max(SPACE_copy_set(self.SIZE), \
+      -- * |       $MULTISET(T)::SPACE_elts(s.SIZE,s.SIZE), \
+      -- * |       SPACE_multiplicity(res.SIZE,item.SIZE), \
+      -- * |       $MULTISET(T)::SPACE_multiplicity(s.SIZE,item.SIZE), \
+      -- * |       SPACE_add(res.SIZE,item.SIZE), \
+      -- * |       self.SIZE+s.SIZE)) \
+      -- * additive TIME__union(self.SIZE,s.SIZE,s.MAXSIZE) = O( \
+      -- * |  TIME_copy_set(self.SIZE) + \
+      -- * |  $MULTISET(T)::TIME_elts(s.SIZE,s.SIZE) + \
+      -- * |  s.SIZE*TIME_multiplicity(self.SIZE+s.SIZE,s.MAXSIZE) + \
+      -- * |  s.SIZE*$MULTISET(T)::TIME_multiplicity(s.SIZE,s.MAXSIZE) + \
+      -- * |  s.SIZE*TIME_add(self.SIZE+s.SIZE,s.MAXSIZE))
+      -- * REFERENCES:
+  
+      item:T;
+      res := copy_set;
+
+      loop
+	 item :=s.elts!;
+ 	 if  res.multiplicity(item) < s.multiplicity(item)
+	 then
+	    res.add(item);
+	 end; -- if
+      end; -- loop
+   end; -- union
+
+   intersect(s : $MULTISET(T)) : SAME
+   is
+      -- * METHOD: intersect(s:$MULTISET(T)):SAME
+      -- * DESCRIPTION: abstract method for intersection of self and s
+      -- * PRE:   true
+      -- * POST:  FORALL x:T: res.multiplicity(x) = min(multiplicity(x),s.multiplicity(x)) AND \
+      -- * res.size = sum(x:T,res.multiplicity(x))
+      -- * COMPLEXITY: \
+      -- * SIZE__intersect(self.SIZE,s.SIZE) = min(self.SIZE,s.SIZE) \
+      -- * MAXSIZE__intersect(self.MAXSIZE,s.MAXSIZE) = min(self.MAXSIZE,s.MAXSIZE) \
+      -- * SPACE__intersect(self.SIZE,s.SIZE,self.MAXSIZE) = O(\
+      -- * |   max(SPACE_elts(s.SIZE,s.SIZE), \
+      -- * |       SPACE_init, \
+      -- * |       SPACE_multiplicity(min(self.SIZE,s.SIZE),self.MAXSIZE), \
+      -- * |       $MULTISET(T)::SPACE_multiplicity(s.SIZE,self.MAXSIZE), \
+      -- * |       SPACE_add(min(self.SIZE,s.SIZE),s.MAXSIZE), \
+      -- * |       min(self.SIZE,s.SIZE))) \
+      -- * TIME__intersect(self.SIZE,s.SIZE,self.MAXSIZE) = O( \
+      -- * |  TIME_elts(self.SIZE,self.SIZE) + TIME_init +  \
+      -- * |  self.SIZE*TIME_multiplicity(self.SIZE+s.SIZE,self.MAXSIZE) + \
+      -- * |  self.SIZE*$MULTISET(T)::TIME_multiplicity(s.SIZE,self.MAXSIZE) + \
+      -- * |  self.SIZE*TIME_add(min(self.SIZE,s.SIZE),self.MAXSIZE))
+      -- * REFERENCES:
+
+      item:T;
+      res := #SAME.init;
+
+      loop
+	 item :=elts!;
+ 	 if  res.multiplicity(item) < s.multiplicity(item)
+	 then
+	    res.add(item);
+	 end; -- if
+      end; -- loop
+   end; -- intersect
+
+
+
+   diff(s : $MULTISET(T)) : SAME
+   is
+      -- * METHOD: diff(s:$MULTISET(T)):SAME
+      -- * DESCRIPTION: abstract method for set difference of self and s
+      -- * PRE:   	true
+      -- * POST:  FORALL x:T: res.multiplicity(x) = max(0,multiplicity(x)-s.multiplicity(x)) AND \
+      -- * res.size = sum(x:T,res.multiplicity(x))
+      -- * COMPLEXITY: \
+      -- * SIZE__diff(self.SIZE,s.SIZE) = self.SIZE \
+      -- * MAXSIZE__diff(self.SIZE,s.SIZE) = self.MAXSIZE \
+      -- * SPACE__diff(self.SIZE,s.SIZE,s.MAXSIZE) = O(\
+      -- * |   max($MULTISET(T)::SPACE_elts(s.SIZE,s.SIZE), \
+      -- * |       SPACE_copy_set(self.SIZE), \
+      -- * |       SPACE_delete(self.SIZE,s.MAXSIZE), \
+      -- * |       self.SIZE)) \
+      -- * additive TIME(self.SIZE,s.SIZE) = O( \
+      -- * |  $MULTISET(T)::TIME_elts(s.SIZE,s.SIZE) + \
+      -- * |  TIME__copy_set(self.SIZE) + \
+      -- * |  s.SIZE*TIME_delete(self.SIZE,s.MAXSIZE)
+      -- * REFERENCES:
+
+      item:T;
+      res := copy_set;
+      loop
+	 item :=s.elts!;
+         res.delete(item);
+      end; -- loop
+   end; -- diff
+   
+   empty:BOOL is
+      -- * METHOD: empty:BOOL
+      -- * DESCRIPTION: true iff empty
+      -- * PRE: true
+      -- * POST: NOT EXISTS x:T : self.member(x)
+      -- * COMPLEXITY: \
+      -- * SIZE__empty(self.SIZE) = 1 \
+      -- * SPACE__empty(self.SIZE) = O(1) \
+      -- * TIME__empty(self.SIZE) = O(1) 
+      -- * REFERENCES:
+      res := size=0;
+   end; -- empty:BOOL
+ 
+
+   subset(s:$MULTISET(T)):BOOL is
+      -- * METHOD: subset(s:$MULTISET(T)):BOOL
+      -- * DESCRIPTION: true iff self is subset of s
+      -- * PRE: true
+      -- * POST: res = FORALL x:T: multiplicity(x) <= s.multiplicity(x)
+      -- * COMPLEXITY: \
+      -- * SIZE__subset(self.SIZE,s.SIZE) = 1 \
+      -- * SPACE__subset(self.SIZE,s.SIZE,self.MAXSIZE) = O(\
+      -- * |   max(SPACE_elts(self.SIZE,self.SIZE), \
+      -- * |       SPACE_multiplicity(self.SIZE,item.SIZE), \
+      -- * |       $MULTISET(T)::SPACE_multiplicity(s.SIZE,self.MAXSIZE))) \
+      -- * TIME__subset(self.SIZE,s.SIZE) = O( \
+      -- * |  TIME_elts(self.SIZE,self.SIZE,self.MAXSIZE) + \
+      -- * |  self.SIZE*TIME_multiplicity(self.SIZE,self.MAXSIZE) + \
+      -- * |  self.SIZE*$MULTISET(T)::TIME_multiplicity(s.SIZE,self.MAXSIZE))
+      -- * REFERENCES:
+
+      item : T;
+      res := true;
+      while res loop
+	item := elts!;
+	res := multiplicity(item) <= s.multiplicity(item);
+      end;
+   end;
+
+
+
+   stream elts:T is 
+      -- * METHOD: stream elts:T
+      -- * DESCRIPTION: abstract iterator iterating over all elements of a set
+      -- * PRE: true
+      -- * POST: elts.terminated IFF i=size AND \
+      -- *       res[i]=self.diff({res[1],...,res[i-1]}).choose AND\
+      -- *       self'=self
+      -- * COMPLEXITY: \
+      -- * SIZE__elts(self.SIZE) = self.SIZE
+      -- * REFERENCES:
+
+      deferred;
+   end;
+
+
+   copy_set : SAME is
+      -- * METHOD: copy_set:SAME
+      -- * DESCRIPTION: abstract method copying a set
+      -- * PRE: true
+      -- * POST: FORALL x:T: multiplicity(x) = res.multiplicity(x) AND self'=self
+      -- * COMPLEXITY: \
+      -- * SIZE__copy_set(self.SIZE) = self.SIZE \
+      -- * MAXSIZE__copy_set(self.MAXSIZE) = self.MAXSIZE \
+      -- * SPACE__copy_set(self.SIZE,self.MAXSIZE) = O( \
+      -- * | max(self.SIZE, \
+      -- * |     SPACE_init, \
+      -- * |     SPACE_add(self.SIZE,self.MAXSIZE))) \
+      -- * TIME__copy_set(self.SIZE,self.MAXSIZE) = O( \
+      -- * | TIME_init + TIME_elts(self.SIZE,self.SIZE) + \
+      -- * | self.SIZE*TIME_add(self.SIZE,self.MAXSIZE) )
+      -- * REFERENCES:
+
+      res := ##res.init;
+      loop
+	 res.add(elts!);
+      end; -- until
+   end; -- copy_set
+
+   str:STR is deferred; end;
+   
+end;
+
+
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+class EXCEPTION__MULTISET is
+  -- * CLASS: EXCEPTION__MULTISET
+  -- * DESCRIPTION: exception of MULTISET: choose on empty multiset
+  -- * SUBCLASS OF:
+  -- * SPECIALIZATION OF:
+  -- * IMPLEMENTATION OF:
+  -- * EXCEPTIONS:
+  -- * INVARIANT:
+  -- * REPRESENTATION:
+  -- * COMPLEXITY:
+  -- * REFERENCES:
+  -- * ATTRIBUTES: name:STR -- error message
+   subtype of EXCEPTION_USER;
+
+   const name:STR := "MULTISET::choose on empty multiset";
+
+end;
+
+class TEST__MULTISET is
+-- * CLASS: TEST__MULTISET
+-- * DESCRIPTION: 
+-- * SUBCLASS OF: 
+-- * SPECIALIZATION OF: 
+-- * IMPLEMENTATION OF: 
+-- * EXCEPTIONS: 
+-- * INVARIANT: 
+-- * COMPLEXITY: 
+-- * REFERENCES: 
+
+
+   main is
+      a:$MULTISET(INT):=#MULTISET(INT);
+      ERR::s("creation of abstract class succeeded.\n");
+   end;
+
+end; -- class TEST__MULTISET
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -1,0 +1,203 @@
+-- Author: Frank Abegg, Frank Schmiedle, Juergen Ruf 
+-- Copyright (C) Universitaet Karlsruhe, 1994
+--
+-- COPYRIGHT NOTICE: This code is provided "AS IS" WITHOUT ANY WARRANTY
+-- and is subject to the terms of the KARLA LIBRARY GENERAL PUBLIC
+-- LICENSE contained in the file: "doc/license.txt" of the 
+-- distribution. 
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FILE: bounded_dequeue.sa
+--*
+--* CLASSES: BOUNDED_DEQUEUE(T) EXCEPTION__BOUNDED_DEQUEUE__OVERFLOW
+--* 
+--* IMPLEMENTATION OF:
+--*
+--* CONFORMS TO: 
+--*
+--* IS A: DEQUEUE(T)
+--*
+--* REQUIRED CLASSES: DEQUEUE EXCEPTION__DEQUEUE__EMPTY
+--*
+--* EXCEPTIONS: EXCEPTION__BOUNDED_DEQUEUE__OVERFLOW EXCEPTION__DEQUEUE__EMPTY
+--*
+--* TEST CLASS: TEST__BOUNDED_DEQUEUE
+--*
+--* FOREIGN FILES:
+--*
+--  RCS: $Id$
+--  HISTORY: $Log$
+--  * Last edited: May 13 12:52 1994 (algprak5)
+--  Last edited: Mar 8 1994 (Wolf Zimmermann)
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+abstract class BOUNDED_DEQUEUE(T) is
+   -- * CLASS: BOUNDED_DEQUEUE(T)
+   -- * DESCRIPTION: standard abstract data type dequeue with limitation, \
+   -- *              enqueue and dequeue on both ends of the structure 
+   -- * SUBCLASS OF:
+   -- * SPECIALIZATION OF: DEQUEUE(T)
+   -- * IMPLEMENTATION OF:
+   -- * EXCEPTIONS: EXCEPTION__BOUNDED_DEQUEUE__OVERFLOW
+   -- * INVARIANT: FORALL n IN NAT: \
+   -- *      act_size < max_size AND \
+   -- *      NOT self = void AND \
+   -- *      #SAME.init(n).empty = true AND \
+   -- *      self.enqr(a).empty =false AND \
+   -- *      self.enql(a).empty = false AND \
+   -- *      (self.empty IMPLIES self.enql(a)=self.enqr(a)) AND \
+   -- *      self.enql(a).enqr(b) = self.enqr(b).enql(a) AND \
+   -- *      self.enql(a).frontl = a AND \
+   -- *      self.empty IMPLIES self.enqr(a).frontr = a AND \
+   -- *      (EXISTS q: DEQUEUE(T), a.b: T :self == q.enql(a).enql(b) IMPLIES \
+   -- *                                   self.frontr = q.enql(a).frontr)        AND \
+   -- *      (self.empty IMPLIES self.frontl = error) AND \
+   -- *      (self.empty IMPLIES self.frontr = error) AND \
+   -- *      self.enql(a).deql = self AND \
+   -- *      (self.empty IMPLIES self.enqr(a).deqr == #SAME.init(n)) AND \
+   -- *      (EXISTS q: DEQUEUE(T), a.b: T :self == q.enql(a).enql(b) IMPLIES \
+   -- *                                   self.deqr == q.enql(a).deqr.enql(b)) AND\
+   -- *      (self.empty IMPLIES self.deql = error) AND \
+   -- *      (self.empty IMPLIES self.deqr = error)
+   -- * REPRESENTATION:
+   -- * COMPLEXITY:
+   -- * REFERENCES: 
+   -- * ATTRIBUTES: readonly max_size:INT -- size of dequeue
+   -- *             readonly act_size:INT -- maximum size of dequeue
+
+   include DEQUEUE(T);
+   
+   readonly max_size: INT;
+   readonly act_size: INT;
+
+   
+   init(size: INT):SAME is
+   -- * METHOD: create(size: INT):SAME
+   -- * DESCRIPTION: method creating a bounded dequeue
+   -- * PRE: NOT self = void 
+   -- * POST: NOT res = void AND \
+   -- *       res.act_size = 0 AND \
+   -- *       res.max_size = size
+   -- * COMPLEXITY:
+   -- * REFERENCES:
+
+     deferred;
+   end;
+
+   enql(a:T):SAME is
+   -- * METHOD: enql(a:T):SAME
+   -- * DESCRIPTION: abstract constructor method inserting a into a dequeue on the left
+   -- * PRE: NOT self = void AND \
+   -- *      act_size < max_size
+   -- * POST: res.deql == self AND res.frontl=a AND \
+   -- *       res.act_size = self.act_size + 1
+   -- * COMPLEXITY: 
+   -- * REFERENCES:
+
+     deferred;
+   end;
+
+   enqr(a:T):SAME is
+   -- * METHOD: enqr(a:T):SAME
+   -- * DESCRIPTION: abstract constructor method inserting a into a dequeue on the right
+   -- * PRE: NOT self = void AND \
+   -- *      act_size < max_size
+   -- * POST: res.deqr == self AND res.frontr=a AND \
+   -- *       res.act_size = self.act_size + 1
+   -- * COMPLEXITY: 
+   -- * REFERENCES:
+
+     deferred;
+   end;
+
+   deql:SAME  is
+   -- * METHOD: deql:SAME
+   -- * DESCRIPTION: abstract method deleting the element on the left
+   -- * PRE: NOT self = void AND NOT self.empty
+   -- * POST: self == res.enql(self.frontl) AND \
+   -- *       self.act_size = res.act_size + 1
+   -- * COMPLEXITY:
+   -- * REFERENCES:
+
+     deferred;
+   end;
+
+   deqr:SAME  is
+   -- * METHOD: deqr:SAME
+   -- * DESCRIPTION: abstract method deleting the element on the right
+   -- * PRE: NOT self = void AND NOT self.empty
+   -- * POST: self == res.enqr(self.frontr) AND \
+   -- *       self.act_size = res.act_size + 1
+   -- * COMPLEXITY:
+   -- * REFERENCES:
+
+     deferred;
+   end;
+
+   frontl:T is
+   -- * METHOD: frontl:T
+   -- * DESCRIPTION: abstract method returning the first inserted element
+   -- * PRE: NOT self = void AND NOT self.empty
+   -- * POST: EXISTS d:DEQUEUE(T),a:T: self==d.enql(a) AND res=a
+   -- * COMPLEXITY:
+   -- * REFERENCES:
+
+     deferred;
+   end;
+
+   frontr:T is
+   -- * METHOD: frontr:T
+   -- * DESCRIPTION: abstract method returning the first inserted element
+   -- * PRE: NOT self = void AND NOT self.empty
+   -- * POST: EXISTS d:DEQUEUE(T),a:T: self==d.enqr(a) AND res=a
+   -- * COMPLEXITY:
+   -- * REFERENCES:
+
+     deferred;
+   end;
+
+   empty:BOOL is
+   -- * METHOD: empty:BOOL
+   -- * DESCRIPTION: abstract method checking whether the dequeue is empty
+   -- * PRE: NOT self = void 
+   -- * POST: res = (act_size = 0)
+   -- * COMPLEXITY:
+   -- * REFERENCES:
+
+     deferred;
+   end;
+
+   str:STR is
+     deferred;
+   end;
+
+   
+end; -- class BOUNDED_DEQUEUE
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+class EXCEPTION__BOUNDED_DEQUEUE__OVERFLOW is 
+  -- * CLASS: EXCEPTION__BOUNDED_DEQUEUE__OVERFLOW
+  -- * DESCRIPTION: exception in bounded dequeue: overflow
+  -- * SUBCLASS OF:
+  -- * SPECIALIZATION OF:
+  -- * IMPLEMENTATION OF:
+  -- * EXCEPTIONS:
+  -- * INVARIANT:
+  -- * REPRESENTATION:
+  -- * COMPLEXITY:
+  -- * REFERENCES:
+  -- * ATTRIBUTES:
+   subtype of EXCEPTION_USER;
+   
+   const name :STR := "ERROR: dequeue overflow in bounded dequeue";
+
+end;
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+class TEST__BOUNDED_DEQUEUE is
+  main is
+    q: BOUNDED_DEQUEUE(INT) := #BOUNDED_DEQUEUE(INT).init(5);
+    ERR::s("creation of abstract class succeeded").nl;
+  end;
+end;

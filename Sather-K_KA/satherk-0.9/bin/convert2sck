@@ -1,0 +1,62 @@
+#!/bin/sh
+#
+# Script to convert syntactical changes
+# from Sather V0.2 to Sather-K
+#
+# Ignores switches, processes all given texts that end in .sa.
+# A backup of the .sa file is created automaticaly with the extension .sa.backup.
+#
+# If a text exists with the same name plus the extension .backup then
+# the backup file is the source for the conversion, but remains
+# unchanged itself. This asserts that sources can be incrementally converted.
+# Change only the .backup files! Changes in the .sa files will be lost at next
+# conversion, if .backup still exists. Since the script cannot do all changes
+# (see comments in convert.sed for details) this keeps you from redoing manual
+# changes as would be necessary if the dates of the .sa and the .sa.backup files
+# were compared to select the newer one as source for the conversion.
+#
+#
+# (C) 1993 Peter Holzwarth
+#
+
+echo Converting Sources to Sather-K syntax... Please wait !
+selfpath=`pathname $0`
+
+TMPDIR=${TMPDIR:-.}
+logfile=${TMPDIR}/sck_convert_log
+rm $logfile
+
+while test $1 ; do
+  case $1 in
+    *.sa)  echo -n .
+           if test -f $1.backup ; then
+             source="$1.backup"
+           else
+             source="$1"
+             cp $source ${source}.backup
+           fi
+           $selfpath/convert_sub $source $1
+	   if grep -l "alias" $1 >> $logfile ; then
+	     grep -n "alias" $1 >> $logfile
+	     echo >> $logfile
+	   fi
+	   if grep -l "undefine" $1 >> $logfile ; then
+	     grep -n "undefine" $1 >> $logfile
+	     echo >> $logfile
+	   fi
+	   ;;
+  esac
+  shift
+done
+
+echo -n done.
+echo
+
+if [ -s $logfile ] ; then
+  echo "This script cannot convert alias/undefine automaticaly."
+  echo "Please change manualy the .backup files of the folowing sources"
+  echo "and do then convert again!"
+  echo "---------------------------------------------------------------"
+  cat $logfile
+fi
+

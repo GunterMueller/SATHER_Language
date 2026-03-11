@@ -1,0 +1,116 @@
+--* Last edited: Feb  2 23:06 1994 (holzw)
+--
+-- test type bounds
+
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+value class ORDERED_SET(T) is
+  is_lt(e2:SAME): BOOL is
+    res:=true;
+  end;
+
+  str: STR is -- defined here until included into the language
+    res:=#STR;
+  end;
+end;
+
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+value class A is
+  subtype of ORDERED_SET(INT);
+  val: INT;
+
+  is_lt(e2:$ORDERED_SET(INT)): BOOL is
+    typecase e2
+    when A then res:= val<e2.val;
+    else ERR::s("Wrong type applied to A::is_lt").nl;
+	 res:=false;
+    end;
+  end;
+
+  str: STR is
+    res:=#STR[2].i(val); -- ruft new ohne Parameter auf
+  end;
+end;
+
+value class B is
+  subtype of ORDERED_SET(FLT);
+  val: FLT;
+
+  is_lt(e2:$ORDERED_SET(FLT)): BOOL is
+    typecase e2
+    when B then res:= val<e2.val;
+    else ERR::s("Wrong type applied to B::is_lt").nl;
+    end;
+    res:=false;
+  end;
+
+  str: STR is
+    res:=#STR.d(val); -- ruft new ohne Parameter auf
+  end;
+end;
+
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+class BINARY_TREE (T<ORDERED_SET(T)) is
+  elem: T;
+  left,right: SAME;
+
+  insert(e:T): SAME is
+    if self=void
+    then
+      res:= #BINARY_TREE(T){elem:=e}; -- Segmentation fault
+    else
+      if e /= elem
+      then
+        if e.is_lt(elem)
+        then
+          left:=left.insert(e);
+	  OUT::s("l ");
+        else
+          right:=right.insert(e);
+	  OUT::s("r ");
+        end;    -- if
+      end;    -- if
+      res:=self;
+    end;    -- if
+  end; -- insert
+
+  find(e:T): SAME is
+    if self=void
+    then res:=void
+    elsif e=elem
+    then res:=self
+    elsif e<elem
+    then res:=left.find(e)
+    else res:=right.find(e)
+    end;  -- if
+  end;  -- find
+
+  str:STR is
+    if self=void
+    then res:=#STR[2]; -- ruft new ohne Parameter auf
+    else res:=left.str.s(" ").s(elem.str).s(" ").s(right.str);
+    end;  -- if
+  end;  -- str
+end;
+
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+class BOUND_OK is
+  main is
+    a:A;
+    b:B;
+
+    t: BINARY_TREE(A);
+    r: RANDOM:= RANDOM::create;
+    r.init_with_time;
+    i: INT:=0;
+    until i>=10 loop
+      a.val:=r.uniform_range(0, 100).to_i;
+      t:=t.insert (a);
+      i:= i+1;
+    end;
+    OUT::s(t.str).nl;
+  end;
+end;

@@ -1,0 +1,170 @@
+--* Last edited: Nov 29 15:38 1993 (holzw)
+--
+-- test classes for ROWs
+--
+
+value class COMPLEX is
+   -- Billigstausfuehrung
+
+   subtype of ARRAY[*](FLTD);
+   real: FLTD is res:= self[0]; end;
+   imag: FLTD is res:= self[1]; end;
+
+   set_real(r:FLTD):COMPLEX is
+      res[0]:= r;
+      res[1]:=self[1];
+   end;
+   
+   set_imag(i:FLTD):COMPLEX is
+      res[0]:=self[0];
+      res[1]:= i;
+   end;
+   
+   plus (z:$COMPLEX):SAME is
+      -- addition komplexer Zahlen
+      res[0]:= self[0]+z[0];
+      res[1]:= self[1]+z[1];
+   end;
+
+   inc: SAME is
+      -- increment real
+      res[0]:=self[0]+1;
+      res[1]:=self[1];
+   end;
+
+   times (z:COMPLEX):SAME is
+      -- multiplication
+      res:=    set_real(real*z.real + imag*z.imag);
+      res:=res.set_imag(real*z.imag - imag*z.real);
+   end;
+
+   pow_2: SAME is
+      -- power of 2
+      res:= times(self);
+      print;
+   end;
+
+   str:STR is
+      -- give a string representation of self
+      res:= #STR[2].s("(").d(self[0]).s(",").d(self[1]).s(")");
+   end;
+   
+   print:OUT is
+     res:= OUT::s(str).nl;
+   end;
+end;
+
+value class N_TUPEL is
+   -- n-tupel of complex numbers
+   tupel: ARRAY[*](FLTD);
+
+   str:STR is
+      -- give a string representation of self
+      i: INT;
+      res:= #STR[2].c('(');
+      while i<tupel.asize0 loop
+         res:= res.s(tupel[i].str).c(',');
+         i:= i+1;
+      end;
+      res[length-1]:= ')';
+   end;
+   
+   print:OUT is
+     res:=OUT::s(str).nl;
+   end;
+end;
+
+class N_TUPEL_LIST [listsize,vectorsize] is
+   -- vector list
+   list: ARRAY[*,*](FLTD);
+
+   start: N_TUPEL[*] is
+      res:=elem(0);
+   end;
+
+   last: N_TUPEL[*] is
+      res:=elem(listsize-1);
+   end;
+
+   elem(n: INT): N_TUPEL[*] is -- later: overloading for aget !
+      i: INT;
+      res:= #N_TUPEL[vectorsize];
+      if 0<=n and n<listsize then
+         while i<vectorsize loop
+            res[i]:= list[n,i];
+            i:= i+1;
+         end;
+      end;      
+   end;
+
+   set_elem(n: INT;e: N_TUPEL[*]) is -- later: overloading for aset !
+      i: INT;
+      if 0<=n and n<listsize then
+         while i<vectorsize loop
+            list[n,i]:= e[i];
+            i:= i+1;
+         end;
+      end;      
+   end;
+
+   set_start(s:N_TUPEL[*]) is
+      set_elem(0,s);
+   end;
+   
+   set_last(e:N_TUPEL[*]) is
+      set_elem(listsize-1,e);
+   end;
+   
+   swap(i,j: INT) is
+      t: N_TUPEL[*];
+      t:= elem(i);
+      set_elem(i,elem(j));
+      set_elem(j,t);
+   end;
+
+   str:STR is
+      -- give a string representation of self
+      i: INT;
+      res:= #STR[2].c('(');
+      while i<listsize loop
+         res:= res.s(elem[i].str).c(',');
+         i:= i+1;
+      end;
+      res[length-1]:= ')';
+   end;
+   
+   print:OUT is
+     res:=OUT::s(str).nl;
+   end;
+end;
+
+class ARRAY_OK is
+
+   main is
+      z1   : $N_TUPEL[*];
+      z3,z4:  N_TUPEL[*];
+      t1: N_TUPEL_LIST[2,2];
+      t3: N_TUPEL_LIST[3,3];
+
+      z1:= #N_TUPEL[*]{3,4};	-- must be built explicitly
+      z1.real:= 3;
+      z1.imag:= 4;
+
+      z3:= #N_TUPEL{1,2};
+      z4:= #N_TUPEL{2+2,3+3,1.5};
+      
+      -- ARRAYs
+      t1:= t1.set_start(z1);
+      t1:= t1.set_last(z3);
+      t1.print;
+      t1.swap;
+      t1.print;
+
+      t3:= t3.set_start(z4);
+      z4[1]:= 7.3;
+      t3:= t3.set_last(z4);
+      t3.print;
+      t3.swap.print;
+      t3.print;
+   end;
+end;

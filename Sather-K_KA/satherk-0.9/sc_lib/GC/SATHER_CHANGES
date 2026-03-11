@@ -1,0 +1,20 @@
+Som changes made to the garbage collector to accommodate the sather compiler.
+
+   Jeff Bilmes
+
+In gc.h, after each new allocation, hincr is multiplied
+by the #defined constants HINCR_MULT/HINCR_DIV. For Sather, this ratio has
+been changed from 3/2 to the constant '2'.
+
+In alloc.c, on Sun systems, the vadvise(2) system call is used around
+the gcollect() function.
+
+-------------------------------------------------------------------
+Changed the names of mach dependent asm files to allow untar'ing on
+SysV hosts with 14 char filename restriction.
+
+Moreover gc.h and mach_dep.c contain Michael Arnoldus' 
+Patches for SCO UNIX SYSV R3.2. Note that we replaced the struct
+"obj" by "gc_obj" to avoid a name conflict in SysV.
+
+

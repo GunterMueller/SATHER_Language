@@ -1,0 +1,86 @@
+-- File: triple.sa
+-- Author: Wolf Zimmermann (zimmer@ira.uka.de)
+-- Copyright (C) Universitaet Karlsruhe, 1994
+--
+-- COPYRIGHT NOTICE: This code is provided "AS IS" WITHOUT ANY WARRANTY
+-- and is subject to the terms of the KARLA LIBRARY GENERAL PUBLIC
+-- LICENSE contained in the file: "doc/license.txt" of the 
+-- distribution. 
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FILE: triple.sa
+--*
+--* CLASSES: TRIPLE(T1,T2,T3)
+--* 
+--* IMPLEMENTATION OF: 
+--*
+--* CONFORMS TO: 
+--*
+--* IS A: 
+--*
+--* REQUIRED CLASSES:
+--*
+--* EXCEPTIONS: 
+--*
+--* TEST CLASS: TEST__TRIPLE
+--*
+--* FOREIGN FILES:
+--*
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--
+-- RCS: $Id$
+-- HISTORY:
+--  * Last edited: Apr 15 15:08 1994 (frick)
+-- Created: Wed Mar 16 18:43:26 1994 (frick)
+--
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+value class TRIPLE(T1,T2,T3) is
+-- * CLASS: TRIPLE(T1,T2,T3)
+-- * DESCRIPTION: type consisting of three components T1, T2 and T3
+-- * SUBCLASS OF:
+-- * SPECIALIZATION OF:
+-- * IMPLEMENTATION OF:
+-- * EXCEPTIONS:
+-- * INVARIANT: self.equal(a)=(self.fst=a.fst AND self.snd=a.snd AND self.trd=a.trd) 
+-- * REPRESENTATION:
+-- * COMPLEXITY: \
+-- * SIZE = fst.SIZE + snd.SIZE + trd.SIZE \
+-- * SPACE(n) = O(1) \
+-- * TIME(n) = O(n)
+-- * REFERENCES:
+-- * ATTRIBUTES:
+
+   fst:T1;
+   snd:T2;
+   trd:T3;
+   
+   str:STR is
+      res:="(";
+      res := res.s(fst.str).s(",").s(snd.str).s(",").s(trd.str);
+      res:=res.s(")");
+   end;
+
+
+end;
+
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+class TEST__TRIPLE is
+   main is
+    x : $TRIPLE(INT,BOOL,STR) := #TRIPLE(INT,BOOL,STR){fst := 5,snd := true,trd:="TTT"};
+    y : $TRIPLE(INT,BOOL,STR) := #TRIPLE(INT,BOOL,STR){fst := 5,snd := true,trd:="TTT"};
+    z : $TRIPLE(INT,BOOL,STR) := #TRIPLE(INT,BOOL,STR){fst := 3,snd := true,trd:="TTT"};
+    OUT::s("print triple (5,true,TTT)").nl;
+    OUT::s("x = ").s(x.str).nl;
+    OUT::s("print triple (5,true,TTT)").nl;
+    OUT::s("y = ").s(y.str).nl;
+    OUT::s("test of equal").nl;
+    if x=y then OUT::s("x=y").nl; else OUT::s("NOT x=y").nl; end;
+    OUT::s("print triple (3,true,TTT)").nl;
+    OUT::s("z = ").s(z.str).nl;
+    OUT::s("test of equal").nl;
+    if x=z then OUT::s("x=z").nl; else OUT::s("NOT x=z").nl; end;
+   end;
+end;

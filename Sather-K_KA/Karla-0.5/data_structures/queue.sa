@@ -1,0 +1,155 @@
+-- Author: Arne Frick (frick@ira.uka.de)
+-- Copyright (C) Universitaet Karlsruhe, 1993
+--
+-- COPYRIGHT NOTICE: This code is provided "AS IS" WITHOUT ANY WARRANTY
+-- and is subject to the terms of the KARLA LIBRARY GENERAL PUBLIC
+-- LICENSE contained in the file: "doc/license.txt" of the 
+-- distribution. 
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FILE: queue.sa
+--*
+--* CLASSES: QUEUE(T) EXCEPTION__QUEUE_EMPTY
+--* 
+--* IMPLEMENTATION OF:
+--*
+--* CONFORMS TO:
+--*
+--* IS A:
+--*
+--* REQUIRED CLASSES: 
+--*
+--* EXCEPTIONS: EXCEPTION__QUEUE_EMPTY
+--*
+--* TEST CLASS: TEST__QUEUE
+--*
+--* FOREIGN FILES:
+--*
+--  RCS: $Id$
+--  HISTORY: $Log$
+--  Last edited: Mar 8 1994 (Wolf Zimmermann)
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+abstract class QUEUE(T) is
+-- * CLASS: QUEUE(T)
+-- * DESCRIPTION: standard abstract data type queue
+-- * SUBCLASS OF:
+-- * SPECIALIZATION OF:
+-- * IMPLEMENTATION OF:
+-- * EXCEPTIONS: EXCEPTION__QUEUE_EMPTY
+-- * INVARIANT: FORALL a:T\
+-- *      ##.empty = true AND \
+-- *      enqueue(a).empty =false AND \
+-- *      empty IMPLIES enqueue(a).front = a AND \
+-- *      (EXISTS q: QUEUE(T), a.b: T :self == q.enqueue(a).enqueue(b) IMPLIES \
+-- *                                   front = q.enqueue(a).front)        AND \
+-- *      (empty IMPLIES front = error) AND \
+-- *      (empty IMPLIES enqueue(a).dequeue == ##.init) AND \
+-- *      (EXISTS q: QUEUE(T), a.b: T :self == q.enqueue(a).enqueue(b) IMPLIES \
+-- *                                   dequeue == q.enqueue(a).dequeue.enqueue(b)) AND\
+-- *      (empty IMPLIES dequeue = error)
+-- * REPRESENTATION:
+-- * COMPLEXITY:\
+-- * static      SIZE = 0             IF empty \
+-- * |                = 1 + dequeue.SIZE  OTHERWISE \
+-- * static      MAXSIZE = 0                         IF empty \
+-- * |                   = max(front.SIZE,dequeue.MAXSIZE  OTHERWISE
+-- * REFERENCES:
+-- * ATTRIBUTES: 
+
+
+   init:SAME is 
+   -- * METHOD: init : SAME
+   -- * DESCRIPTION: abstract initialization method 
+   -- * PRE: NOT self = void AND self.empty=true
+   -- * POST: NOT res = void AND res.empty=true
+   -- * COMPLEXITY: \
+   -- * SIZE__init = 0\
+   -- * MAXSIZE__init = 0
+   -- * REFERENCES:
+      
+      deferred; 
+   end;
+
+   enqueue(a:T):SAME is
+   -- * METHOD: enqueue(a:T):SAME
+   -- * DESCRIPTION: abstract constructor method inserting a into a queue
+   -- * PRE: NOT self=void
+   -- * POST: EXISTS n>=0: self.dequeue^n.front = a
+   -- * COMPLEXITY: \
+   -- * SIZE__enqueue(self.SIZE,a.SIZE) = self.SIZE + 1 \
+   -- * MAXSIZE__enqueue(self.MAXSIZE,a.SIZE) = max(self.MAXSIZE,a.SIZE) 
+   -- * REFERENCES:
+
+     deferred;
+   end;
+
+   dequeue:SAME  is
+   -- * METHOD: dequeue:SAME
+   -- * DESCRIPTION: abstract method deleting the first inserted element
+   -- * PRE: NOT self = void AND NOT self.empty
+   -- * POST: self == #QUEUE(T).init.enqueue(a_1)....enqueue(a_k) IMPLIES
+   -- *       res == #QUEUE(T).init.enqueue(a_2)....enqueue(a_k)
+   -- * COMPLEXITY: \
+   -- * SIZE__dequeue(self.SIZE) = self.SIZE - 1 \
+   -- * MAXSIZE__dequeue(self.MAXSIZE) = self.MAXSIZE
+   -- * REFERENCES:
+
+    deferred;
+   end;
+
+   front:T is
+   -- * METHOD: front:T
+   -- * DESCRIPTION: abstract method returning the first inserted element
+   -- * PRE: NOT self = void AND NOT self.empty
+   -- * POST: self == #QUEUE(T).enqueue(a_1)....enqueue(a_k) IMPLIES res = a_1
+   -- * COMPLEXITY: \
+   -- * SIZE__front(self.SIZE,self.MAXSIZE) = self.MAXSIZE
+   -- * REFERENCES:
+
+     deferred;
+   end;
+
+   empty:BOOL is
+   -- * METHOD: empty:BOOL
+   -- * DESCRIPTION: abstract method checking whether the queue is empty
+   -- * PRE: NOT self = void 
+   -- * POST: res = (self == #QUEUE(T))
+   -- * COMPLEXITY: \
+   -- * SIZE__empty(self.SIZE) = 1
+   -- * REFERENCES:
+
+     deferred;
+   end;
+
+   str:STR is
+     deferred;
+   end;
+
+   
+end; -- class QUEUE
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+class EXCEPTION__QUEUE_EMPTY is 
+   -- * CLASS: EXCEPTION__QUEUE_EMPTY
+   -- * DESCRIPTION: exceptions of QUEUE: dequeue or front on empty queue
+   -- * SUBCLASS OF: EXCEPTION_USER
+   -- * SPECIALIZATION OF:
+   -- * IMPLEMENTATION OF:
+   -- * EXCEPTIONS:
+   -- * INVARIANT:
+   -- * REPRESENTATION:
+   -- * COMPLEXITY: O(1)
+   -- * REFERENCES:
+   -- * ATTRIBUTES: number, name
+   subtype of EXCEPTION_USER;
+   const name :STR :="ERROR: front/dequeue operation on empty queue";
+end;
+
+
+class TEST__QUEUE is
+  main is
+    q:$QUEUE(INT) := #QUEUE(INT).init;
+    ERR::s("creation of abstract class succeeded").nl;
+  end;
+end;

@@ -1,0 +1,907 @@
+-- Author: Johannes Stober, Bui Anh Toan (Gruppe 5)
+-- Copyright (C) Universitaet Karlsruhe, 1994
+--
+-- COPYRIGHT NOTICE: This code is provided "AS IS" WITHOUT ANY WARRANTY
+-- and is subject to the terms of the KARLA LIBRARY GENERAL PUBLIC
+-- LICENSE contained in the file: "doc/license.txt" of the 
+-- distribution. 
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FILE: list_linked.sa
+--*
+--* CLASSES: LIST__LINKED(T) 
+--* 
+--* IMPLEMENTATION OF: LIST(T)
+--*
+--* CONFORMS TO: 
+--*
+--* IS A:
+--*
+--* REQUIRED CLASSES: CELL(T) LIST(T) EXCEPTION__LIST_EMPTY \
+--* EXCEPTION__LIST_INDEX TIMER DEQUEUE__LINKED(T) \
+--* EXCEPTION__DEQUEUE__EMPTY EXCEPTION__QUEUE_EMPTY EXCEPTION__STACK__EMPTY
+--*
+--* EXCEPTIONS: EXCEPTION__LIST_EMPTY EXCEPTION__LIST_INDEX \
+--* EXCEPTION__DEQUEUE__EMPTY EXCEPTION__QUEUE_EMPTY EXCEPTION__STACK__EMPTY
+--*
+--* TEST CLASS: TEST__LIST__LINKED
+--*
+--* FOREIGN FILES:
+--*
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+class LIST__LINKED(T) is
+-- * CLASS: LIST__LINKED(T)
+-- * DESCRIPTION: data type linked list: \
+-- *     insertion and deletion on both ends and on any position in the  list \
+-- *     advancing positions in both direction \
+-- *     streams for the elements in both orders
+-- * SUBCLASS OF: LIST(T)
+-- * SPECIALIZATION OF:
+-- * IMPLEMENTATION OF:
+-- * EXCEPTIONS: EXCEPTION__LIST_EMPTY EXCEPTION__LIST_INDEX \
+-- * EXCEPTION__DEQUEUE__EMPTY EXCEPTION__QUEUE_EMPTY EXCEPTION__STACK__EMPTY
+-- * INVARIANT: LIST::Inv AND DEQUEUE__LINKED::Inv AND \
+-- * (NOT at_end IMPLIES next.pos = pos.links[1]) AND \
+-- * (NOT at_begin IMPLIES previous.pos = pos.links[0]) AND \
+-- * frt.links[0]=void AND lst.links[1]=void
+-- * REPRESENTATION:
+-- * COMPLEXITY: 
+-- * static      SIZE = 0             IF empty \
+-- * |                = 1 + dequeue.SIZE  OTHERWISE \
+-- * static      MAXSIZE = 0                         IF empty \
+-- * |                   = max(front.SIZE,dequeue.MAXSIZE  OTHERWISE
+-- * cumulative SPACE(n) = O(n) \
+-- * additive TIME(n) = O(n)
+-- * REFERENCES: 
+-- * ATTRIBUTES: frt:CELL(T);  -- first element in list \
+-- * lst:CELL(T);  -- last element in list \
+-- * pos:CELL(T);  -- actual element in list \
+-- * size:INT
+
+
+   subtype of LIST(T);
+   include DEQUEUE__LINKED(T)::dequeue,enqueue,front,pop,push,top;
+
+   frt:CELL(T);  -- first element in list
+   lst:CELL(T);  -- last element in list
+   pos:CELL(T);  -- actual element in list
+
+   init:SAME is
+   -- * METHOD: init : SAME
+   -- * DESCRIPTION: initialization method 
+   -- * PRE: NOT self = void 
+   -- * POST: res = self' AND size'=0 AND frt=frt' AND lst=lst' AND pos=pos'
+   -- * COMPLEXITY:  \
+   -- * SIZE__init = 0\
+   -- * MAXSIZE__init = 0\
+   -- * SPACE__init = O(1) \
+   -- * TIME__init = O(1)
+   -- * REFERENCES:
+
+     size := 0;
+     res := self;
+   end; 
+
+
+   insert(a:T):SAME is
+   -- * METHOD: insert(a:T):SAME
+   -- * DESCRIPTION: constructor method inserting a into the list at the actual \
+   -- *              position. The new actual position is the inserted element
+   -- * PRE: true
+   -- * POST: res=self' AND pos'.val = a AND lst'=lst AND size'=size+1 AND\
+   -- * (empty IMPLIES pos'=frt' AND frt'=lst' AND pos'.links[0]=void AND pos'.links[1]=void)
+   -- * (frt=pos IMPLIES pos'.links[0]=void AND \
+   -- * |                frt'=pos' AND \
+   -- * |                pos'.links[1]=frt AND \
+   -- * |                pos.links'[0] = pos' AND\
+   -- * |                pos.links'[1] = pos.links[1]) AND \
+   -- * (NOT frt=pos IMPLIES  frt'=frt AND\
+   -- * |                pos'.links[0]=pos.links[0] AND \
+   -- * |                pos'.links[1]=pos AND \
+   -- * |                pos.links[0].links[1]' = pos' AND\
+   -- * |                pos.links[0].links[0]' = pos.links[0].links[1] AND\
+   -- * |                pos.links'[0] = pos' AND\
+   -- * |                pos.links'[1] = pos.links[1]) 
+   -- * COMPLEXITY:  \
+   -- *   SIZE__insert(self.SIZE,a.SIZE) = self.SIZE + 1 \
+   -- *   MAXSIZE__insert(self.MAXSIZE,a.SIZE) = max(a.SIZE,self.MAXSIZE) \
+   -- *   SPACE__insert(self.SIZE,a.SIZE) = O(1) \
+   -- *   TIME__insert(self.SIZE,a.SIZE) = O(1)
+   -- * REFERENCES:
+
+      h:CELL(T) := #CELL(T).init(2);
+      h.val := a;
+      if (pos = void) then  
+	 pos := h;
+	 frt := h;
+	 lst := h;
+      else
+	 h.links[1] := pos;    
+         if (frt = pos) then      
+            h.links[0] := void;
+	    frt := h;
+	 else   
+	    pos.links[0].links[1] := h;  
+	    h.links[0] := pos.links[0];
+	 end;
+	 pos.links[0] := h;
+	 pos := h;
+      end;
+      res := self;
+      size := size + 1;
+      
+   end;  -- insert
+
+   ins_frt(a:T):SAME is
+   -- * METHOD: ins_frt(a:T):SAME
+   -- * DESCRIPTION: constructor method inserting a at the begin of a list
+   -- * PRE: true
+   -- * POST: res = self' AND size'=size+1 AND frt'.val=a AND frt'.links[0]=void AND \
+   -- * (empty IMPLIES lst'=frt' AND pos'=frt' AND frt'.links[1]=void) AND \
+   -- * (NOT empty IMPLIES pos'=pos AND lst'=lst AND \
+   -- *                    frt'.links[1]=frt AND \
+   -- *                    frt.links'[0]=frt' AND \
+   -- *                    frt.links'[1]=frt.links[1])
+   -- * COMPLEXITY: \
+   -- *   SIZE__ins_frt(self.SIZE,a.SIZE) = self.SIZE+1 \
+   -- *   MAXSIZE__ins_frt(self.MAXSIZE,a.SIZE) = max(a.SIZE,self.MAXSIZE) \
+   -- *   SPACE__ins_frt(self.SIZE,a.SIZE) = O(1) \
+   -- *   TIME__ins_frt(self.SIZE,a.SIZE) = O(1)
+   -- * REFERENCES:
+
+     h:CELL(T) := #CELL(T).init(2);
+     h.val := a;
+     if (self.empty) then
+	pos := h;
+	frt := h;
+	lst := h;
+     else
+        h.links[0] := void;
+	h.links[1] := frt;
+	frt.links[0] := h;
+	frt := h;
+     end;
+     res := self;
+     size := size + 1;
+      
+   end;
+
+   ins_end(a:T):SAME is
+   -- * METHOD: ins_end(a:T):SAME
+   -- * DESCRIPTION: constructor method inserting a at the end of a list
+   -- * PRE: true
+   -- * POST: res = self' AND size'=size+1 AND lst'.val=a AND lst'.links[1]=void AND \
+   -- * (empty IMPLIES frt'=lst' AND pos'=lst' AND lst'.links[0]=void) AND \
+   -- * (NOT empty IMPLIES pos'=pos AND frt'=frt AND \
+   -- *                    lst'.links[0]=lst AND \
+   -- *                    lst.links'[1]=lst' AND \
+   -- *                    lst.links'[0]=lst.links[0])
+   -- * COMPLEXITY: \
+   -- *   SIZE__ins_end(self.SIZE,a.SIZE) = self.SIZE+1 \
+   -- *   MAXSIZE__ins_end(self.MAXSIZE,a.SIZE) = max(a.SIZE,self.MAXSIZE) \
+   -- *   SPACE__ins_end(self.SIZE,a.SIZE) = O(1) \
+   -- *   TIME__ins_end(self.SIZE,a.SIZE) = O(1)
+   -- * REFERENCES:
+
+     h:CELL(T) := #CELL(T).init(2);
+     h.val := a;
+     if (self.empty) then
+	pos := h;
+	frt := h;
+	lst := h;
+     else
+	h.links[0] := lst;
+	h.links[1] := void;
+	lst.links[1] := h;
+	lst := h;
+     end;
+     res := self;
+     size := size + 1;
+   end;
+
+   delete:SAME is
+   -- * METHOD: delete:SAME
+   -- * DESCRIPTION: method deleting the element at the actual position
+   -- * PRE: NOT self.empty
+   -- * POST: res=self' size'=size-1 AND \
+   -- * (frt=lst IMPLIES frt=void AND lst=void AND pos=void) AND \
+   -- * (frt=pos IMPLIES frt'=frt.links[1] AND \
+   -- * |                frt'.links[0]=void AND \
+   -- * |                frt.links[1].links'[1]=frt.links[1].links[1] AND\
+   -- * |                pos'=frt' AND lst'=lst) AND \
+   -- * (lst=pos IMPLIES lst'=lst.links[0] AND \
+   -- * |                lst'.links[1]=void AND \
+   -- * |                lst.links[0].links'[0]=frt.links[0].links[0] AND\
+   -- * |                pos'=lst' AND frt'=frt) AND \
+   -- * (NOT lst=pos AND NOT frt=pos IMPLIES pos' = pos.links[1] AND \
+   -- * |                pos.links[0].links'[1] = pos' AND \
+   -- * |                pos.links[0].links'[0] = pos.links[0].links[0] AND \
+   -- * |                pos'.links[0]=pos.links[0] AND\
+   -- * |                pos'.links[1]=pos.links[1].links[1] AND\
+   -- * |                frt'=frt AND lst'=lst)
+   -- * COMPLEXITY: \
+   -- *   SIZE__delete(self.SIZE) = self.SIZE - 1 \
+   -- *   MAXSIZE__delete(self.MAXSIZE) = self.MAXSIZE \
+   -- *   SPACE__delete(self.SIZE,a.SIZE) = O(1) \
+   -- *   TIME__delete(self.SIZE,a.SIZE) = O(1)
+   -- * REFERENCES:
+
+   -- assert(pre) not self.empty end;
+
+      if self.empty then #EXCEPTION__LIST_EMPTY.raise; end;
+      if (frt = lst) then
+	 frt := void;
+	 lst := void;
+	 pos := void;
+      else if (pos = frt) then
+	 pos.links[1].links[0] := void;
+	 pos := pos.links[1];
+	 frt := pos;
+      else if (pos = lst) then
+	 pos.links[0].links[1] := void;
+	 pos := pos.links[0];
+	 lst := pos;
+      else
+         pos.links[0].links[1] := pos.links[1];
+         pos.links[1].links[0] := pos.links[0];
+         pos := pos.links[1];
+      end; end; end;
+      res := self;
+      size := size - 1;
+      
+   end; -- delete
+
+   del_frt:SAME is
+   -- * METHOD: del_frt:SAME
+   -- * DESCRIPTION: constructor method deleting the front element
+   -- * PRE: NOT self.empty
+   -- * POST: res=self' AND size'=size-1 AND \
+   -- * (frt=lst IMPLIES frt'=void AND lst'=void AND pos'=void) AND \
+   -- * (frt=pos AND NOT frt=lst IMPLIES lst'=lst AND \
+   -- * |                           frt'=frt.links[1] AND \
+   -- * |                           frt'.links[0]=void AND \
+   -- * |                           frt'.links[1]=frt.links[1].links[1] AND \
+   -- * |                           pos'=frt') AND \
+   -- * (NOT frt=pos IMPLIES lst'=lst AND pos'=pos AND \
+   -- * |                    frt'=frt.links[1] AND \
+   -- * |                    frt'.links[0]=void AND \
+   -- * |                    frt'.links[1]=frt.links[1].links[1])
+   -- * COMPLEXITY: \
+   -- *   SIZE__del_frt(self.SIZE) = self.SIZE - 1 \
+   -- *   MAXSIZE__del_frt(self.MAXSIZE) = self.MAXSIZE \
+   -- *   SPACE__del_frt(self.SIZE,a.SIZE) = O(1) \
+   -- *   TIME__del_frt(self.SIZE,a.SIZE) = O(1)
+   -- * REFERENCES:
+
+   -- assert(pre) not self.empty end;
+
+      if self.empty then #EXCEPTION__LIST_EMPTY.raise; end;
+      if (frt = lst) then
+	 frt := void;
+	 lst := void;
+	 pos := void;
+      else
+	 frt.links[1].links[0] := void;
+	 if (pos = frt) then
+	    pos := pos.links[1];
+	 end;
+	 frt := frt.links[1];
+      end;	 
+      res := self;
+      size := size - 1;
+      
+   end; -- del_frt
+
+   del_end:SAME is
+   -- * METHOD: del_end:SAME
+   -- * DESCRIPTION: constructor method deleting the last element
+   -- * PRE: NOT self.empty
+   -- * POST: res=self' AND size'=size-1 AND \
+   -- * (frt=lst IMPLIES frt'=void AND lst'=void AND pos'=void) AND \
+   -- * (lst=pos AND NOT frt=lst IMPLIES frt'=frt AND \
+   -- * |                           lst'=lst.links[0] AND \
+   -- * |                           lst'.links[1]=void AND \
+   -- * |                           lst'.links[0]=lst.links[0].links[0] AND \
+   -- * |                           pos'=lst') AND \
+   -- * (NOT lst=pos IMPLIES frt'=frt AND pos'=pos AND \
+   -- * |                    lst'=lst.links[0] AND \
+   -- * |                    lst'.links[1]=void AND \
+   -- * |                    lst'.links[0]=lst.links[0].links[0])
+   -- * COMPLEXITY: \
+   -- *   SIZE__del_end(self.SIZE) = self.SIZE - 1 \
+   -- *   MAXSIZE__del_end(self.MAXSIZE) = self.MAXSIZE \
+   -- *   SPACE__del_end(self.SIZE,a.SIZE) = O(1) \
+   -- *   TIME__del_end(self.SIZE,a.SIZE) = O(1)
+   -- * REFERENCES:
+
+   -- assert(pre) not self.empty end;
+
+      if self.empty then #EXCEPTION__LIST_EMPTY.raise; end;
+      if (frt = lst) then
+	 frt := void;
+	 lst := void;
+	 pos := void;
+      else
+	 lst.links[0].links[1] := void;
+	 if (pos = lst) then
+	    pos := pos.links[0];
+	 end;
+	 lst := lst.links[0];
+      end;
+      res := self;
+      size := size - 1;
+           
+   end; -- del_end
+
+   element:T is
+   -- * METHOD: element:T
+   -- * DESCRIPTION: method returning the element at the actual position
+   -- * PRE: NOT self.empty
+   -- * POST: res=pos.val AND self'=self
+   -- * COMPLEXITY: \
+   -- * SIZE__element(self.SIZE,self.MAXSIZE) = self.MAXSIZE
+   -- * SPACE__element(self.SIZE,self.MAXSIZE) = O(self.MAXSIZE)
+   -- * TIME__element(self.SIZE) = O(1)
+   -- * REFERENCES:
+
+   -- assert(pre) not self.empty end;
+
+      if self.empty then #EXCEPTION__LIST_EMPTY.raise; end;
+      res := pos.val;
+      
+   end; -- element
+
+   first:T is
+   -- * METHOD: first:T
+   -- * DESCRIPTION:  method returning the first element in list
+   -- * PRE: NOT self.empty
+   -- * POST: res=frt.val
+   -- * COMPLEXITY: \
+   -- * SIZE__first(self.SIZE,self.MAXSIZE) = self.MAXSIZE
+   -- * SPACE__first(self.SIZE,self.MAXSIZE) = O(self.MAXSIZE)
+   -- * TIME__first(self.SIZE) = O(1)
+   -- * REFERENCES:
+
+   -- assert(pre) not self.empty end;
+      
+      if self.empty then #EXCEPTION__LIST_EMPTY.raise; end;
+      res := frt.val;
+      
+   end; -- first
+
+   last:T is
+   -- * METHOD: last:T
+   -- * DESCRIPTION:  method returning the last element in list
+   -- * PRE: NOT self.empty
+   -- * POST: res=lst.val
+   -- * COMPLEXITY: \
+   -- * SIZE__last(self.SIZE,self.MAXSIZE) = self.MAXSIZE
+   -- * SPACE__last(self.SIZE,self.MAXSIZE) = O(self.MAXSIZE)
+   -- * TIME__last(self.SIZE) = O(1)
+   -- * REFERENCES:
+
+   -- assert(pre) not self.empty end;
+
+      if self.empty then #EXCEPTION__LIST_EMPTY.raise; end;
+      res := lst.val;
+      
+   end; -- last
+
+   empty:BOOL is
+   -- * METHOD: empty:BOOL
+   -- * DESCRIPTION:  method checking whether the list is empty
+   -- * PRE: true
+   -- * POST: res = (self == #LIST(T))
+   -- * COMPLEXITY: \
+   -- * SIZE__empty(self.SIZE) = 1 \
+   -- * SPACE__empty(self.SIZE) = O(1) \
+   -- * TIME__empty(self.SIZE) = O(1)
+   -- * REFERENCES:
+
+      res := (frt = void);
+      
+   end; -- empty
+
+   next:SAME is
+   -- * METHOD: next:SAME
+   -- * DESCRIPTION:  method advancing the actual position to the next element
+   -- * PRE: NOT self.empty AND NOT self.at_end
+   -- * POST: res=self' AND size'=size AND frt'=frt AND lst'=lst AND pos'=pos.links[1]
+   -- * COMPLEXITY: \
+   -- *   SIZE__next(self.SIZE) = self.SIZE \
+   -- *   MAXSIZE__next(self.MAXSIZE) = self.MAXSIZE \
+   -- *   SPACE__next(self.SIZE) = O(1) \
+   -- *   TIME__next(self.SIZE) = O(1) 
+   -- * REFERENCES:
+
+   -- assert(pre) not self.empty and not self.at_end end;
+
+      if self.empty then #EXCEPTION__LIST_EMPTY.raise; end;
+      if self.at_end then #EXCEPTION__LIST_INDEX.raise; end;
+      pos := pos.links[1];
+      res := self;
+      
+   end; -- next
+
+   previous:SAME is
+   -- * METHOD: previous:SAME
+   -- * DESCRIPTION:  method advancing the actual position to the previous element
+   -- * PRE: NOT self.empty AND NOT self.at_begin
+   -- *   SIZE__previous(self.SIZE) = self.SIZE \
+   -- *   MAXSIZE__previous(self.MAXSIZE) = self.MAXSIZE \
+   -- *   SPACE__previous(self.SIZE) = O(1) \
+   -- *   TIME__previous(self.SIZE) = O(1) 
+   -- * REFERENCES:
+
+   -- assert(pre) not self.empty and not self.at_begin end;
+
+      if self.empty then #EXCEPTION__LIST_EMPTY.raise; end;
+      if self.at_begin then #EXCEPTION__LIST_INDEX.raise; end;
+      pos := pos.links[0];
+      res := self;
+     
+   end; -- previous
+
+   pos_begin:SAME is
+   -- * METHOD: pos_begin:SAME
+   -- * DESCRIPTION:  method setting the actual position to the begin of the list
+   -- * PRE: NOT self.empty 
+   -- * POST: res=self' AND size'=size AND frt'=frt AND lst'=lst AND pos'=frt
+   -- * COMPLEXITY: \
+   -- *   SIZE__pos_begin(self.SIZE) = self.SIZE \
+   -- *   MAXSIZE__pos_begin(self.MAXSIZE) = self.MAXSIZE \
+   -- *   SPACE__pos_begin(self.SIZE) = O(1) \
+   -- *   TIME__pos_begin(self.SIZE) = O(1) 
+   -- * REFERENCES:
+
+   -- assert(pre) not self.empty end;
+
+      if self.empty then #EXCEPTION__LIST_EMPTY.raise; end;
+      pos := frt;
+      res := self;
+      
+   end; -- pos_begin
+
+   pos_end:SAME is
+   -- * METHOD: pos_end:SAME
+   -- * DESCRIPTION:  method setting the actual position to the end of the list
+   -- * PRE: NOT self.empty 
+   -- * POST: res=self' AND size'=size AND frt'=frt AND lst'=lst AND pos'=lst
+   -- * COMPLEXITY: \
+   -- *   SIZE__pos_end(self.SIZE) = self.SIZE \
+   -- *   MAXSIZE__pos_end(self.MAXSIZE) = self.MAXSIZE \
+   -- *   SPACE__pos_end(self.SIZE) = O(1) \
+   -- *   TIME__pos_end(self.SIZE) = O(1)
+   -- * REFERENCES:
+
+   -- assert(pre) not self.empty end;
+
+      if self.empty then #EXCEPTION__LIST_EMPTY.raise; end;
+      pos := lst;
+      res := self;
+     
+   end; -- pos_end
+
+   at_begin:BOOL is
+   -- * METHOD: at_begin:BOOL
+   -- * DESCRIPTION:  method checking whether the actual position is at the begin\
+   -- *              of the list
+   -- * PRE: NOT self.empty 
+   -- * POST: res = true IFF frt=pos
+   -- * COMPLEXITY: \
+   -- * SIZE__at_begin(self.SIZE) = self.SIZE \
+   -- * SPACE__at_begin(self.SIZE) = O(1) \
+   -- * TIME__at_begin(self.SIZE) = O(1) 
+   -- * REFERENCES:
+
+   -- assert(pre) not self.empty end;
+
+      if self.empty then #EXCEPTION__LIST_EMPTY.raise; end;
+      res := (pos = frt); 
+     
+   end; -- at_begin
+
+   at_end:BOOL is
+   -- * METHOD: at_end:BOOL
+   -- * DESCRIPTION:  method checking whether the actual position is at the end \
+   -- *              of the list
+   -- * PRE: NOT self.empty 
+   -- * POST: res = true IFF pos=lst
+   -- * COMPLEXITY: \
+   -- * SIZE__at_end(self.SIZE) = self.SIZE \
+   -- * SPACE__at_end(self.SIZE) = O(1) \
+   -- * TIME__at_end(self.SIZE) = O(1) 
+   -- * REFERENCES:
+   -- * REFERENCES:
+
+   -- assert (pre) not self.empty end;
+      
+      if self.empty then #EXCEPTION__LIST_EMPTY.raise; end;
+      res := (pos = lst);
+       
+   end; -- at_end
+
+
+  enql(a:T):SAME is
+  -- * METHOD: enql(a:T):SAME
+  -- * DESCRIPTION: synonym for ins_frt
+  -- * PRE: NOT self=void
+  -- * POST: res=ins_frt(a)
+  -- * COMPLEXITY:\
+  -- * SIZE__enql(self.SIZE,a.SIZE) = self.SIZE + 1 \
+  -- * MAXSIZE__enql(self.MAXSIZE,a.SIZE) = max(self.MAXSIZE,a.SIZE)\
+  -- * SPACE__enql(self.SIZE,a.SIZE) = O(1) \
+  -- * TIME__enql(self.SIZE,a.SIZE) = O(1)
+  -- * REFERENCES:
+
+    res := ins_frt(a);
+ end;
+
+
+
+  enqr(a:T):SAME is
+  -- * METHOD: enqr(a:T):SAME
+  -- * DESCRIPTION: synonym for ins_end
+  -- * PRE: NOT self=void
+  -- * POST: res=ins_end(a)
+  -- * COMPLEXITY:\
+  -- * SIZE__enqr(self.SIZE,a.SIZE) = self.SIZE + 1 \
+  -- * MAXSIZE__enqr(self.MAXSIZE,a.SIZE) = max(self.MAXSIZE,a.SIZE)\
+  -- * SPACE__enqr(self.SIZE,a.SIZE) = O(1) \
+  -- * TIME__enqr(self.SIZE,a.SIZE) = O(1)
+  -- * REFERENCES:
+
+    res := ins_end(a);
+ end;
+
+
+
+  deql:SAME is
+  -- * METHOD: deql:SAME
+  -- * DESCRIPTION: synonym for del_frt
+  -- * PRE: NOT self=void
+  -- * POST: res=del_frt
+  -- * COMPLEXITY:\
+  -- * SIZE__deql(self.SIZE) = self.SIZE - 1 \
+  -- * MAXSIZE__deql(self.MAXSIZE) = self.MAXSIZE\
+  -- * SPACE__deql(self.SIZE) = O(1) \
+  -- * TIME__deql(self.SIZE) = O(1)
+  -- * REFERENCES:
+
+    res := del_frt;
+ end;
+
+
+
+  deqr:SAME is
+  -- * METHOD: deqr:SAME
+  -- * DESCRIPTION: synonym for del_end
+  -- * PRE: NOT self=void
+  -- * POST: res=del_end
+  -- * COMPLEXITY:\
+  -- * SIZE__deqr(self.SIZE) = self.SIZE - 1 \
+  -- * MAXSIZE__deqr(self.MAXSIZE) = self.MAXSIZE\
+  -- * SPACE__deqr(self.SIZE) = O(1) \
+  -- * TIME__deqr(self.SIZE) = O(1)
+  -- * REFERENCES:
+
+    res := del_end;
+ end;
+
+
+
+  frontl:T is
+  -- * METHOD: frontl:T
+  -- * DESCRIPTION: synonym for first
+  -- * PRE: NOT self=void
+  -- * POST: res=first
+  -- * COMPLEXITY:\
+  -- * SIZE__frontl(self.SIZE,self.MAXSIZE) = self.MAXSIZE \
+  -- * SPACE__frontl(self.SIZE) = O(1) \
+  -- * TIME__frontl(self.SIZE) = O(1)
+  -- * REFERENCES:
+
+    res := first;
+end;
+
+
+
+
+  frontr:T is
+  -- * METHOD: frontr:T
+  -- * DESCRIPTION: synonym for last
+  -- * PRE: NOT self=void
+  -- * POST: res=last
+  -- * COMPLEXITY:\
+  -- * SIZE__frontr(self.SIZE,self.MAXSIZE) = self.MAXSIZE \
+  -- * SPACE__frontr(self.SIZE) = O(1) \
+  -- * TIME__frontr(self.SIZE) = O(1)
+  -- * REFERENCES:
+
+    res := last;
+end;
+
+
+   str:STR is
+   -- converting a list into a string
+      h:CELL(T);
+      if empty then res := "[]";
+      else
+	 res:="[";
+         h := frt;
+         until h = void loop
+            res := res.s(h.val.str);
+            h := h.links[1];
+            if h = void then res := res.s("]"); else res := res.s(","); end;
+         end; -- loop
+       end; -- if
+   end; -- str
+
+   end; -- class LIST_LINKED
+
+
+class TEST__LIST__LINKED is
+
+  performancetest(n:INT) is
+    l:$LIST(INT) := #LIST__LINKED(INT).init;
+    i:INT;
+    timer:TIMER := #TIMER;
+    timer.reset;
+    timer.go;
+    loop
+      i := 1.upto!(n);
+      l := l.insert(i);
+    end;
+    timer.stop;
+    OUT::s(n.str).s(" times insert cost time ").s(timer.mean.str).nl.nl;
+    timer.reset;
+    timer.go;
+    until l.empty loop
+      l := l.delete;
+    end;
+    timer.stop;
+    OUT::s(n.str).s(" times delete cost time ").s(timer.mean.str).nl.nl;
+  end; -- performancetest
+
+  exception_test(l:$LIST(INT)) is
+    x:INT;
+    b:BOOL;
+    begin
+      l := l.delete;
+    except excptlist
+      when EXCEPTION__LIST_EMPTY then 
+	ERR::s(excptlist.str).nl;
+	OUT::s("exception test for delete successfull").nl;
+      else OUT::s("exception test for delete not successfull").nl;
+    end;
+    begin
+      l := l.del_frt;
+    except excptlist
+      when EXCEPTION__LIST_EMPTY then 
+	ERR::s(excptlist.str).nl;
+	OUT::s("exception test for del_frt successfull").nl;
+      else OUT::s("exception test for del_frt not successfull").nl;
+    end;
+    begin
+      l := l.del_end;
+    except excptlist
+      when EXCEPTION__LIST_EMPTY then 
+	ERR::s(excptlist.str).nl;
+	OUT::s("exception test for del_end successfull").nl;
+      else OUT::s("exception test for del_end not successfull").nl;
+    end;
+    begin
+      x := l.element;
+    except excptlist
+      when EXCEPTION__LIST_EMPTY then 
+	ERR::s(excptlist.str).nl;
+	OUT::s("exception test for element successfull").nl;
+      else OUT::s("exception test for element not successfull").nl;
+    end;
+    begin
+      x := l.first;
+    except excptlist
+      when EXCEPTION__LIST_EMPTY then 
+	ERR::s(excptlist.str).nl;
+	OUT::s("exception test for first successfull").nl;
+      else OUT::s("exception test for first not successfull").nl;
+    end;
+    begin
+      x := l.last;
+    except excptlist
+      when EXCEPTION__LIST_EMPTY then 
+	ERR::s(excptlist.str).nl;
+	OUT::s("exception test for last successfull").nl;
+      else OUT::s("exception test for last not successfull").nl;
+    end;
+    begin
+      l := l.next;
+    except excptlist
+      when EXCEPTION__LIST_EMPTY then 
+	ERR::s(excptlist.str).nl;
+	OUT::s("exception test for next on empty list successfull").nl;
+      when EXCEPTION__LIST_INDEX then 
+	ERR::s(excptlist.str).nl;
+	OUT::s("exception test for next at end successfull").nl;
+      else OUT::s("exception test for next on empty list not successfull").nl;
+    end;
+    begin
+      l := l.previous;
+    except excptlist
+      when EXCEPTION__LIST_EMPTY then 
+	ERR::s(excptlist.str).nl;
+	OUT::s("exception test for previous on empty list successfull").nl;
+      when EXCEPTION__LIST_INDEX then 
+	ERR::s(excptlist.str).nl;
+	OUT::s("exception test for previous on list at begin successfull").nl;
+      else OUT::s("exception test for previous on empty list not successfull").nl;
+    end;
+    begin
+      l := l.pos_begin;
+    except excptlist
+      when EXCEPTION__LIST_EMPTY then 
+	ERR::s(excptlist.str).nl;
+	OUT::s("exception test for pos_begin successfull").nl;
+      else OUT::s("exception test for pos_begin not successfull").nl;
+    end;
+    begin
+      l := l.pos_end;
+    except excptlist
+      when EXCEPTION__LIST_EMPTY then 
+	ERR::s(excptlist.str).nl;
+	OUT::s("exception test for pos_end successfull").nl;
+      else OUT::s("exception test for pos_end not successfull").nl;
+    end;
+    begin
+      b := l.at_begin;
+    except excptlist
+      when EXCEPTION__LIST_EMPTY then 
+	ERR::s(excptlist.str).nl;
+	OUT::s("exception test for at_begin successfull").nl;
+      else OUT::s("exception test for at_begin not successfull").nl;
+    end;
+    begin
+      b := l.at_end;
+    except excptlist
+      when EXCEPTION__LIST_EMPTY then 
+	ERR::s(excptlist.str).nl;
+	OUT::s("exception test for at_end successfull").nl;
+      else OUT::s("exception test for at_end not successfull").nl;
+    end;
+  end; -- exception_test
+
+  show_elements_order(l:$LIST(INT)) is
+    OUT::s("l = ").s(l.str).nl;
+    l := l.pos_begin;
+    until l.at_end loop
+      OUT::s("   element = ").s(l.element.str).nl;
+      l := l.next;
+    end;
+    OUT::s("   element = ").s(l.element.str).nl;
+  end;
+
+  show_elements_reverse(l:$LIST(INT)) is
+    OUT::s("l = ").s(l.str).nl;
+    l := l.pos_end;
+    until l.at_begin loop
+      OUT::s("   element = ").s(l.element.str).nl;
+      l := l.previous;
+    end;
+    OUT::s("   element = ").s(l.element.str).nl;
+  end;
+
+  main is
+     l:$LIST(INT) := #LIST__LINKED(INT).init;
+     i:INT;
+     OUT::s(l.str).nl;  -- []
+     if (l.empty) then OUT::s("empty list").nl; else OUT::s("list not empty").nl; end; -- empty list
+     l := l.insert(2).ins_frt(3).ins_end(1);  
+     OUT::s(l.str).nl;  -- [3,2,1]
+     l := l.pos_end;
+     l := l.insert(0);
+     OUT::s(l.str).nl; -- [3,2,0,1]
+     l := l.insert(4);
+     OUT::s(l.str).nl; -- [3,2,4,0,1]
+     OUT::i(l.element).nl; -- 4
+     if (l.at_begin) then OUT::s("list at begin").nl; else OUT::s("list not at begin").nl; end; -- list not at begin
+     if (l.at_end) then OUT::s("list at end").nl; else OUT::s("list not at end").nl; end; -- list not at end
+     if (l.empty) then OUT::s("empty list").nl; else OUT::s("list not empty").nl; end; -- list not empty
+     l := l.pos_begin;
+     if (l.at_begin) then OUT::s("list at begin").nl; else OUT::s("list not at begin").nl; end; -- list at begin
+     l := l.delete;
+     OUT::s(l.str).nl; -- [2,4,0,1]
+     l := l.pos_end;
+     if (l.at_end) then OUT::s("list at end").nl; else OUT::s("list not at end").nl; end; -- list at end
+     l := l.delete;
+     OUT::s(l.str).nl; -- [2,4,0]
+     l := l.ins_frt(5).ins_end(6);
+     OUT::s(l.str).nl; -- [5,2,4,0,6]
+     l := l.del_frt.del_end;
+     OUT::s(l.str).nl; -- [2,4,0]
+     l := l.previous;
+     OUT::i(l.element).nl; -- 4
+     l := l.next;
+     OUT::i(l.element).nl; -- 0
+     OUT::i(l.first).nl; -- 2
+     OUT::i(l.last).nl; -- 0;
+     l := l.delete.delete.delete;
+     OUT::s(l.str).nl; -- []
+
+    l := #LIST__LINKED(INT).init;
+    OUT::s("l is created: empty list").nl;
+    OUT::s("l ").s(l.str).nl.nl;
+    OUT::s("l.empty? ").s(l.empty.str).nl.nl;
+    exception_test(l);
+    OUT::s("l.insert(5)").nl;
+    l := l.insert(5);
+    OUT::s("l = ").s(l.str).nl.nl;
+    OUT::s("l.empty? ").s(l.empty.str).nl.nl;
+    show_elements_order(l);
+    begin
+      l := l.next;
+    except excptlist
+      when EXCEPTION__LIST_INDEX then
+	    ERR::s(excptlist.str).nl;
+	    OUT::s("exception test for next when at_end successfull").nl;
+      else OUT::s("exception test for next when at_end successfull").nl;
+    end;
+    show_elements_reverse(l);
+    begin
+      l := l.previous;
+    except excptlist
+      when EXCEPTION__LIST_INDEX then
+	    ERR::s(excptlist.str).nl;
+	    OUT::s("exception test for previous when at_begin successfull").nl;
+      else OUT::s("exception test for previous when at_begin successfull").nl;
+    end;
+    OUT::s("First Element: ").s(l.first.str).nl.nl;
+    OUT::s("Last Element: ").s(l.last.str).nl.nl;
+    OUT::s("l.insert(5)").nl;
+    l := l.insert(5);
+    OUT::s("l = ").s(l.str).nl.nl;
+    OUT::s("l.insert(10)").nl;
+    l := l.insert(10);
+    OUT::s("l = ").s(l.str).nl.nl;
+    show_elements_order(l);
+    show_elements_reverse(l);
+    OUT::s("l.delete").nl;
+    l := l.delete;
+    OUT::s("l = ").s(l.str).nl.nl;
+    OUT::s("l.delete").nl;
+    l := l.delete;
+    OUT::s("l = ").s(l.str).nl.nl;
+    OUT::s("l.delete").nl;
+    l := l.delete;
+    OUT::s("l = ").s(l.str).nl.nl;
+    OUT::s("l.empty? ").s(l.empty.str).nl.nl;
+    exception_test(l);
+    OUT::s("l.insert(10)").nl;
+    l := l.insert(10);
+    OUT::s("l = ").s(l.str).nl.nl;
+    OUT::s("l.empty? ").s(l.empty.str).nl.nl;
+    l := #LIST__LINKED(INT).init;
+    loop
+      i := 0.upto!(20);
+      l := l.insert(i);
+    end;
+    show_elements_order(l);
+    show_elements_reverse(l);
+    OUT::s("First Element: ").s(l.first.str).nl.nl;
+    OUT::s("Last Element: ").s(l.last.str).nl.nl;
+    l := #LIST__LINKED(INT).init;
+    loop
+      i := 0.upto!(10);
+      l := l.ins_end(i);
+    end;
+    OUT::s("l = ").s(l.str).nl;
+    --performancetest(100);
+    --performancetest(1000);
+    --performancetest(10000);
+    --performancetest(25000);
+    --performancetest(50000);
+    --performancetest(75000);
+    --performancetest(100000);
+  end; -- main
+
+end;
+

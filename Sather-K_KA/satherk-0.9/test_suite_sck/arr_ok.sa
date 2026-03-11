@@ -1,0 +1,131 @@
+--* Last edited: Nov 29 15:38 1993 (holzw)
+--
+-- test classes for ARRs
+--
+
+value class COMPLEX is
+   -- extremly simple
+   real, imag: FLTD;
+--real: FLTD;
+--imag: FLTD;
+
+   plus (z:$COMPLEX):SAME is
+      -- addition
+      res.real:= self.real+z.real;
+      res.imag:= self.imag+z.imag;
+   end;
+
+   inc: SAME is
+      -- increment real
+      res:=self;
+      res.real:= res.real+1;
+   end;
+
+   times (z:COMPLEX):SAME is
+      -- multiplication
+      res.real:= real*z.real + imag*z.imag;
+      res.imag:= real*z.imag - imag*z.real;
+   end;
+
+   pow_2: SAME is
+      -- power of 2
+      res:= times(self);
+      print;
+   end;
+
+   str:STR is
+      -- give a string representation of self
+      res:= #STR[2].c('(').d(real).c(',').d(imag).c(')');
+   end;
+   
+   print:OUT is
+     res:= OUT::s(str).nl;
+   end;
+end;
+
+value class COMPLEX_LIST[*] is
+   -- list of complex numbers
+   subtype of ARR[*](COMPLEX);
+
+   start: COMPLEX is
+      res:= self[0];
+   end;
+
+   i: COMPLEX is
+      res:= self[i];
+   end;
+
+   last: COMPLEX is
+      res:= self[asize-1];
+   end;
+
+   set_start(s:COMPLEX): SAME is
+      res:= self;
+      res[0]:= s;
+   end;
+   
+   set_i(s:COMPLEX): SAME is
+      res:= self;
+      res[i]:= s;
+   end;
+   
+   set_last(e:COMPLEX): SAME is
+      res:= self;
+      res[asize-1]:= e;
+   end;
+   
+   swap(i,j: INT): SAME is
+      res:= self;
+      t: COMPLEX:= res[i];
+      res[i]:= res[j];
+      res[j]:= t;
+   end;
+
+   str:STR is
+      -- give a string representation of self
+      i: INT;
+      res:= #STR[2].c('(');
+      while i<asize loop
+         res:= res.s(self[i].str).c(',');
+         i:= i+1;
+      end;
+      res[res.length-1]:= ')';
+   end;
+   
+   print:OUT is
+     res:=OUT::s(str).nl;
+   end;
+end;
+
+class ARR_OK is
+
+   main is
+      z1   : $COMPLEX;
+      z3,z4:  COMPLEX;
+      t1   :  COMPLEX_LIST[*];
+      t3   :  COMPLEX_LIST[*];
+
+      z1:= #COMPLEX{3,4};	-- must be built explicitly
+
+      z3:= #COMPLEX{1,2};
+      z3.print;
+      z4:= #COMPLEX{2+2,3+3};
+      z4.print;
+
+      -- ARRs
+      t1:= #COMPLEX_LIST[2];
+      t1:= t1.set_start(z1);
+      t1:= t1.set_last(z3);
+      t1.print;
+      t3:= t1.swap(0,1);
+      t3.print;
+
+      t3:= #COMPLEX_LIST[3];
+      t3[0]:= t1.start;
+      t3[2]:= t1.last;
+      t3[1]:= t1.start.plus(t1.last);
+      t3.print;
+      t3:= t3.swap(1,2);
+      t3.print;
+   end;
+end;

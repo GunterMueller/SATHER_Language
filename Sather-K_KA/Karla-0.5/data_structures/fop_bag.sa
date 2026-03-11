@@ -1,0 +1,95 @@
+-- File: fop_bag.sa
+-- Author: Wolf Zimmermann
+-- Copyright (C) Universitaet Karlsruhe, 1994
+--
+-- COPYRIGHT NOTICE: This code is provided "AS IS" WITHOUT ANY WARRANTY
+-- and is subject to the terms of the KARLA LIBRARY GENERAL PUBLIC
+-- LICENSE contained in the file: "doc/license.txt" of the 
+-- distribution. 
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FILE: fop_bag.sa
+--*
+--* CLASSES: FINITE_ORDERED_PARTIAL_MULTISET(K<ORDERED(K),T1,T<FINITE_ORDERED_PARTIAL(K,T1),ORDER<ORDER_RELATION(T))
+--* 
+--* IMPLEMENTATION OF: 
+--*
+--* CONFORMS TO: FINITE_PARTIAL_MULTISET(K,T1,T2,T) FINITE_ORDERED_MULTISET(T1,T,ORDER) ORDERED_PARTIAL_MULTISET(K,T1,T,ORDER)
+--*
+--* IS A:
+--*
+--* REQUIRED CLASSES: ORDER_RELATION(T) \
+--*                   FINITE_ORDERED_PARTIAL(K,T) ORDER_LT(T) \
+--*                   ORDERED_PARTIAL_MULTISET(K,T1,T,ORDER) \
+--*                   FINITE_PARTIAL_MULTISET(K,T1,T2,T) \
+--*                   FINITE_ORDERED_MULTISET(T1,T,ORDER) \
+--*                   PARTIAL_INT FINITE_ORDERED_PARTIAL_INT
+--*
+--* EXCEPTIONS:  EXCEPTION__PARTIAL_MULTISET_LOOKUP \
+--* EXCEPTION_MULTISET EXCEPTION__ORDERED_MULTISET_MAX EXCEPTION__ORDERED_MULTISET_MIN \
+--* EXCEPTION__ORDERED_MULTISET_NEXT EXCEPTION__ORDERED_MULTISET_PREVIOUS \
+--* EXCEPTION__ORDERED_PARTIAL_MULTISET_NEXT EXCEPTION__ORDERED_PARTIAL_MULTISET_PREVIOUS
+--*
+--* TEST CLASS: TEST__FINITE_ORDERED_PARTIAL_MULTISET
+--*
+--* FOREIGN FILES:
+--*
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--
+-- RCS: $Id$
+-- HISTORY: $Log$
+--
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+abstract class FINITE_ORDERED_PARTIAL_MULTISET(
+	 K<ORDERED(K),
+	 T1,T2<ORDERED_PARTIAL(K,T1),
+	 T<FINITE_ORDERED_PARTIAL(K,T1,T2),
+	 ORDER<ORDER_RELATION(T)) is
+   
+   -- * CLASS: FINITE_ORDERED_PARTIAL_MULTISET(K<ORDERED(K),\
+   -- * T1,T2<ORDERED_PARTIAL(K,T1), \
+   -- * T<FINITE_ORDERED_PARTIAL(K,T1,T2),\
+   -- * ORDER<ORDER_RELATION(T))	
+   -- * DESCRIPTION: abstract class defining finite ordered sets with partial key access \
+   -- *              the order is defined on the partial key
+   -- * SUBCLASS OF: FINITE_PARTIAL_MULTISET(K,T1,T2,T) \
+   -- * FINITE_ORDERED_MULTISET(T1,T,ORDER) \
+   -- * ORDERED_PARTIAL_MULTISET(K,T1,T,ORDER)
+   -- * SPECIALIZATION OF: FINITE_PARTIAL_MULTISET(K,T1,T2,T) \
+   -- * FINITE_ORDERED_MULTISET(T1,T,ORDER) \
+   -- * ORDERED_PARTIAL_MULTISET(K,T1,T,ORDER)
+   -- * EXCEPTIONS: EXCEPTION__PARTIAL_MULTISET_INS EXCEPTION__PARTIAL_MULTISET_LOOKUP \
+   -- * EXCEPTION_MULTISET EXCEPTION__ORDERED_MULTISET EXCEPTION__ORDERED_PARTIAL_MULTISET
+   -- * IMPLEMENTATION OF:  FINITE_ORDERED_PARTIAL_MULTISET(K,T1,T2,T,ORDER)
+   -- * INVARIANT: FINITE_ORDERED_MULTISET::Inv AND \
+   -- *  FINITE_PARTIAL_MULTISET::Inv AND \
+   -- *  ORDERED_PARTIAL_MULTISET::Inv
+   -- * REPRESENTATION:
+   -- * COMPLEXITY: \
+   -- *     static      SIZE = size; \
+   -- *                 ##.init.MAXSIZE = 0 AND \
+   -- *                 MAXSIZE = max(choose.SIZE,delete(choose).MAXSIZE)\ 
+   -- *                 ##.init.KEYSIZE = 0 AND \
+   -- *                 KEYSIZE = max(choose.key.SIZE,delete(choose).KEYSIZE)
+   -- * REFERENCES: [Aho, Hopcroft, Ullman: "The Design and Analysis \
+   -- *               of Computer Algorithms", Addison-Wesley, 1974]
+   -- * ATTRIBUTES: size:INT \
+   -- *            const order:ORDER:= #ORDER
+
+   subtype of FINITE_PARTIAL_MULTISET(K,T1,T2,T);
+   subtype of ORDERED_PARTIAL_MULTISET(K,T1,T,ORDER);
+   subtype of FINITE_ORDERED_MULTISET(T1,T,ORDER);
+
+
+end; -- class
+
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+class TEST__FINITE_ORDERED_PARTIAL_MULTISET is
+   main is
+     s:$MULTISET(FINITE_ORDERED_PARTIAL_INT)  :=
+     #FINITE_ORDERED_PARTIAL_MULTISET(INT,INT,PARTIAL_INT,FINITE_ORDERED_PARTIAL_INT,ORDER_LT(FINITE_PARTIAL_INT)).init;
+     ERR::s("creation of abstract class succeeded").nl;
+   end;
+end;

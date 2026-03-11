@@ -1,0 +1,70 @@
+--* Last edited: Feb  2 23:06 1994 (holzw)
+--
+-- test cycle detection in "subtype of" and include relations
+
+value class A is
+  i: INT;
+end;
+
+value class B is
+  subtype of A;
+end;
+
+value class D is
+  subtype of B;
+  subtype of A;
+end;
+
+value class E is
+  include A;
+end;
+
+value class F is
+  include A;
+  subtype of D;
+  include B;
+end;
+
+class X is
+  subtype of Z;	-- cycle in inheritances
+end;
+
+class Y is
+  subtype of X;
+end;
+
+class Z is
+  subtype of Y;
+end;
+
+class XI is
+  include ZI;		-- cycle in includes
+end;
+
+class YI is
+  include XI;
+end;
+
+class ZI is
+  include YI;
+end;
+
+class SBINC_E1 is
+  main is
+    a:A;
+    b:B;
+    c:D;
+    d:E;
+    e:F;
+
+    x:$A;
+    x:=a;
+    x:=b;
+    x:=c;
+    x:=d;
+    x:=e;
+
+    x.i:=1;
+    e.i:=5;
+  end;
+end;

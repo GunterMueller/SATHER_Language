@@ -1,0 +1,473 @@
+-- File: ordered_bag.sa
+-- Author: Wolf Zimmermann (zimmer@ira.uka.de)
+-- Copyright (C) Universitaet Karlsruhe, 1994
+--
+-- COPYRIGHT NOTICE: This code is provided "AS IS" WITHOUT ANY WARRANTY
+-- and is subject to the terms of the KARLA LIBRARY GENERAL PUBLIC
+-- LICENSE contained in the file: "doc/license.txt" of the 
+-- distribution. 
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FILE: ordered_bag.sa
+--*
+--* CLASSES: ORDERED_MULTISET(T<ORDERED(T),ORDER<ORDER_RELATION(T)) EXCEPTION__ORDERED_MULTISET_NEXT EXCEPTION__ORDERED_MULTISET_PREVIOUS EXCEPTION__ORDERED_MULTISET_MAX EXCEPTION__ORDERED_MULTISET_MIN
+--* 
+--* IMPLEMENTATION OF: 
+--*
+--* CONFORMS TO: MULTISET(T)
+--*
+--* IS A: MULTISET(T)
+--*
+--* REQUIRED CLASSES: MULTISET(T) ORDER_RELATION(T) ORDER_LT(T) ORDERED(T) LIST__LINKED(T)
+--*
+--* EXCEPTIONS:  EXCEPTION__MULTISET EXCEPTION__ORDERED_MULTISET_NEXT EXCEPTION__ORDERED_MULTISET_PREVIOUS EXCEPTION__ORDERED__MULTISET__MAX EXCEPTION__ORDERED_MULTISET_MIN
+--*
+--* TEST CLASS: TEST__ORDERED_MULTISET
+--*
+--* FOREIGN FILES:
+--*
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--
+--
+-- RCS: $Id$
+-- HISTORY:
+--  * Last edited: Aug 10 12:51 1994 (frick)
+--  *  Aug 10 12:51 1994 (frick): changed method 'sort' to use a linked list; this works
+--
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+abstract class ORDERED_MULTISET(T<ORDERED(T),ORDER<ORDER_RELATION(T)) is
+   -- * CLASS: ORDERED_MULTISET(T,ORDER<ORDER_RELATION(T))
+   -- * DESCRIPTION: abstract class defining ordered sets 
+   -- * SUBCLASS OF: MULTISET(T)
+   -- * SPECIALIZATION OF: 
+   -- * IMPLEMENTATION OF: 
+   -- * EXCEPTIONS: EXCEPTION__MULTISET EXCEPTION__ORDERED_MULTISET_NEXT \
+   -- *             EXCEPTION__ORDERED_MULTISET_PREVIOUS EXCEPTION__ORDERED_MULTISET_MIN \
+   -- * EXCEPTION__ORDERED_MULTISET_MAX
+   -- * INVARIANT: MULTISET::Inv 
+   -- * REPRESENTATION:
+   -- * COMPLEXITY: \
+   -- *     static      SIZE = size; \
+   -- *                 ##.init.MAXSIZE = 0 AND \
+   -- *                 MAXSIZE = max(choose.SIZE,delete(choose).MAXSIZE)
+   -- * REFERENCES: [Aho, Hopcroft, Ullman: "The Design and Analysis \
+   -- *               of Computer Algorithms", Addison-Wesley, 1974]
+   -- * ATTRIBUTES: size : INT \
+   -- *             order : ORDER \
+   -- *             s : $SORT(T)
+
+   subtype of MULTISET(T);
+
+   const order:ORDER := #ORDER;  -- usage: a,b\in T:  order.is_lt(a,b) = true iff a<b
+
+   choose_next(a:T):T is
+      -- * METHOD: choose_next(a:T):T
+      -- * DESCRIPTION: choose the smallest element which is larger than a \
+      -- *   if a is bigger than the largest element an exception is raised
+      -- * PRE: EXISTS e:T: a < e
+      -- * POST: member(res) AND FORALL e:T : (e > a AND member(e) IMPLIES res <= e)
+      -- * COMPLEXITY: \
+      -- * SIZE__choose_next(self.SIZE,a.SIZE,self.MAXSIZE) = self.MAXSIZE \
+      -- * SPACE__choose_next(self.SIZE,a.SIZE) = O(\
+      -- * |    max(SPACE__elts(self.SIZE,self.SIZE),
+      -- * |        SPACE__max(self.SIZE,self.MAXSIZE),
+      -- * |        ORDER(T)::SPACE__is_lt(self.MAXSIZE,self.MAXSIZE),
+      -- * |        ORDER(T)::SPACE__is_lt(a.SIZE,self.MAXSIZE))) \
+      -- * additive TIME_choose_next(self.SIZE,a.SIZE,self.MAXSIZE) = O( \
+      -- * |     TIME_max(self.SIZE,self.MAXSIZE) +
+      -- * |     TIME_elts(self.SIZE,self.SIZE) +
+      -- * |     self.SIZE*ORDER(T)::TIME__is_lt(self.MAXSIZE,self.MAXSIZE) + \
+      -- * |     self.SIZE*ORDER(T)::TIME__is_lt(a.SIZE,self.MAXSIZE)
+      -- * REFERENCES: 
+
+      e:T;
+      res := max;
+      loop
+	e := elts!;
+	if order.is_lt(e,res) and order.is_lt(a,e) then res := e; end;
+      end;
+      if not order.is_lt(a,res) then -- precondition was not satisfied
+	   #EXCEPTION__ORDERED_MULTISET_NEXT.raise;
+      end;
+   end;
+
+
+
+  min:T is  
+      -- * METHOD: min:T
+      -- * DESCRIPTION: choose minimum among all elements 
+      -- * PRE: NOT empty
+      -- * POST: FORALL a:T : member(a) IMPLIES res <= a AND member(res)
+      -- * COMPLEXITY: \
+      -- * SIZE__min(self.SIZE,self.MAXSIZE) = self.MAXSIZE \
+      -- * SPACE__min(self.SIZE,self.MAXSIZE) = O( \
+      -- * |   max(SPACE__elts(self.SIZE,self.SIZE),\
+      -- * |       SPACE__empty(self.SIZE),
+      -- * |       ORDER(T)::SPACE__is_lt(self.MAXSIZE,self.MAXSIZE))) \
+      -- * TIME__min(self.SIZE) = O( \
+      -- * |   TIME__empty(self.SIZE) + TIME__elts(self.SIZE,self.SIZE) + \
+      -- * |   self.SIZE*ORDER(T)::is_lt(self.MAXSIZE,self.MAXSIZE))
+      -- * REFERENCES: 
+
+
+      e:T;
+      if empty 
+      then #EXCEPTION__ORDERED_MULTISET_MIN.raise; return;
+      end;
+      loop 
+	e := elts!;
+	if res=void then res := e; end;
+        if order.is_lt(e,res) then res := e; end;
+      end;
+  end;
+
+
+  max:T is
+      -- * METHOD: max:T
+      -- * DESCRIPTION: choose maximum among all elements
+      -- * PRE: true
+      -- * POST: member(res) AND FORALL a:T : member(a) IMPLIES res>=a
+      -- * COMPLEXITY: \
+      -- * SIZE__max(self.SIZE,self.MAXSIZE) = self.MAXSIZE \
+      -- * SPACE__max(self.SIZE,self.MAXSIZE) = O( \
+      -- * |   max(SPACE__elts(self.SIZE,self.SIZE),\
+      -- * |       SPACE__empty(self.SIZE),
+      -- * |       ORDER(T)::SPACE__is_lt(self.MAXSIZE,self.MAXSIZE))) \
+      -- * TIME__max(self.SIZE) = O( \
+      -- * |   TIME__empty(self.SIZE) + TIME__elts(self.SIZE,self.SIZE) + \
+      -- * |   self.SIZE*ORDER(T)::is_lt(self.MAXSIZE,self.MAXSIZE))
+      -- * REFERENCES:
+
+      e:T;
+      if empty
+      then #EXCEPTION__ORDERED_MULTISET_MAX.raise; return;
+      end;
+      loop
+	 e := elts!;
+	 if res=void then res:=e; end;
+	 if order.is_lt(res,e) then res:=e; end;
+      end;
+   end;
+
+
+   choose_previous(a:T):T is
+      -- * METHOD: choose_previous(a:T):T
+      -- * DESCRIPTION: choose the largest element which is smaller than a \
+      -- *   if a is less than the minimum element an exception is raised
+      -- * PRE: EXISTS e:T: e<a
+      -- * POST: member(res) AND FORALL e:T : (e < a AND member(e) IMPLIES res >= e)
+      -- * COMPLEXITY: \
+      -- * SIZE__choose_previous(self.SIZE,a.SIZE,self.MAXSIZE) = self.MAXSIZE \
+      -- * SPACE__choose_previous(self.SIZE,a.SIZE) = O(\
+      -- * |    max(SPACE__elts(self.SIZE,self.SIZE),
+      -- * |        SPACE__min(self.SIZE,self.MAXSIZE),
+      -- * |        ORDER(T)::SPACE__is_lt(self.MAXSIZE,self.MAXSIZE),
+      -- * |        ORDER(T)::SPACE__is_lt(self.MAXSIZE,a.SIZE))) \
+      -- * additive TIME_choose_next(self.SIZE,a.SIZE,self.MAXSIZE) = O( \
+      -- * |     TIME_min(self.SIZE,self.MAXSIZE) +
+      -- * |     TIME_elts(self.SIZE,self.SIZE) +
+      -- * |     self.SIZE*ORDER(T)::TIME__is_lt(self.MAXSIZE,self.MAXSIZE) + \
+      -- * |     self.SIZE*ORDER(T)::TIME__is_lt(self.MAXSIZE,a.SIZE)
+      -- * REFERENCES: 
+
+      e:T;
+      res := min;
+      loop
+	e := elts!;
+	if order.is_lt(res,e) and order.is_lt(e,a) then res := e; end;
+      end;
+      if not order.is_lt(res,a) then -- precondition was not satisfied
+	   #EXCEPTION__ORDERED_MULTISET_PREVIOUS.raise;
+      end;
+   end;
+
+  delete_min:SAME is
+    -- * METHOD: delete_min:SAME
+    -- * DESCRIPTION: delete the minimal element from set.
+    -- * PRE: NOT self.empty
+    -- * POST: res = self.delete(self.min)
+    -- * COMPLEXITY: \
+    -- * SIZE__delete_min(self.SIZE) = self.SIZE \
+    -- * MAXSIZE__delete_min(self.MAXSIZE) = self.MAXSIZE \
+    -- * SPACE__delete_min(self.SIZE,self.MAXSIZE) = O( \
+    -- * |   max(SPACE_empty(self.SIZE),SPACE__min(self.SIZE,self.MAXSIZE), \
+    -- * |       SPACE_delete(self.SIZE,self.MAXSIZE))) \
+    -- * TIME__delete_min(self.SIZE) = O( \
+    -- * |   TIME__empty(self.SIZE) + TIME__min(self.SIZE,self.MAXSIZE) + \
+    -- * |   TIME__delete(self.SIZE,self.MAXSIZE))
+    -- * REFERENCES:
+
+      if empty
+      then #EXCEPTION__ORDERED_MULTISET_MIN.raise; return;
+      end;
+    res := delete(min);
+  end; -- delete_min
+
+
+  delete_max:SAME is
+    -- * METHOD: delete_max:SAME
+    -- * DESCRIPTION: delete the maximal element from set.
+    -- * PRE: NOT self.empty
+    -- * POST: res = self.delete(self.max)
+    -- * COMPLEXITY: \
+    -- * SIZE__delete_max(self.SIZE) = self.SIZE \
+    -- * MAXSIZE__delete_max(self.MAXSIZE) = self.MAXSIZE \
+    -- * SPACE__delete_max(self.SIZE,self.MAXSIZE) = O( \
+    -- * |   max(SPACE_empty(self.SIZE),SPACE__max(self.SIZE,self.MAXSIZE), \
+    -- * |       SPACE_delete(self.SIZE,self.MAXSIZE))) \
+    -- * TIME__delete_max(self.SIZE) = O( \
+    -- * |   TIME__empty(self.SIZE) + TIME__max(self.SIZE,self.MAXSIZE) + \
+    -- * |   TIME__delete(self.SIZE,self.MAXSIZE))
+    -- * REFERENCES:
+
+      if empty
+      then #EXCEPTION__ORDERED_MULTISET_MAX.raise; return;
+      end;
+    res := delete(max);
+  end; -- delete_max
+
+
+  sort:$LIST(T) is
+      -- * METHOD: sort:LIST(T)
+      -- * DESCRIPTION: sorting the elements in an ordered set
+      -- * PRE: true
+      -- * POST: res.size = size AND \
+      -- *    FORALL 0<=i<size: member(res.next^i.element) AND \
+      -- *         (i < size -1 IMPLIES  res.next^i.element < res.next^(i+1).element)
+      -- * COMPLEXITY: \
+      -- * SIZE__sort(self.SIZE) = self.SIZE \
+      -- * SPACE__sort(self.SIZE,self.MAXSIZE) = \
+      -- * |        O(max(SPACE__elts_order(self.SIZE,self.MAXSIZE,self.SIZE),\
+      -- * |          LIST__LINKED(T)::SPACE__ins_end(self.SIZE,self.MAXSIZE))) \
+      -- * TIME__sort(self.SIZE,self.MAXSIZE) = O(\
+      -- * |  TIME_elts_order(self.SIZE,self.SIZE,self.MAXSIZE) + \
+      -- * |  LIST_LINKED::TIME_init + \
+      -- *    self.SIZE*LIST_LINKED(T)::TIME_ins_end(self.SIZE,self.MAXSIZE))
+      -- * REFERENCES:
+
+       res := #LIST__LINKED(T).init;
+       loop
+         res := res.ins_end(elts_order!);
+       end;
+    end;
+
+
+  stream elts_order:T is 
+     -- * METHOD: stream elts_order:T
+     -- * DESCRIPTION: stream yielding the elements in order
+     -- * PRE: true
+     -- * POST: elts_order.terminated IFF i=size AND \
+     -- * res[1]=min AND (EXISTS s[1]:$ORDERED_MULTISET(T,ORDER): s[1]=self) AND \
+     -- * FORALL i:INT: 1<i<=size: EXISTS s[i]:$ORDERED_MULTISET(T,ORDER): \
+     -- * |       s[i]=s[i-1].delete_min AND res[i]=s[i].min
+     -- * COMPLEXITY: \
+     -- * SIZE__elts_order(self.SIZE) = self.SIZE \
+     -- * SPACE__elts_order(self.SIZE,self.MAXSIZE,k) = O( \
+     -- * |    max(self.SIZE,SPACE__empty(self.SIZE), \
+     -- * |        SPACE__min(self.SIZE,self.MAXSIZE), \
+     -- * |        SPACE__delete_min(self.SIZE,self.MAXSIZE),
+     -- * |        SPACE_copy_set(self.SIZE))
+     -- * TIME__elts_order(self.SIZE,self.MAXSIZE,k) = O( \
+     -- * |    k*TIME_empty(self.SIZE) + \
+     -- * |    k*TIME_min(self.SIZE,self.MAXSIZE) + \
+     -- * |    k*TIME_delete_min(self.SIZE,self.MAXSIZE))
+     -- * REFERENCES:
+
+     s:$ORDERED_MULTISET(T,ORDER) := copy_set;
+     while not s.empty loop
+	 res := s.min;
+         resume;
+	 s := s.delete_min;
+     end;
+  end;
+
+  stream elts_reverse_order:T is 
+     -- * METHOD: stream elts_reverse_order:T
+     -- * DESCRIPTION: stream yielding the elements in reverse order
+     -- * PRE: true
+     -- * POST: elts_reverse_order.terminated IFF i=size AND \
+     -- * res[1]=max AND EXISTS s[1]:$ORDERED_MULTISET(T,ORDER): s[1]=self) AND \
+     -- * FORALL i:INT: 1<i<=size: EXISTS s[i]:$ORDERED_MULTISET(T,ORDER): \
+     -- * |       s[i]=s[i-1].delete_max AND res[i]=s[i].max
+     -- * COMPLEXITY: \
+     -- * SIZE__elts_reverse_order(self.SIZE) = self.SIZE \
+     -- * SPACE__elts_reverse_order(self.SIZE,self.MAXSIZE,k) = O( \
+     -- * |    max(self.SIZE,SPACE__empty(self.SIZE), \
+     -- * |        SPACE__max(self.SIZE,self.MAXSIZE), \
+     -- * |        SPACE__delete_max(self.SIZE,self.MAXSIZE),
+     -- * |        SPACE_copy_set(self.SIZE))
+     -- * TIME__elts_reverse_order(self.SIZE,self.MAXSIZE,k) = O( \
+     -- * |    k*TIME_empty(self.SIZE) + \
+     -- * |    k*TIME_max(self.SIZE,self.MAXSIZE) + \
+     -- * |    k*TIME_delete_max(self.SIZE,self.MAXSIZE))
+     -- * REFERENCES:
+
+     s:$ORDERED_MULTISET(T,ORDER):=copy_set;
+     while not s.empty loop
+       res := s.max;
+       resume;
+       s := s.delete_max;
+     end;
+  end;
+
+  stream from_to(const lower:T; const upper:T):T is
+     -- * METHOD: stream from_to(const lower:T, const upper:T):T
+     -- * DESCRIPTION: stream yielding the elements between lower and upper \
+     -- * in order
+     -- * PRE: true
+     -- * POST: (from_to.terminated IFF res[i]=max OR empty OR \
+     -- * |                             choose_next(res[i])>upper AND res[i-multiplicity(res[i])+1]=res[i]) AND\
+     -- *       (member(lower) IMPLIES res[1]=lower) AND \
+     -- *       (NOT member(lower) IMPLIES res[1]=choose_next(lower)) AND \
+     -- *       (FORALL 0<=j<multiplicity(res[i-1]): res[i-1-j]=res[i-1] IMPLIES res[i]=choose_next(res[i-1]) AND \
+     -- *       (multiplicity(res[i-1])>i OR res[i-multiplicity(res[i-1])]/=res[i-1] IMPLIES res[i]=res[i-1]) AND \
+     -- *       self[i]=self
+     -- * COMPLEXITY: \
+     -- * SIZE__from_to(self.SIZE,lower.SIZE,upper.SIZE) = self.SIZE \
+     -- * SPACE__from_to(self.SIZE,lower.SIZE,upper.SIZE,self.MAXSIZE,k) = O( \
+     -- * |       max(self.SIZE, \
+     -- * |           SPACE__elts_order(self.SIZE,self.MAXSIZE,self.SIZE),
+     -- * |           ORDER(T)::SPACE__is_lt(self.MAXSIZE,lower.SIZE),
+     -- * |           ORDER(T)::SPACE__is_lt(upper.SIZE,self.MAXSIZE))) \
+     -- *TIME_from_to(self.SIZE,lower.SIZE,self.MAXSIZEupper.SIZE,k) = O( \
+     -- *      TIME_elts_order(self.SIZE,self.MAXSIZE,self.SIZE) +
+     -- *      k*ORDER(T)::TIME__is_lt(upper.SIZE,self.MAXSIZE)  + \
+     -- *      k*ORDER(T)::TIME__is_lt(self.MAXSIZE,lower.SIZE))
+     -- * REFERENCES:
+
+     loop
+       res := elts_order!;
+       if not order.is_lt(res,lower) and not order.is_lt(upper,res) then resume; end;
+     end;
+
+  end;
+
+
+  
+  stream from_downto(const upper:T; const lower:T):T is
+     -- * METHOD: stream from_downto(const upper:T, const lower:T):T
+     -- * DESCRIPTION: stream yielding the elements between upper and lower \
+     -- * in reverse order
+     -- * PRE: true
+     -- * POST: (from_downto.terminated IFF res[i]=min OR empty OR \
+     -- * |                                  choose_previous(res[i])<lower AND res[i-multiplicity(res[i]+1)]=res[i])
+     -- * AND\
+     -- *       (member(upper) IMPLIES res[1]=upper) AND \
+     -- *       (NOT member(upper) IMPLIES res[1]=choose_previous(upper)) AND \
+     -- *       (FORALL 0<=j<multiplicity(res[i-1]): res[i-1-j]=res[i-1] IMPLIES res[i]=choose_previous(res[i-1]) AND \
+     -- *       (multiplicity(res[i-1])>i OR res[i-multiplicity(res[i-1])]/=res[i-1] IMPLIES res[i]=res[i-1]) AND \
+     -- *       self[i]=self
+     -- * COMPLEXITY: \
+     -- * SIZE__from_downto(self.SIZE,upper.SIZE,lower.SIZE) = self.SIZE \
+     -- * SPACE__from_downto(self.SIZE,upper.SIZE,lower.SIZE,self.MAXSIZE,k) = O( \
+     -- * |       max(self.SIZE, \
+     -- * |           SPACE__elts_reverse_order(self.SIZE,self.MAXSIZE,self.SIZE),
+     -- * |           ORDER(T)::SPACE__is_lt(self.MAXSIZE,lower.SIZE),
+     -- * |           ORDER(T)::SPACE__is_lt(upper.SIZE,self.MAXSIZE))) \
+     -- *TIME_from_downto(self.SIZE,upper.SIZE,lower.SIZE,self.MAXSIZE,k) = O( \
+     -- *      TIME_elts_reverse_order(self.SIZE,self.MAXSIZE,self.SIZE) +
+     -- *      k*ORDER(T)::TIME__is_lt(upper.SIZE,self.MAXSIZE)  + \
+     -- *      k*ORDER(T)::TIME__is_lt(self.MAXSIZE,lower.SIZE))
+     -- * REFERENCES:
+
+     loop
+       res := elts_reverse_order!;
+       if not order.is_lt(res,lower) and not order.is_lt(upper,res) then resume; end;
+     end;
+
+  end;
+
+end;
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+class EXCEPTION__ORDERED_MULTISET_NEXT is
+  -- * CLASS: EXCEPTION__ORDERED_MULTISET_NEXT
+  -- * DESCRIPTION: exceptions of ORDERED_MULTISET: \
+  -- *  choose_next(x) where x is an upper bound on set
+  -- * SUBCLASS OF:
+  -- * SPECIALIZATION OF:
+  -- * IMPLEMENTATION OF:
+  -- * EXCEPTIONS:
+  -- * INVARIANT:
+  -- * REPRESENTATION:
+  -- * COMPLEXITY:
+  -- * REFERENCES:
+  -- * ATTRIBUTES: name:STR  -- error message
+  subtype of EXCEPTION_USER;
+
+  const name:STR := "ORDERED_MULTISET::choose_next(x) where x is upper bound on set";
+end;
+
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+class EXCEPTION__ORDERED_MULTISET_PREVIOUS is
+  -- * CLASS: EXCEPTION__ORDERED_MULTISET_PREVIOUS
+  -- * DESCRIPTION: exceptions of ORDERED_MULTISET: \
+  -- *  choose_previous(x) where x is a lower bound on set
+  -- * SUBCLASS OF:
+  -- * SPECIALIZATION OF:
+  -- * IMPLEMENTATION OF:
+  -- * EXCEPTIONS:
+  -- * INVARIANT:
+  -- * REPRESENTATION:
+  -- * COMPLEXITY:
+  -- * REFERENCES:
+  -- * ATTRIBUTES: name:STR  -- error message
+  subtype of EXCEPTION_USER;
+
+  const name:STR := "ORDERED_MULTISET::choose_previous(x) where x is lower bound on set";
+end;
+
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+class EXCEPTION__ORDERED_MULTISET_MIN is
+  -- * CLASS: EXCEPTION__ORDERED_MULTISET_MIN
+  -- * DESCRIPTION: exceptions of ORDERED_MULTISET: \
+  -- *  min/delete_min on empty set
+  -- * SUBCLASS OF:
+  -- * SPECIALIZATION OF:
+  -- * IMPLEMENTATION OF:
+  -- * EXCEPTIONS:
+  -- * INVARIANT:
+  -- * REPRESENTATION:
+  -- * COMPLEXITY:
+  -- * REFERENCES:
+  -- * ATTRIBUTES: name:STR  -- error message
+  subtype of EXCEPTION_USER;
+
+  const name:STR := "ORDERED_MULTISET::min/delete_min on empty set";
+end;
+
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+class EXCEPTION__ORDERED_MULTISET_MAX is
+  -- * CLASS: EXCEPTION__ORDERED_MULTISET_MAX
+  -- * DESCRIPTION: exceptions of ORDERED_MULTISET: \
+  -- * max/delete_max on empty set
+  -- * SUBCLASS OF:
+  -- * SPECIALIZATION OF:
+  -- * IMPLEMENTATION OF:
+  -- * EXCEPTIONS:
+  -- * INVARIANT:
+  -- * REPRESENTATION:
+  -- * COMPLEXITY:
+  -- * REFERENCES:
+  -- * ATTRIBUTES: name:STR  -- error message
+  subtype of EXCEPTION_USER;
+
+  const name:STR := "ORDERED_MULTISET::max/delete_max on empty set";
+end;
+
+
+class TEST__ORDERED_MULTISET is
+   main is
+      a:$MULTISET(INT):=# ORDERED_MULTISET(INT,ORDER_LT(INT));
+      ERR::s("creation of abstract class succeeded.\n");
+   end;
+end;
+
+

@@ -1,0 +1,18 @@
+--
+-- print commandline parameters
+-- could be seen as a modified echo command
+-- 28.4.1994 Peter Holzwarth
+--
+
+
+class COMMANDL is
+  main (argv: ARR[*](STR)): INT is
+    -- print contents of commandline
+    i: INT:= 0;
+    while i<argv.asize loop
+      OUT::i(i).s("  ").s(argv[i]).nl;
+      i:= i+1;
+    end;
+    res:= 0;
+  end;
+end;

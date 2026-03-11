@@ -1,0 +1,10 @@
+This is the binary version of the Sather-K compiler for sun4 machines.
+For running sck in your local environment you must set two shell variables:
+
+   SATHER_K_HOME : the directory where the sck files are located
+   SATHER_K_LIB  : the lib subdirectory of the sck directory
+
+For example in a C-Shell you must do the following:
+
+setenv SATHER_K_HOME __the_sck_directory__
+setenv SATHER_K_LIB ${SATHER_K_HOME}/lib

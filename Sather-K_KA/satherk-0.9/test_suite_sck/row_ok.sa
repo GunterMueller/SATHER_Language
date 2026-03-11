@@ -1,0 +1,123 @@
+--* Last edited: Nov 29 15:38 1993 (holzw)
+--
+-- test classes for ROWs
+--
+
+value class COMPLEX is
+   -- Billigstausfuehrung
+
+   subtype of ROW[2](FLTD);
+   real: FLTD is res:= self[0]; end;
+   imag: FLTD is res:= self[1]; end;
+
+   set_real(r:FLTD):COMPLEX is 
+      res[0]:= r;
+      res[1]:=self[1];
+   end;
+   
+   set_imag(i:FLTD):COMPLEX is
+      res[0]:=self[0];
+      res[1]:= i;
+   end;
+   
+   plus (z:$COMPLEX):SAME is
+      -- addition komplexer Zahlen
+      res[0]:= self[0]+z[0];
+      res[1]:= self[1]+z[1];
+   end;
+
+   inc: SAME is
+      -- increment real
+      res[0]:=self[0]+1;
+      res[1]:=self[1];
+   end;
+
+   times (z:COMPLEX):SAME is
+      -- multiplication
+      res:=    set_real(real*z.real + imag*z.imag);
+      res:=res.set_imag(real*z.imag - imag*z.real);
+   end;
+
+   pow_2: SAME is
+      -- power of 2
+      res:= times(self);
+      print;
+   end;
+
+   str:STR is
+      -- give a string representation of self
+      res:= #STR[1].s("(").d(self[0]).s(",").d(self[1]).s(")");
+   end;
+   
+   print:OUT is
+     res:= OUT::s(str).nl;
+   end;
+end;
+
+value class COMPLEX_TUPEL is
+   -- tupel of two complex numbers
+   subtype of ROW[2](COMPLEX);
+
+   start: COMPLEX is res:= self[0]; end;
+   last : COMPLEX is res:= self[1]; end;
+
+   set_start(s:COMPLEX):COMPLEX_TUPEL is
+      res[0]:= s;
+      res[1]:=self[1];
+   end;
+   
+   set_last(e:COMPLEX):COMPLEX_TUPEL is
+      res[0]:=self[0];
+      res[1]:= e;
+   end;
+
+   swap: COMPLEX_TUPEL is
+      res[0]:=self[1];
+      res[1]:=self[0];
+   end;
+
+   str:STR is
+      -- give a string representation of self
+      res:= #STR[1].s("(").s(start.str).s(",").s(last.str).s(")");
+   end;
+   
+   print:OUT is
+     res:=OUT::s(str).nl;
+   end;
+end;
+
+class ROW_OK is
+
+   main is
+      z1,z2: $COMPLEX;
+      z3,z4: COMPLEX;
+      t1,t2: COMPLEX_TUPEL;
+
+      z1:= #COMPLEX;		-- must be built explicitly
+      z1:= z1.set_real(3);
+      z1:= z1.set_imag(4);
+      OUT::s("(3,4) = ");
+      z1.print;
+
+      z3:= z3.set_real(1);
+      z3:= z3.set_imag(2);
+      OUT::s("(1,2) = ");
+      z3.print;
+
+      z2:= z1;			-- $COMPLEX:= $COMPLEX
+      z3:= z1;			--  COMPLEX:= $COMPLEX, rttc
+      z1:= z3;			-- $COMPLEX:=  COMPLEX
+
+      z1:= z1.plus (z2); z1.print;
+      z1:= z1.plus (z3); z1.print;
+      z4:= z3.plus (z1); z4.print;
+      z3:= z3.plus (z4); z3.print;
+
+      -- ROWs
+      t1:= t1.set_start(z1);
+      t1:= t1.set_last(z2);
+      t1.print;
+      t1.swap.print;
+      t1.print;
+   end;
+end;

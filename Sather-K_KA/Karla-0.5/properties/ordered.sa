@@ -1,0 +1,208 @@
+-- File: ordered.sa
+-- Author: Arne Frick (frick@ira.uka.de)
+-- Copyright (C) Universitaet Karlsruhe, 1994
+--
+-- COPYRIGHT NOTICE: This code is provided "AS IS" WITHOUT ANY WARRANTY
+-- and is subject to the terms of the KARLA LIBRARY GENERAL PUBLIC
+-- LICENSE contained in the file: "doc/license.txt" of the 
+-- distribution. 
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FILE: ordered.sa
+--*
+--* CLASSES: ORDERED(T) ORDER_RELATION(T) ORDER_LT(T) ORDER_GT(T) \
+--*          ORDER_LEQ(T) ORDER_GEQ(T)
+--* 
+--* IMPLEMENTATION OF: 
+--*
+--* CONFORMS TO:
+--*
+--* IS A:
+--*
+--* REQUIRED CLASSES: 
+--*
+--* EXCEPTIONS: 
+--*
+--* TEST CLASS: 
+--*
+--* FOREIGN FILES:
+--*
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--
+-- RCS: $Id$
+-- HISTORY:
+--  * Last edited: Jul 12 15:58 1994 (frick)
+--
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+abstract class ORDERED(T) is
+   -- * CLASS: ORDERED(T)
+   -- * DESCRIPTION: property class defining a total order relation on objects \
+   -- *    makes only sense when T<ORDERED(T)
+   -- * SUBCLASS OF:
+   -- * SPECIALIZATION OF:
+   -- * IMPLEMENTATION OF:
+   -- * EXCEPTIONS:
+   -- * INVARIANT: FORALL a,b,c:SAME : \
+   -- *    NOT a<a AND \
+   -- *    (a<b IMPLIES NOT b<a) AND \
+   -- *    (a<b AND b<c IMPLIES a<c) AND \
+   -- *    (a<b OR b<a OR a=b)
+   -- * REPRESENTATION:
+   -- * COMPLEXITY:
+   -- * REFERENCES:
+   -- * ATTRIBUTES:
+
+   is_lt(b:T) : BOOL is
+      -- * METHOD: is_lt(b:T):BOOL
+      -- * DESCRIPTION: compares self with b using "<"
+      -- * PRE: true
+      -- * POST: res=true IFF a < b in T
+      -- * COMPLEXITY: 
+      -- * REFERENCES: 
+
+      deferred;
+   end;
+
+
+   is_leq(b:T) : BOOL is
+      -- * METHOD: is_leq(b:T):BOOL
+      -- * DESCRIPTION: compares self with b using "<="
+      -- * PRE: true
+      -- * POST: res=true IFF a <= b in T
+      -- * COMPLEXITY: O(TIME_T::is_lt(b.size,size)))
+      -- * REFERENCES: 
+
+      res:= not b.is_lt(self);
+   end;
+
+
+   is_gt(b:T) : BOOL is
+      -- * METHOD: is_gt(b:T):BOOL
+      -- * DESCRIPTION: compares self with b using ">"
+      -- * PRE: true
+      -- * POST: res=true IFF a > b in T
+      -- * COMPLEXITY: O(TIME_T::is_lt(size,b.size)))
+      -- * REFERENCES: 
+      
+      res:= b.is_lt(self);
+
+   end;
+
+   is_geq(b:T) : BOOL is
+      -- * METHOD: is_geq(b:T):BOOL
+      -- * DESCRIPTION: compares self with b using ">="
+      -- * PRE: true
+      -- * POST: res=true IFF a >= b in T
+      -- * COMPLEXITY: O(max(TIME_T::is_gt(size,b.size),TIME_T::is_equal(size,b.size)))
+      -- * REFERENCES: 
+
+      res:=is_gt(b) or is_equal(b);
+   end;
+
+
+end; -- class ORDERED
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+abstract class ORDER_RELATION(T<ORDERED(T)) is
+   -- * CLASS: ORDER_RELATION(T<ORDERED(T))
+   -- * DESCRIPTION: superclass for implementations of 'is_lt'
+   -- * SUBCLASS OF:
+   -- * SPECIALIZATION OF:
+   -- * IMPLEMENTATION OF:
+   -- * EXCEPTIONS:
+   -- * INVARIANT:
+   -- * REPRESENTATION:
+   -- * COMPLEXITY:
+   -- * REFERENCES:
+
+   is_lt(a,b:T):BOOL is
+      deferred;
+   end;
+
+end; -- class ORDERED
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+class  ORDER_LT(T<ORDERED(T)) is
+  -- * CLASS: ORDER_LT(T<ORDERED(T))
+  -- * DESCRIPTION: defines the "<" order from ORDERED(T)
+  -- * SUBCLASS OF: ORDER_RELATION(T)
+  -- * SPECIALIZATION OF:
+  -- * IMPLEMENTATION OF:
+  -- * EXCEPTIONS:
+  -- * INVARIANT:
+  -- * REPRESENTATION:
+  -- * COMPLEXITY:
+  -- * REFERENCES:
+  -- * ATTRIBUTES:
+   subtype of ORDER_RELATION(T);
+
+   is_lt(a,b:T):BOOL is
+      res:=a.is_lt(b);
+   end;
+end;
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+class  ORDER_GT(T<ORDERED(T)) is
+  -- * CLASS: ORDER_GT(T<ORDERED(T))
+  -- * DESCRIPTION: defines the ">" order from ORDERED(T) based on "<"
+  -- * SUBCLASS OF: ORDER_RELATION(T)
+  -- * SPECIALIZATION OF:
+  -- * IMPLEMENTATION OF:
+  -- * EXCEPTIONS:
+  -- * INVARIANT:
+  -- * REPRESENTATION:
+  -- * COMPLEXITY:
+  -- * REFERENCES:
+  -- * ATTRIBUTES:
+   subtype of ORDER_RELATION(T);
+
+   is_lt(a,b:T):BOOL is
+      res:=a.is_gt(b);
+   end;
+end;
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+class  ORDER_LEQ(T<ORDERED(T)) is
+  -- * CLASS: ORDER_LEQ(T<ORDERED(T))
+  -- * DESCRIPTION: defines the "<=" order from ORDERED(T) based on "<"
+  -- * SUBCLASS OF: ORDER_RELATION(T)
+  -- * SPECIALIZATION OF:
+  -- * IMPLEMENTATION OF:
+  -- * EXCEPTIONS:
+  -- * INVARIANT:
+  -- * REPRESENTATION:
+  -- * COMPLEXITY:
+  -- * REFERENCES:
+  -- * ATTRIBUTES:
+   subtype of ORDER_RELATION(T);
+
+   is_lt(a,b:T):BOOL is
+      res:=a.is_leq(b);
+   end;
+end;
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+class  ORDER_GEQ(T<ORDERED(T)) is
+  -- * CLASS: ORDER_GEQ(T<ORDERED(T))
+  -- * DESCRIPTION: defines the ">=" order from ORDERED(T) based on "<"
+  -- * SUBCLASS OF: ORDER_RELATION(T)
+  -- * SPECIALIZATION OF:
+  -- * IMPLEMENTATION OF:
+  -- * EXCEPTIONS:
+  -- * INVARIANT:
+  -- * REPRESENTATION:
+  -- * COMPLEXITY:
+  -- * REFERENCES:
+  -- * ATTRIBUTES:
+   subtype of ORDER_RELATION(T);
+
+   is_lt(a,b:T):BOOL is
+      res:=a.is_geq(b);
+   end;
+end;
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 

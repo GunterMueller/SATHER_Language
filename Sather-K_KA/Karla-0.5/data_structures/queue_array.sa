@@ -1,0 +1,442 @@
+-- Author: Wolf Zimmermann
+-- Copyright (C) Universitaet Karlsruhe, 1994
+--
+-- COPYRIGHT NOTICE: This code is provided "AS IS" WITHOUT ANY WARRANTY
+-- and is subject to the terms of the KARLA LIBRARY GENERAL PUBLIC
+-- LICENSE contained in the file: "doc/license.txt" of the 
+-- distribution. 
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FILE: queue_array.sa
+--*
+--* CLASSES: QUEUE__ARRAY(T)
+--* 
+--* IMPLEMENTATION OF: QUEUE(T)
+--*
+--* CONFORMS TO:
+--*
+--* IS A:
+--*
+--* REQUIRED CLASSES: QUEUE(T) EXCEPTION__QUEUE_EMPTY
+--*
+--* EXCEPTIONS: EXCEPTION__QUEUE_EMPTY
+--*
+--* TEST CLASS: TEST__QUEUE__ARRAY
+--*
+--* FOREIGN FILES:
+--*
+--  RCS: $Id$
+--  HISTORY: $Log$
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+class QUEUE__ARRAY(T) is 
+   -- * CLASS: QUEUE__ARRAY(T)
+   -- * DESCRIPTION: implementation of abstract data type queue via arrays
+   -- * SUBCLASS OF:
+   -- * SPECIALIZATION OF:
+   -- * IMPLEMENTATION OF: QUEUE(T)
+   -- * EXCEPTIONS: EXCEPTION__QUEUE_EMPTY
+   -- * INVARIANT: QUEUE(T)::Inv AND \
+   -- *    self.qsize >= 0 AND \
+   -- *    0 <= frt < queue.asize AND \
+   -- *    0 <= lst < queue.asize AND \
+   -- *    (empty IMPLIES (frt - lst) MOD queue.asize = 1) AND \
+   -- *    (empty IFF qsize=0) AND \
+   -- *    (NOT empty IMPLIES 
+   -- *   |     (FORALL i:INT: i>=0 AND i<qsize IMPLIES dequeue^i.front=queue[(frt+i) MOD asize]
+   -- * REPRESENTATION: 
+   -- * COMPLEXITY: \
+   -- * static SIZE=qsize \
+   -- * static MAXSIZE = max(queue[i].SIZE,frt<=i<lst) \ 
+   -- * cumulative SPACE(n) =O(n) \
+   -- * additive TIME(n) = O(n) \
+   -- *     Potential function: PHI(self) = min(2*qsize - queue.asize,0)
+   -- * REFERENCES:
+   -- * ATTRIBUTES: queue:ARRAY[*](T) \
+   -- *             qsize:INT       -- actual size of queue \
+   -- *             frt:INT         -- front element of queue \
+   -- *             lst:INT         -- last element of queue 
+
+
+   subtype of QUEUE(T);
+   const initsize:INT := 5; -- initial queuesize
+   queue:ARRAY[*](T);
+   qsize:INT; --actual size of queue
+   frt:INT;  -- front element of queue
+   lst: INT; -- last element of queue
+
+   init:SAME is
+      -- * METHOD: init:SAME 
+      -- * DESCRIPTION: initialization method
+      -- * PRE: self/=void
+      -- * POST: res.qsize=0 AND res.frt:=0 AND res.lst=res.initsize-1 AND res.queue/=void
+      -- * COMPLEXITY: \
+      -- * SIZE__init = 0 \
+      -- * MAXSIZE__init = 0 \
+      -- * SPACE__init = 0(1) \
+      -- * TIME__init = 0(1) 
+      -- * REFERENCES:
+      res:=self;
+      res.queue:=#ARRAY[initsize](T);
+      res.qsize := 0;
+      res.frt := 0;
+      res.lst := res.initsize-1;
+   end;
+  
+   enqueue(a:T):SAME is
+      -- * METHOD: enqueue(a:T):SAME
+      -- * DESCRIPTION: inserts an element a into queue \
+      -- *   if queue is not full (qsize < queue.asize) then lst is incremented by \
+      -- *   one and a is inserted to queue[lst]. \
+      -- *   Otherwise queue is first reorganized by shifting the queue such that \
+      -- *   frt=0 and lst = qsize-1 and then extended to double length
+      -- * PRE: NOT self=void
+      -- * POST: \
+      -- *  (qsize < queue.asize IMPLIES \
+      -- *     res.lst = lst + 1 MOD queue.asize AND \
+      -- *     (frt < lst IMPLIES \
+      -- *        FORALL i:frt <= i <= lst : res.queue[i] = queue[i]) AND \
+      -- *        (lst < frt IMPLIES FORALL i: 0 < = i <= lst: res.queue[i] = queue[i] AND\
+      -- *        FORALL i: frt <= i < queue.asize: res.queue[i] = queue[i])) AND \
+      -- *  (qsize = queue.asize IMPLIES \
+      -- *     res.queue.asize = 2 * queue.asize AND \   
+      -- *       (frt = 0 IMPLIES FORALL 0 <= i < queue.asize: res.queue[i] = queue[i]) AND\
+      -- *       (NOT frt = 0 IMPLIES 
+      -- *          (FORALL frt <= i < queue.asize: res.queue[i-frt] = queue[i] AND \
+      -- *           FORALL 0 <= i <= lst: res.queue[queue.asize - frt + i] = queue[i])) AND \
+      -- *     res.lst = queue.asize) AND \
+      -- *  res.qsize = qsize + 1 AND \
+      -- *  res.queue[res.lst] = a AND \
+      -- * COMPLEXITY: \
+      -- * SIZE__enqueue(self.SIZE,a.SIZE) = self.SIZE + 1 \
+      -- * MAXSIZE__enqueue(self.MAXSIZE,a.SIZE) = max(self.MAXSIZE,a.SIZE)\
+      -- * SPACE__enqueue(self.SIZE,a.SIZE) = O(self.SIZE) \
+      -- * TIME__enqueue(self.SIZE,a.SIZE) = O(self.SIZE)
+      -- * REFERENCES:
+
+      i:INT;
+      asize:INT;
+      h : ARRAY[*](T);
+      if queue=void then
+	 queue := #ARRAY[initsize](T);
+	 qsize := 0;
+	 frt := 0;
+	 lst := res.initsize-1;
+      end;
+      if qsize = queue.asize then
+	 -- copy queue into an array of double length
+	 i := frt;
+	 asize := queue.asize;
+	 h := #ARRAY[2*asize](T);
+	 if frt=0 then
+	    until i=asize loop
+	       h[i] := queue[i];
+	       i := i+1;
+	    end;  -- loop
+	 else
+	    until i=asize loop
+	       h[i-frt] := queue[i];
+	       i := i+1;
+	    end; -- loop
+	    i := 0;
+	    until i=lst+1 loop
+	       h[asize - frt + i] := queue[i];
+	       i := i+1;
+	    end; -- loop
+	 end; -- if
+	 lst := asize-1;
+	 frt := 0;
+	 queue := h;
+      end; -- if
+      if lst=queue.asize-1 then lst := 0; else lst := lst + 1; end;
+      queue[lst] := a;
+      qsize := qsize + 1;
+      res := self;
+
+      --assert (post) res.queue[lst] = a end;
+
+end; -- enqueue
+
+
+
+
+
+   front: T is
+      -- * METHOD: front:T
+      -- * DESCRIPTION: returns the element which is the first inserted element in queue
+      -- * PRE: NOT self=void AND NOT self.empty
+      -- * POST: res = queue[frt]
+      -- * COMPLEXITY: \
+      -- * SIZE__front(self.SIZE,self.MAXSIZE) = self.MAXSIZE \
+      -- * SPACE__front(self.SIZE) = O(1) \
+      -- * TIME__front(self.SIZE) = O(1)
+      -- * REFERENCES:
+
+      --assert(pre) not(self=void) and not(self.empty) end;
+   
+   if self.empty 
+   then #EXCEPTION__QUEUE_EMPTY.raise;
+   else res := queue[frt];
+   end;
+
+   --assert(post) res=queue[frt] end;
+
+end; -- front
+
+
+
+
+
+   dequeue: SAME is
+      -- * METHOD: dequeue:SAME
+      -- * DESCRIPTION: deletes the element which is the first inserted element in queue
+      -- * PRE: NOT self=void AND NOT self.empty
+      -- * POST: \
+      -- *   (frt < queue.asize - 1 IMPLIES \
+      -- *       res.frt = frt + 1 MOD queue.asize AND \
+      -- *       (frt <= lst IMPLIES FORALL frt < i <= lst: res.queue[i] = queue[i]) AND \
+      -- *       (lst < frt IMPLIES \
+      -- *           FORALL frt < i < queue.asize: res.queue[i] = queue[i] AND \
+      -- *           FORALL 0 <= i <= lst: res.queue[i] = queue[i])) AND \
+      -- *   (frt = queue.asize - 1 IMPLIES \
+      -- *       res.frt = 0 AND \
+      -- *       FORALL 0 <= i <= lst: res.queue[i] = queue[i])
+      -- * COMPLEXITY: \
+      -- * SIZE__dequeue(self.SIZE) = self.SIZE - 1 \
+      -- * SPACE__dequeue(self.SIZE) = O(self.SIZE) \
+      -- * TIME__dequeue(self.SIZE) = O(1)
+      -- * REFERENCES:
+
+      --assert(pre) not(self=void) and not(self.empty) end;
+
+   if self.empty 
+   then #EXCEPTION__QUEUE_EMPTY.raise;
+   else
+      if frt=queue.asize-1 then frt := 0; else frt := frt + 1; end;
+      qsize := qsize - 1;
+      res := self;
+   end;
+
+end; -- dequeue
+
+
+
+
+
+   empty:BOOL is
+      -- * METHOD: empty:BOOL
+      -- * DESCRIPTION: checks whether self is empty
+      -- * PRE: NOT self=void
+      -- * POST: res = (qsize = 0)
+      -- * COMPLEXITY: \
+      -- * SIZE__empty(self.SIZE) = 1 \
+      -- * SPACE_empty(self.SIZE) = O(1) \
+      -- * TIME_empty(self.SIZE) = O(1) 
+      -- * REFERENCES:
+
+      --assert(pre) not(self=void) end;
+
+   res := (qsize = 0);
+
+   --assert(post) res = (qsize = 0) end;
+
+end; -- empty
+
+
+
+
+
+
+   str:STR is
+      -- converting a queue into a string
+      i:INT;
+      if qsize=0 then res := "[]"; -- if 1
+      else
+	 i := frt;
+	 res := "queue = [";
+	 if frt <= lst -- if 2
+	 then
+	    until i=lst+1 loop
+	       typecase x : T := queue[i] 
+	       when STR then res := res.s(x);
+	       when INT then res := res.i(x);
+	       else res := res.s(x.str);
+	       end; -- typecase
+	       if i<lst -- if 3
+	       then res := res.s(",");
+	       else res := res.s("]");
+	       end; --if 3
+	       i := i+1;
+	    end; -- loop
+	 else
+	    until i=queue.asize loop
+	       typecase x : T := queue[i] 
+	       when STR then res := res.s(x);
+	       when INT then res := res.i(x);
+	       else res := res.s(x.str);
+	       end; -- typecase
+	       res := res.s(",");
+	       i := i+1;
+	    end; -- loop
+	    i := 0;
+	    until i=lst+1 loop
+	       typecase x : T := queue[i] 
+	       when STR then res := res.s(x);
+	       else res := res.s(x.str);
+	       end; -- typecase
+	       if i=lst -- if 4
+	       then res := res.s("]");
+	       else res := res.s(",");
+	       end; --if 4
+	       i := i+1;
+	    end; -- loop
+	 end; -- if 2
+      end; -- if 1
+
+   end; -- str
+
+end; -- QUEUE__ARRAY
+
+
+
+class TEST__QUEUE__ARRAY is
+   main is
+      q1 : $QUEUE(INT) := #QUEUE__ARRAY(INT).init;
+      i : INT := 0;
+      x:INT;
+      q2 : $QUEUE(INT) := #QUEUE__ARRAY(INT).init;
+	 -- test without cyclic shift
+      OUT::s("empty queue").nl;
+      OUT::s(q1.str).nl;
+      OUT::s("Testing empty").nl;
+      if q1.empty 
+      then OUT::s("queue is empty").nl; 
+      else OUT::s("queue is not empty").nl;
+      end; -- if
+      until i= 10 loop
+	 i := i + 1;
+	 OUT::s("enqueue (").i(i).s(")").nl;
+	 q1 := q1.enqueue(i);
+	 OUT::s(q1.str).nl;
+      end; -- loop
+      OUT::s("Testing empty").nl;
+      if q1.empty 
+      then OUT::s("queue is empty").nl; 
+      else OUT::s("queue is not empty").nl;
+      end; -- if
+	 -- dequeueing the loop
+      until q1.empty loop
+	 OUT::s("front element: ");
+	 OUT::i(q1.front).nl;
+	 OUT::s("dequeue").nl;
+	 q1 := q1.dequeue;
+	 OUT::s(q1.str).nl;
+      end;
+
+      OUT::s("Testing empty").nl;
+      if q1.empty 
+      then OUT::s("queue is empty").nl; 
+      else OUT::s("queue is not empty").nl;
+      end; -- if
+      
+      OUT::s("Testing Exceptions: dequeue").nl;
+      begin
+	 q1 := q1.dequeue;
+      except emptydequeue
+      when EXCEPTION__QUEUE_EMPTY then 
+	ERR::s(emptydequeue.str).nl;
+	OUT::s("exception test EXCEPTION__QUEUE_EMPTY on dequeue successfull").nl;
+      else OUT::s("exception test EXCEPTION__QUEUE_EMPTY on dequeue not successfull").nl;
+      end;
+
+      OUT::s("Testing Exceptions: front").nl;
+      begin
+	 x := q1.front;
+      except emptyfront
+      when EXCEPTION__QUEUE_EMPTY then 
+	 ERR::s(emptyfront.str).nl;
+	 OUT::s("exception test EXCEPTION__QUEUE_EMPTY on front successfull").nl;
+      else OUT::s("exception test EXCEPTION__QUEUE_EMPTY on front not successfull").nl;
+      end;
+      
+
+	 -- Testing Cyclic Shifts without extension
+
+      OUT::s("empty queue").nl;
+      OUT::s(q2.str).nl;
+      i := 0;
+      OUT::s("Testing empty").nl;
+      if q2.empty 
+      then OUT::s("queue is empty").nl; 
+      else OUT::s("queue is not empty").nl;
+      end; -- if
+      OUT::s("empty queue").nl;
+      OUT::s(q2.str).nl;
+      i := 0;
+      OUT::s("Testing empty").nl;
+      if q2.empty 
+      then OUT::s("queue is empty").nl; 
+      else OUT::s("queue is not empty").nl;
+      end; -- if
+      i := 0;
+      until i=8 loop
+	 i := i + 1;
+	 OUT::s("enqueue (").i(i).s(")").nl;
+	 q2 := q2.enqueue(i);
+	 OUT::s(q2.str).nl;
+      end; -- loop
+      until i=20 loop
+	 i := i + 1;
+	 OUT::s("front element: ");
+	 OUT::i(q2.front).nl;
+	 OUT::s("dequeue").nl;
+	 q2 := q2.dequeue;
+	 OUT::s(q2.str).nl;
+	 OUT::s("enqueue (").i(i).s(")").nl;
+	 q2 := q2.enqueue(i);
+	 OUT::s(q2.str).nl;
+      end;
+	 -- Testing Cyclic extension
+      until i = 40 loop
+	 i := i + 1;
+	 OUT::s("enqueue (").i(i).s(")").nl;
+	 q2 := q2.enqueue(i);
+	 OUT::s(q2.str).nl;
+      end;
+	 -- deleting cyclic extenstions
+      until q2.empty loop
+	 OUT::s("front element: ");
+	 OUT::i(q2.front).nl;
+	 OUT::s("dequeue").nl;
+	 q2 := q2.dequeue;
+	 OUT::s(q2.str).nl;
+      end;
+
+      OUT::s("Testing empty").nl;
+      OUT::s("Testing empty").nl;
+      if q2.empty 
+      then OUT::s("queue is empty").nl; 
+      else OUT::s("queue is not empty").nl;
+      end; -- if
+      
+      OUT::s("Testing Exceptions: dequeue").nl;
+      begin
+	 q2 := q2.dequeue;
+      except emptydequeue
+      when EXCEPTION__QUEUE_EMPTY then 
+	ERR::s(emptydequeue.str).nl;
+	OUT::s("exception test EXCEPTION__QUEUE_EMPTY on dequeue successfull").nl;
+      else OUT::s("exception test EXCEPTION__QUEUE_EMPTY on dequeue not successfull").nl;
+      end;
+
+      OUT::s("Testing Exceptions: front").nl;
+      begin
+	 x : INT := q2.front;
+      except emptyfront
+      when EXCEPTION__QUEUE_EMPTY then 
+	 ERR::s(emptyfront.str).nl;
+	 OUT::s("exception test EXCEPTION__QUEUE_EMPTY on front successfull").nl;
+      else OUT::s("exception test EXCEPTION__QUEUE_EMPTY on front not successfull").nl;
+      end;
+      
+   end; -- main
+end;  -- TEST__QUEUE__ARRAY

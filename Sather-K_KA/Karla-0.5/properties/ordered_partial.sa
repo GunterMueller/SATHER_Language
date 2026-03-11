@@ -1,0 +1,94 @@
+-- File: ordered_partial.sa
+-- Author: Arne Frick (frick@ira.uka.de)
+-- Copyright (C) Universitaet Karlsruhe, 1994
+--
+-- COPYRIGHT NOTICE: This code is provided "AS IS" WITHOUT ANY WARRANTY
+-- and is subject to the terms of the KARLA LIBRARY GENERAL PUBLIC
+-- LICENSE contained in the file: "doc/license.txt" of the 
+-- distribution. 
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FILE: ordered_partial.sa
+--*
+--* CLASSES: ORDERED_PARTIAL(K,T) 
+--* 
+--* IMPLEMENTATION OF: 
+--*
+--* CONFORMS TO: ORDERED(T) PARTIAL(K,T)
+--*
+--* IS A: 
+--*
+--* REQUIRED CLASSES: PAIR(K,T)
+--*
+--* EXCEPTIONS: 
+--*
+--* TEST CLASS: 
+--*
+--* FOREIGN FILES:
+--*
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--
+-- RCS: $Id$
+-- HISTORY:
+--  * Last edited: Apr 13 15:18 1994 (frick)
+-- Created: Wed Mar 16 18:43:26 1994 (frick)
+--
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+abstract class ORDERED_PARTIAL(K<ORDERED(K),T) is
+   -- * CLASS: ORDERED_PARTIAL(K<ORDERED(K),T)
+   -- * DESCRIPTION: abstract class defining partial key access for objects \
+   -- *              use makes only sense as T < ORDERED_PARTIAL(K,T)
+   -- * SUBCLASS OF: ORDERED(T) PARTIAL(K,T)
+   -- * SPECIALIZATION OF: 
+   -- * IMPLEMENTATION OF: 
+   -- * EXCEPTIONS: 
+   -- * INVARIANT: FORALL a,b,c:SAME : \
+   -- *    NOT a<a AND \
+   -- *    (a<b IMPLIES NOT b<a) AND \
+   -- *    (a<b AND b<c IMPLIES a<c) AND \
+   -- *    (a<b OR b<a OR a=b) AND \
+   -- *    (NOT a.val = b.val IFF NOT a.key=b.key) AND \
+   -- *    (a<b IFF a.key < b.key)
+   -- * REPRESENTATION:
+   -- * COMPLEXITY:
+   -- * REFERENCES: 
+   -- * ATTRIBUTES: key:K -- unique key for each val\
+   -- *             val:T
+
+   subtype of PARTIAL(K,T);
+   subtype of ORDERED(T); -- induced by order on K!
+
+   is_lt(b:T):BOOL is
+   -- * METHOD: is_lt(b:T):BOOL
+   -- * DESCRIPTION: defines < on SAME
+   -- * PRE: true
+   -- * POST: res = key<b.key
+   -- * COMPLEXITY: O(TIME__K::is_lt(key.size,b.key.size))
+   -- * REFERENCES:
+      res:=key.is_lt(b.key);
+   end;
+
+      -- * METHOD: is_leq(b:T):BOOL
+      -- * DESCRIPTION: compares self with b using "<="
+      -- * PRE: true
+      -- * POST: res=true IFF a <= b in T
+      -- * COMPLEXITY: O(TIME_T::is_lt(b.size,size)))
+      -- * REFERENCES:
+
+      -- * METHOD: is_gt(b:T):BOOL
+      -- * DESCRIPTION: compares self with b using ">"
+      -- * PRE: true
+      -- * POST: res=true IFF a > b in T
+      -- * COMPLEXITY: O(TIME_T::is_lt(size,b.size)))
+      -- * REFERENCES:
+
+      -- * METHOD: is_geq(b:T):BOOL
+      -- * DESCRIPTION: compares self with b using ">="
+      -- * PRE: true
+      -- * POST: res=true IFF a >= b in T
+      -- * COMPLEXITY: O(max(TIME_T::is_gt(size,b.size),TIME_T::is_equal(size,b.size)))
+      -- * REFERENCES:
+
+  
+
+end;

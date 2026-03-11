@@ -1,0 +1,45 @@
+--* Last edited: Dec  6 10:53 1993 (holzw)
+--
+-- Testklassen fuer Wertetypen
+--
+
+value class COMPLEX is
+   -- Billigstausfuehrung
+
+   real, imag: FLT;
+   v: COMPLEX;
+   plus (z:$COMPLEX):SAME is
+      -- addition komplexer Zahlen
+      res.real:= self.real+z.real;
+      res.imag:= self.imag+z.imag;
+   end;
+end;
+
+class VALUE_ERR is
+   val: COMPLEX;
+   
+   main is
+      z1: $COMPLEX;         -- Platz fuer Verweis
+      z2: $COMPLEX;         -- Platz fuer Verweis
+      z3: COMPLEX;          -- Platz fuer Objekt
+      z4: COMPLEX;          -- Platz fuer Objekt
+      z4.v.real:= 5;        -- Fehler: Wertobjekt wird rekursiv definiert (und genutzt)
+
+      z1:= COMPLEX::new;    -- Fehler: new ex. nicht.
+      z1:= z3.copy;	    -- Fehler: copy ex. nicht.
+      z1.real:= 3;
+      z1.imag:= 4;
+
+      z3.real:= 1;          -- implizites new
+      z3.imag:= 2;
+      
+      z2:= z1;              -- Kopie eines Verweisobjekts in ein Verweisobjekt
+      z3:= z1;              -- Kopie eines Verweisobjekts in ein Wertobjekt (+type check)
+      z1:= z3;              -- Kopie eines Wertobjekts in ein Verweisobjekt
+
+      z1:= z1.plus (z2);    -- Addition, 2 Verweise
+      z1:= z1.plus (z3);    -- Addition, Verweis und Wert
+      z4:= z3.plus (z2);    -- Addition, Wert und Verweis
+      z3:= z3.plus (z4);    -- Addition, 2 Werte
+   end;
+end;

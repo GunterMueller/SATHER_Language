@@ -1,0 +1,61 @@
+--* Last edited: Feb  2 23:06 1994 (holzw)
+--
+-- Test class for subtyping
+--
+
+value class A is
+  i: INT;
+  foo(x:A) is
+    OUT::i(x).nl;
+  end;
+end;
+
+value class B is
+  subtype of A;
+  foo(x:$A) is
+    OUT::s("redefined, unused").nl;
+  end;
+end;
+
+class SUPER is
+  a: INT;
+  b: SUPER;
+  c: A;
+  foo(a:INT;b:$SUPER;c:$A): $SUPER is
+    res:=b;
+    res.a:=5;
+    res.c.i:=res.a;
+  end;
+end;
+
+class SUB is
+  subtype of SUPER : foo -> old_foo;
+
+  foo(a:INT;b:$SUPER;c:$A): SUPER is
+    res:=b.old_foo(a,b,c);
+    res.a:=res.a+1;
+    res.c.i:=res.a+2;
+  end;
+end;
+
+class REUSER is
+  include SUPER::foo;
+  a: FLT;
+  b: $SUPER;
+  c: $A;
+end;
+
+class SBINC_OK is
+  main is
+    a: A;
+    b: B;
+    c: REUSER;
+    s: SUB;
+    r: $SUPER;
+
+    s:= #SUB;
+    a.i:=5;
+    a.i:=a.i+1;
+    r:= c.foo(5,s,a);
+  end;
+end;

@@ -1,0 +1,188 @@
+-- Author: Wolf Zimmermann
+-- Copyright (C) Universitaet Karlsruhe, 1993
+--
+-- COPYRIGHT NOTICE: This code is provided "AS IS" WITHOUT ANY WARRANTY
+-- and is subject to the terms of the KARLA LIBRARY GENERAL PUBLIC
+-- LICENSE contained in the file: "doc/license.txt" of the 
+-- distribution. 
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FILE: cell.sa
+--*
+--* CLASSES: CELL(T) EXCEPTION__CELL
+--* 
+--* IMPLEMENTATION OF:
+--*
+--* CONFORMS TO:
+--*
+--* IS A:
+--*
+--* REQUIRED CLASSES: EXCEPTION__CELL
+--*
+--* EXCEPTIONS: EXCEPTION__CELL
+--*
+--* TEST CLASS: TEST__CELL
+--*
+--* FOREIGN FILES:
+--*
+--  RCS: $Id$
+--  HISTORY: $Log$
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+class CELL(T) is
+-- * CLASS: CELL(T)
+-- * DESCRIPTION: data type cell which holds arity links to cell and val
+-- * SUBCLASS OF:
+-- * SPECIALIZATION OF:
+-- * IMPLEMENTATION OF:
+-- * EXCEPTIONS: EXCEPTION__CELL
+-- * INVARIANT: arity >= 0
+-- * REPRESENTATION:
+-- * COMPLEXITY: \
+-- * SIZE = arity \
+-- * SPACE(n) = O(1) \
+-- * TIME(n) = O(n) \
+-- * REFERENCES:
+-- * ATTRIBUTES: links:ARR[*](CELL(T)) \ 
+-- *             val:T \
+-- *             readonly arity:INT
+
+   readonly arity: INT;
+   readonly label:INT;  -- only for str. uid
+   shared number:INT;  -- only for str
+   private visited:BOOL;  -- only for str
+   links: ARR[*](SAME);
+   val: T;
+
+   init(n:INT):SAME is
+   -- * METHOD: init(n:INIT):SAME
+   -- * DESCRIPTION: initializes the private attributes of CELL(T) \
+   -- *   n is the number of links from the cell
+   -- * PRE: NOT self=void AND n>=0
+   -- * POST: (FORALL I:INT: 0<=i<n IMPLIES res.links[0] = void) AND res.val = void AND res.arity = n
+   -- * COMPLEXITY: \
+   -- * SIZE__init(n) = n
+   -- * SPACE__init(n) = O(n)
+   -- * TIME__init(n) = O(1)
+   -- * REFERENCES:
+
+   --assert(pre) n >= 0 end;
+
+     if n < 0 then
+       #EXCEPTION__CELL.raise;
+     else res := self;
+       arity := n;
+       links := #ARR[arity](SAME);
+       val := void;
+       label := number;
+       number := number + 1;
+       visited := false;
+     end; -- if
+
+   end; -- create
+
+   str:STR is
+     res := str_dfs;
+     clear;
+   end;
+
+   private str_dfs: STR is
+   -- converting cells to strings
+     
+     i:INT;
+     if not visited then visited := true;
+       res := "Cell[".i(label).s("].").s("val = ");
+       i := 0;
+       res := res.s(val.str).nl;
+       until i=arity loop
+	 if links[i]=void 
+	 then res := res.s("Cell[").i(label).s("].link[").i(i).s("] = void").nl;
+	 else 
+	      res := res.s("Cell[").i(label).s("].link[").i(i).s("] = ").i(links[i].label).nl; 
+	      res := res.s(links[i].str_dfs);
+	 end;
+	 i := i + 1;
+       end; -- loop
+     else res := "";
+     end; -- if
+   end; -- str_dfs
+
+
+   private clear is -- sets all visited attributes in cells reachable from self to false
+
+     i:INT;
+     if visited then 
+       visited := false;
+       i := 0;
+       until i=arity loop
+	 if not(links[i]=void) then links[i].clear; end;
+	 i := i + 1;
+       end; -- loop
+     end; -- if
+   end; -- clear
+
+end; -- CELL(T)
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+class EXCEPTION__CELL is
+  -- * CLASS: EXCEPTION__CELL
+  -- * DESCRIPTION: exception for cells: create with a negativ number of links
+  -- * SUBCLASS OF:
+  -- * SPECIALIZATION OF:
+  -- * IMPLEMENTATION OF:
+  -- * EXCEPTIONS:
+  -- * INVARIANT:
+  -- * REPRESENTATION:
+  -- * COMPLEXITY: O(1)
+  -- * REFERENCES:
+  -- * ATTRIBUTES: name:STR -- error message
+
+
+  subtype of EXCEPTION_USER;
+
+  const  name :STR := "CELL::create with a negative number of links";
+
+end;
+
+
+class TEST__CELL is
+  main is
+    c:CELL(INT) := #CELL(INT).init(2);
+    x:CELL(INT) := #CELL(INT).init(2);
+    y:CELL(INT) := #CELL(INT).init(2);
+    z:CELL(INT) := #CELL(INT).init(2);
+    c.val := 1;
+    c.number := 1;
+    OUT::s("simple cell containing 1").nl;
+    OUT::s(c.str).nl;
+    
+    -- Testing simple linked structures
+    x.val := 2;
+    x.links[1] := c;
+    c.links[0] := x;
+    OUT::s("(void,2,-->)(<--,1,void)").nl;
+    OUT::s(x.str).nl;
+   
+    y.val := 3;
+    y.links[1] := x;
+    x.links[0] := y;
+    OUT::s("(void,3,-->)(<--,2,-->)(<--,1,void)").nl;
+    OUT::s(y.str).nl;
+  
+
+    -- Testing sharing
+    OUT::s("as above, create cell 4 link[0] = 3 link[1] = 1").nl;
+    z.val := 4;
+    z.links[0] := y;
+    z.links[1] := c;
+    OUT::s(z.str).nl;
+ 
+
+    -- TESTING cycles
+    OUT::s("structure as above cylce from 3 to 1").nl;
+    y.links[0] := c;
+    c.links[1] := y;
+    OUT::s(y.str).nl;
+
+  end;
+end;

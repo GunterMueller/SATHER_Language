@@ -1,0 +1,87 @@
+--* Last edited: Dec  6 10:53 1993 (holzw)
+--
+-- test classes for value types
+--
+
+value class COMPLEX is
+   -- very primitive
+
+   real, imag: FLT;
+   v: COMPLEX;
+   plus (z:$COMPLEX):SAME is
+      -- addition komplexer Zahlen
+      res.real:= self.real+z.real;
+      res.imag:= self.imag+z.imag;
+   end;
+end;
+
+class REF_COMPLEX is
+   -- reference class
+
+   real,imag: FLT;
+   plus (z:$REF_COMPLEX):SAME is
+      -- addition of complex numbers
+      res.real:= self.real+z.real;
+      res.imag:= self.imag+z.imag;
+   end;
+end;
+
+class RC is
+   refattr: INT;
+   reffoo(ref:SAME):SAME is
+     res:=refat;
+   end;
+end;
+
+value class VC is
+   subtype of RC;
+   valattr: INT;
+   valfoo(valat:$RC):VC is
+     res:=refat;
+   end;
+end;
+
+class VALUE_E1 is
+   val: COMPLEX;
+   
+   main is
+      z1: $COMPLEX; 		-- $value class type
+      z3,z4: COMPLEX; 		-- value class type, held in place
+      r1: $REF_COMPLEX;		-- reference class variable, polymorph
+      r3: REF_COMPLEX;		-- reference class variable
+
+      z4.v.real:= 5;		-- recursive def. and usage of an ipVO
+
+      z1:= COMPLEX::new;	-- error: new doesn't exist
+      z1:= z3.copy;		-- error: copy doesn't exist
+      z1.real:=z3.real;		-- unrealized error: $value type variable contains void
+
+      r1:= z1;			-- reported while labilcode generation
+      r3:= z3;			-- reference type:= value type
+      z1:= r1;			-- reported while labilcode generation
+      z3:= r3;			-- value type:= reference type
+
+      z1:= z1.plus (r1);	-- reported while labilcode generation
+      z1:= z1.plus (r3);	-- formal: $value type, actual:  reference type
+      r1:= r1.plus (z1);	-- reported while labilcode generation
+      r3:= r3.plus (z3);	-- formal: $reference type, acutal:  value type
+
+      if z1=r1 or		-- comparisons between value and ref. type variables
+         z3/=r3 then
+        OUT::s("comparison").nl;
+      end;
+
+      if z1<z3 or		-- illegal operator for objects
+         r1<r3 then
+        OUT::s("comparison").nl;
+      end;
+
+      a: VC;
+      b: RC;
+      b:=a;
+      b.reffoo(b);
+      a.valfoo(a);
+      a.valfoo(b);
+      b.reffoo(a);
+   end;
+end;

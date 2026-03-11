@@ -1,0 +1,127 @@
+-- -*- Mode: Sather;  -*-
+-- File: sather/lib/base/any.sa
+-- Author: Heinz Schmidt (hws@ICSI.Berkeley.EDU)
+-- Copyright (C) International Computer Science Institute, 1991
+--
+-- COPYRIGHT NOTICE: This code is provided "AS IS" WITHOUT ANY WARRANTY
+-- and is subject to the terms of the SATHER LIBRARY GENERAL PUBLIC
+-- LICENSE contained in the file: "sather/doc/license.txt" of the Sather
+-- distribution. The license is also available from ICSI, 1947 Center
+-- St., Suite 600, Berkeley CA 94704, USA.
+--*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FUNCTION: generic creation, deferral, ignore and describe protocol.
+--*           Obtained by mixing ANY into the root classes of some hierarchy.
+--*
+--* CLASSES:  ANY, CHECK
+--* 
+--* REQUIRED FILES: sather/lib/data_structure/pmap.sa
+--*
+--* RELATED FILES:
+--*
+--* HISTORY:
+--* Last edited: Feb 23 19:56 1992 (hws)
+--*  Sep  8 16:15 1991 (hws): Moved from ICSIM library upward as a general tool.
+--*         Should we have an additional directory "tools"?
+--* Created: Sun Sep  8 16:03:30 1991 (hws)
+--*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+class ANY is
+   -- Abstraction: print, create, new
+   -- Auxiliaries: must_redefine, deferred, ignored, not_yet
+   
+--- - - - - - - - - - - - - INITIALIZATION  - - - - - - - - - - - - ---
+-- Implementation note:
+-- Uniform initialization is supported by a number of programming
+-- conventions that we fix here for all classes.
+-- Our programming conventions include an initialization protocol that splits
+-- instance allocation via `new', context-free `initialize' including
+-- component creation, and a possibly context-dependent `finish'.
+-- Caller arguments to create are passed by initialization parameter maps
+-- (pmaps). This allows a caller to pass a variable number of init parameters.
+-- in a uniform way throughout ICSIM.
+-- Usually classes do not have an own definition of `create'. Anyone is free,
+-- though, to overwrite the protocol. 
+   
+-- Initialization
+
+   finish(init_pmap: PMAP) is ignored("ANY::finish"); end;
+      -- final init, when all components are created.
+   
+   create(init_pmap: PMAP): SAME is
+      -- Generic creation.  Builds a functioning instance and runs `initialize'.
+      res := new;
+      res.initialize(init_pmap).finish(init_pmap);
+   end;
+   
+-- Readable Init Pmap access
+
+   private int(i: $OB; p: INT): INT is
+      assert (pre) i.type = PMAP::type end;
+      ip: PMAP := i; res := ip.int(p);
+   end;
+   
+   private int_opt(i: $OB; p,d: INT): INT is
+      assert (pre) i.type = PMAP::type end;
+      ip: PMAP := i; res := ip.int_opt(p,d);
+   end;
+   
+   private real(i: $OB; p: INT): FLT is
+      assert (pre) i.type = PMAP::type end;
+      ip: PMAP := i; res := ip.real(p);
+   end;
+   
+   private real_opt(i: $OB; p: INT; d: FLT): FLT is
+      assert (pre) i.type = PMAP::type end;
+      ip: PMAP := i; res := ip.real_opt(p,d);
+   end;
+   
+   private ob(i: $OB; p: INT): $OB is
+      assert (pre) i.type = PMAP::type end;
+      ip: PMAP := i; res := ip.ob(p);
+   end;
+   
+   private ob_opt(i: $OB; p: INT; d: $OB): $OB is
+      assert (pre) i.type = PMAP::type end;
+      ip: PMAP := i; res := ip.ob_opt(p,d);
+   end;
+   
+--- - - - - - - - - - PUBLIC - ABSTRINGACT DATA TYPE - - - - - - - - - ---
+   
+   print is OUT::s(" <").i(type).s("::").i(C::ob_id(self)).s("> ") end;
+
+--- - - - - - - - - -  AUXILIARIES - FOR FAMILY - - - - - - - - - - ---
+
+-- a few conventions that make life easier.
+   
+   private must_redefine(name,why: $STRING) is -- Descendents redefine.
+      OUT::s(name).s(" not redefined. ").s(why).nl;
+   end;
+   
+   private deferred(name: STRING) is -- If called something is wrong.
+      must_redefine(name,"Deferred.");
+   end;
+   
+   private not_yet(name: $STRING) is -- Temporary stub.
+      OUT::s(name).s(" not implemented yet.\n");
+   end;
+   
+   private ignored(name: $STRING) is -- Ignore. Trace when debug(defaults).
+      debug(defaults) 
+	 must_redefine(name,": ignored.");
+      end;
+   end;
+   
+end; -- class ANY
+   
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+-- We introduce deferred classes in our Sather code  as `class FOO (DEFERRED)...'
+-- Use FOO (CHECK) at the point where they are to be checked in an unparameterized
+-- class or a ground actualization (no class variables) of some parameterized
+-- class.
+
+class CHECK is end; -- Dummy for actualizing `deferred classes', decle
+   
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+ 

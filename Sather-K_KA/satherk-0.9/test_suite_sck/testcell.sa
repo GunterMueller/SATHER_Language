@@ -1,0 +1,167 @@
+-- -*- Mode: Sather;  -*-
+-- Author: Wolf Zimmermann
+-- Copyright (C) Universitaet Karlsruhe, 1993
+--
+-- COPYRIGHT NOTICE: This code is provided "AS IS" WITHOUT ANY WARRANTY
+-- and is subject to the terms of the KARLA LIBRARY GENERAL PUBLIC
+-- LICENSE contained in the file: "doc/license.txt" of the 
+-- distribution. 
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FILE: queue.sa
+--*
+--* CLASSES: CELL(T)
+--* 
+--* IMPLEMENTATION OF:
+--*
+--* CONFORMS TO:
+--*
+--* IS A:
+--*
+--* REQUIRED CLASSES:
+--*
+--* EXCEPTIONS: EXCEPTION__CELL
+--*
+--* TEST CLASS: TEST__CELL
+--*
+--* FOREIGN FILES:
+--*
+--  RCS: $Id$
+--  HISTORY: $Log$
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+class CELL(T) is
+-- * CLASS: CELL(T)
+-- * DESCRIPTION: data type cell which holds arity links to cell and val
+-- * SUBCLASS OF:
+-- * SPECIALIZATION OF:
+-- * IMPLEMENTATION OF:
+-- * EXCEPTIONS: 
+-- * INVARIANT: arity >= 0
+-- * COMPLEXITY: O(n)
+-- * REFERENCES:
+
+   arity : INT;
+   readonly label:INT;  -- only for to_s. uid
+   shared number:INT;  -- only for to_s
+   private visited:BOOL;  -- only for to_s
+   links: ARRAY[*](CELL(T));
+   val: T;
+
+   create(x:INT):SAME is
+   -- * METHOD: create(x:INT):SAME
+   -- * DESCRIPTION: abstract constructor method creating an empty cell with x links
+   -- *              call makes only sense as CELL(T)::create
+   -- * PRE: NOT self=void AND x>=0
+   -- * POST: res.arity = x AND res.links = [void,...,void] AND res.val = void
+   -- * COMPLEXITY: O(1)
+   -- * REFERENCES:
+
+   assert(pre) x >= 0 end;
+
+     if x < 0 then
+       EXCEPTION__CELL::new.raise;
+     else res := CELL(T)::new;
+       res.arity := x;
+       res.links := ARRAY[*](CELL(T))::new(x);
+       res.val := void;
+       res.label := res.number;
+       res.number := res.number + 1;
+       res.visited := false;
+     end; -- if
+
+   end; -- create
+
+   to_s:STR is
+     res := to_s_dfs;
+     clear;
+   end;
+
+   private to_s_dfs: STR is
+   -- converting cells to strings
+
+     if not visited then visited := true;
+       res := "Cell[".i(label).s("].").s("val = ");
+       i : INT := 0;
+       typecase z:T := val
+         when INT then res := res.i(z).nl;
+         when STR then res := res.s(z).nl;
+         else res := res.s(z.str).nl;
+       end; -- typecase
+       until i=arity loop
+	 if links[i]=void 
+	 then res := res.s("Cell[").i(label).s("].link[").i(i).s("] = void").nl;
+	 else 
+	      res := res.s("Cell[").i(label).s("].link[").i(i).s("] = ").i(links[i].label).nl; 
+	      res := res.s(links[i].to_s_dfs);
+	 end;
+	 i := i + 1;
+       end; -- loop
+     else res := "";
+     end; -- if
+   end; -- to_s_dfs
+
+
+   private clear is -- sets all visited attributes in cells reachable from self to false
+     if visited then 
+       visited := false;
+       i:INT := 0;
+       until i=arity loop
+	 if not(links[i]=void) then links[i].clear; end;
+	 i := i + 1;
+       end; -- loop
+     end; -- if
+   end; -- clear
+
+end; -- CELL(T)
+
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+class EXCEPTION__CELL is
+  subtype of EXCEPTION_USER;
+  const name :STR := "CELL::create with a negative number of links";
+end;
+
+
+class TESTCELL is
+  main is
+--    c:CELL(INT) := #CELL(INT){2};
+    c:CELL(INT) := #CELL(INT);
+    c.val := 1;
+    c.number := 1;
+    c.links:= #ARRAY[2](CELL(INT));
+    OUT::s("simple cell containing 1").nl;
+    OUT::s(c.to_s).nl;
+    
+    -- Testing simple linked structures
+    x:CELL(INT) := CELL(INT)::create(2);
+    x.val := 2;
+    x.links[1] := c;
+    c.links[0] := x;
+    OUT::s("(void,2,-->)(<--,1,void)").nl;
+    OUT::s(x.to_s).nl;
+   
+    y:CELL(INT) := CELL(INT)::create(2);
+    y.val := 3;
+    y.links[1] := x;
+    x.links[0] := y;
+    OUT::s("(void,3,-->)(<--,2,-->)(<--,1,void)").nl;
+    OUT::s(y.to_s).nl;
+  
+
+    -- Testing sharing
+    OUT::s("as above, create cell 4 link[0] = 3 link[1] = 1").nl;
+    z:CELL(INT) := CELL(INT)::create(2);
+    z.val := 4;
+    z.links[0] := y;
+    z.links[1] := c;
+    OUT::s(z.to_s).nl;
+ 
+
+    -- TESTING cycles
+    OUT::s("structure as above cylce from 3 to 1").nl;
+    y.links[0] := c;
+    c.links[1] := y;
+    OUT::s(y.to_s).nl;
+
+  end;
+end;

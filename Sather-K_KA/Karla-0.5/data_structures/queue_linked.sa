@@ -1,0 +1,343 @@
+-- Author: Wolf Zimmermann
+-- Copyright (C) Universitaet Karlsruhe, 1994
+--
+-- COPYRIGHT NOTICE: This code is provided "AS IS" WITHOUT ANY WARRANTY
+-- and is subject to the terms of the KARLA LIBRARY GENERAL PUBLIC
+-- LICENSE contained in the file: "doc/license.txt" of the 
+-- distribution. 
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--* FILE: queue_linked.sa
+--*
+--* CLASSES: QUEUE__LINKED(T)
+--* 
+--* IMPLEMENTATION OF: QUEUE(T)
+--*
+--* CONFORMS TO:
+--*
+--* IS A:
+--*
+--* REQUIRED CLASSES: CELL(T) QUEUE(T) EXCEPTION__QUEUE_EMPTY
+--*
+--* EXCEPTIONS: EXCEPTION__QUEUE_EMPTY
+--*
+--* TEST CLASS: TEST__QUEUE__LINKED
+--*
+--* FOREIGN FILES:
+--*
+--  RCS: $Id$
+--  HISTORY: $Log$
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+class QUEUE__LINKED(T) is  
+   -- * CLASS: QUEUE__LINKED(T)
+   -- * DESCRIPTION: implementation of abstract data type queue via links
+   -- * SUBCLASS OF:
+   -- * SPECIALIZATION OF:
+   -- * IMPLEMENTATION OF: QUEUE(T)
+   -- * EXCEPTIONS: EXCEPTION__QUEUE_EMPTY
+   -- * INVARIANT: QUEUE(T)::Inv AND  \
+   -- *    (empty IFF frt=void AND lst=void) AND \
+   -- *    (frt=void IFF lst=void) AND \
+   -- *    (NOT empty IMPLIES front=frt.val AND dequeue=frt.links[0]
+   -- * REPRESENTATION:
+   -- * COMPLEXITY: \
+   -- * static      SIZE = 0             IF empty \
+   -- * |                = 1 + dequeue.SIZE  OTHERWISE \
+   -- * static      MAXSIZE = 0                         IF empty \
+   -- * |                   = max(front.SIZE,dequeue.MAXSIZE  OTHERWISE
+   -- * cumulative SPACE(n) = O(n) \
+   -- * additive TIME(n) = O(n)
+   -- * REFERENCES:
+   -- * ATTRIBUTES:  frt:CELL(T)   -- first element in queue \
+   -- *              lst:CELL(T)   -- next element in queue
+
+   subtype of QUEUE(T);
+
+   private frt:CELL(T);  -- first element in queue
+   private lst:CELL(T);  -- next element in queue
+   
+   init:SAME is 
+   -- * METHOD: init : SAME
+   -- * DESCRIPTION: initialization method 
+   -- * PRE: NOT self = void AND self.empty=true
+   -- * POST: NOT res = void AND res.empty=true
+   -- * COMPLEXITY: \
+   -- * SIZE__init = 0\
+   -- * MAXSIZE__init = 0\
+   -- * SPACE__init = O(1) \
+   -- * TIME__init = O(1)
+   -- * REFERENCES:
+
+      res:=self; 
+   end;
+
+   enqueue(a:T):SAME is
+      -- * METHOD: enqueue(a:T):SAME
+      -- * DESCRIPTION: inserts an element a into queue 
+      -- * PRE: NOT self=void
+      -- * POST: (frt = void IMPLIES NOT res.frt = void AND res.lst=res.frt) AND \
+      -- *       (NOT frt = void IMPLIES \
+      -- *              res.frt = frt AND res.lst.links[0]=lst AND lst.links[1]=res.lst) AND \
+      -- *        res.lst.val = a
+      -- * COMPLEXITY: \
+      -- * SIZE__enqueue(self.SIZE,a.SIZE) = self.SIZE + 1 \
+      -- * MAXSIZE__enqueue(self.MAXSIZE,a.SIZE) = max(self.MAXSIZE,a.SIZE)\
+      -- * SPACE__enqueue(self.SIZE,a.SIZE) = O(self.SIZE) \
+      -- * TIME__enqueue(self.SIZE,a.SIZE) = O(1)
+      -- * REFERENCES:
+
+      --assert (pre) not(self = void) end;
+      
+      h:CELL(T) := #CELL(T).init(2);
+      h.val := a;
+      h.links[0] := lst;
+      if not(lst=void) then lst.links[1] := h; else frt := h; end;
+      lst := h;
+      res := self;
+
+   end; -- enqueue
+
+
+
+
+
+   front: T is
+      -- * METHOD: front:T
+      -- * DESCRIPTION: returns the element which is the first inserted element in queue
+      -- * PRE: NOT self=void AND NOT self.empty
+      -- * POST: res = frt.val
+      -- * COMPLEXITY: \
+      -- * SIZE__front(self.SIZE,self.MAXSIZE) = self.MAXSIZE \
+      -- * SPACE__front(self.SIZE,self.MAXSIZE) = O(self.MAXSIZE) \
+      -- * TIME__front(self.SIZE) = O(1) 
+      -- * REFERENCES:
+
+      --assert (pre) not (self=void) and not (self.empty) end;
+   
+      if not empty 
+      then res := frt.val;
+      else #EXCEPTION__QUEUE_EMPTY.raise;
+      end;
+
+   end; -- front
+
+
+
+
+
+   dequeue: SAME is
+      -- * METHOD: dequeue:SAME
+      -- * DESCRIPTION: deletes the element which is the first inserted element in queue
+      -- * PRE: NOT self=void AND NOT self.empty
+      -- * POST: res.frt = frt.links[1] AND (res.frt=void IMPLIES res.lst=void) AND \
+      -- *      (NOT res.frt=void IMPLIES res.lst=lst)
+      -- * COMPLEXITY: \
+      -- * SIZE__dequeue(self.SIZE) = self.SIZE - 1 \
+      -- * MAXSIZE__dequeue(self.MAXSIZE) = self.MAXSIZE \
+      -- * SPACE__dequeue(self.SIZE) = O(self.SIZE) \
+      -- * TIME__dequeue(self.SIZE) = O(1) 
+      -- * REFERENCES:
+
+      --assert(pre) not(self=void) and not(self.empty) end;
+   
+      if self.empty 
+      then #EXCEPTION__QUEUE_EMPTY.raise;
+      else frt := frt.links[1];
+	 if frt=void then 
+	    lst:=void; 
+	 end;
+	 res := self;
+      end;
+      
+   end; -- dequeue
+
+
+
+
+
+   empty:BOOL is
+      -- * METHOD: empty:BOOL
+      -- * DESCRIPTION: checks whether self is empty
+      -- * PRE: NOT self=void
+      -- * POST: res = (frt = void)
+      -- * COMPLEXITY: \
+      -- * SIZE__empty(self.SIZE) = 1 \
+      -- * SPACE__empty(self.SIZE) = O(1) \
+      -- * TIME__empty(self.SIZE) = O(1)
+      -- * REFERENCES:
+
+      --assert(pre) not(self=void) end;
+
+      res := (frt = void);
+
+      --assert(post) res = (frt = void) end;
+
+   end; -- empty
+
+
+
+
+
+
+   str:STR is
+      -- converting a queue into a string
+      h:CELL(T);
+      if empty then res := "[]";
+      else
+	 res := "[";
+	 h := frt;
+	 until h=void loop
+	    typecase x : T := h.val
+	    when STR then res := res.s(x);
+	    when INT then res := res.i(x);
+	    else res := res.s(x.str);
+	    end; -- typecase
+	    h := h.links[1];
+	    if h=void then res := res.s("]").nl; else res := res.s(","); end;
+	 end; -- loop
+      end; -- if
+   end; -- str
+
+end; -- QUEUE__LINKED
+
+
+
+class TEST__QUEUE__LINKED is
+   main is
+      q1 : QUEUE__LINKED(INT) := #QUEUE__LINKED(INT).init;
+      q2 : QUEUE__LINKED(INT) := #QUEUE__LINKED(INT).init;
+      i : INT := 0;
+      x : INT;
+      OUT::s("empty queue").nl;
+      OUT::s(q1.str).nl;
+      OUT::s("Testing empty").nl;
+      if q1.empty 
+      then OUT::s("queue is empty").nl; 
+      else OUT::s("queue is not empty").nl;
+      end; -- if
+      until i= 10 loop
+	 i := i + 1;
+	 OUT::s("enqueue (").i(i).s(")").nl;
+	 q1 := q1.enqueue(i);
+	 OUT::s(q1.str).nl;
+      end; -- loop
+      OUT::s("Testing empty").nl;
+      if q1.empty 
+      then OUT::s("queue is empty").nl; 
+      else OUT::s("queue is not empty").nl;
+      end; -- if
+	 -- dequeueing the loop
+      until q1.empty loop
+	 OUT::s("front element: ");
+	 OUT::i(q1.front).nl;
+	 OUT::s("dequeue").nl;
+	 q1 := q1.dequeue;
+	 OUT::s(q1.str).nl;
+      end;
+
+      OUT::s("Testing empty").nl;
+      if q1.empty 
+      then OUT::s("queue is empty").nl; 
+      else OUT::s("queue is not empty").nl;
+      end; -- if
+      
+      OUT::s("Testing Exceptions: dequeue").nl;
+      begin
+	 q1 := q1.dequeue;
+      except emptydequeue
+      when EXCEPTION__QUEUE_EMPTY then 
+	 ERR::s(emptydequeue.str).nl;
+	 OUT::s("exception test EXCEPTION__QUEUE_EMPTY on dequeue successfull").nl;
+      else OUT::s("exception test EXCEPTION__QUEUE_EMPTY on dequeue not successfull").nl;
+      end;
+      
+      OUT::s("Testing Exceptions: front").nl;
+      begin
+	 x := q1.front;
+      except emptyfront
+      when EXCEPTION__QUEUE_EMPTY then 
+	 ERR::s(emptyfront.str).nl;
+	 OUT::s("exception test EXCEPTION__QUEUE_EMPTY on front successfull").nl;
+      else OUT::s("exception test EXCEPTION__QUEUE_EMPTY on front not successfull").nl;
+      end;
+      
+      
+      OUT::s("empty queue").nl;
+      OUT::s(q2.str).nl;
+      i := 0;
+      OUT::s("Testing empty").nl;
+      if q2.empty 
+      then OUT::s("queue is empty").nl; 
+      else OUT::s("queue is not empty").nl;
+      end; -- if
+      OUT::s("empty queue").nl;
+      OUT::s(q2.str).nl;
+      i := 0;
+      OUT::s("Testing empty").nl;
+      if q2.empty 
+      then OUT::s("queue is empty").nl; 
+      else OUT::s("queue is not empty").nl;
+      end; -- if
+      i := 0;
+      until i=8 loop
+	 i := i + 1;
+	 OUT::s("enqueue (").i(i).s(")").nl;
+	 q2 := q2.enqueue(i);
+	 OUT::s(q2.str).nl;
+      end; -- loop
+      until i=20 loop
+	 i := i + 1;
+	 OUT::s("front element: ");
+	 OUT::i(q2.front).nl;
+	 OUT::s("dequeue").nl;
+	 q2 := q2.dequeue;
+	 OUT::s(q2.str).nl;
+	 OUT::s("enqueue (").i(i).s(")").nl;
+	 q2 := q2.enqueue(i);
+	 OUT::s(q2.str).nl;
+      end;
+	 -- Testing Cyclic extension
+      until i = 40 loop
+	 i := i + 1;
+	 OUT::s("enqueue (").i(i).s(")").nl;
+	 q2 := q2.enqueue(i);
+	 OUT::s(q2.str).nl;
+      end;
+	 -- deleting cyclic extenstions
+      until q2.empty loop
+	 OUT::s("front element: ");
+	 OUT::i(q2.front).nl;
+	 OUT::s("dequeue").nl;
+	 q2 := q2.dequeue;
+	 OUT::s(q2.str).nl;
+      end;
+      
+      OUT::s("Testing empty").nl;
+      OUT::s("Testing empty").nl;
+      if q2.empty 
+      then OUT::s("queue is empty").nl; 
+      else OUT::s("queue is not empty").nl;
+      end; -- if
+      
+      OUT::s("Testing Exceptions: dequeue").nl;
+      begin
+	 q2 := q2.dequeue;
+      except emptydequeue
+      when EXCEPTION__QUEUE_EMPTY then 
+	 ERR::s(emptydequeue.str).nl;
+	 OUT::s("exception test EXCEPTION__QUEUE_EMPTY on dequeue successfull").nl;
+      else OUT::s("exception test EXCEPTION__QUEUE_EMPTY on dequeue not successfull").nl;
+      end;
+      
+      OUT::s("Testing Exceptions: front").nl;
+      begin
+	 x := q2.front;
+      except emptyfront
+      when EXCEPTION__QUEUE_EMPTY then 
+	 ERR::s(emptyfront.str).nl;
+	 OUT::s("exception test EXCEPTION__QUEUE_EMPTY on front successfull").nl;
+      else OUT::s("exception test EXCEPTION__QUEUE_EMPTY on front not successfull").nl;
+      end;
+      
+   end; -- main
+end;  -- TEST__QUEUE__LINKED
