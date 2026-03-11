@@ -38,7 +38,7 @@
 static Obstack genstack;
 static int gen_stack_initialized = 0;
 
-char error_message[255];
+extern char error_message[255];
 
 ArgumentInfo NewArgumentInfo(TreeNodePtr node, DefTableKeyList list);
 GenericInfo NewGenericInfo(ArgumentInfoList list, DefTableKey k);

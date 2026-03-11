@@ -17,6 +17,7 @@
     <http://www.gnu.org/licenses/>. */
     
 #include "GenericResolution.h"
+char error_message[255];
 
 ArgumentInfo NewArgumentInfo(TreeNodePtr node, DefTableKeyList list) 
 {

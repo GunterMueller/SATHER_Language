@@ -16,16 +16,12 @@
     License along with Sather-K Compiler Halle.  If not, see
     <http://www.gnu.org/licenses/>. */
     
-#include "SpecialTypes.head"
+#include "deftbl.h"
+#include "SatherTypeImpl.h"
+#include "IntSet.h"
+#include "pdl_gen.h"
 
-  int CreateSpecialTypes()
-  {
-    same_key = NewKey();
-  
-    ResetPolyType(same_key, 
-      NewType(same_key, SingleIS(polymorphK), MakeName("$SAME")));
-    ResetMonoType(same_key,
-      NewType(same_key, SingleIS(monomorphK), MakeName("SAME")));
+extern DefTableKey same_key;
 
-    return 1;
-  }
+int CreateSpecialTypes();
+

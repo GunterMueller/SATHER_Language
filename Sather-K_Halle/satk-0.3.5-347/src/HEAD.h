@@ -278,7 +278,7 @@ int IsRowSym(int sym);
 #include "IntSet.h"
 #include "pdl_gen.h"
 
-DefTableKey same_key;
+extern DefTableKey same_key;
 
 int CreateSpecialTypes();
 
